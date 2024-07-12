@@ -29,6 +29,13 @@ export const navItems: NavItem[] = [
     description: 'Authentication forms built using the components.',
     hideInMenu: true,
   },
+  {
+    title: 'Redirect',
+    href: '/auth/github/callback',
+    component: 'callback',
+    description: 'Redirect route.',
+    hideInMenu: true,
+  },
 ]
 
 export const projectItems: ProjectItem[] = [

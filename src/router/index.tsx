@@ -1,5 +1,5 @@
 import React from 'react'
-import { createHashRouter, RouteObject } from 'react-router-dom'
+import { createBrowserRouter, RouteObject } from 'react-router-dom'
 
 import { navItems } from '@/constants/data'
 import { Pages } from '@/router/pages'
@@ -29,7 +29,7 @@ const routerObjects: RouteObject[] = navItems.map((item) => {
   }
 })
 
-export function createRouter(): ReturnType<typeof createHashRouter> {
+export function createRouter(): ReturnType<typeof createBrowserRouter> {
   const routeWrappers = routerObjects.map((router) => {
     const Component = router.Component
     const page = Component ? <Component /> : null
@@ -40,5 +40,5 @@ export function createRouter(): ReturnType<typeof createHashRouter> {
       // ErrorBoundary: ErrorPage,
     }
   })
-  return createHashRouter(routeWrappers)
+  return createBrowserRouter(routeWrappers)
 }
