@@ -9,23 +9,25 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 import { Icons } from '@/components/icons'
-// import GoogleSignInButton from '../github-auth-button'
+// import GithubSignInButton from '../github-auth-button'
+
+const CLIENT_ID = 'Ov23li86Nz0RcXbj54Z5'
+const REDIRECT_URI = 'http://localhost:3000/auth/github/callback'
 
 const signIn = (...args: unknown[]) => {
   location.href = '/'
 }
 
-function GoogleSignInButton() {
-  const searchParams = new URLSearchParams(useLocation().search)
-  const callbackUrl = searchParams.get('callbackUrl')
+const githubOAuth = () => {
+  window.location.href = `http://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=user:email`
+}
+
+const GithubSignInButton = () => {
+  // const searchParams = new URLSearchParams(useLocation().search)
+  // const callbackUrl = searchParams.get('callbackUrl')
 
   return (
-    <Button
-      className="w-full"
-      variant="outline"
-      type="button"
-      onClick={() => signIn('github', { callbackUrl: callbackUrl ?? '/dashboard' })}
-    >
+    <Button className="w-full" variant="outline" type="button" onClick={() => githubOAuth()}>
       <Icons.github className="w-4 h-4 mr-2" />
       Continue with Github
     </Button>
@@ -88,7 +90,7 @@ export default function UserAuthForm() {
           <span className="px-2 bg-background text-muted-foreground">Or continue with</span>
         </div>
       </div>
-      <GoogleSignInButton />
+      <GithubSignInButton />
     </>
   )
 }
