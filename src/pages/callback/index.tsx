@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react'
+import { backendUrl } from '@/constants/config'
+import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 
 const Callback = () => {
@@ -8,7 +9,7 @@ const Callback = () => {
     const code = searchParams.get('code')
 
     if (code) {
-      fetch(`http://183.131.108.116:3000/auth/github?code=${code}`)
+      fetch(`http://${backendUrl}/auth/github/callback?code=${code}`)
         .then((response) => response.json())
         .then((data) => {
           console.log('User info:', data)
@@ -18,9 +19,6 @@ const Callback = () => {
           console.error('Error fetching user info:', error)
         })
     }
-    // setTimeout(() => {
-    //   window.location.href = '/'
-    // }, 5000) // 5000 毫秒即 5 秒
   })
 
   return (
