@@ -12,6 +12,7 @@ import {
 import { Input } from '@/components/ui/input'
 import MobileSidebar from '@/components/layout/MobileSidebar'
 import { useNavigate } from 'react-router-dom'
+import { CustomConnectButton } from './ConnectButton'
 
 export default function Header() {
   const navigate = useNavigate()
@@ -34,6 +35,11 @@ export default function Header() {
           </div>
         </form>
       </div>
+      <Button variant="secondary" className="rounded-full border">
+        <CustomConnectButton />
+      </Button>
+
+      {/* <ConnectButton /> */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="secondary" size="icon" className="rounded-full">
