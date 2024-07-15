@@ -1,9 +1,19 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import UserAuthForm from '@/components/forms/user-auth-form'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { useEffect } from 'react'
+import Cookies from 'js-cookie'
 
 export default function Login() {
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const token = Cookies.get('token')
+    if (token) {
+      navigate('/', { replace: true })
+    }
+  })
   return (
     <>
       <div className="relative flex-col items-center justify-center h-screen md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
