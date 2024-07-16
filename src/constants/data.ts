@@ -30,7 +30,7 @@ export const navItems: NavItem[] = [
     hideInMenu: true,
   },
   {
-    title: 'Redirect',
+    title: 'callback',
     href: '/auth/github/callback',
     component: 'callback',
     description: 'Redirect route.',
