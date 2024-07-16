@@ -6,24 +6,27 @@ import { createRouter } from './router'
 import { RainbowKitProvider, getDefaultConfig } from '@rainbow-me/rainbowkit'
 import { WagmiProvider } from 'wagmi'
 import '@rainbow-me/rainbowkit/styles.css'
-import { mainnet, polygon, optimism, arbitrum, base } from 'wagmi/chains'
+import { scroll } from 'wagmi/chains'
+import AuthProvider from './provider/auth-provider'
 const config = getDefaultConfig({
   appName: 'Kuibu',
   projectId: '05c3ea68819376e65dc4a8802f90f41b',
-  chains: [mainnet, polygon, optimism, arbitrum, base],
+  chains: [scroll],
   ssr: true, // If your dApp uses server side rendering (SSR)
 })
 
 export default function App() {
   const queryClient = useMemo(() => new QueryClient({}), [])
   return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>
-          <RouterProvider router={createRouter()} />
-          <ReactQueryDevtools />
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+    <AuthProvider>
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <RainbowKitProvider>
+            <RouterProvider router={createRouter()} />
+            <ReactQueryDevtools />
+          </RainbowKitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
+    </AuthProvider>
   )
 }

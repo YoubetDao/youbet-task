@@ -1,6 +1,7 @@
 import { backendUrl } from '@/constants/config'
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
+import Cookies from 'js-cookie'
 
 const Callback = () => {
   const location = useLocation()
@@ -10,10 +11,15 @@ const Callback = () => {
 
     if (code) {
       fetch(`http://${backendUrl}/auth/github/callback?code=${code}`)
-        .then((response) => response.json())
+        .then((response) => {
+          return response.json()
+        })
         .then((data) => {
           console.log('User info:', data)
-          // 在此处处理用户信息，例如保存到状态或重定向到其他页面
+          if (data.data.jwt) {
+            Cookies.set('token', data.data.jwt, { expires: 7 }) // 7 天过期
+          }
+          console.log(data.data.jwt)
         })
         .catch((error) => {
           console.error('Error fetching user info:', error)

@@ -10,9 +10,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
-import MobileSidebar from '@/components/layout/MobileSidebar'
 import { useNavigate } from 'react-router-dom'
 import { CustomConnectButton } from './ConnectButton'
+import MobileSidebar from './MobileSidebar'
 
 export default function Header() {
   const navigate = useNavigate()

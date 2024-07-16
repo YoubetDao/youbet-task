@@ -2,7 +2,6 @@ import { Bell } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import Sidebar from '@/components/layout/Sidebar'
-import Upgrade from '@/components/layout/Upgrade'
 import Title from '@/components/layout/Title'
 import Header from '@/components/layout/Header'
 
@@ -28,9 +27,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="flex-1">
             <Sidebar />
           </div>
-          <div className="p-4 mt-auto">
-            <Upgrade />
-          </div>
+          <div className="p-4 mt-auto">{/* <Upgrade /> */}</div>
         </div>
       </div>
       <div className="flex flex-col flex-1 overflow-hidden">
