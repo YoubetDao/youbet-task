@@ -1,4 +1,15 @@
-import { Bell, Package2, Home, LineChart, Package, ShoppingCart, Users, ListChecks, LucideProps } from 'lucide-react'
+import {
+  Bell,
+  Package2,
+  Home,
+  LineChart,
+  Package,
+  ShoppingCart,
+  Users,
+  ListChecks,
+  LucideProps,
+  UserCircle2,
+} from 'lucide-react'
 
 export const Icons = {
   bell: Bell,
@@ -9,6 +20,7 @@ export const Icons = {
   shoppingCart: ShoppingCart,
   users: Users,
   listChecks: ListChecks,
+  profile: UserCircle2,
   github: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"

@@ -12,7 +12,8 @@ export default function Sidebar() {
         if (item.hideInMenu) return null
 
         const Icon = item.icon ? Icons[item.icon] : () => null
-        const isActive = location.pathname === item.href
+        const isActive =
+          location.pathname === item.href || (item.href !== '/' && location.pathname.startsWith(item.href))
         return (
           <Link
             key={item.title}
