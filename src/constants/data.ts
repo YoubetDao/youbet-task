@@ -17,10 +17,11 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'Tasks',
-    href: '/tasks',
+    href: '/projects/:project/tasks',
     icon: 'listChecks',
     component: 'task',
     layout: 'dashboard',
+    hideInMenu: true,
   },
   {
     title: 'Login',
@@ -35,6 +36,14 @@ export const navItems: NavItem[] = [
     component: 'callback',
     description: 'Redirect route.',
     hideInMenu: true,
+  },
+  {
+    title: 'Profile',
+    href: '/profile',
+    icon: 'profile',
+    component: 'profile',
+    description: 'My Profile.',
+    layout: 'dashboard',
   },
 ]
 

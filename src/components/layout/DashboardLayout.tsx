@@ -1,8 +1,4 @@
-import { Bell } from 'lucide-react'
-
-import { Button } from '@/components/ui/button'
 import Sidebar from '@/components/layout/Sidebar'
-import Upgrade from '@/components/layout/Upgrade'
 import Title from '@/components/layout/Title'
 import Header from '@/components/layout/Header'
 
@@ -20,16 +16,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="flex flex-col h-full max-h-screen gap-2">
           <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
             <Title />
-            <Button variant="outline" size="icon" className="w-8 h-8 ml-auto">
-              <Bell className="w-4 h-4" />
-              <span className="sr-only">Toggle notifications</span>
-            </Button>
           </div>
           <div className="flex-1">
             <Sidebar />
-          </div>
-          <div className="p-4 mt-auto">
-            <Upgrade />
           </div>
         </div>
       </div>

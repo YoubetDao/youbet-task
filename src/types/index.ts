@@ -16,6 +16,7 @@ export interface NavItem {
   layout?: keyof typeof Layouts
   description?: string
   hideInMenu?: boolean
+  children?: NavItem[]
 }
 
 export interface ProjectItem extends BaseItem {
