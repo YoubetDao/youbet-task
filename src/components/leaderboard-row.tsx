@@ -9,7 +9,7 @@ interface LeaderboardRowProps {
 
 const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ avatarSrc, name, html, completedTasks }) => {
   return (
-    <div className="flex items-center">
+    <div className="flex items-center transition-all hover:shadow-lg hover:scale-110">
       <Avatar className="h-9 w-9">
         <AvatarImage src={avatarSrc} alt="Avatar" />
         <AvatarFallback>{name.charAt(0)}</AvatarFallback>

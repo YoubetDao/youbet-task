@@ -12,6 +12,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import ReactMarkdown from 'react-markdown'
 import Cookies from 'js-cookie'
 import http from '../../service/instance'
@@ -57,19 +58,14 @@ function TaskItem({
         <CardTitle>{item.title}</CardTitle>
       </CardHeader>
       <CardContent className="flex-1">
-        <div className="flex h-full flex-col justify-between overflow-hidden rounded">
+        <div className="flex flex-col justify-between h-full overflow-hidden rounded">
           <div>
-            <div className="mb-4 flex items-center">
-              <img className="mr-4 h-12 w-12 rounded-full" src={item.user.avatar_url} alt="User Avatar" />
+            <div className="flex items-center mb-4">
+              <img className="w-12 h-12 mr-4 rounded-full" src={item.user.avatar_url} alt="User Avatar" />
               <div className="text-sm">
                 <p className="leading-none text-gray-900">{item.user.login}</p>
                 <p className="text-gray-600">{item.user.html_url}</p>
               </div>
-            </div>
-            <div className="mb-4">
-              <p className="text-base text-gray-700">
-                <ReactMarkdown>{item.body}</ReactMarkdown>
-              </p>
             </div>
             <div className="flex justify-between">
               <div>
@@ -81,7 +77,17 @@ function TaskItem({
               </div>
             </div>
           </div>
-          <div className="mt-8 flex justify-end gap-2">
+          <div className="flex justify-end gap-2 mt-8">
+            {item.body && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="link">Description</Button>
+                </PopoverTrigger>
+                <PopoverContent side="right" className="w-[500px] h-[250px] overflow-y-auto">
+                  <ReactMarkdown className="prose">{item.body}</ReactMarkdown>
+                </PopoverContent>
+              </Popover>
+            )}
             <Button asChild variant="link">
               <a href={item.url} target="_blank" rel="noreferrer">
                 View Issue
