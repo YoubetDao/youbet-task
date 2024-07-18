@@ -34,10 +34,10 @@ function TaskItem({ item }: { item: Issue }) {
         <CardTitle>{item.title}</CardTitle>
       </CardHeader>
       <CardContent className="flex-1">
-        <div className="flex flex-col justify-between h-full overflow-hidden rounded">
+        <div className="flex h-full flex-col justify-between overflow-hidden rounded">
           <div>
-            <div className="flex items-center mb-4">
-              <img className="w-12 h-12 mr-4 rounded-full" src={item.user.avatar_url} alt="User Avatar" />
+            <div className="mb-4 flex items-center">
+              <img className="mr-4 h-12 w-12 rounded-full" src={item.user.avatar_url} alt="User Avatar" />
               <div className="text-sm">
                 <p className="leading-none text-gray-900">{item.user.login}</p>
                 <p className="text-gray-600">{item.user.html_url}</p>
@@ -51,7 +51,6 @@ function TaskItem({ item }: { item: Issue }) {
             <div className="flex justify-between">
               <div>
                 <p className="text-gray-600">State: {item.state}</p>
-                <p className="text-gray-600">Comments: {item.comments}</p>
               </div>
               <div>
                 <p className="text-gray-600">Created At: {new Date(item.created_at).toLocaleDateString()}</p>
@@ -59,9 +58,9 @@ function TaskItem({ item }: { item: Issue }) {
               </div>
             </div>
           </div>
-          <div className="flex justify-end gap-2 mt-8">
+          <div className="mt-8 flex justify-end gap-2">
             <Button asChild variant="link">
-              <a href={item.html_url} target="_blank" rel="noreferrer">
+              <a href={item.url} target="_blank" rel="noreferrer">
                 View Issue
               </a>
             </Button>
@@ -121,7 +120,7 @@ export default function Task() {
         {loading ? (
           <SkeletonTasks />
         ) : tasks.length ? (
-          tasks.map((item) => <TaskItem key={item.id} item={item} />)
+          tasks.map((item) => <TaskItem key={item.title} item={item} />)
         ) : (
           <EmptyTasks />
         )}

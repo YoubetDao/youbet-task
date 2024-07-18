@@ -65,11 +65,10 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
     return null
   }
 
-  return (
-    <style
-      dangerouslySetInnerHTML={{
-        __html: Object.entries(THEMES).map(
-          ([theme, prefix]) => `
+  // TODO: fix it...
+  const htmlStr = Object.entries(THEMES)
+    .map(
+      ([theme, prefix]) => `
 ${prefix} [data-chart=${id}] {
 ${colorConfig
   .map(([key, itemConfig]) => {
@@ -79,7 +78,12 @@ ${colorConfig
   .join('\n')}
 }
 `,
-        ),
+    )
+    .toString()
+  return (
+    <style
+      dangerouslySetInnerHTML={{
+        __html: 'htmlStr',
       }}
     />
   )
