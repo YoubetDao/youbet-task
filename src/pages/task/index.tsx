@@ -13,6 +13,13 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
 import ReactMarkdown from 'react-markdown'
+import Cookies from 'js-cookie'
+import http from '../../service/instance'
+import { NetworkType, SDK } from 'youbet-sdk'
+
+const sdk = new SDK({
+  networkType: NetworkType.Testnet, // or NetworkType.Testnet
+})
 
 function SkeletonTasks() {
   return (
@@ -27,7 +34,23 @@ function SkeletonTasks() {
   )
 }
 
-function TaskItem({ item }: { item: Issue }) {
+function TaskItem({
+  item,
+  onClaim,
+  onDisclaim,
+}: {
+  item: Issue
+  onClaim: (item: Issue) => void
+  onDisclaim: (item: Issue) => void
+}) {
+  const handleClaim = () => {
+    onClaim(item)
+  }
+
+  const handleDisclaim = () => {
+    onDisclaim(item)
+  }
+
   return (
     <Card className="flex flex-col">
       <CardHeader>
@@ -64,7 +87,15 @@ function TaskItem({ item }: { item: Issue }) {
                 View Issue
               </a>
             </Button>
-            <Button>Claim</Button>
+            {item.state === 'closed' ? (
+              <Button disabled>Closed</Button>
+            ) : !item.assignees.length ? (
+              <Button onClick={handleClaim}>Claim</Button>
+            ) : item.assignees.some((assignee) => assignee.login === Cookies.get('username')) ? (
+              <Button onClick={handleDisclaim}>Disclaim</Button>
+            ) : (
+              <Button disabled>Claimed</Button>
+            )}
           </div>
         </div>
       </CardContent>
@@ -85,17 +116,49 @@ export default function Task() {
   const [loading, setLoading] = useState(false)
   const { project } = useParams<{ project: string }>()
 
+  const fetchTasks = async () => {
+    setLoading(true)
+    const data = await fetch(`/api/tasks?org=youbetdao&project=${project}`)
+      .then((res) => res.json())
+      .catch(() => [])
+    setTasks(data)
+    setLoading(false)
+  }
+
   useEffect(() => {
-    const fetchTasks = async () => {
-      setLoading(true)
-      const data = await fetch(`/api/tasks?org=youbetdao&project=${project}`)
-        .then((res) => res.json())
-        .catch(() => [])
-      setTasks(data)
-      setLoading(false)
-    }
     fetchTasks()
   }, [project])
+
+  const handleClaim = async (item: Issue) => {
+    const issueNumber = item.url.split('/').pop()
+    try {
+      // TODO: the claim logic here will cause some exception. I don't know what happened.
+      const res = await http.post('/claim-task', {
+        org: 'youbetdao',
+        project,
+        task: issueNumber,
+      })
+      console.log(res)
+    } catch (e) {
+      console.log(e)
+    }
+    fetchTasks()
+  }
+
+  const handleDisclaim = async (item: Issue) => {
+    const issueNumber = item.url.split('/').pop()
+    try {
+      const res = await http.post('/disclaim-task', {
+        org: 'youbetdao',
+        project,
+        task: issueNumber,
+      })
+      console.log(res)
+    } catch (e) {
+      console.log(e)
+    }
+    fetchTasks()
+  }
 
   return (
     <div className="space-y-4">
@@ -120,7 +183,9 @@ export default function Task() {
         {loading ? (
           <SkeletonTasks />
         ) : tasks.length ? (
-          tasks.map((item) => <TaskItem key={item.title} item={item} />)
+          tasks.map((item) => (
+            <TaskItem key={item.title} item={item} onClaim={handleClaim} onDisclaim={handleDisclaim} />
+          ))
         ) : (
           <EmptyTasks />
         )}
