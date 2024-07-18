@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/icons'
 // import GithubSignInButton from '../github-auth-button'
 
-const CLIENT_ID = 'Ov23li86Nz0RcXbj54Z5'
+const CLIENT_ID = import.meta.env.VITE_GITHUB_OAUTH_CLIENT_ID
 const REDIRECT_URI = `${location.origin}/auth/github/callback`
 
 const githubOAuth = () => {
