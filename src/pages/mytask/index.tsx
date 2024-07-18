@@ -3,15 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Issue, Repository } from '@/types'
 import { useEffect, useState } from 'react'
 import { SkeletonCard } from '@/components/skeleton-card'
-import { Link, useParams } from 'react-router-dom'
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb'
+import { useParams } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 
 function SkeletonTasks() {
@@ -124,23 +116,7 @@ export default function MyTask() {
 
   return (
     <div className="space-y-4">
-      <Breadcrumb className="py-2">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link to="/projects">Projects</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink>{project}</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Tasks</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+      <h1>My Task</h1>
       <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
         {loading ? (
           <SkeletonTasks />
