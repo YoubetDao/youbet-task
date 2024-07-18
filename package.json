@@ -58,6 +58,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.8.1",
     "@commitlint/config-conventional": "^17.4.4",
+    "@tailwindcss/typography": "^0.5.13",
     "@tanstack/react-query-devtools": "^4.29.1",
     "@types/js-cookie": "^3.0.6",
     "@types/loadable__component": "^5.13.4",
