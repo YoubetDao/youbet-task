@@ -55,12 +55,37 @@ export default function Profile() {
   }
 
   return (
-    <div>
-      <h2>User Profile</h2>
-      <p>Username: {username}</p>
-      <p>Linked Address: {linkedAddress}</p>
-      <p>User Points: {userPoints}</p>
-      {/* 添加更多的用户信息显示 */}
+    <div className="overflow-hidden bg-white shadow sm:rounded-lg">
+      <div className="px-4 py-5 sm:px-6">
+        <h3 className="text-lg font-medium leading-6 text-gray-900">User Profile</h3>
+      </div>
+      <div className="border-t border-gray-200">
+        <dl>
+          <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt className="text-sm font-medium text-gray-500">Username</dt>
+            <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{username}</dd>
+          </div>
+          {/* github link */}
+          <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt className="text-sm font-medium text-gray-500">Github</dt>
+            <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+              <a href={`https://github.com/${username}`}>https://github.com/{username}</a>
+            </dd>
+          </div>
+
+          <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt className="text-sm font-medium text-gray-500">Linked Address</dt>
+
+            <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+              <a href={`https://sepolia.scrollscan.dev/address/${linkedAddress}`}>{linkedAddress}</a>
+            </dd>
+          </div>
+          <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt className="text-sm font-medium text-gray-500">User Points</dt>
+            <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{userPoints}</dd>
+          </div>
+        </dl>
+      </div>
     </div>
   )
 }
