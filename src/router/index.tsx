@@ -5,7 +5,7 @@ import { navItems } from '@/constants/data'
 import { Pages } from '@/router/pages'
 import { Layouts } from '@/router/layouts'
 import { Helmet } from 'react-helmet'
-import { useAuth } from '@/provider/auth-provider'
+import Cookies from 'js-cookie'
 
 const getDefaultLayout = ({ children }: { children: React.ReactNode }) => children
 
@@ -16,7 +16,7 @@ const routerObjects: RouteObject[] = navItems.map((item) => {
   const isPrivate = item.component !== 'callback' && item.component !== 'login'
 
   const Component = () => {
-    const { token } = useAuth()
+    const token = Cookies.get('token')
     return (
       <>
         <Helmet>
