@@ -41,10 +41,12 @@ instance.interceptors.response.use(
       if (status === 401) {
         // Unauthorized: clear token and redirect to login
         Cookies.remove('token') // Remove token from cookie
+        Cookies.remove('username')
         history.replace('/login') // Redirect to login page
       } else if (status === 403) {
         // Forbidden: clear token and redirect to login
         Cookies.remove('token') // Remove token from cookie
+        Cookies.remove('username')
         history.replace('/login') // Redirect to login page
       } else if (status === 500) {
         // Internal Server Error: return the error response

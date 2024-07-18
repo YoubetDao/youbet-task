@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { SkeletonCard } from '@/components/skeleton-card'
 import { useParams } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
+import Cookies from 'js-cookie'
 
 function SkeletonTasks() {
   return (
@@ -80,6 +81,11 @@ export default function MyTask() {
 
   useEffect(() => {
     const fetchTasks = async () => {
+      if (!Cookies.get('username')) {
+        setTasks([])
+        return
+      }
+
       setLoading(true)
 
       try {
@@ -91,7 +97,9 @@ export default function MyTask() {
         let allTasks: Issue[] = []
 
         const tasksPromises = projects.map(async (project: Repository) => {
-          const projectTasks = await fetch(`/api/tasks?org=${org}&project=${project.name}&assignee=${'wfnuser'}`)
+          const projectTasks = await fetch(
+            `/api/tasks?org=${org}&project=${project.name}&assignee=${Cookies.get('username')}`,
+          )
             .then((res) => res.json())
             .catch(() => [])
           return projectTasks

@@ -12,6 +12,7 @@ const api = {
 
       if (response.data.data && response.data.data.jwt) {
         Cookies.set('token', response.data.data.jwt, { expires: 1 }) // 设置 token 到 cookie
+        Cookies.set('username', response.data.data.username, { expires: 1 })
         return response.data.data.jwt // 返回 JWT
       }
     } catch (error) {
