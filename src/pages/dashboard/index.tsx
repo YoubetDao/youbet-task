@@ -1,127 +1,81 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { AreaGraph } from '@/components/charts/AreaGraph'
-import { BarGraph } from '@/components/charts/BarGraph'
-import { PieGraph } from '@/components/charts/PieGraph'
-import { IssueCompletionLeaderboard } from '@/components/issue-completion-leaderboard'
+import { Tabs, TabsContent } from '@/components/ui/tabs'
+import { useEffect, useState } from 'react'
+import api from '@/service'
+import { TaskCompletionLeaderboard } from '@/components/task-completion-leaderboard'
 
 export default function Dashboard() {
+  const [assigneeStats, setAssigneeStats] = useState<{
+    [key: string]: { avatarSrc: string; name: string; html: string; completedTasks: number }
+  }>({})
+  const [openedCount, setOpenedCount] = useState<number>(0)
+  const [closedCount, setClosedCount] = useState<number>(0)
+
+  useEffect(() => {
+    api.fetchIssues('YoubetDao', 'youbet-test-repo').then((data) => {
+      if (data) {
+        const stats: { [key: string]: { avatarSrc: string; name: string; html: string; completedTasks: number } } = {}
+        let opened = 0
+        let closed = 0
+        console.log(data)
+
+        data.forEach((issue) => {
+          issue.assignees.forEach((assignee) => {
+            if (!stats[assignee.login]) {
+              stats[assignee.login] = {
+                avatarSrc: assignee.avatar_url,
+                name: assignee.login,
+                html: assignee.html_url, // 将 email 改为 html 字段
+                completedTasks: 0,
+              }
+            }
+            if (issue.state === 'closed') {
+              stats[assignee.login].completedTasks += 1
+            }
+          })
+          if (issue.state === 'closed') {
+            closed++
+          } else {
+            opened++
+          }
+        })
+
+        setAssigneeStats(stats)
+        setOpenedCount(opened)
+        setClosedCount(closed)
+      }
+    })
+  }, [])
   return (
     <>
       <ScrollArea className="h-full">
         <div className="flex-1 p-4 pt-6 space-y-4 md:p-8">
-          <div className="flex items-center justify-between space-y-2">
-            <h2 className="text-3xl font-bold tracking-tight">Hi, Welcome back 👋</h2>
+          <div className="flex items-center justify-between space-y-4">
+            <h2 className="text-3xl font-bold tracking-tight">Hi, Welcome to YouBet Task 👋</h2>
           </div>
-          <Tabs defaultValue="overview" className="space-y-4">
-            <TabsList>
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="analytics" disabled>
-                Analytics
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="overview" className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Tabs defaultValue="overview" className="">
+            <TabsContent value="overview" className="flex-row flex justify-start">
+              <div className="gap-4 w-64 max-h-screen flex flex-col">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                    <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="w-4 h-4 text-muted-foreground"
-                    >
-                      <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                    </svg>
+                    <CardTitle className="text-sm font-medium">Opened Tasks</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">$45,231.89</div>
-                    <p className="text-xs text-muted-foreground">+20.1% from last month</p>
+                    <div className="text-2xl font-bold">{openedCount}</div>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                    <CardTitle className="text-sm font-medium">Subscriptions</CardTitle>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="w-4 h-4 text-muted-foreground"
-                    >
-                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                      <circle cx="9" cy="7" r="4" />
-                      <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-                    </svg>
+                    <CardTitle className="text-sm font-medium">Completed Tasks</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">+2350</div>
-                    <p className="text-xs text-muted-foreground">+180.1% from last month</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                    <CardTitle className="text-sm font-medium">Sales</CardTitle>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="w-4 h-4 text-muted-foreground"
-                    >
-                      <rect width="20" height="14" x="2" y="5" rx="2" />
-                      <path d="M2 10h20" />
-                    </svg>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">+12,234</div>
-                    <p className="text-xs text-muted-foreground">+19% from last month</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                    <CardTitle className="text-sm font-medium">Active Now</CardTitle>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="w-4 h-4 text-muted-foreground"
-                    >
-                      <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                    </svg>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">+573</div>
-                    <p className="text-xs text-muted-foreground">+201 since last hour</p>
+                    <div className="text-2xl font-bold">{closedCount}</div>
                   </CardContent>
                 </Card>
               </div>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <div className="col-span-4">
-                  <BarGraph />
-                </div>
-                <IssueCompletionLeaderboard />
-                <div className="col-span-4">
-                  <AreaGraph />
-                </div>
-                <div className="col-span-4 md:col-span-3">
-                  <PieGraph />
-                </div>
+              <div className="items-start justify-center flex flex-grow">
+                <TaskCompletionLeaderboard assigneeStats={assigneeStats} />
               </div>
             </TabsContent>
           </Tabs>
