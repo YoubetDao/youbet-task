@@ -1,4 +1,4 @@
-import { NavItem, ProjectItem, TaskItem } from '@/types'
+import { NavItem } from '@/types'
 
 export const navItems: NavItem[] = [
   {
@@ -24,6 +24,13 @@ export const navItems: NavItem[] = [
     hideInMenu: true,
   },
   {
+    title: 'MyTasks',
+    href: '/mytasks',
+    icon: 'listChecks',
+    component: 'mytask',
+    layout: 'dashboard',
+  },
+  {
     title: 'Login',
     href: '/login',
     component: 'login',
@@ -44,148 +51,5 @@ export const navItems: NavItem[] = [
     component: 'profile',
     description: 'My Profile.',
     layout: 'dashboard',
-  },
-]
-
-export const projectItems: ProjectItem[] = [
-  {
-    id: '1',
-    createAt: '2021-07-01T00:00:00Z',
-    updateAt: '2021-07-01T00:00:00Z',
-    title: 'Project 1',
-    description: 'A project description.',
-    link: '/projects/1',
-  },
-  {
-    id: '2',
-    createAt: '2021-07-02T00:00:00Z',
-    updateAt: '2021-07-02T00:00:00Z',
-    title: 'Project 2',
-    description: 'Another project description.',
-    link: '/projects/2',
-  },
-  {
-    id: '3',
-    createAt: '2021-07-03T00:00:00Z',
-    updateAt: '2021-07-03T00:00:00Z',
-    title: 'Project 3',
-    description: 'Yet another project description.',
-    link: '/projects/3',
-  },
-  {
-    id: '4',
-    createAt: '2021-07-04T00:00:00Z',
-    updateAt: '2021-07-04T00:00:00Z',
-    title: 'Project 4',
-    description: 'Yet another project description.',
-    link: '/projects/4',
-  },
-  {
-    id: '5',
-    createAt: '2021-07-05T00:00:00Z',
-    updateAt: '2021-07-05T00:00:00Z',
-    title: 'Project 5',
-    description: 'Yet another project description.',
-    link: '/projects/5',
-  },
-  {
-    id: '6',
-    createAt: '2021-07-06T00:00:00Z',
-    updateAt: '2021-07-06T00:00:00Z',
-    title: 'Project 6',
-    description: 'Yet another project description.',
-    link: '/projects/6',
-  },
-  {
-    id: '7',
-    createAt: '2021-07-07T00:00:00Z',
-    updateAt: '2021-07-07T00:00:00Z',
-    title: 'Project 7',
-    description: 'Yet another project description.',
-    link: '/projects/7',
-  },
-  {
-    id: '8',
-    createAt: '2021-07-08T00:00:00Z',
-    updateAt: '2021-07-08T00:00:00Z',
-    title: 'Project 8',
-    description: 'Yet another project description.',
-    link: '/projects/8',
-  },
-  {
-    id: '9',
-    createAt: '2021-07-09T00:00:00Z',
-    updateAt: '2021-07-09T00:00:00Z',
-    title: 'Project 9',
-    description: 'Yet another project description.',
-    link: '/projects/9',
-  },
-  {
-    id: '10',
-    createAt: '2021-07-10T00:00:00Z',
-    updateAt: '2021-07-10T00:00:00Z',
-    title: 'Project 10',
-    description: 'Yet another project description.',
-    link: '/projects/10',
-  },
-  {
-    id: '11',
-    createAt: '2021-07-11T00:00:00Z',
-    updateAt: '2021-07-11T00:00:00Z',
-    title: 'Project 11',
-    description: 'Yet another project description.',
-    link: '/projects/11',
-  },
-  {
-    id: '12',
-    createAt: '2021-07-12T00:00:00Z',
-    updateAt: '2021-07-12T00:00:00Z',
-    title: 'Project 12',
-    description: 'Yet another project description.',
-    link: '/projects/12',
-  },
-  {
-    id: '13',
-    createAt: '2021-07-13T00:00:00Z',
-    updateAt: '2021-07-13T00:00:00Z',
-    title: 'Project 13',
-    description: 'Yet another project description.',
-    link: '/projects/13',
-  },
-]
-
-export const taskItems: TaskItem[] = [
-  {
-    id: '1',
-    createAt: '2021-07-01T00:00:00Z',
-    updateAt: '2021-07-01T00:00:00Z',
-    title: 'Task 1',
-    description: 'A task description.',
-    priority: 0,
-    projectId: '1',
-    link: '/tasks/1',
-    status: 'todo',
-  },
-  {
-    id: '2',
-    createAt: '2021-07-02T00:00:00Z',
-    updateAt: '2021-07-02T00:00:00Z',
-    title: 'Task 2',
-    description: 'Another task description.',
-    priority: 1,
-    projectId: '1',
-    link: '/tasks/2',
-    status: 'in-progress',
-  },
-  {
-    id: '3',
-    createAt: '2021-07-03T00:00:00Z',
-    updateAt: '2021-07-03T00:00:00Z',
-    title: 'Task 3',
-    description: 'Yet another task description.',
-    priority: 2,
-    projectId: '2',
-    link: '/tasks/3',
-    status: 'done',
   },
 ]
