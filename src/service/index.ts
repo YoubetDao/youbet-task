@@ -1,5 +1,6 @@
 import Cookies from 'js-cookie'
 import http from './instance'
+import { Issue } from '@/types'
 
 const api = {
   fetchUserInfo: async (code: string) => {
@@ -17,6 +18,21 @@ const api = {
       }
     } catch (error) {
       console.error('Error fetching user info:', error)
+    }
+  },
+  fetchIssues: async (org: string, project: string): Promise<Issue[] | null> => {
+    try {
+      const response = await http.get('/tasks', {
+        params: { org, project },
+      })
+
+      if (response.data) {
+        return response.data
+      }
+      return null
+    } catch (error) {
+      console.error('Error fetching user info:', error)
+      return null
     }
   },
 }
