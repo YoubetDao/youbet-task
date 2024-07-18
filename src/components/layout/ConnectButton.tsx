@@ -1,4 +1,7 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
+import Cookies from 'js-cookie'
+import http from '../../service/instance'
+
 export const CustomConnectButton = () => {
   return (
     <ConnectButton.Custom>
@@ -8,6 +11,26 @@ export const CustomConnectButton = () => {
         const ready = mounted && authenticationStatus !== 'loading'
         const connected =
           ready && account && chain && (!authenticationStatus || authenticationStatus === 'authenticated')
+
+        const github = Cookies.get('username')
+
+        const linkWallet = async () => {
+          console.log('call link')
+          if (connected) {
+            const address = account.address
+            const linkedAddress = await fetch(`/api/get-linked-wallet?github=${github}`).then((res) => res.text())
+            console.log(linkedAddress)
+            if (linkedAddress == '0x0000000000000000000000000000000000000000') {
+              const res = await http.post('/link-wallet', {
+                github,
+                address,
+              })
+              console.log(res)
+            }
+          }
+        }
+        linkWallet()
+
         return (
           <div
             {...(!ready && {
