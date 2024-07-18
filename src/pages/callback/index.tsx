@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import api from '@/service'
+import Loading from '@/components/loading'
 
 const Callback = () => {
   const location = useLocation()
@@ -17,8 +18,9 @@ const Callback = () => {
   }, [location, navigate])
 
   return (
-    <div>
-      <p>Redirecting...</p>
+    <div className="flex items-center justify-center h-screen w-screen flex-col">
+      <Loading />
+      <span>Redirecting</span>
     </div>
   )
 }
