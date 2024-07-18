@@ -5,7 +5,7 @@ import { Icons } from '@/components/icons'
 // import GithubSignInButton from '../github-auth-button'
 
 const CLIENT_ID = 'Ov23li86Nz0RcXbj54Z5'
-const REDIRECT_URI = 'http://localhost:3000/auth/github/callback'
+const REDIRECT_URI = `${location.origin}/auth/github/callback`
 
 const githubOAuth = () => {
   window.location.href = `http://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=user:email`
