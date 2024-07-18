@@ -25,10 +25,10 @@ function ProjectItem({ item }: { item: Repository }) {
         <CardTitle>{item.name}</CardTitle>
       </CardHeader>
       <CardContent className="flex-1">
-        <div className="flex flex-col justify-between h-full overflow-hidden rounded">
+        <div className="flex h-full flex-col justify-between overflow-hidden rounded">
           <div>
-            <div className="flex items-center mb-4">
-              <img className="w-12 h-12 mr-4 rounded-full" src={item.owner.avatar_url} alt="Owner Avatar" />
+            <div className="mb-4 flex items-center">
+              <img className="mr-4 h-12 w-12 rounded-full" src={item.owner.avatar_url} alt="Owner Avatar" />
               <div className="text-sm">
                 <p className="leading-none text-gray-900">{item.owner.login}</p>
                 <p className="text-gray-600">{item.owner.html_url}</p>
@@ -49,7 +49,7 @@ function ProjectItem({ item }: { item: Repository }) {
               </div>
             </div>
           </div>
-          <div className="flex items-end justify-end gap-2 mt-8">
+          <div className="mt-8 flex items-end justify-end gap-2">
             <Button variant="link" asChild>
               <a target="_blank" href={item.html_url} rel="noreferrer">
                 View Repository
@@ -74,7 +74,9 @@ export default function Project() {
       const data = await fetch('/api/projects?org=youbetdao')
         .then((res) => res.json())
         .catch(() => [])
-      setProjects(data)
+      // filter if open issue exists
+      const filteredData = data.filter((item: Repository) => item.open_issues_count > 0)
+      setProjects(filteredData)
       setLoading(false)
     }
     fetchProjects()
