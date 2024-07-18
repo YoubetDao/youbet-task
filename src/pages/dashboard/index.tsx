@@ -1,12 +1,10 @@
-import { Button } from '@/components/ui/button'
-import { CalendarDateRangePicker } from '@/components/date-range-picker'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { AreaGraph } from '@/components/charts/AreaGraph'
 import { BarGraph } from '@/components/charts/BarGraph'
 import { PieGraph } from '@/components/charts/PieGraph'
-import { RecentSales } from '@/components/recent-sales'
+import { IssueCompletionLeaderboard } from '@/components/issue-completion-leaderboard'
 
 export default function Dashboard() {
   return (
@@ -15,10 +13,6 @@ export default function Dashboard() {
         <div className="flex-1 p-4 pt-6 space-y-4 md:p-8">
           <div className="flex items-center justify-between space-y-2">
             <h2 className="text-3xl font-bold tracking-tight">Hi, Welcome back 👋</h2>
-            <div className="items-center hidden space-x-2 md:flex">
-              <CalendarDateRangePicker />
-              <Button>Download</Button>
-            </div>
           </div>
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsList>
@@ -121,15 +115,7 @@ export default function Dashboard() {
                 <div className="col-span-4">
                   <BarGraph />
                 </div>
-                <Card className="col-span-4 md:col-span-3">
-                  <CardHeader>
-                    <CardTitle>Recent Sales</CardTitle>
-                    <CardDescription>You made 265 sales this month.</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <RecentSales />
-                  </CardContent>
-                </Card>
+                <IssueCompletionLeaderboard />
                 <div className="col-span-4">
                   <AreaGraph />
                 </div>
