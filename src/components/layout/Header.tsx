@@ -9,8 +9,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import MobileSidebar from '@/components/layout/MobileSidebar'
 import { useNavigate } from 'react-router-dom'
+import MobileSidebar from './MobileSidebar'
+import { CustomConnectButton } from './ConnectButton'
 
 export default function Header() {
   const navigate = useNavigate()
@@ -22,6 +23,10 @@ export default function Header() {
     <header className="flex flex-shrink-0 h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
       <MobileSidebar />
       <div className="flex-1 w-full"></div>
+      <Button variant="outline" className="border rounded-full">
+        <CustomConnectButton />
+      </Button>
+
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="secondary" size="icon" className="rounded-full">
