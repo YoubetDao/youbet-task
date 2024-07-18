@@ -89,14 +89,13 @@ export default function MyTask() {
       setLoading(true)
 
       try {
-        // const projectsData = await fetch(`/api/projects?org=${org}`).then((res) => res.json())
         const projects = await fetch('/api/projects?org=youbetdao')
           .then((res) => res.json())
           .catch(() => [])
-
+        const filteredProjects = projects.filter((item: Repository) => item.open_issues_count > 0)
         let allTasks: Issue[] = []
 
-        const tasksPromises = projects.map(async (project: Repository) => {
+        const tasksPromises = filteredProjects.map(async (project: Repository) => {
           const projectTasks = await fetch(
             `/api/tasks?org=${org}&project=${project.name}&assignee=${Cookies.get('username')}`,
           )
