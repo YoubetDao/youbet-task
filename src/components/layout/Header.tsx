@@ -1,6 +1,6 @@
 import { User } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom'
 import MobileSidebar from './MobileSidebar'
 import { CustomConnectButton } from './ConnectButton'
 import Cookies from 'js-cookie'
+import { cn } from '@/lib/utils'
 
 export default function Header() {
   const navigate = useNavigate()
@@ -25,15 +26,15 @@ export default function Header() {
   return (
     <header className="flex h-14 flex-shrink-0 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
       <MobileSidebar />
-      <div className="w-full flex-1"></div>
-      <Button variant="outline" className="rounded-full border">
+      <div className="flex-1 w-full"></div>
+      <div className={cn(buttonVariants({ variant: 'outline' }), 'border rounded-full')}>
         <CustomConnectButton />
-      </Button>
+      </div>
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="secondary" size="icon" className="rounded-full">
-            <User className="h-5 w-5" />
+            <User className="w-5 h-5" />
             <span className="sr-only">Toggle user menu</span>
           </Button>
         </DropdownMenuTrigger>

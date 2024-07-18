@@ -2,12 +2,13 @@ import axios from 'axios'
 import qs from 'qs'
 import { createBrowserHistory } from 'history'
 import Cookies from 'js-cookie'
-import { backendUrl } from '@/constants/config'
+// import { backendUrl } from '@/constants/config'
 
 const history = createBrowserHistory()
 
 const instance = axios.create({
-  baseURL: `http://${backendUrl}`,
+  // baseURL: `http://${backendUrl}`,
+  baseURL: '/api',
   paramsSerializer(params) {
     return qs.stringify(params, { indices: false })
   },
