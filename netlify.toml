@@ -1,7 +1,7 @@
 ## This rule redirects to an external API, signing requests with a secret
 [[redirects]]
   from = "/api/*"
-  to = "http://124.221.119.233:5060:splat"
+  to = "http://124.221.119.233:5060/:splat"
 
   status = 200
   force = true # COMMENT: ensure that we always redirect
