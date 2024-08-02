@@ -31,7 +31,7 @@ function ProjectItem({ item }: { item: Repository }) {
               <img className="mr-4 h-12 w-12 rounded-full" src={item.owner.avatar_url} alt="Owner Avatar" />
               <div className="text-sm">
                 <p className="leading-none text-gray-900">{item.owner.login}</p>
-                <p className="text-gray-600">{item.owner.html_url}</p>
+                <p>{item.owner.html_url}</p>
               </div>
             </div>
             <div className="mb-4">
@@ -40,12 +40,12 @@ function ProjectItem({ item }: { item: Repository }) {
             </div>
             <div className="flex justify-between">
               <div>
-                <p className="text-gray-600">Stars: {item.stargazers_count}</p>
-                <p className="text-gray-600">Forks: {item.forks_count}</p>
+                <p>Stars: {item.stargazers_count}</p>
+                <p>Forks: {item.forks_count}</p>
               </div>
               <div>
-                <p className="text-gray-600">Issues: {item.open_issues_count}</p>
-                <p className="text-gray-600">Language: {item.language}</p>
+                <p>Issues: {item.open_issues_count}</p>
+                <p>Language: {item.language}</p>
               </div>
             </div>
           </div>
