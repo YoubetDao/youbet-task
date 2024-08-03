@@ -29,7 +29,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <main className="flex flex-1 flex-col gap-4 overflow-auto p-4 lg:gap-6 lg:p-6">
           <div>
             {children}
-            <div className="pointer-events-none fixed bottom-0 left-[220px] right-0 top-14 md:left-[220px] lg:left-[280px] lg:top-[60px] overflow-hidden">
+            <div className="pointer-events-none fixed bottom-0 left-[220px] right-0 top-14 md:left-[220px] lg:left-[280px] lg:top-[60px] overflow-hidden z-[-1]">
               <Meteors number={20} />
             </div>
           </div>
