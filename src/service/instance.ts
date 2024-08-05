@@ -1,7 +1,6 @@
 import axios from 'axios'
 import qs from 'qs'
 import { createBrowserHistory } from 'history'
-import Cookies from 'js-cookie'
 // import { backendUrl } from '@/constants/config'
 
 const history = createBrowserHistory()
@@ -16,7 +15,7 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   (config) => {
-    const token = Cookies.get('token')
+    const token = localStorage.getItem('APP_TOKEN')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
@@ -41,13 +40,17 @@ instance.interceptors.response.use(
       const status = error.response.status
       if (status === 401) {
         // Unauthorized: clear token and redirect to login
-        Cookies.remove('token') // Remove token from cookie
-        Cookies.remove('username')
+        // Cookies.remove('token') // Remove token from cookie
+        // Cookies.remove('username')
+        localStorage.removeItem('APP_TOKEN')
+        localStorage.removeItem('APP_USERNAME')
         history.replace('/login') // Redirect to login page
       } else if (status === 403) {
         // Forbidden: clear token and redirect to login
-        Cookies.remove('token') // Remove token from cookie
-        Cookies.remove('username')
+        // Cookies.remove('token') // Remove token from cookie
+        // Cookies.remove('username')
+        localStorage.removeItem('APP_TOKEN')
+        localStorage.removeItem('APP_USERNAME')
         history.replace('/login') // Redirect to login page
       } else if (status === 500) {
         // Internal Server Error: return the error response

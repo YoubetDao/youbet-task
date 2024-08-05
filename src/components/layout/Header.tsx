@@ -12,14 +12,17 @@ import {
 import { useNavigate } from 'react-router-dom'
 import MobileSidebar from './MobileSidebar'
 import { CustomConnectButton } from './ConnectButton'
-import Cookies from 'js-cookie'
 import { cn } from '@/lib/utils'
+import { tokenAtom, usernameAtom } from '@/store'
+import { useAtom } from 'jotai'
 
 export default function Header() {
   const navigate = useNavigate()
+  const [, setToken] = useAtom(tokenAtom)
+  const [, setUsername] = useAtom(usernameAtom)
   const handleLogout = () => {
-    Cookies.remove('token')
-    Cookies.remove('username')
+    setToken(null)
+    setUsername(null)
     navigate('/login')
   }
 

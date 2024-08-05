@@ -3,17 +3,19 @@ import UserAuthForm from '@/components/forms/user-auth-form'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useEffect } from 'react'
-import Cookies from 'js-cookie'
+import { tokenAtom } from '@/store'
+import { useAtom } from 'jotai'
 
 export default function Login() {
   const navigate = useNavigate()
+  const [token] = useAtom(tokenAtom)
 
   useEffect(() => {
-    const token = Cookies.get('token')
     if (token) {
       navigate('/', { replace: true })
     }
-  })
+  }, [token, navigate])
+
   return (
     <>
       <div className="relative flex-col items-center justify-center h-screen md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
