@@ -7,6 +7,8 @@ import { RainbowKitProvider, getDefaultConfig } from '@rainbow-me/rainbowkit'
 import { WagmiProvider } from 'wagmi'
 import '@rainbow-me/rainbowkit/styles.css'
 import { scroll } from 'wagmi/chains'
+import { Provider } from 'jotai'
+import { store } from './store'
 
 const config = getDefaultConfig({
   appName: 'Kuibu',
@@ -19,13 +21,15 @@ export default function App() {
   const queryClient = useMemo(() => new QueryClient({}), [])
 
   return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>
-          <RouterProvider router={createRouter()} />
-          <ReactQueryDevtools />
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+    <Provider store={store}>
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <RainbowKitProvider>
+            <RouterProvider router={createRouter()} />
+            <ReactQueryDevtools />
+          </RainbowKitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
+    </Provider>
   )
 }

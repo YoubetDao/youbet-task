@@ -32,6 +32,8 @@ export default function Profile() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
+        if (!username) return
+
         const response = await http.get<string>(`/get-linked-wallet?github=${username}`)
         const linkedAddress = response.data
         setLinkedAddress(linkedAddress)

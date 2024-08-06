@@ -12,12 +12,14 @@ export const CustomConnectButton = () => {
 
   useEffect(() => {
     const linkWallet = async () => {
+      if (!github) return
       console.log('call link')
       // 获取当前github用户绑定的钱包地址
       const linkedAddress = await http.get<string>(`/get-linked-wallet?github=${github}`).then((res) => res.data)
       console.log(linkedAddress)
       // 如果没有绑定过钱包
       if (linkedAddress == '0x0000000000000000000000000000000000000000') {
+        if (!address) return
         const res = await http.post('/link-wallet', {
           github,
           address,

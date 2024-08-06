@@ -1,5 +1,6 @@
 import axios from 'axios'
 import qs from 'qs'
+import { store, tokenAtom, usernameAtom } from '@/store'
 // import { backendUrl } from '@/constants/config'
 
 const instance = axios.create({
@@ -11,7 +12,7 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('APP_TOKEN')
+    const token = store.get(tokenAtom)
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
@@ -45,16 +46,16 @@ instance.interceptors.response.use(
         // Unauthorized: clear token and redirect to login
         // Cookies.remove('token') // Remove token from cookie
         // Cookies.remove('username')
-        localStorage.removeItem('APP_TOKEN')
-        localStorage.removeItem('APP_USERNAME')
+        store.set(tokenAtom, null)
+        store.set(usernameAtom, null)
         // history.replace('/login') // Redirect to login page
         window.location.href = '/login'
       } else if (status === 403) {
         // Forbidden: clear token and redirect to login
         // Cookies.remove('token') // Remove token from cookie
         // Cookies.remove('username')
-        localStorage.removeItem('APP_TOKEN')
-        localStorage.removeItem('APP_USERNAME')
+        store.set(tokenAtom, null)
+        store.set(usernameAtom, null)
         // history.replace('/login') // Redirect to login page
         window.location.href = '/login'
       } else if (status === 500) {
