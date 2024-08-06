@@ -1,8 +1,33 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
-import Cookies from 'js-cookie'
 import http from '../../service/instance'
+import { usernameAtom } from '@/store'
+import { useAtom } from 'jotai'
+import { useAccount } from 'wagmi'
+import { useEffect } from 'react'
 
 export const CustomConnectButton = () => {
+  const [github] = useAtom(usernameAtom)
+
+  const { address } = useAccount()
+
+  useEffect(() => {
+    const linkWallet = async () => {
+      console.log('call link')
+      // 获取当前github用户绑定的钱包地址
+      const linkedAddress = await http.get<string>(`/get-linked-wallet?github=${github}`).then((res) => res.data)
+      console.log(linkedAddress)
+      // 如果没有绑定过钱包
+      if (linkedAddress == '0x0000000000000000000000000000000000000000') {
+        const res = await http.post('/link-wallet', {
+          github,
+          address,
+        })
+        console.log(res)
+      }
+    }
+    linkWallet()
+  }, [address, github])
+
   return (
     <ConnectButton.Custom>
       {({ account, chain, openAccountModal, openChainModal, openConnectModal, authenticationStatus, mounted }) => {
@@ -11,25 +36,6 @@ export const CustomConnectButton = () => {
         const ready = mounted && authenticationStatus !== 'loading'
         const connected =
           ready && account && chain && (!authenticationStatus || authenticationStatus === 'authenticated')
-
-        const github = Cookies.get('username')
-
-        const linkWallet = async () => {
-          console.log('call link')
-          if (connected) {
-            const address = account.address
-            const linkedAddress = await fetch(`/api/get-linked-wallet?github=${github}`).then((res) => res.text())
-            console.log(linkedAddress)
-            if (linkedAddress == '0x0000000000000000000000000000000000000000') {
-              const res = await http.post('/link-wallet', {
-                github,
-                address,
-              })
-              console.log(res)
-            }
-          }
-        }
-        linkWallet()
 
         return (
           <div

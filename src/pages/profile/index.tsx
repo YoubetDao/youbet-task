@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
-import Cookies from 'js-cookie'
 import { NetworkType, SDK } from 'youbet-sdk'
 import { SkeletonCard } from '@/components/skeleton-card'
+import http from '@/service/instance'
+import { usernameAtom } from '@/store'
+import { useAtom } from 'jotai'
 
 const sdk = new SDK({
   networkType: NetworkType.Testnet, // or NetworkType.Mainnet
@@ -21,19 +23,17 @@ function SkeletonTasks() {
 }
 
 export default function Profile() {
-  const [username, setUsername] = useState('')
+  // const [username, setUsername] = useState('')
   const [linkedAddress, setLinkedAddress] = useState('')
   const [userPoints, setUserPoints] = useState('')
   const [loading, setLoading] = useState(true)
+  const [username] = useAtom(usernameAtom)
 
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const github = Cookies.get('username')
-        setUsername(github || '')
-
-        const linkedAddressResponse = await fetch(`/api/get-linked-wallet?github=${github}`)
-        const linkedAddress = await linkedAddressResponse.text()
+        const response = await http.get<string>(`/get-linked-wallet?github=${username}`)
+        const linkedAddress = response.data
         setLinkedAddress(linkedAddress)
 
         if (linkedAddress !== '0x0000000000000000000000000000000000000000') {
@@ -48,7 +48,7 @@ export default function Profile() {
     }
 
     fetchUserProfile()
-  }, [])
+  }, [username])
 
   if (loading) {
     return <SkeletonTasks />
@@ -61,26 +61,26 @@ export default function Profile() {
       </div>
       <div className="border-t border-gray-200">
         <dl>
-          <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <div className="px-4 py-5 bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt className="text-sm font-medium text-gray-500">Username</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{username}</dd>
           </div>
           {/* github link */}
-          <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <div className="px-4 py-5 bg-white sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt className="text-sm font-medium text-gray-500">Github</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
               <a href={`https://github.com/${username}`}>https://github.com/{username}</a>
             </dd>
           </div>
 
-          <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <div className="px-4 py-5 bg-white sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt className="text-sm font-medium text-gray-500">Linked Address</dt>
 
             <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
               <a href={`https://sepolia.scrollscan.dev/address/${linkedAddress}`}>{linkedAddress}</a>
             </dd>
           </div>
-          <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <div className="px-4 py-5 bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt className="text-sm font-medium text-gray-500">User Points</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{userPoints}</dd>
           </div>

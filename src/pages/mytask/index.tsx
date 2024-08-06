@@ -5,7 +5,9 @@ import { useEffect, useState } from 'react'
 import { SkeletonCard } from '@/components/skeleton-card'
 import { useParams } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
-import Cookies from 'js-cookie'
+import http from '@/service/instance'
+import { usernameAtom } from '@/store'
+import { useAtom } from 'jotai'
 
 function SkeletonTasks() {
   return (
@@ -27,10 +29,10 @@ function TaskItem({ item }: { item: Issue }) {
         <CardTitle>{item.title}</CardTitle>
       </CardHeader>
       <CardContent className="flex-1">
-        <div className="flex h-full flex-col justify-between overflow-hidden rounded">
+        <div className="flex flex-col justify-between h-full overflow-hidden rounded">
           <div>
-            <div className="mb-4 flex items-center">
-              <img className="mr-4 h-12 w-12 rounded-full" src={item.user.avatar_url} alt="User Avatar" />
+            <div className="flex items-center mb-4">
+              <img className="w-12 h-12 mr-4 rounded-full" src={item.user.avatar_url} alt="User Avatar" />
               <div className="text-sm">
                 <p className="leading-none text-gray-900">{item.user.login}</p>
                 <p className="text-gray-600">{item.user.html_url}</p>
@@ -51,7 +53,7 @@ function TaskItem({ item }: { item: Issue }) {
               </div>
             </div>
           </div>
-          <div className="mt-8 flex justify-end gap-2">
+          <div className="flex justify-end gap-2 mt-8">
             <Button asChild variant="link">
               <a href={item.url} target="_blank" rel="noreferrer">
                 View Issue
@@ -78,10 +80,11 @@ export default function MyTask() {
   const [tasks, setTasks] = useState<Issue[]>([])
   const [loading, setLoading] = useState(false)
   const { project } = useParams<{ project: string }>()
+  const [username] = useAtom(usernameAtom)
 
   useEffect(() => {
     const fetchTasks = async () => {
-      if (!Cookies.get('username')) {
+      if (!username) {
         setTasks([])
         return
       }
@@ -89,17 +92,17 @@ export default function MyTask() {
       setLoading(true)
 
       try {
-        const projects = await fetch('/api/projects?org=youbetdao')
-          .then((res) => res.json())
+        const projects = await http
+          .get<Repository[]>('/projects?org=youbetdao')
+          .then((res) => res.data)
           .catch(() => [])
         const filteredProjects = projects.filter((item: Repository) => item.open_issues_count > 0)
         let allTasks: Issue[] = []
 
         const tasksPromises = filteredProjects.map(async (project: Repository) => {
-          const projectTasks = await fetch(
-            `/api/tasks?org=${org}&project=${project.name}&assignee=${Cookies.get('username')}`,
-          )
-            .then((res) => res.json())
+          const projectTasks = await http
+            .get(`/tasks?org=${org}&project=${project.name}&assignee=${username}`)
+            .then((res) => res.data)
             .catch(() => [])
           return projectTasks
         })
@@ -119,7 +122,7 @@ export default function MyTask() {
       }
     }
     fetchTasks()
-  }, [project])
+  }, [project, username])
 
   return (
     <div className="space-y-4">

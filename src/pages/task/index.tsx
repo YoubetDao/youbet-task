@@ -14,9 +14,10 @@ import {
 } from '@/components/ui/breadcrumb'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import ReactMarkdown from 'react-markdown'
-import Cookies from 'js-cookie'
-import http from '../../service/instance'
+import http from '@/service/instance'
 import { NetworkType, SDK } from 'youbet-sdk'
+import { usernameAtom } from '@/store'
+import { useAtom } from 'jotai'
 
 const sdk = new SDK({
   networkType: NetworkType.Testnet, // or NetworkType.Testnet
@@ -44,6 +45,7 @@ function TaskItem({
   onClaim: (item: Issue) => void
   onDisclaim: (item: Issue) => void
 }) {
+  const [username] = useAtom(usernameAtom)
   const handleClaim = () => {
     onClaim(item)
   }
@@ -97,7 +99,7 @@ function TaskItem({
               <Button disabled>Closed</Button>
             ) : !item.assignees.length ? (
               <Button onClick={handleClaim}>Claim</Button>
-            ) : item.assignees.some((assignee) => assignee.login === Cookies.get('username')) ? (
+            ) : item.assignees.some((assignee) => assignee.login === username) ? (
               <Button onClick={handleDisclaim}>Disclaim</Button>
             ) : (
               <Button disabled>Claimed</Button>
@@ -124,8 +126,9 @@ export default function Task() {
 
   const fetchTasks = async () => {
     setLoading(true)
-    const data = await fetch(`/api/tasks?org=youbetdao&project=${project}`)
-      .then((res) => res.json())
+    const data = await http
+      .get(`/tasks?org=youbetdao&project=${project}`)
+      .then((res) => res.data)
       .catch(() => [])
     setTasks(data)
     setLoading(false)

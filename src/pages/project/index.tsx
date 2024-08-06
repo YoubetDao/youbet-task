@@ -4,6 +4,7 @@ import { SkeletonCard } from '@/components/skeleton-card'
 import { Repository } from '@/types'
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import http from '@/service/instance'
 
 function SkeletonProjects() {
   return (
@@ -25,10 +26,10 @@ function ProjectItem({ item }: { item: Repository }) {
         <CardTitle>{item.name}</CardTitle>
       </CardHeader>
       <CardContent className="flex-1">
-        <div className="flex h-full flex-col justify-between overflow-hidden rounded">
+        <div className="flex flex-col justify-between h-full overflow-hidden rounded">
           <div>
-            <div className="mb-4 flex items-center">
-              <img className="mr-4 h-12 w-12 rounded-full" src={item.owner.avatar_url} alt="Owner Avatar" />
+            <div className="flex items-center mb-4">
+              <img className="w-12 h-12 mr-4 rounded-full" src={item.owner.avatar_url} alt="Owner Avatar" />
               <div className="text-sm">
                 <p className="leading-none text-gray-900">{item.owner.login}</p>
                 <p>{item.owner.html_url}</p>
@@ -49,7 +50,7 @@ function ProjectItem({ item }: { item: Repository }) {
               </div>
             </div>
           </div>
-          <div className="mt-8 flex items-end justify-end gap-2">
+          <div className="flex items-end justify-end gap-2 mt-8">
             <Button variant="link" asChild>
               <a target="_blank" href={item.html_url} rel="noreferrer">
                 View Repository
@@ -71,8 +72,9 @@ export default function Project() {
   useEffect(() => {
     const fetchProjects = async () => {
       setLoading(true)
-      const data = await fetch('/api/projects?org=youbetdao')
-        .then((res) => res.json())
+      const data = await http
+        .get('/projects?org=youbetdao')
+        .then((res) => res.data)
         .catch(() => [])
       // filter if open issue exists
       const filteredData = data.filter((item: Repository) => item.open_issues_count > 0)
