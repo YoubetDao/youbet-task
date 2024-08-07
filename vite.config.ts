@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react'
 import svgr from 'vite-plugin-svgr'
 import path from 'path'
 
+const isLocal = process.env.SERVER === 'local'
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -28,7 +30,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'http://124.221.119.233:5050',
+        target: isLocal ? 'http://localhost:5050' : 'http://124.221.119.233:5050',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
