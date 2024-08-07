@@ -57,34 +57,34 @@ export default function Profile() {
   }
 
   return (
-    <div className="overflow-hidden bg-white shadow sm:rounded-lg">
+    <div className="overflow-hidden shadow bg-muted/40 sm:rounded-lg">
       <div className="px-4 py-5 sm:px-6">
-        <h3 className="text-lg font-medium leading-6 text-gray-900">User Profile</h3>
+        <h3 className="text-lg font-medium leading-6">User Profile</h3>
       </div>
-      <div className="border-t border-gray-200">
+      <div className="border-t">
         <dl>
-          <div className="px-4 py-5 bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <div className="px-4 py-5 bg-muted/40 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt className="text-sm font-medium text-gray-500">Username</dt>
-            <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{username}</dd>
+            <dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">{username}</dd>
           </div>
           {/* github link */}
-          <div className="px-4 py-5 bg-white sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <div className="px-4 py-5 bg-muted sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt className="text-sm font-medium text-gray-500">Github</dt>
-            <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+            <dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
               <a href={`https://github.com/${username}`}>https://github.com/{username}</a>
             </dd>
           </div>
 
-          <div className="px-4 py-5 bg-white sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <div className="px-4 py-5 bg-muted/40 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt className="text-sm font-medium text-gray-500">Linked Address</dt>
 
-            <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+            <dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
               <a href={`https://sepolia.scrollscan.dev/address/${linkedAddress}`}>{linkedAddress}</a>
             </dd>
           </div>
-          <div className="px-4 py-5 bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <div className="px-4 py-5 bg-muted sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt className="text-sm font-medium text-gray-500">User Points</dt>
-            <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{userPoints}</dd>
+            <dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">{userPoints}</dd>
           </div>
         </dl>
       </div>

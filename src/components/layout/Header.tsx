@@ -1,4 +1,4 @@
-import { User } from 'lucide-react'
+import { User, Github } from 'lucide-react'
 
 import { Button, buttonVariants } from '@/components/ui/button'
 import {
@@ -18,11 +18,14 @@ import { useAtom } from 'jotai'
 
 export default function Header() {
   const navigate = useNavigate()
-  const [, setToken] = useAtom(tokenAtom)
+  const [token, setToken] = useAtom(tokenAtom)
   const [, setUsername] = useAtom(usernameAtom)
   const handleLogout = () => {
     setToken(null)
     setUsername(null)
+    navigate('/login')
+  }
+  const handleLogin = () => {
     navigate('/login')
   }
 
@@ -34,22 +37,30 @@ export default function Header() {
         <CustomConnectButton />
       </div>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="secondary" size="icon" className="rounded-full">
-            <User className="w-5 h-5" />
-            <span className="sr-only">Toggle user menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-          <DropdownMenuItem>Support</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      {!!token && (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="secondary" size="icon" className="rounded-full">
+              <User className="w-5 h-5" />
+              <span className="sr-only">Toggle user menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuItem>Support</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
+      {!token && (
+        <Button variant="secondary" className="space-x-2 rounded-full" onClick={handleLogin}>
+          <Github className="w-5 h-5" />
+          <span>Login</span>
+        </Button>
+      )}
     </header>
   )
 }
