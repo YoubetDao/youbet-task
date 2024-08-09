@@ -2,6 +2,7 @@
 module.exports = {
   darkMode: ['class'],
   content: ['./src/**/*.{ts,tsx}'],
+  safelist: ['toc-h1', 'toc-h2', 'toc-h3', 'active', 'toc-item'],
   theme: {
     container: {
       center: true,
@@ -11,6 +12,9 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        custom: ['MyCustomFont', 'sans-serif'],
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
