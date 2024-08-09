@@ -9,6 +9,7 @@ import {
   ListChecks,
   LucideProps,
   UserCircle2,
+  BookOpen,
 } from 'lucide-react'
 
 export const Icons = {
@@ -21,6 +22,7 @@ export const Icons = {
   users: Users,
   listChecks: ListChecks,
   profile: UserCircle2,
+  tutorial: BookOpen,
   github: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"

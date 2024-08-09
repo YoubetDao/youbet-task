@@ -52,4 +52,12 @@ export const navItems: NavItem[] = [
     description: 'My Profile.',
     layout: 'dashboard',
   },
+  {
+    title: 'Tutorial',
+    href: '/tutorial',
+    icon: 'tutorial',
+    component: 'tutorial',
+    description: 'tutorial.',
+    layout: 'dashboard',
+  },
 ]
