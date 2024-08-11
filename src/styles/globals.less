@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: MyCustomFont;
+  src: url('/fonts/MyCustomFont.woff2') format('woff2'), url('/fonts/MyCustomFont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -66,5 +73,26 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .toc-h1 a {
+    @apply ml-1 block font-medium text-slate-300 hover:text-purple-700;
+  }
+
+  .toc-h2 a {
+    @apply ml-4 items-start text-slate-300 hover:text-purple-700;
+  }
+
+  .toc-h3 a {
+    @apply ml-8 items-start text-slate-300 hover:text-purple-700;
+  }
+
+  .toc-item.active {
+    @apply font-bold;
+
+    background: linear-gradient(to right, rgb(128 0 128 / 50%), rgb(128 0 128 / 20%));
+    border-radius: 8px;
   }
 }
