@@ -5,6 +5,7 @@
   "scripts": {
     "prepare": "husky install",
     "dev": "vite",
+    "local": "vite --mode development.local",
     "build": "npm run type-check && vite build",
     "type-check": "tsc --noEmit",
     "type-check:watch": "tsc --noEmit --watch",
