@@ -1,7 +1,6 @@
 import axios from 'axios'
 import qs from 'qs'
 import { store, tokenAtom, usernameAtom } from '@/store'
-// import { backendUrl } from '@/constants/config'
 
 const instance = axios.create({
   baseURL: '/api',
