@@ -78,7 +78,7 @@ export interface User {
 export interface Issue {
   htmlUrl: string
   title: string
-  user: User
+  assignee?: User
   state: string
   createdAt: string
   updatedAt: string
