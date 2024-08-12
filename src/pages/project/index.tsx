@@ -29,10 +29,10 @@ function ProjectItem({ item }: { item: Repository }) {
         <div className="flex flex-col justify-between h-full overflow-hidden rounded">
           <div>
             <div className="flex items-center mb-4">
-              <img className="w-12 h-12 mr-4 rounded-full" src={item.owner.avatar_url} alt="Owner Avatar" />
+              <img className="w-12 h-12 mr-4 rounded-full" src={item.owner.avatarUrl} alt="Owner Avatar" />
               <div className="text-sm">
                 <p className="leading-none text-gray-900">{item.owner.login}</p>
-                <p>{item.owner.html_url}</p>
+                <p>{item.owner.htmlUrl}</p>
               </div>
             </div>
             <div className="mb-4">
@@ -41,18 +41,18 @@ function ProjectItem({ item }: { item: Repository }) {
             </div>
             <div className="flex justify-between">
               <div>
-                <p>Stars: {item.stargazers_count}</p>
-                <p>Forks: {item.forks_count}</p>
+                <p>Stars: {item.stargazersCount}</p>
+                <p>Forks: {item.forksCount}</p>
               </div>
               <div>
-                <p>Issues: {item.open_issues_count}</p>
+                <p>Issues: {item.openIssuesCount}</p>
                 <p>Language: {item.language}</p>
               </div>
             </div>
           </div>
           <div className="flex items-end justify-end gap-2 mt-8">
             <Button variant="link" asChild>
-              <a target="_blank" href={item.html_url} rel="noreferrer">
+              <a target="_blank" href={item.htmlUrl} rel="noreferrer">
                 View Repository
               </a>
             </Button>
@@ -76,9 +76,7 @@ export default function Project() {
         .get('/projects?org=youbetdao')
         .then((res) => res.data)
         .catch(() => [])
-      // filter if open issue exists
-      const filteredData = data.filter((item: Repository) => item.open_issues_count > 0)
-      setProjects(filteredData)
+      setProjects(data)
       setLoading(false)
     }
     fetchProjects()
@@ -88,7 +86,7 @@ export default function Project() {
     <div className="space-y-4">
       <h1>Projects</h1>
       <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
-        {loading ? <SkeletonProjects /> : projects.map((item) => <ProjectItem key={item.id} item={item} />)}
+        {loading ? <SkeletonProjects /> : projects.map((item) => <ProjectItem key={item._id} item={item} />)}
       </div>
     </div>
   )

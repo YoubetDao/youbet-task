@@ -63,19 +63,19 @@ function TaskItem({
         <div className="flex flex-col justify-between h-full overflow-hidden rounded">
           <div>
             <div className="flex items-center mb-4">
-              <img className="w-12 h-12 mr-4 rounded-full" src={item.user.avatar_url} alt="User Avatar" />
+              {/* <img className="w-12 h-12 mr-4 rounded-full" src={item.user.avatarUrl} alt="User Avatar" />
               <div className="text-sm">
                 <p className="leading-none text-gray-900">{item.user.login}</p>
-                <p className="text-gray-600">{item.user.html_url}</p>
-              </div>
+                <p className="text-gray-600">{item.user.htmlUrl}</p>
+              </div> */}
             </div>
             <div className="flex justify-between">
               <div>
                 <p className="text-gray-600">State: {item.state}</p>
               </div>
               <div>
-                <p className="text-gray-600">Created At: {new Date(item.created_at).toLocaleDateString()}</p>
-                <p className="text-gray-600">Updated At: {new Date(item.updated_at).toLocaleDateString()}</p>
+                <p className="text-gray-600">Created At: {new Date(item.createdAt).toLocaleDateString()}</p>
+                <p className="text-gray-600">Updated At: {new Date(item.updatedAt).toLocaleDateString()}</p>
               </div>
             </div>
           </div>
@@ -91,7 +91,7 @@ function TaskItem({
               </Popover>
             )}
             <Button asChild variant="link">
-              <a href={item.url} target="_blank" rel="noreferrer">
+              <a href={item.htmlUrl} target="_blank" rel="noreferrer">
                 View Issue
               </a>
             </Button>
@@ -127,7 +127,7 @@ export default function Task() {
   const fetchTasks = async () => {
     setLoading(true)
     const data = await http
-      .get(`/tasks?org=youbetdao&project=${project}`)
+      .get(`/tasks?project=${project}`)
       .then((res) => res.data)
       .catch(() => [])
     setTasks(data)
@@ -139,7 +139,7 @@ export default function Task() {
   }, [project])
 
   const handleClaim = async (item: Issue) => {
-    const issueNumber = item.url.split('/').pop()
+    const issueNumber = item.htmlUrl.split('/').pop()
     try {
       // TODO: the claim logic here will cause some exception. I don't know what happened.
       const res = await http.post('/claim-task', {
@@ -155,7 +155,7 @@ export default function Task() {
   }
 
   const handleDisclaim = async (item: Issue) => {
-    const issueNumber = item.url.split('/').pop()
+    const issueNumber = item.htmlUrl.split('/').pop()
     try {
       const res = await http.post('/disclaim-task', {
         org: 'youbetdao',

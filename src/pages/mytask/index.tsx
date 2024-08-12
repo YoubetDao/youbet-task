@@ -32,10 +32,10 @@ function TaskItem({ item }: { item: Issue }) {
         <div className="flex flex-col justify-between h-full overflow-hidden rounded">
           <div>
             <div className="flex items-center mb-4">
-              <img className="w-12 h-12 mr-4 rounded-full" src={item.user.avatar_url} alt="User Avatar" />
+              <img className="w-12 h-12 mr-4 rounded-full" src={item.user.avatarUrl} alt="User Avatar" />
               <div className="text-sm">
                 <p className="leading-none text-gray-900">{item.user.login}</p>
-                <p className="text-gray-600">{item.user.html_url}</p>
+                <p className="text-gray-600">{item.user.htmlUrl}</p>
               </div>
             </div>
             <div className="mb-4">
@@ -48,14 +48,14 @@ function TaskItem({ item }: { item: Issue }) {
                 <p className="text-gray-600">State: {item.state}</p>
               </div>
               <div>
-                <p className="text-gray-600">Created At: {new Date(item.created_at).toLocaleDateString()}</p>
-                <p className="text-gray-600">Updated At: {new Date(item.updated_at).toLocaleDateString()}</p>
+                <p className="text-gray-600">Created At: {new Date(item.createdAt).toLocaleDateString()}</p>
+                <p className="text-gray-600">Updated At: {new Date(item.updatedAt).toLocaleDateString()}</p>
               </div>
             </div>
           </div>
           <div className="flex justify-end gap-2 mt-8">
             <Button asChild variant="link">
-              <a href={item.url} target="_blank" rel="noreferrer">
+              <a href={item.htmlUrl} target="_blank" rel="noreferrer">
                 View Issue
               </a>
             </Button>
@@ -96,7 +96,7 @@ export default function MyTask() {
           .get<Repository[]>('/projects?org=youbetdao')
           .then((res) => res.data)
           .catch(() => [])
-        const filteredProjects = projects.filter((item: Repository) => item.open_issues_count > 0)
+        const filteredProjects = projects.filter((item: Repository) => item.openIssuesCount > 0)
         let allTasks: Issue[] = []
 
         const tasksPromises = filteredProjects.map(async (project: Repository) => {

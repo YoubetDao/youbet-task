@@ -35,15 +35,15 @@ export interface TaskItem extends BaseItem {
 }
 
 export interface Repository {
-  id: number
+  _id: number
   name: string
-  html_url: string
+  htmlUrl: string
   description: string | null
-  created_at: string
-  updated_at: string
-  stargazers_count: number
-  forks_count: number
-  open_issues_count: number
+  createdAt: string
+  updatedAt: string
+  stargazersCount: number
+  forksCount: number
+  openIssuesCount: number
   language: string | null
   owner: User
 }
@@ -71,17 +71,17 @@ interface Reactions {
 
 export interface User {
   login: string
-  html_url: string
-  avatar_url: string
+  htmlUrl: string
+  avatarUrl: string
 }
 
 export interface Issue {
-  url: string
+  htmlUrl: string
   title: string
   user: User
   state: string
-  created_at: string
-  updated_at: string
+  createdAt: string
+  updatedAt: string
   body: string
   assignees: User[]
 }

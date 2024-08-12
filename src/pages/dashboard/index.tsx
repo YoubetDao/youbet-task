@@ -24,9 +24,9 @@ export default function Dashboard() {
           issue.assignees.forEach((assignee) => {
             if (!stats[assignee.login]) {
               stats[assignee.login] = {
-                avatarSrc: assignee.avatar_url,
+                avatarSrc: assignee.avatarUrl,
                 name: assignee.login,
-                html: assignee.html_url, // 将 email 改为 html 字段
+                html: assignee.htmlUrl, // 将 email 改为 html 字段
                 completedTasks: 0,
               }
             }
