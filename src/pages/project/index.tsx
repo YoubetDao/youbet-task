@@ -5,6 +5,9 @@ import { Repository } from '@/types'
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import http from '@/service/instance'
+import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 function SkeletonProjects() {
   return (
@@ -66,6 +69,79 @@ function ProjectItem({ item }: { item: Repository }) {
   )
 }
 
+function FilterBoard() {
+  return (
+    <Card>
+      <CardContent className="space-y-3">
+        {/* filter */}
+        <div className="mt-3 space-y-3">
+          <Label>Filter</Label>
+          <RadioGroup defaultValue="option-one" className="flex flex-wrap">
+            <div className="flex items-center mx-2 space-x-2 flex-0">
+              <RadioGroupItem value="option-one" id="option-one" />
+              <Label htmlFor="option-one">Option One</Label>
+            </div>
+            <div className="flex items-center mx-2 space-x-2 flex-0">
+              <RadioGroupItem value="option-two" id="option-two" />
+              <Label htmlFor="option-two">Option Two</Label>
+            </div>
+            <div className="flex items-center mx-2 space-x-2 flex-0">
+              <RadioGroupItem value="option-two" id="option-two" />
+              <Label htmlFor="option-two">Option Two</Label>
+            </div>
+            <div className="flex items-center mx-2 space-x-2 flex-0">
+              <RadioGroupItem value="option-two" id="option-two" />
+              <Label htmlFor="option-two">Option Two</Label>
+            </div>
+          </RadioGroup>
+        </div>
+        {/* select */}
+        <div className="space-y-3">
+          <Label>Language</Label>
+          <Select>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Theme" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="light">Light</SelectItem>
+              <SelectItem value="dark">Dark</SelectItem>
+              <SelectItem value="system">System</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        {/* select */}
+        <div className="space-y-3">
+          <Label>Language</Label>
+          <Select>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Theme" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="light">Light</SelectItem>
+              <SelectItem value="dark">Dark</SelectItem>
+              <SelectItem value="system">System</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        {/* select */}
+        <div className="space-y-3">
+          <Label>Language</Label>
+          <Select>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Theme" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="light">Light</SelectItem>
+              <SelectItem value="dark">Dark</SelectItem>
+              <SelectItem value="system">System</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
 export default function Project() {
   const [projects, setProjects] = useState<Repository[]>([])
   const [loading, setLoading] = useState(true)
@@ -86,7 +162,8 @@ export default function Project() {
     <div className="space-y-4">
       <h1>Projects</h1>
       <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
-        {loading ? <SkeletonProjects /> : projects.map((item) => <ProjectItem key={item._id} item={item} />)}
+        <FilterBoard />
+        <div>{loading ? <SkeletonProjects /> : projects.map((item) => <ProjectItem key={item._id} item={item} />)}</div>
       </div>
     </div>
   )
