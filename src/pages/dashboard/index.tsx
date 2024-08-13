@@ -13,7 +13,7 @@ export default function Dashboard() {
   const [closedCount, setClosedCount] = useState<number>(0)
 
   useEffect(() => {
-    api.fetchIssues('YoubetDao', 'youbet-test-repo').then((data) => {
+    api.fetchTasks('YoubetDao', 'youbet-test-repo').then((data) => {
       if (data) {
         const stats: { [key: string]: { avatarSrc: string; name: string; html: string; completedTasks: number } } = {}
         let opened = 0

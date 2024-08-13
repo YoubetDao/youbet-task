@@ -75,11 +75,12 @@ export interface User {
   avatarUrl: string
 }
 
-export interface Issue {
+export interface Task {
   htmlUrl: string
   title: string
   assignee?: User
   state: string
+  labels: string[]
   createdAt: string
   updatedAt: string
   body: string

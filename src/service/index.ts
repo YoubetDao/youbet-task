@@ -1,5 +1,5 @@
+import { Task } from '@/types'
 import http from './instance'
-import { Issue } from '@/types'
 
 const api = {
   fetchUserInfo: async (code: string) => {
@@ -16,11 +16,12 @@ const api = {
       console.error('Error fetching user info:', error)
     }
   },
-  fetchIssues: async (org: string, project: string): Promise<Issue[] | null> => {
+  fetchTasks: async (org: string, project: string): Promise<Task[] | null> => {
     try {
       const response = await http.get('/tasks', {
         params: { org, project },
       })
+      console.log(response.data)
 
       if (response.data) {
         return response.data
