@@ -6,8 +6,19 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import http from '@/service/instance'
 import { Label } from '@/components/ui/label'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Input } from '@/components/ui/input'
+import {
+  LucideSearch,
+  LucideFlame,
+  LucideThumbsUp,
+  LucideSprout,
+  LucideSparkles,
+  LucideGift,
+  LucidePickaxe,
+  LucideZap,
+} from 'lucide-react'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
 function SkeletonProjects() {
   return (
@@ -69,80 +80,7 @@ function ProjectItem({ item }: { item: Repository }) {
   )
 }
 
-function FilterBoard() {
-  return (
-    <Card>
-      <CardContent className="space-y-3">
-        {/* filter */}
-        <div className="mt-3 space-y-3">
-          <Label>Filter</Label>
-          <RadioGroup defaultValue="option-one" className="flex flex-wrap">
-            <div className="flex items-center mx-2 space-x-2 flex-0">
-              <RadioGroupItem value="option-one" id="option-one" />
-              <Label htmlFor="option-one">Option One</Label>
-            </div>
-            <div className="flex items-center mx-2 space-x-2 flex-0">
-              <RadioGroupItem value="option-two" id="option-two" />
-              <Label htmlFor="option-two">Option Two</Label>
-            </div>
-            <div className="flex items-center mx-2 space-x-2 flex-0">
-              <RadioGroupItem value="option-three" id="option-three" />
-              <Label htmlFor="option-three">Option Three</Label>
-            </div>
-            <div className="flex items-center mx-2 space-x-2 flex-0">
-              <RadioGroupItem value="option-four" id="option-four" />
-              <Label htmlFor="option-four">Option Four</Label>
-            </div>
-          </RadioGroup>
-        </div>
-        {/* select */}
-        <div className="space-y-3">
-          <Label>Language</Label>
-          <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Theme" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="light">Light</SelectItem>
-              <SelectItem value="dark">Dark</SelectItem>
-              <SelectItem value="system">System</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        {/* select */}
-        <div className="space-y-3">
-          <Label>Language</Label>
-          <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Theme" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="light">Light</SelectItem>
-              <SelectItem value="dark">Dark</SelectItem>
-              <SelectItem value="system">System</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        {/* select */}
-        <div className="space-y-3">
-          <Label>Language</Label>
-          <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Theme" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="light">Light</SelectItem>
-              <SelectItem value="dark">Dark</SelectItem>
-              <SelectItem value="system">System</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </CardContent>
-    </Card>
-  )
-}
-
-export default function Project() {
+function ProjectList() {
   const [projects, setProjects] = useState<Repository[]>([])
   const [loading, setLoading] = useState(true)
   useEffect(() => {
@@ -158,12 +96,150 @@ export default function Project() {
     fetchProjects()
   }, [])
 
+  if (loading) return <SkeletonProjects />
+
   return (
-    <div className="space-y-4">
-      <h1>Projects</h1>
-      <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
-        <FilterBoard />
-        <div>{loading ? <SkeletonProjects /> : projects.map((item) => <ProjectItem key={item._id} item={item} />)}</div>
+    <div className="flex flex-col w-full gap-4">
+      <div className="flex items-center justify-between">
+        <div></div>
+        <div className="text-muted-foreground">{projects.length} PROJECTS</div>
+      </div>
+      <div className="flex flex-col w-full gap-4">
+        {projects.map((item) => (
+          <ProjectItem key={item._id} item={item} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function getIconFromKey(key: string) {
+  return {
+    'issues-available': LucideThumbsUp,
+    'hot-community': LucideFlame,
+    'newbies-welcome': LucideSprout,
+    'big-whale': LucideSparkles,
+    'likely-to-be-reward': LucideGift,
+    'work-in-progress': LucidePickaxe,
+    'fast-and-furious': LucideZap,
+  }[key]
+}
+
+function FilterBoard() {
+  const tags = [
+    {
+      label: 'Issues available',
+      value: 'issues-available',
+      icon: getIconFromKey('issues-available'),
+    },
+    {
+      label: 'Hot Community',
+      value: 'hot-community',
+      icon: getIconFromKey('hot-community'),
+    },
+    {
+      label: 'Newbies Welcome',
+      value: 'newbies-welcome',
+      icon: getIconFromKey('newbies-welcome'),
+    },
+    {
+      label: 'Big whale',
+      value: 'big-whale',
+      icon: getIconFromKey('big-whale'),
+    },
+    {
+      label: 'Likely to be reward',
+      value: 'likely-to-be-reward',
+      icon: getIconFromKey('likely-to-be-reward'),
+    },
+    {
+      label: 'Work in progress',
+      value: 'work-in-progress',
+      icon: getIconFromKey('work-in-progress'),
+    },
+    {
+      label: 'Fast and furious',
+      value: 'fast-and-furious',
+      icon: getIconFromKey('fast-and-furious'),
+    },
+  ]
+
+  return (
+    <div className="flex-shrink-0 basis-96">
+      <Card className="sticky top-0 left-0">
+        <CardHeader className="py-4">
+          <CardTitle className="text-lg">Filter</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-y-4">
+          {/* filter */}
+          <ToggleGroup type="multiple">
+            {tags.map((tag) => (
+              <ToggleGroupItem key={tag.value} size="sm" value={tag.value}>
+                {tag.icon && <tag.icon className="w-4 h-4" />}
+                {tag.label}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
+          {/* select */}
+          <div className="pt-2 space-y-3 border-t border-muted">
+            <Label>Ecosystems</Label>
+            <Select>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Theme" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="light">Light</SelectItem>
+                <SelectItem value="dark">Dark</SelectItem>
+                <SelectItem value="system">System</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          {/* select */}
+          <div className="pt-2 space-y-3 border-t border-muted">
+            <Label>Languages</Label>
+            <Select>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Theme" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="light">Light</SelectItem>
+                <SelectItem value="dark">Dark</SelectItem>
+                <SelectItem value="system">System</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          {/* select */}
+          <div className="pt-2 space-y-3 border-t border-muted">
+            <Label>Categories</Label>
+            <Select>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Theme" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="light">Light</SelectItem>
+                <SelectItem value="dark">Dark</SelectItem>
+                <SelectItem value="system">System</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+export default function Project() {
+  return (
+    <div className="px-4 py-4 mx-auto max-w-7xl lg:px-12">
+      <div className="flex flex-col w-full gap-6">
+        <div className="relative">
+          <Input placeholder="Search project title or description" className="pl-12 bg-background/80" />
+          <LucideSearch className="absolute -translate-y-1/2 top-1/2 left-2" />
+        </div>
+        <div className="flex flex-col gap-6 lg:flex-row">
+          <FilterBoard />
+          <ProjectList />
+        </div>
       </div>
     </div>
   )

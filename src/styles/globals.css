@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: MyCustomFont;
-  src: url('/fonts/MyCustomFont.woff2') format('woff2'), url('/fonts/MyCustomFont.woff') format('woff');
-  font-weight: normal;
+  font-family: Boogaloo-Regular;
+  src: url('/fonts/Boogaloo-Regular.ttf') format('ttf');
   font-style: normal;
+  font-weight: normal;
 }
 
 @layer base {
@@ -72,21 +72,21 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-["Boogaloo-Regular"];
   }
 }
 
 @layer components {
   .toc-h1 a {
-    @apply ml-1 block font-medium text-slate-300 hover:text-purple-700;
+    @apply block ml-1 font-medium text-slate-300 hover:text-purple-700;
   }
 
   .toc-h2 a {
-    @apply ml-4 items-start text-slate-300 hover:text-purple-700;
+    @apply items-start ml-4 text-slate-300 hover:text-purple-700;
   }
 
   .toc-h3 a {
-    @apply ml-8 items-start text-slate-300 hover:text-purple-700;
+    @apply items-start ml-8 text-slate-300 hover:text-purple-700;
   }
 
   .toc-item.active {
