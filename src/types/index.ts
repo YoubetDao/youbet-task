@@ -85,3 +85,15 @@ export interface Issue {
   body: string
   assignees: User[]
 }
+
+export interface Profile {
+  username: string
+  email: string
+  avatarUrl: string
+  displayName?: string
+  location?: string
+  bio?: string
+  followers?: number
+  following?: number
+  twitterUsername?: string
+}

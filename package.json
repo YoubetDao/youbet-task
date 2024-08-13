@@ -53,6 +53,7 @@
     "react-daisyui": "^5.0.3",
     "react-day-picker": "^8.9.1",
     "react-dom": "^18.3.1",
+    "react-github-calendar": "^4.2.2",
     "react-helmet": "^6.1.0",
     "react-hook-form": "^7.52.1",
     "react-i18next": "^13.2.2",
