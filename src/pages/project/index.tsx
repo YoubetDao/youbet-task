@@ -86,12 +86,12 @@ function FilterBoard() {
               <Label htmlFor="option-two">Option Two</Label>
             </div>
             <div className="flex items-center mx-2 space-x-2 flex-0">
-              <RadioGroupItem value="option-two" id="option-two" />
-              <Label htmlFor="option-two">Option Two</Label>
+              <RadioGroupItem value="option-three" id="option-three" />
+              <Label htmlFor="option-three">Option Three</Label>
             </div>
             <div className="flex items-center mx-2 space-x-2 flex-0">
-              <RadioGroupItem value="option-two" id="option-two" />
-              <Label htmlFor="option-two">Option Two</Label>
+              <RadioGroupItem value="option-four" id="option-four" />
+              <Label htmlFor="option-four">Option Four</Label>
             </div>
           </RadioGroup>
         </div>
