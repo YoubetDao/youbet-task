@@ -10,6 +10,7 @@ import {
   LucideProps,
   UserCircle2,
   BookOpen,
+  LucideSchool,
 } from 'lucide-react'
 
 export const Icons = {
@@ -23,6 +24,7 @@ export const Icons = {
   listChecks: ListChecks,
   profile: UserCircle2,
   tutorial: BookOpen,
+  school: LucideSchool,
   github: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"

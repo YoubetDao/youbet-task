@@ -24,6 +24,14 @@ export const navItems: NavItem[] = [
     hideInMenu: true,
   },
   {
+    title: 'Tutorials',
+    href: '/tutorials',
+    icon: 'tutorial',
+    component: 'tutorials',
+    layout: 'dashboard',
+    hideInMenu: false,
+  },
+  {
     title: 'MyTasks',
     href: '/mytasks',
     icon: 'listChecks',

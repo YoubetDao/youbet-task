@@ -97,3 +97,22 @@ export interface Profile {
   following?: number
   twitterUsername?: string
 }
+
+export interface Tutorial {
+  _id: number
+  name: string
+  htmlUrl: string
+  description: string | null
+  createdAt: string
+  updatedAt: string
+  stargazersCount: number
+  forksCount: number
+  openIssuesCount: number
+  language: string | null
+  owner: User
+}
+
+export interface TutorialCategory {
+  id: string
+  name: string
+}
