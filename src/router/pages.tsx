@@ -6,6 +6,7 @@ import Callback from '@/pages/callback'
 import ProfilePage from '@/pages/profile'
 import MyTask from '@/pages/mytask'
 import Tutorial from '@/pages/tutorial'
+import Tutorials from '@/pages/tutorials'
 
 export const Pages = {
   dashboard: Dashboard,
@@ -16,4 +17,5 @@ export const Pages = {
   callback: Callback,
   profile: ProfilePage,
   tutorial: Tutorial,
+  tutorials: Tutorials,
 }

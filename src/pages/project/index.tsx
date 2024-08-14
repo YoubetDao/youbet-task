@@ -36,52 +36,6 @@ function SkeletonProjects() {
   )
 }
 
-// function ProjectItem({ item }: { item: Repository }) {
-//   return (
-//     <Link to={`/projects/${item.name}/tasks`}>
-//       <Card className="flex flex-col">
-//         <CardHeader>
-//           <CardTitle>{item.name}</CardTitle>
-//         </CardHeader>
-//         <CardContent className="flex-1">
-//           <div className="flex flex-col justify-between h-full overflow-hidden rounded">
-//             <div>
-//               <div className="flex items-center mb-4">
-//                 <img className="w-12 h-12 mr-4 rounded-full" src={item.owner.avatarUrl} alt="Owner Avatar" />
-//                 <div className="text-sm">
-//                   <p className="leading-none text-gray-900">{item.owner.login}</p>
-//                   <p>{item.owner.htmlUrl}</p>
-//                 </div>
-//               </div>
-//               <div className="mb-4">
-//                 {/* <h2 className="mb-2 text-xl font-bold">{item.full_name}</h2> */}
-//                 <p className="text-base text-gray-700">{item.description}</p>
-//               </div>
-//               <div className="flex justify-between">
-//                 <div>
-//                   <p>Stars: {item.stargazersCount}</p>
-//                   <p>Forks: {item.forksCount}</p>
-//                 </div>
-//                 <div>
-//                   <p>Issues: {item.openIssuesCount}</p>
-//                   <p>Language: {item.language}</p>
-//                 </div>
-//               </div>
-//             </div>
-//             <div className="flex items-end justify-end gap-2 mt-8">
-//               <Button variant="link" asChild>
-//                 <a target="_blank" href={item.htmlUrl} rel="noreferrer">
-//                   View Repository
-//                 </a>
-//               </Button>
-//             </div>
-//           </div>
-//         </CardContent>
-//       </Card>
-//     </Link>
-//   )
-// }
-
 function __randomPickTags(tags: string[]): React.ReactNode[] {
   return tags
     .filter(() => {
@@ -115,7 +69,7 @@ function ProjectItem({ item }: { item: Project }) {
               <div className="flex-1 overflow-hidden text-2xl font-bold whitespace-nowrap text-ellipsis">
                 {item.name}
               </div>
-              <div className="flex gap-2 ">
+              <div className="hidden gap-2 md:flex">
                 {__randomPickTags([
                   'issues-available',
                   'hot-community',
@@ -130,15 +84,15 @@ function ProjectItem({ item }: { item: Project }) {
             <div className="mt-2 text-sm text-muted-foreground">
               {item.description || 'Decentralized social built with Nostr and powered by Starknet account abstraction.'}
             </div>
-            <div className="flex gap-4 mt-5 text-xs">
-              <div className="flex items-center justify-center gap-1">
+            <div className="flex flex-col gap-4 mt-5 text-xs md:flex-row">
+              <div className="flex gap-1 md:justify-center md:items-center">
                 <Avatar className="w-4 h-4">
                   <AvatarImage src={item.owner.avatarUrl} />
                   <AvatarFallback>{item.owner.login}</AvatarFallback>
                 </Avatar>
                 <span>project owner</span>
               </div>
-              <div className="flex items-center justify-center gap-1">
+              <div className="flex gap-1 md:items-center md:justify-center">
                 <LucideUser className="w-4 h-4" />
                 {Math.floor(Math.random() * 100)} contributors
               </div>
@@ -171,7 +125,7 @@ function ProjectList() {
   if (loading) return <SkeletonProjects />
 
   return (
-    <div className="flex flex-col w-full gap-4 pt-4 pl-4 overflow-hidden">
+    <div className="flex flex-col w-full gap-4 pt-4 overflow-hidden md:pl-4">
       <div className="flex items-center justify-between">
         <div>
           <Select defaultValue="treading">
