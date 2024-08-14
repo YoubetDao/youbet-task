@@ -34,7 +34,7 @@ export interface TaskItem extends BaseItem {
   status: 'todo' | 'in-progress' | 'done'
 }
 
-export interface Repository {
+export interface Project {
   _id: number
   name: string
   htmlUrl: string
