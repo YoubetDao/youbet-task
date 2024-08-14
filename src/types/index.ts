@@ -75,6 +75,11 @@ export interface User {
   avatarUrl: string
 }
 
+export interface FetchIssuesParams {
+  org?: string
+  project?: string
+}
+
 export interface Task {
   htmlUrl: string
   title: string
@@ -89,7 +94,7 @@ export interface Task {
 
 export interface Profile {
   username: string
-  email: string
+  email?: string
   avatarUrl: string
   displayName?: string
   location?: string
@@ -97,6 +102,7 @@ export interface Profile {
   followers?: number
   following?: number
   twitterUsername?: string
+  completedTasks?: number
 }
 
 export interface Tutorial {

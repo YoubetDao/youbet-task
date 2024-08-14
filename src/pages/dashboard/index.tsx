@@ -1,86 +1,88 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { useEffect, useState } from 'react'
 import api from '@/service'
 import { TaskCompletionLeaderboard } from '@/components/task-completion-leaderboard'
+import { Profile, Project } from '@/types'
+
+function StatsCard({ title, value }: { title: string; value: number }) {
+  return (
+    <Card className="w-1/4">
+      <CardHeader>
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{value}</div>
+      </CardContent>
+    </Card>
+  )
+}
+
+function ProjectRecommendations({ projects }: { projects: any[] }) {
+  return (
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>Recommended Projects</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          {projects.map((project, index) => (
+            <a key={index} href={project.htmlUrl} target="_blank" rel="noopener noreferrer">
+              <div key={index} className="border-b pb-4 mb-4">
+                <h3 className="text-lg font-semibold">{project.name}</h3>
+                <p className="text-sm text-gray-400">{project.description}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
 
 export default function Dashboard() {
-  const [assigneeStats, setAssigneeStats] = useState<{
-    [key: string]: { avatarSrc: string; name: string; html: string; completedTasks: number }
-  }>({})
+  const [leaderboard, setLeaderboard] = useState<Profile[]>([])
   const [openedCount, setOpenedCount] = useState<number>(0)
-  const [closedCount, setClosedCount] = useState<number>(0)
+  const [totalCount, setTotalCount] = useState<number>(0)
+  const [projects, setProjects] = useState<Project[]>([])
+  const [userCount, setUserCount] = useState<number>(0)
 
   useEffect(() => {
-    api.fetchTasks('YoubetDao', 'youbet-test-repo').then((data) => {
-      if (data) {
-        const stats: { [key: string]: { avatarSrc: string; name: string; html: string; completedTasks: number } } = {}
-        let opened = 0
-        let closed = 0
-        console.log(data)
 
-        data.forEach((issue) => {
-          issue.assignees.forEach((assignee) => {
-            if (!stats[assignee.login]) {
-              stats[assignee.login] = {
-                avatarSrc: assignee.avatarUrl,
-                name: assignee.login,
-                html: assignee.htmlUrl, // 将 email 改为 html 字段
-                completedTasks: 0,
-              }
-            }
-            if (issue.state === 'closed') {
-              stats[assignee.login].completedTasks += 1
-            }
-          })
-          if (issue.state === 'closed') {
-            closed++
-          } else {
-            opened++
-          }
-        })
-
-        setAssigneeStats(stats)
-        setOpenedCount(opened)
-        setClosedCount(closed)
-      }
+    api.fetchLeaderboard().then((leaderboardData) => {
+      setLeaderboard(leaderboardData || [])
+      setUserCount(leaderboardData?.length || 0)
+    })
+    api.fetchTasks({}).then((tasks) => {
+      setOpenedCount((tasks || []).filter((task) => task.state === 'open').length)
+      setTotalCount((tasks || []).length)
+    })
+    api.fetchProjects().then((projects) => {
+      setProjects(projects || [])
     })
   }, [])
+
   return (
     <>
-      <ScrollArea className="h-full">
-        <div className="flex-1 p-4 pt-6 space-y-4 md:p-8">
-          <div className="flex items-center justify-between space-y-4">
-            <h2 className="text-3xl font-bold tracking-tight">Hi, Welcome to YouBet Task 👋</h2>
+      <div className="flex flex-col w-full gap-4 pt-4 pl-4 overflow-hidden">
+        <div className="space-y-4">
+          <h2 className="text-3xl font-bold tracking-tight">Hi, Welcome to YouBet Task 👋</h2>
+          <div className="flex justify-between space-x-4">
+            <StatsCard title="Total Users" value={userCount} />
+            <StatsCard title="Total Projects" value={projects.length} />
+            <StatsCard title="Total Tasks" value={totalCount} />
+            <StatsCard title="Opened Tasks" value={openedCount} />
           </div>
-          <Tabs defaultValue="overview" className="">
-            <TabsContent value="overview" className="flex-row flex justify-start">
-              <div className="gap-4 w-64 max-h-screen flex flex-col">
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                    <CardTitle className="text-sm font-medium">Opened Tasks</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{openedCount}</div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                    <CardTitle className="text-sm font-medium">Completed Tasks</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{closedCount}</div>
-                  </CardContent>
-                </Card>
-              </div>
-              <div className="items-start justify-center flex flex-grow">
-                <TaskCompletionLeaderboard assigneeStats={assigneeStats} />
-              </div>
-            </TabsContent>
-          </Tabs>
         </div>
-      </ScrollArea>
+
+        <div className="flex space-x-6 w-full">
+          <div className="w-1/4">
+            <TaskCompletionLeaderboard leaderboard={leaderboard} />
+          </div>
+          <div className="w-3/4">
+            <ProjectRecommendations projects={projects.slice(0, 5)} />
+          </div>
+        </div>
+      </div>
     </>
   )
 }
