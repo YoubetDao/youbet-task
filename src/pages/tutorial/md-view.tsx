@@ -15,7 +15,6 @@ const MdView = ({ content }: IMarkdownRendererProps) => {
   }, 100) // 100ms 去抖动时间
 
   useEffect(() => {
-    console.log(contentRef)
     if (!contentRef.current) return
 
     const observerOptions = {
