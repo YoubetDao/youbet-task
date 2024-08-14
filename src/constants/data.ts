@@ -53,19 +53,19 @@ export const navItems: NavItem[] = [
     hideInMenu: true,
   },
   {
-    title: 'Profile',
-    href: '/profile',
-    icon: 'profile',
-    component: 'profile',
-    description: 'My Profile.',
-    layout: 'dashboard',
-  },
-  {
     title: 'Tutorial',
     href: '/tutorial',
     icon: 'tutorial',
     component: 'tutorial',
     description: 'tutorial.',
+    layout: 'dashboard',
+  },
+  {
+    title: 'Profile',
+    href: '/profile',
+    icon: 'profile',
+    component: 'profile',
+    description: 'My Profile.',
     layout: 'dashboard',
   },
 ]

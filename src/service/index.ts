@@ -1,5 +1,6 @@
-import { Task } from '@/types'
+import { Project, Task } from '@/types'
 import http from './instance'
+import { FetchIssuesParams, Profile, } from '@/types'
 
 const api = {
   fetchUserInfo: async (code: string) => {
@@ -16,10 +17,10 @@ const api = {
       console.error('Error fetching user info:', error)
     }
   },
-  fetchTasks: async (org: string, project: string): Promise<Task[] | null> => {
+  fetchTasks: async (params: FetchIssuesParams): Promise<Task[] | null> => {
     try {
       const response = await http.get('/tasks', {
-        params: { org, project },
+        params,
       })
       console.log(response.data)
 
@@ -29,6 +30,30 @@ const api = {
       return null
     } catch (error) {
       console.error('Error fetching user info:', error)
+      return null
+    }
+  },
+  fetchProjects: async (): Promise<Project[] | null> => {
+    try {
+      const response = await http.get('/projects')
+      if (response.data) {
+        return response.data
+      }
+    } catch (error) {
+      console.log('Error fetching projects:', error)
+    }
+    return null
+  },
+  fetchLeaderboard: async (): Promise<Profile[] | null> => {
+    try {
+      const response = await http.get('/leaderboard')
+
+      if (response.data) {
+        return response.data
+      }
+      return null
+    } catch (error) {
+      console.error('Error fetching leaderboard:', error)
       return null
     }
   },

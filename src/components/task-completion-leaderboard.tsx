@@ -1,34 +1,27 @@
+import { Profile } from '@/types'
 import LeaderboardRow from './leaderboard-row'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-interface AssigneeStats {
-  [key: string]: {
-    avatarSrc: string
-    name: string
-    html: string
-    completedTasks: number
-  }
-}
 
 // 定义 IssueCompletionLeaderboardProps 接口
 interface TaskCompletionLeaderboardProps {
-  assigneeStats: AssigneeStats
+  leaderboard: Profile[]
 }
 
-export function TaskCompletionLeaderboard({ assigneeStats }: TaskCompletionLeaderboardProps) {
+export function TaskCompletionLeaderboard({ leaderboard }: TaskCompletionLeaderboardProps) {
   return (
-    <Card className="w-[85%] min-h-screen">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>Task Completion Leaderboard</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-12">
-          {Object.values(assigneeStats).map((assignee, index) => (
+        <div className="space-y-4">
+          {leaderboard.map((user, index) => (
             <LeaderboardRow
               key={index}
-              avatarSrc={assignee.avatarSrc}
-              name={assignee.name}
-              html={assignee.html}
-              completedTasks={assignee.completedTasks}
+              avatarSrc={user.avatarUrl}
+              name={user.username}
+              bio={user.bio || `https://github.com/${user.username}`}
+              completedTasks={user.completedTasks || 0}
             />
           ))}
         </div>
