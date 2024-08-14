@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react'
-import TocSidebar from './toc-sidebar'
-import { MarkdownProcessor } from '@/lib/md-processor'
 import debounce from 'lodash/debounce'
-interface IMarkdownRendererProps extends React.HTMLAttributes<HTMLElement> {
+import { useMd } from '@/components/md-renderer'
+interface IMarkdownRendererProps {
   content: string
 }
 
-const MdView: React.FC<IMarkdownRendererProps> = ({ content, ...props }) => {
-  const mdProcessor = new MarkdownProcessor(content)
-  const [activeId, setActiveId] = useState('')
+const MdView = ({ content }: IMarkdownRendererProps) => {
   const contentRef = useRef<HTMLElement>(null)
+  const [activeId, setActiveId] = useState('')
+  const { MdRenderer, TocSidebar } = useMd(content, { activeId: activeId, contentRef: contentRef })
 
   const debouncedSetActiveId = debounce((id: string) => {
     setActiveId(id)
@@ -42,15 +41,8 @@ const MdView: React.FC<IMarkdownRendererProps> = ({ content, ...props }) => {
 
   return (
     <div className="flex w-full justify-center">
-      <div className="w-[752px]">
-        <article
-          ref={contentRef}
-          {...props}
-          className="prose dark:prose-invert"
-          dangerouslySetInnerHTML={{ __html: mdProcessor.getContentHtml() }}
-        />
-      </div>
-      <TocSidebar toc={mdProcessor.getTocData()} activeId={activeId} />
+      {MdRenderer && <MdRenderer className="w-[752px]" />}
+      {TocSidebar && <TocSidebar className="hidden lg:block sticky top-0 h-screen overflow-y-auto px-8 w-[312px]" />}
     </div>
   )
 }
