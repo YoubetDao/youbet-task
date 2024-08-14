@@ -14,6 +14,7 @@ const darkModeColors = [
 const getRandomColor = () => _.sample(darkModeColors)
 
 export const TaskItem = ({ item }: { item: Task }) => {
+  console.log(item)
   return (
     <article className="rounded-2xl border group z-[1] duration-200 ease-in hover:border hover:border-opacity-80 hover:bg-white/10 relative w-full p-4 transition-all hover:scale-[0.998]">
       <div className="flex items-center justify-between gap-4">

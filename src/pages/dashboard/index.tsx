@@ -47,7 +47,6 @@ export default function Dashboard() {
   const [userCount, setUserCount] = useState<number>(0)
 
   useEffect(() => {
-
     api.fetchLeaderboard().then((leaderboardData) => {
       setLeaderboard(leaderboardData || [])
       setUserCount(leaderboardData?.length || 0)
@@ -62,7 +61,7 @@ export default function Dashboard() {
   }, [])
 
   return (
-    <>
+    <div className="px-4 py-4 mx-auto max-w-7xl lg:px-12">
       <div className="flex flex-col w-full gap-4 pt-4 pl-4 overflow-hidden">
         <div className="space-y-4">
           <h2 className="text-3xl font-bold tracking-tight">Hi, Welcome to YouBet Task 👋</h2>
@@ -83,6 +82,6 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
