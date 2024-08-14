@@ -67,24 +67,24 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="flex max-w-7xl mx-auto p-6 space-x-6">
+    <div className="flex flex-col p-6 mx-auto space-y-6 lg:space-y-0 lg:space-x-6 lg:flex-row max-w-7xl">
       {/* 左侧布局 */}
-      <div className="w-1/3 space-y-6">
+      <div className="w-full space-y-6 lg:w-1/3">
         {/* 个人信息 Card */}
         <Card className="rounded-lg shadow-lg">
           <div className="flex items-center p-4 space-x-6">
-            <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
-              <Avatar className="h-full w-full">
+            <div className="flex-shrink-0 w-16 h-16 overflow-hidden rounded-full">
+              <Avatar className="w-full h-full">
                 <AvatarImage src={profile?.avatarUrl} alt="Avatar" className="object-cover" />
                 <AvatarFallback>{profile?.displayName?.charAt(0)}</AvatarFallback>
               </Avatar>
             </div>
             <div className="flex-grow">
-              <h2 className="text-2xl font-semibold text-white leading-relaxed">
+              <h2 className="text-2xl font-semibold leading-relaxed text-white">
                 {profile?.displayName || profile?.username}
               </h2>
-              <p className="text-gray-400 leading-relaxed">{profile?.bio || 'No bio...'}</p>
-              <div className="flex space-x-4 mt-2">
+              <p className="leading-relaxed text-gray-400">{profile?.bio || 'No bio...'}</p>
+              <div className="flex mt-2 space-x-4">
                 <a
                   href={`https://github.com/${profile?.username}`}
                   target="_blank"
@@ -114,7 +114,7 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <div className="flex justify-center space-x-32 p-4 bg-gray-900 rounded-b-lg ">
+          <div className="flex justify-center p-4 space-x-32 bg-gray-900 rounded-b-lg ">
             <div className="text-center">
               <h3 className="text-2xl font-bold text-white">{profile?.followers}</h3>
               <p className="text-gray-400">Followers</p>
@@ -126,41 +126,41 @@ export default function ProfilePage() {
           </div>
         </Card>
 
-        <Card className="rounded-lg shadow-lg p-4">
+        <Card className="p-4 rounded-lg shadow-lg">
           <h3 className="text-lg font-semibold text-white">Points</h3>
-          <p className="text-l font-bold text-gray-400 mb-2">{userPoints}</p>
+          <p className="mb-2 font-bold text-gray-400 text-l">{userPoints}</p>
           <h3 className="text-lg font-semibold text-white">Skills</h3>
           <div className="flex flex-wrap">
-            <span className="text-xs bg-gray-700 text-white rounded-full px-3 py-1 m-1">C++</span>
-            <span className="text-xs bg-gray-700 text-white rounded-full px-3 py-1 m-1">Java</span>
-            <span className="text-xs bg-gray-700 text-white rounded-full px-3 py-1 m-1">Python</span>
+            <span className="px-3 py-1 m-1 text-xs text-white bg-gray-700 rounded-full">C++</span>
+            <span className="px-3 py-1 m-1 text-xs text-white bg-gray-700 rounded-full">Java</span>
+            <span className="px-3 py-1 m-1 text-xs text-white bg-gray-700 rounded-full">Python</span>
           </div>
         </Card>
       </div>
 
       {/* 右侧布局 */}
-      <div className="w-2/3 space-y-6">
+      <div className="w-full space-y-6 lg:w-2/3">
         {/* GitHub 贡献图 Card */}
-        <Card className="rounded-lg shadow-lg p-4">
-          <h3 className="text-lg font-semibold text-white mb-2">Contributions</h3>
+        <Card className="p-4 rounded-lg shadow-lg">
+          <h3 className="mb-2 text-lg font-semibold text-white">Contributions</h3>
           <GitHubCalendar username="wfnuser" />
         </Card>
 
         {/* 活动流 Card */}
-        <Card className="rounded-lg shadow-lg p-4">
-          <h3 className="text-lg font-semibold text-white mb-2">Recent Activities</h3>
+        <Card className="p-4 rounded-lg shadow-lg">
+          <h3 className="mb-2 text-lg font-semibold text-white">Recent Activities</h3>
           <ul className="space-y-4">
             <li className="flex items-center space-x-4">
               <span className="text-gray-400">[PR] Merged PR #42 in youbet-task</span>
-              <span className="text-gray-500 text-xs">2 hours ago</span>
+              <span className="text-xs text-gray-500">2 hours ago</span>
             </li>
             <li className="flex items-center space-x-4">
               <span className="text-gray-400">[Issue] Opened Issue #7 in youbet-task</span>
-              <span className="text-gray-500 text-xs">4 hours ago</span>
+              <span className="text-xs text-gray-500">4 hours ago</span>
             </li>
             <li className="flex items-center space-x-4">
               <span className="text-gray-400">[Comment] Commented on Issue #7 in youbet-task</span>
-              <span className="text-gray-500 text-xs">6 hours ago</span>
+              <span className="text-xs text-gray-500">6 hours ago</span>
             </li>
             {/* 继续添加更多的活动 */}
           </ul>
