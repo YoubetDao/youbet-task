@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { SkeletonCard } from '@/components/skeleton-card'
-import { Repository } from '@/types'
+import { Project } from '@/types'
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import http from '@/service/instance'
@@ -98,7 +98,7 @@ function __randomPickTags(tags: string[]): React.ReactNode[] {
     })
 }
 
-function ProjectItem({ item }: { item: Repository }) {
+function ProjectItem({ item }: { item: Project }) {
   return (
     <Link to={`/projects/${item.name}/tasks`}>
       <article className="rounded-2xl p-4 lg:p-6 cursor-pointer border group z-[1] duration-200 ease-in hover:border hover:border-opacity-80 hover:bg-white/10 relative w-full !pr-0 !pt-0 transition-all hover:scale-[0.998]">
@@ -153,7 +153,7 @@ function ProjectItem({ item }: { item: Repository }) {
 }
 
 function ProjectList() {
-  const [projects, setProjects] = useState<Repository[]>([])
+  const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   useEffect(() => {
     const fetchProjects = async () => {
@@ -326,7 +326,7 @@ function FilterBoard() {
   )
 }
 
-export default function Project() {
+export default function ProjectPage() {
   return (
     <div className="px-4 py-4 mx-auto max-w-7xl lg:px-12">
       <div className="flex flex-col w-full gap-2">
