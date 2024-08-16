@@ -14,6 +14,9 @@ import http from '@/service/instance'
 import { NetworkType, SDK } from 'youbet-sdk'
 import { TaskItem } from './task-item'
 import { EmptyTasks } from './empty-task'
+import { Input } from '@/components/ui/input'
+import { LucideSearch } from 'lucide-react'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
 const sdk = new SDK({
   networkType: NetworkType.Testnet, // or NetworkType.Testnet
@@ -36,6 +39,8 @@ export default function TaskPage() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(false)
   const { project } = useParams<{ project: string }>()
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [all, setAll] = useState<string>('All')
 
   const fetchTasks = async () => {
     setLoading(true)
@@ -50,6 +55,24 @@ export default function TaskPage() {
   useEffect(() => {
     fetchTasks()
   }, [project])
+
+  const handleCategoryChange = (value: string[]) => {
+    if (value.length) {
+      setAll('')
+    } else {
+      setAll('All')
+    }
+    setSelectedCategories(value)
+  }
+
+  const handleSelectAll = (value: string) => {
+    if (value) {
+      setSelectedCategories([])
+      setAll(value)
+    } else {
+      setAll('')
+    }
+  }
 
   const handleClaim = async (item: Task) => {
     const issueNumber = item.htmlUrl.split('/').pop()
@@ -83,7 +106,7 @@ export default function TaskPage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="px-4 py-4 mx-auto max-w-7xl lg:px-12">
       <Breadcrumb className="py-2">
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -101,16 +124,27 @@ export default function TaskPage() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
-        {loading ? (
-          <SkeletonTasks />
-        ) : tasks.length ? (
-          tasks.map((item) => (
-            <TaskItem key={item.title} item={item} onClaim={handleClaim} onDisclaim={handleDisclaim} />
-          ))
-        ) : (
-          <EmptyTasks />
-        )}
+      <div className="gap-5 flex flex-col">
+        <div className="relative">
+          <Input placeholder="Search tutorial title or description" className="pl-8 bg-background/80" />
+          <LucideSearch className="absolute w-4 h-4 -translate-y-1/2 top-1/2 left-2" />
+        </div>
+        <div className="flex space-x-2">
+          <ToggleGroup size="sm" type="single" value={all} onValueChange={handleSelectAll}>
+            <ToggleGroupItem value="All">All</ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+        <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+          {loading ? (
+            <SkeletonTasks />
+          ) : tasks.length ? (
+            tasks.map((item) => (
+              <TaskItem key={item.title} item={item} onClaim={handleClaim} onDisclaim={handleDisclaim} />
+            ))
+          ) : (
+            <EmptyTasks />
+          )}
+        </div>
       </div>
     </div>
   )

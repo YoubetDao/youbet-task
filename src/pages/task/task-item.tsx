@@ -36,7 +36,7 @@ export const TaskItem = ({
   return (
     <article className="rounded-2xl border group z-[1] duration-200 ease-in hover:border hover:border-opacity-80 hover:bg-white/10 relative w-full p-4 transition-all hover:scale-[0.998]">
       <div className="flex items-center justify-between gap-4">
-        <div className="flex flex-row items-center gap-3">
+        <div className="flex flex-row items-center justify-start gap-3 w-full">
           {item.state === 'open' ? (
             <CircleDot className="w-6 h-6 text-green-600" />
           ) : (
@@ -45,11 +45,9 @@ export const TaskItem = ({
           <Button
             asChild
             variant="link"
-            className="text-gray-50 !p-0 overflow-hidden text-2xl font-bold whitespace-nowrap text-ellipsis"
+            className="w-full !p-0 block text-gray-50 text-2xl font-bold whitespace-nowrap text-ellipsis overflow-hidden"
           >
-            <a href={item.htmlUrl} target="_blank" rel="noreferrer">
-              {item.title}
-            </a>
+            <a href={item.htmlUrl}>{item.title}</a>
           </Button>
         </div>
       </div>

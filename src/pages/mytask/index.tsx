@@ -55,8 +55,7 @@ export default function MyTask() {
   }, [project, username])
 
   return (
-    <div className="space-y-4">
-      <h1>My Task</h1>
+    <div className="px-4 py-4 mx-auto max-w-7xl lg:px-12">
       <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
         {loading ? (
           <SkeletonTasks />
