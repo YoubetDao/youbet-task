@@ -43,18 +43,19 @@ function __randomPickTags(tags: string[]): React.ReactNode[] {
     })
     .map((tag) => {
       return (
-        <>
-          <div className="relative flex items-center justify-center p-1.5 overflow-hidden transition-all duration-300 ease-in border rounded-full bg-muted border-white/80 bg-greyscale-50/8 border-greyscale-50/12 h-7 w-7">
-            {getIconFromKey(tag)}
-          </div>
-        </>
+        <div
+          key={tag}
+          className="relative flex items-center justify-center p-1.5 overflow-hidden transition-all duration-300 ease-in border rounded-full bg-muted border-white/80 bg-greyscale-50/8 border-greyscale-50/12 h-7 w-7"
+        >
+          {getIconFromKey(tag)}
+        </div>
       )
     })
 }
 
 function ProjectItem({ item }: { item: Project }) {
   return (
-    <Link to={`/projects/${item.name}/tasks`}>
+    <Link key={item._id} to={`/projects/${item.name}/tasks`}>
       <article className="rounded-2xl p-4 lg:p-6 cursor-pointer border group z-[1] duration-200 ease-in hover:border hover:border-opacity-80 hover:bg-white/10 relative w-full !pr-0 !pt-0 transition-all hover:scale-[0.998]">
         <div className="flex gap-5">
           {/* 头像 */}
@@ -67,23 +68,27 @@ function ProjectItem({ item }: { item: Project }) {
           <div className="pt-4 pr-4 overflow-hidden">
             <div className="flex items-center w-full gap-2">
               <div className="flex-1 overflow-hidden text-2xl font-bold whitespace-nowrap text-ellipsis">
-                {item.name}
+                <Button
+                  asChild
+                  variant="link"
+                  className="text-gray-50 !p-0 overflow-hidden text-2xl font-bold whitespace-nowrap text-ellipsis"
+                >
+                  <span
+                    className="z-10"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      window.open(item.htmlUrl, '_blank')
+                    }}
+                  >
+                    {item.name}
+                  </span>
+                </Button>
               </div>
               <div className="hidden gap-2 md:flex">
-                {__randomPickTags([
-                  'issues-available',
-                  'hot-community',
-                  'newbies-welcome',
-                  'big-whale',
-                  'likely-to-be-reward',
-                  'work-in-progress',
-                  'fast-and-furious',
-                ])}
+                {__randomPickTags(['issues-available', 'hot-community', 'good-first-issues'])}
               </div>
             </div>
-            <div className="mt-2 text-sm text-muted-foreground">
-              {item.description || 'Decentralized social built with Nostr and powered by Starknet account abstraction.'}
-            </div>
+            <div className="mt-2 text-sm text-muted-foreground">{item.description || 'No description...'}</div>
             <div className="flex flex-col gap-4 mt-5 text-xs md:flex-row">
               <div className="flex gap-1 md:justify-center md:items-center">
                 <Avatar className="w-4 h-4">
@@ -94,9 +99,9 @@ function ProjectItem({ item }: { item: Project }) {
               </div>
               <div className="flex gap-1 md:items-center md:justify-center">
                 <LucideUser className="w-4 h-4" />
-                {Math.floor(Math.random() * 100)} contributors
+                {Math.floor(Math.random() * 10)} contributors
               </div>
-              <div>Ecosystems</div>
+              {/* <div>Ecosystems</div> */}
               <div>Languages</div>
             </div>
           </div>
@@ -106,21 +111,26 @@ function ProjectItem({ item }: { item: Project }) {
   )
 }
 
-function ProjectList() {
+interface ProjectListProps {
+  filterTags: string[]
+}
+
+function ProjectList({ filterTags }: ProjectListProps) {
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
+
   useEffect(() => {
     const fetchProjects = async () => {
       setLoading(true)
       const data = await http
-        .get('/projects?org=youbetdao')
+        .get(`/projects?tags=${filterTags.join(',')}`)
         .then((res) => res.data)
         .catch(() => [])
       setProjects(data)
       setLoading(false)
     }
     fetchProjects()
-  }, [])
+  }, [filterTags])
 
   if (loading) return <SkeletonProjects />
 
@@ -159,50 +169,40 @@ function getIconFromKey(key: string) {
   return {
     'issues-available': <LucideThumbsUp className="w-4 h-4" />,
     'hot-community': <LucideFlame className="w-4 h-4" />,
-    'newbies-welcome': <LucideSprout className="w-4 h-4" />,
+    'good-first-issues': <LucideSprout className="w-4 h-4" />,
     'big-whale': <LucideSparkles className="w-4 h-4" />,
-    'likely-to-be-reward': <LucideGift className="w-4 h-4" />,
+    'potential-reward': <LucideGift className="w-4 h-4" />,
     'work-in-progress': <LucidePickaxe className="w-4 h-4" />,
     'fast-and-furious': <LucideZap className="w-4 h-4" />,
   }[key]
 }
 
-function FilterBoard() {
+interface FilterBoardProps {
+  filterTags: string[]
+  setFilterTags: (tags: string[]) => void
+}
+
+function FilterBoard({ filterTags, setFilterTags }: FilterBoardProps) {
   const tags = [
-    {
-      label: 'Issues available',
-      value: 'issues-available',
-      icon: getIconFromKey('issues-available'),
-    },
+    // {
+    //   label: 'Issues available',
+    //   value: 'issues-available',
+    //   icon: getIconFromKey('issues-available'),
+    // },
     {
       label: 'Hot Community',
       value: 'hot-community',
       icon: getIconFromKey('hot-community'),
     },
     {
-      label: 'Newbies Welcome',
-      value: 'newbies-welcome',
-      icon: getIconFromKey('newbies-welcome'),
+      label: 'Good First Issues',
+      value: 'good-first-issues',
+      icon: getIconFromKey('good-first-issues'),
     },
     {
-      label: 'Big whale',
-      value: 'big-whale',
-      icon: getIconFromKey('big-whale'),
-    },
-    {
-      label: 'Likely to be reward',
-      value: 'likely-to-be-reward',
-      icon: getIconFromKey('likely-to-be-reward'),
-    },
-    {
-      label: 'Work in progress',
-      value: 'work-in-progress',
-      icon: getIconFromKey('work-in-progress'),
-    },
-    {
-      label: 'Fast and furious',
-      value: 'fast-and-furious',
-      icon: getIconFromKey('fast-and-furious'),
+      label: 'Potential Reward',
+      value: 'potential-reward',
+      icon: getIconFromKey('potential-reward'),
     },
   ]
 
@@ -216,6 +216,7 @@ function FilterBoard() {
               variant="ghost"
               size="sm"
               className="absolute right-0 flex items-center gap-1 text-xs -translate-y-1/2 cursor-pointer hover:text-primary text-primary top-1/2"
+              onClick={() => setFilterTags([])}
             >
               <LucideRefreshCcw className="w-3 h-3" />
               Clear all
@@ -224,7 +225,7 @@ function FilterBoard() {
         </CardHeader>
         <CardContent className="flex flex-col gap-y-4">
           {/* filter */}
-          <ToggleGroup type="multiple">
+          <ToggleGroup type="multiple" value={filterTags} onValueChange={setFilterTags}>
             {tags.map((tag) => (
               <ToggleGroupItem key={tag.value} size="sm" value={tag.value}>
                 {tag.icon}
@@ -233,7 +234,7 @@ function FilterBoard() {
             ))}
           </ToggleGroup>
           {/* select */}
-          <div className="pt-2 space-y-3 border-t border-muted">
+          {/* <div className="pt-2 space-y-3 border-t border-muted">
             <Label>Ecosystems</Label>
             <Select>
               <SelectTrigger className="w-[180px]">
@@ -245,23 +246,25 @@ function FilterBoard() {
                 <SelectItem value="system">System</SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </div> */}
           {/* select */}
           <div className="pt-2 space-y-3 border-t border-muted">
             <Label>Languages</Label>
             <Select>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Theme" />
+                <SelectValue placeholder="Select Languages..." />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="light">Light</SelectItem>
-                <SelectItem value="dark">Dark</SelectItem>
-                <SelectItem value="system">System</SelectItem>
+                <SelectItem value="solidity">Solidity</SelectItem>
+                <SelectItem value="rust">Rust</SelectItem>
+                <SelectItem value="move">Move</SelectItem>
+                <SelectItem value="typescript">Typescript</SelectItem>
+                <SelectItem value="javascript">javascript</SelectItem>
               </SelectContent>
             </Select>
           </div>
           {/* select */}
-          <div className="pt-2 space-y-3 border-t border-muted">
+          {/* <div className="pt-2 space-y-3 border-t border-muted">
             <Label>Categories</Label>
             <Select>
               <SelectTrigger className="w-[180px]">
@@ -273,7 +276,7 @@ function FilterBoard() {
                 <SelectItem value="system">System</SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </div> */}
         </CardContent>
       </Card>
     </div>
@@ -281,6 +284,8 @@ function FilterBoard() {
 }
 
 export default function ProjectPage() {
+  const [filterTags, setFilterTags] = useState<string[]>([])
+
   return (
     <div className="px-4 py-4 mx-auto max-w-7xl lg:px-12">
       <div className="flex flex-col w-full gap-2">
@@ -289,8 +294,8 @@ export default function ProjectPage() {
           <LucideSearch className="absolute w-4 h-4 -translate-y-1/2 top-1/2 left-2" />
         </div>
         <div className="flex flex-col gap-2 lg:flex-row">
-          <FilterBoard />
-          <ProjectList />
+          <FilterBoard filterTags={filterTags} setFilterTags={setFilterTags} />
+          <ProjectList filterTags={filterTags} />
         </div>
       </div>
     </div>
