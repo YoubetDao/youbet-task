@@ -130,7 +130,7 @@ function ProjectList({ filterTags }: ProjectListProps) {
   if (loading) return <SkeletonProjects />
 
   return (
-    <div className="flex flex-col w-full gap-4 pt-4 overflow-hidden md:pl-4">
+    <div className="flex flex-col w-full gap-4 pt-4 overflow-hidden lg:pl-4">
       <div className="flex items-center justify-between">
         <div>
           <Select defaultValue="treading">
@@ -202,7 +202,7 @@ function FilterBoard({ filterTags, setFilterTags }: FilterBoardProps) {
   ]
 
   return (
-    <div className="flex-shrink-0 pt-4 basis-96">
+    <div className="flex-shrink-0 w-full pt-4 lg:w-48 xl:w-96">
       <Card className="sticky top-0 left-0 bg-transparent">
         <CardHeader className="py-4">
           <CardTitle className="relative text-lg">
@@ -232,7 +232,7 @@ function FilterBoard({ filterTags, setFilterTags }: FilterBoardProps) {
           {/* <div className="pt-2 space-y-3 border-t border-muted">
             <Label>Ecosystems</Label>
             <Select>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full max-w-[180px]">
                 <SelectValue placeholder="Theme" />
               </SelectTrigger>
               <SelectContent>
@@ -246,7 +246,7 @@ function FilterBoard({ filterTags, setFilterTags }: FilterBoardProps) {
           <div className="pt-2 space-y-3 border-t border-muted">
             <Label>Languages</Label>
             <Select>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full max-w-[180px]">
                 <SelectValue placeholder="Select Languages..." />
               </SelectTrigger>
               <SelectContent>
@@ -262,7 +262,7 @@ function FilterBoard({ filterTags, setFilterTags }: FilterBoardProps) {
           {/* <div className="pt-2 space-y-3 border-t border-muted">
             <Label>Categories</Label>
             <Select>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full max-w-[180px]">
                 <SelectValue placeholder="Theme" />
               </SelectTrigger>
               <SelectContent>

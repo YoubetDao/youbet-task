@@ -61,17 +61,22 @@ export const useMd = (content: string, toc?: boolean) => {
     const observerCallback: IntersectionObserverCallback = (entries) => {
       const intersectingEntries = entries.filter((entry) => entry.isIntersecting)
 
-      let minYEntry: IntersectionObserverEntry | null = null
+      // let minYEntry: IntersectionObserverEntry | null = null
+      let minYTop = Infinity
+      let minYId = ''
 
       intersectingEntries.forEach((entry) => {
         const rect = entry.boundingClientRect
         // 寻找 y 坐标最小的那个元素
-        if (!minYEntry || rect.top < minYEntry.boundingClientRect.top) {
-          minYEntry = entry
+        if (rect.top < minYTop) {
+          minYTop = rect.top
+          minYId = entry.target.id
         }
       })
 
-      throttledSetActiveId(minYEntry!.target.id)
+      if (minYId) {
+        throttledSetActiveId(minYId)
+      }
     }
 
     const observer = new IntersectionObserver(observerCallback, observerOptions)

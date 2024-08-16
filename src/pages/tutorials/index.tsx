@@ -57,7 +57,7 @@ function TutorialItem({ item }: { item: Project }) {
               <div>
                 <Button
                   variant="link"
-                  className="flex-1 overflow-hidden text-xl font-bold whitespace-nowrap text-ellipsis px-0"
+                  className="flex-1 px-0 overflow-hidden text-xl font-bold whitespace-nowrap text-ellipsis"
                 >
                   <span
                     className="z-10"
@@ -191,7 +191,7 @@ export default function Tutorials() {
             <LucideSearch className="absolute w-4 h-4 -translate-y-1/2 top-1/2 left-2" />
           </div>
           <div className="flex space-x-2">
-            <ToggleGroup size="sm" type="single" value={all} onValueChange={handleSelectAll}>
+            <ToggleGroup size="sm" type="single" value={all} onValueChange={handleSelectAll} className="items-start">
               <ToggleGroupItem value="All">All</ToggleGroupItem>
             </ToggleGroup>
             <ToggleGroup size="sm" type="multiple" value={selectedCategories} onValueChange={handleCategoryChange}>

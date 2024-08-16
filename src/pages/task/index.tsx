@@ -124,7 +124,7 @@ export default function TaskPage() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <div className="gap-5 flex flex-col">
+      <div className="flex flex-col gap-5">
         <div className="relative">
           <Input placeholder="Search tutorial title or description" className="pl-8 bg-background/80" />
           <LucideSearch className="absolute w-4 h-4 -translate-y-1/2 top-1/2 left-2" />
@@ -134,12 +134,12 @@ export default function TaskPage() {
             <ToggleGroupItem value="All">All</ToggleGroupItem>
           </ToggleGroup>
         </div>
-        <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {loading ? (
             <SkeletonTasks />
           ) : tasks.length ? (
             tasks.map((item) => (
-              <TaskItem key={item.title} item={item} onClaim={handleClaim} onDisclaim={handleDisclaim} />
+              <TaskItem key={item._id} item={item} onClaim={handleClaim} onDisclaim={handleDisclaim} />
             ))
           ) : (
             <EmptyTasks />

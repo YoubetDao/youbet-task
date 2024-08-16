@@ -36,7 +36,7 @@ export const TaskItem = ({
   return (
     <article className="rounded-2xl border group z-[1] duration-200 ease-in hover:border hover:border-opacity-80 hover:bg-white/10 relative w-full p-4 transition-all hover:scale-[0.998]">
       <div className="flex items-center justify-between gap-4">
-        <div className="flex flex-row items-center justify-start gap-3 w-full">
+        <div className="flex flex-row items-center justify-start w-full gap-3">
           {item.state === 'open' ? (
             <CircleDot className="w-6 h-6 text-green-600" />
           ) : (
@@ -52,13 +52,13 @@ export const TaskItem = ({
         </div>
       </div>
       <div className="flex-1">
-        <div className="flex flex-col justify-between h-full overflow-hidden rounded gap-2">
-          <div className="flex gap-4 flex-col">
-            <div className="mt-4 text-sm text-muted-foreground whitespace-nowrap text-ellipsis overflow-hidden">
+        <div className="flex flex-col justify-between h-full gap-2 overflow-hidden rounded">
+          <div className="flex flex-col gap-4">
+            <div className="mt-4 overflow-hidden text-sm text-muted-foreground whitespace-nowrap text-ellipsis">
               {item.body || 'Decentralized social built with Nostr and powered by Starknet account abstraction.'}
             </div>
           </div>
-          <div className="flex justify-between mt-2 items-center">
+          <div className="flex items-center justify-between mt-2">
             <div className="flex flex-row items-center gap-4">
               <Avatar className="w-4 h-4">
                 <AvatarImage
@@ -69,7 +69,7 @@ export const TaskItem = ({
                 <Clock className="w-4 h-4" />
                 <span className="text-xs">{formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })}</span>
               </div>
-              <div className="flex flex-row gap-2 pr-4">
+              {/* <div className="flex flex-row gap-2 pr-4">
                 {item.labels.length > 0 && (
                   <span
                     className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
@@ -78,41 +78,51 @@ export const TaskItem = ({
                     {item.labels[0]}
                   </span>
                 )}
-              </div>
+              </div> */}
             </div>
 
             <div>
               {item.state === 'closed' ? (
                 <Button
                   disabled
-                  className="w-24 border border-white/80 bg-greyscale-50/8 text-white hover:border-opacity-80 hover:bg-white/10"
+                  className="w-24 text-white border border-white/80 bg-greyscale-50/8 hover:border-opacity-80 hover:bg-white/10"
                 >
                   Closed
                 </Button>
               ) : !item.assignees.length ? (
                 <Button
                   onClick={handleClaim}
-                  className="w-24 border border-white/80 bg-greyscale-50/8 text-white hover:border-opacity-80 hover:bg-white/10"
+                  className="w-24 text-white border border-white/80 bg-greyscale-50/8 hover:border-opacity-80 hover:bg-white/10"
                 >
                   Claim
                 </Button>
               ) : item.assignees.some((assignee) => assignee.login === username) ? (
                 <Button
                   onClick={handleDisclaim}
-                  className="w-24 border border-white/80 bg-greyscale-50/8 text-white hover:border-opacity-80 hover:bg-white/10"
+                  className="w-24 text-white border border-white/80 bg-greyscale-50/8 hover:border-opacity-80 hover:bg-white/10"
                 >
                   Disclaim
                 </Button>
               ) : (
                 <Button
                   disabled
-                  className="w-24 border border-white/80 bg-greyscale-50/8 text-white hover:border-opacity-80 hover:bg-white/10"
+                  className="w-24 text-white border border-white/80 bg-greyscale-50/8 hover:border-opacity-80 hover:bg-white/10"
                 >
                   Claimed
                 </Button>
               )}
             </div>
           </div>
+          {item.labels.length > 0 && (
+            <div className="flex flex-row gap-2 pr-4">
+              <span
+                className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                style={{ backgroundColor: getRandomColor() }}
+              >
+                {item.labels[0]}
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </article>

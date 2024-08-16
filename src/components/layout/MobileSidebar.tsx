@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
-import { Menu, Package2 } from 'lucide-react'
+import { Menu } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
 
 import { navItems } from '@/constants/data'
 import { Icons } from '@/components/icons'
@@ -18,11 +18,15 @@ export default function MobileSidebar() {
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="flex flex-col">
+        <SheetTitle>
+          <img src="/logo.png" alt="YouBet Task" className="inline-block w-6 h-6 mr-2 rounded-lg" />
+          YouBet Task
+        </SheetTitle>
         <nav className="grid gap-2 text-lg font-medium">
-          <Link to="#" className="flex items-center gap-2 text-lg font-semibold">
+          {/* <Link to="#" className="flex items-center gap-2 text-lg font-semibold">
             <Package2 className="w-6 h-6" />
             <span className="sr-only">YouBet Task</span>
-          </Link>
+          </Link> */}
           {navItems.map((item) => {
             if (item.hideInMenu) return null
             const Icon = item.icon ? Icons[item.icon] : () => null

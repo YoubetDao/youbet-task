@@ -103,6 +103,7 @@ export interface Task {
   updatedAt: string
   body: string
   assignees: User[]
+  _id: string
 }
 
 export interface Profile {

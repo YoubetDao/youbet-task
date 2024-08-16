@@ -1,6 +1,7 @@
 import { Profile } from '@/types'
 import LeaderboardRow from './leaderboard-row'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { LucideCrown } from 'lucide-react'
 
 // 定义 IssueCompletionLeaderboardProps 接口
 interface TaskCompletionLeaderboardProps {
@@ -11,7 +12,10 @@ export function TaskCompletionLeaderboard({ leaderboard }: TaskCompletionLeaderb
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Task Completion Leaderboard</CardTitle>
+        <CardTitle className="relative">
+          <LucideCrown className="absolute w-6 h-6 -top-5 -left-5 -rotate-12" />
+          Task Completion Leaderboard
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
