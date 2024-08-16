@@ -70,15 +70,7 @@ function ProjectItem({ item }: { item: Project }) {
                 {item.name}
               </div>
               <div className="hidden gap-2 md:flex">
-                {__randomPickTags([
-                  'issues-available',
-                  'hot-community',
-                  'newbies-welcome',
-                  'big-whale',
-                  'likely-to-be-reward',
-                  'work-in-progress',
-                  'fast-and-furious',
-                ])}
+                {__randomPickTags(['issues-available', 'hot-community', 'newbies-welcome'])}
               </div>
             </div>
             <div className="mt-2 text-sm text-muted-foreground">
@@ -184,26 +176,11 @@ function FilterBoard() {
       value: 'newbies-welcome',
       icon: getIconFromKey('newbies-welcome'),
     },
-    {
-      label: 'Big whale',
-      value: 'big-whale',
-      icon: getIconFromKey('big-whale'),
-    },
-    {
-      label: 'Likely to be reward',
-      value: 'likely-to-be-reward',
-      icon: getIconFromKey('likely-to-be-reward'),
-    },
-    {
-      label: 'Work in progress',
-      value: 'work-in-progress',
-      icon: getIconFromKey('work-in-progress'),
-    },
-    {
-      label: 'Fast and furious',
-      value: 'fast-and-furious',
-      icon: getIconFromKey('fast-and-furious'),
-    },
+    // {
+    //   label: 'Likely to be reward',
+    //   value: 'likely-to-be-reward',
+    //   icon: getIconFromKey('likely-to-be-reward'),
+    // },
   ]
 
   return (
@@ -233,7 +210,7 @@ function FilterBoard() {
             ))}
           </ToggleGroup>
           {/* select */}
-          <div className="pt-2 space-y-3 border-t border-muted">
+          {/* <div className="pt-2 space-y-3 border-t border-muted">
             <Label>Ecosystems</Label>
             <Select>
               <SelectTrigger className="w-[180px]">
@@ -245,7 +222,7 @@ function FilterBoard() {
                 <SelectItem value="system">System</SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </div> */}
           {/* select */}
           <div className="pt-2 space-y-3 border-t border-muted">
             <Label>Languages</Label>
@@ -254,14 +231,16 @@ function FilterBoard() {
                 <SelectValue placeholder="Theme" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="light">Light</SelectItem>
-                <SelectItem value="dark">Dark</SelectItem>
-                <SelectItem value="system">System</SelectItem>
+                <SelectItem value="solidity">Solidity</SelectItem>
+                <SelectItem value="rust">Rust</SelectItem>
+                <SelectItem value="move">Move</SelectItem>
+                <SelectItem value="typescript">Typescript</SelectItem>
+                <SelectItem value="javascript">javascript</SelectItem>
               </SelectContent>
             </Select>
           </div>
           {/* select */}
-          <div className="pt-2 space-y-3 border-t border-muted">
+          {/* <div className="pt-2 space-y-3 border-t border-muted">
             <Label>Categories</Label>
             <Select>
               <SelectTrigger className="w-[180px]">
@@ -273,7 +252,7 @@ function FilterBoard() {
                 <SelectItem value="system">System</SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </div> */}
         </CardContent>
       </Card>
     </div>
