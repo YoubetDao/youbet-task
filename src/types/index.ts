@@ -39,6 +39,11 @@ export interface Tutorial {
   time: string
   categories: string[]
 }
+
+export interface YoubetExtra {
+  tags?: string[]
+}
+
 export interface Project {
   _id: number
   name: string
@@ -52,6 +57,7 @@ export interface Project {
   language: string | null
   owner: User
   tutorial?: Tutorial
+  youbetExtra?: YoubetExtra
 }
 
 interface PullRequest {

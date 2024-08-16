@@ -36,21 +36,17 @@ function SkeletonProjects() {
   )
 }
 
-function __randomPickTags(tags: string[]): React.ReactNode[] {
-  return tags
-    .filter(() => {
-      return Math.random() > 0.5
-    })
-    .map((tag) => {
-      return (
-        <div
-          key={tag}
-          className="relative flex items-center justify-center p-1.5 overflow-hidden transition-all duration-300 ease-in border rounded-full bg-muted border-white/80 bg-greyscale-50/8 border-greyscale-50/12 h-7 w-7"
-        >
-          {getIconFromKey(tag)}
-        </div>
-      )
-    })
+function renderTags(tags: string[]): React.ReactNode[] {
+  return tags.map((tag) => {
+    return (
+      <div
+        key={tag}
+        className="relative flex items-center justify-center p-1.5 overflow-hidden transition-all duration-300 ease-in border rounded-full bg-muted border-white/80 bg-greyscale-50/8 border-greyscale-50/12 h-7 w-7"
+      >
+        {getIconFromKey(tag)}
+      </div>
+    )
+  })
 }
 
 function ProjectItem({ item }: { item: Project }) {
@@ -84,9 +80,7 @@ function ProjectItem({ item }: { item: Project }) {
                   </span>
                 </Button>
               </div>
-              <div className="hidden gap-2 md:flex">
-                {__randomPickTags(['issues-available', 'hot-community', 'good-first-issues'])}
-              </div>
+              <div className="hidden gap-2 md:flex">{renderTags(item.youbetExtra?.tags || [])}</div>
             </div>
             <div className="mt-2 text-sm text-muted-foreground">{item.description || 'No description...'}</div>
             <div className="flex flex-col gap-4 mt-5 text-xs md:flex-row">
