@@ -72,6 +72,7 @@ function ProjectItem({ item }: { item: Project }) {
                   <span
                     className="z-10"
                     onClick={(e) => {
+                      e.preventDefault()
                       e.stopPropagation()
                       window.open(item.htmlUrl, '_blank')
                     }}
