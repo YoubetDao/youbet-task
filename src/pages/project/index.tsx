@@ -67,15 +67,27 @@ function ProjectItem({ item }: { item: Project }) {
           <div className="pt-4 pr-4 overflow-hidden">
             <div className="flex items-center w-full gap-2">
               <div className="flex-1 overflow-hidden text-2xl font-bold whitespace-nowrap text-ellipsis">
-                {item.name}
+                <Button
+                  asChild
+                  variant="link"
+                  className="text-gray-50 !p-0 overflow-hidden text-2xl font-bold whitespace-nowrap text-ellipsis"
+                >
+                  <a
+                    className="z-10"
+                    href={item.htmlUrl}
+                    onClick={(e) => e.stopPropagation()}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {item.name}
+                  </a>
+                </Button>
               </div>
               <div className="hidden gap-2 md:flex">
                 {__randomPickTags(['issues-available', 'hot-community', 'newbies-welcome'])}
               </div>
             </div>
-            <div className="mt-2 text-sm text-muted-foreground">
-              {item.description || 'Decentralized social built with Nostr and powered by Starknet account abstraction.'}
-            </div>
+            <div className="mt-2 text-sm text-muted-foreground">{item.description || 'No description...'}</div>
             <div className="flex flex-col gap-4 mt-5 text-xs md:flex-row">
               <div className="flex gap-1 md:justify-center md:items-center">
                 <Avatar className="w-4 h-4">
@@ -86,9 +98,9 @@ function ProjectItem({ item }: { item: Project }) {
               </div>
               <div className="flex gap-1 md:items-center md:justify-center">
                 <LucideUser className="w-4 h-4" />
-                {Math.floor(Math.random() * 100)} contributors
+                {Math.floor(Math.random() * 10)} contributors
               </div>
-              <div>Ecosystems</div>
+              {/* <div>Ecosystems</div> */}
               <div>Languages</div>
             </div>
           </div>
@@ -228,7 +240,7 @@ function FilterBoard() {
             <Label>Languages</Label>
             <Select>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Theme" />
+                <SelectValue placeholder="Select Languages..." />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="solidity">Solidity</SelectItem>
