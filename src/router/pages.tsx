@@ -8,6 +8,7 @@ import MyTask from '@/pages/mytask'
 import Tutorial from '@/pages/tutorial'
 import Tutorials from '@/pages/tutorials'
 import TaskDetailPage from '@/pages/task-detail'
+import ErrorPage from '@/pages/error'
 
 export const Pages = {
   dashboard: Dashboard,
@@ -20,4 +21,5 @@ export const Pages = {
   tutorial: Tutorial,
   tutorials: Tutorials,
   taskDetail: TaskDetailPage,
+  error: ErrorPage,
 }

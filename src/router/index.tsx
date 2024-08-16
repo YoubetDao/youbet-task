@@ -44,7 +44,7 @@ export function createRouter(): ReturnType<typeof createBrowserRouter> {
       ...router,
       element: page,
       Component: null,
-      // ErrorBoundary: ErrorPage,
+      ErrorBoundary: Pages.error,
     }
   })
   return createBrowserRouter(routeWrappers)

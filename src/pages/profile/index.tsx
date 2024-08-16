@@ -68,7 +68,7 @@ export default function ProfilePage() {
 
   return (
     <div className="px-4 py-4 mx-auto max-w-7xl lg:px-12">
-      <div className="flex flex-col p-6 mx-auto space-y-6 lg:space-y-0 lg:space-x-6 lg:flex-row max-w-7xl">
+      <div className="flex flex-col mx-auto space-y-6 lg:space-y-0 lg:space-x-6 lg:flex-row max-w-7xl">
         {/* 左侧布局 */}
         <div className="w-full space-y-6 lg:w-1/3">
           {/* 个人信息 Card */}
