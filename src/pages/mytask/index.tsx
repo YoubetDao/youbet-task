@@ -61,7 +61,8 @@ export default function MyTask() {
         {loading ? (
           <SkeletonTasks />
         ) : tasks.length ? (
-          tasks.map((item) => <TaskItem key={item.title} item={item} />)
+          // TODO: key should not be htmlUrl; but title is not unique.
+          tasks.map((item) => <TaskItem key={item.htmlUrl} item={item} />)
         ) : (
           <EmptyTasks />
         )}

@@ -43,18 +43,19 @@ function __randomPickTags(tags: string[]): React.ReactNode[] {
     })
     .map((tag) => {
       return (
-        <>
-          <div className="relative flex items-center justify-center p-1.5 overflow-hidden transition-all duration-300 ease-in border rounded-full bg-muted border-white/80 bg-greyscale-50/8 border-greyscale-50/12 h-7 w-7">
-            {getIconFromKey(tag)}
-          </div>
-        </>
+        <div
+          key={tag}
+          className="relative flex items-center justify-center p-1.5 overflow-hidden transition-all duration-300 ease-in border rounded-full bg-muted border-white/80 bg-greyscale-50/8 border-greyscale-50/12 h-7 w-7"
+        >
+          {getIconFromKey(tag)}
+        </div>
       )
     })
 }
 
 function ProjectItem({ item }: { item: Project }) {
   return (
-    <Link to={`/projects/${item.name}/tasks`}>
+    <Link key={item._id} to={`/projects/${item.name}/tasks`}>
       <article className="rounded-2xl p-4 lg:p-6 cursor-pointer border group z-[1] duration-200 ease-in hover:border hover:border-opacity-80 hover:bg-white/10 relative w-full !pr-0 !pt-0 transition-all hover:scale-[0.998]">
         <div className="flex gap-5">
           {/* 头像 */}
@@ -72,15 +73,15 @@ function ProjectItem({ item }: { item: Project }) {
                   variant="link"
                   className="text-gray-50 !p-0 overflow-hidden text-2xl font-bold whitespace-nowrap text-ellipsis"
                 >
-                  <a
+                  <span
                     className="z-10"
-                    href={item.htmlUrl}
-                    onClick={(e) => e.stopPropagation()}
-                    target="_blank"
-                    rel="noreferrer"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      window.open(item.htmlUrl, '_blank')
+                    }}
                   >
                     {item.name}
-                  </a>
+                  </span>
                 </Button>
               </div>
               <div className="hidden gap-2 md:flex">

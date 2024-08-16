@@ -106,7 +106,8 @@ export default function TaskPage() {
           <SkeletonTasks />
         ) : tasks.length ? (
           tasks.map((item) => (
-            <TaskItem key={item.title} item={item} onClaim={handleClaim} onDisclaim={handleDisclaim} />
+            // TODO: key should not be htmlUrl; but title is not unique.
+            <TaskItem key={item.htmlUrl} item={item} onClaim={handleClaim} onDisclaim={handleDisclaim} />
           ))
         ) : (
           <EmptyTasks />
