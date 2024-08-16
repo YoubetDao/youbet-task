@@ -68,4 +68,12 @@ export const navItems: NavItem[] = [
     description: 'My Profile.',
     layout: 'dashboard',
   },
+  {
+    title: 'TaskDetail',
+    href: '/task-detail',
+    component: 'taskDetail',
+    description: 'task detail.',
+    layout: 'dashboard',
+    hideInMenu: true,
+  },
 ]

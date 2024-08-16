@@ -7,6 +7,7 @@ import ProfilePage from '@/pages/profile'
 import MyTask from '@/pages/mytask'
 import Tutorial from '@/pages/tutorial'
 import Tutorials from '@/pages/tutorials'
+import TaskDetailPage from '@/pages/task-detail'
 
 export const Pages = {
   dashboard: Dashboard,
@@ -18,4 +19,5 @@ export const Pages = {
   profile: ProfilePage,
   tutorial: Tutorial,
   tutorials: Tutorials,
+  taskDetail: TaskDetailPage,
 }
