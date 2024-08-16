@@ -6,6 +6,7 @@ import { Project } from '@/types'
 import { Link } from 'react-router-dom'
 import { SkeletonCard } from '@/components/skeleton-card'
 import http from '@/service/instance'
+import { Button } from '@/components/ui/button'
 
 function SkeletonList() {
   return (
@@ -38,8 +39,9 @@ const DEFAULT_HARDNESS = {
 
 function TutorialItem({ item }: { item: Project }) {
   if (!item.tutorial) return
+  const { githubId } = item
   return (
-    <Link to={`/tutorial/${item.name}`}>
+    <Link to={`/tutorial/${githubId}`}>
       <article className="rounded-2xl overflow-hidden cursor-pointer border group z-[1] duration-200 ease-in hover:border hover:border-opacity-80 hover:bg-white/10 relative w-full transition-all hover:scale-[0.998]">
         <div className="relative flex flex-col">
           <div className="absolute flex items-center justify-center p-1 rounded-full top-2 left-2 bg-muted">
@@ -52,8 +54,22 @@ function TutorialItem({ item }: { item: Project }) {
           <div className="p-4 overflow-hidden lg:p-6 ">
             {/* name */}
             <div className="flex items-center w-full gap-2">
-              <div className="flex-1 overflow-hidden text-xl font-bold whitespace-nowrap text-ellipsis">
-                {item.name}
+              <div>
+                <Button
+                  variant="link"
+                  className="flex-1 overflow-hidden text-xl font-bold whitespace-nowrap text-ellipsis px-0"
+                >
+                  <span
+                    className="z-10"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      window.open(item.htmlUrl, '_blank')
+                    }}
+                  >
+                    {item.name}
+                  </span>
+                </Button>
               </div>
             </div>
             {/* description */}

@@ -10,7 +10,7 @@ const MdView = ({ content }: IMarkdownRendererProps) => {
 
   return (
     <div className="flex flex-col-reverse w-full gap-10 xl:flex-row">
-      {MdRenderer && <MdRenderer className="max-w-[1024px]" />}
+      {MdRenderer && <MdRenderer className="flex-1 max-w-[1024px]" />}
       {TocSidebar && (
         <TocSidebar className="block xl:sticky top-0 overflow-y-auto h-full max-w-[312px] xl:border-l xl:border-muted pl-4" />
       )}

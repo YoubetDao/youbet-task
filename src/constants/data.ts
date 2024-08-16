@@ -54,11 +54,12 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'Tutorial',
-    href: '/tutorial',
+    href: '/tutorial/:githubId',
     icon: 'tutorial',
     component: 'tutorial',
     description: 'tutorial.',
     layout: 'dashboard',
+    hideInMenu: true,
   },
   {
     title: 'Profile',

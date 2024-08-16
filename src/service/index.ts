@@ -1,6 +1,5 @@
-import { Project, Task } from '@/types'
+import { Project, Task, FetchIssuesParams, Profile } from '@/types'
 import http from './instance'
-import { FetchIssuesParams, Profile, } from '@/types'
 
 const api = {
   fetchUserInfo: async (code: string) => {
@@ -55,6 +54,19 @@ const api = {
     } catch (error) {
       console.error('Error fetching leaderboard:', error)
       return null
+    }
+  },
+  fetchTutorialContent: async (githubId: string): Promise<string> => {
+    try {
+      const response = await http.get('/tutorial/' + githubId)
+
+      if (response.data) {
+        return response.data
+      }
+      return ''
+    } catch (error) {
+      console.error('Error fetching tutorial content:', error)
+      return ''
     }
   },
 }

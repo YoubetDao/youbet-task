@@ -46,6 +46,7 @@ export interface YoubetExtra {
 
 export interface Project {
   _id: number
+  githubId: number
   name: string
   htmlUrl: string
   description: string | null
