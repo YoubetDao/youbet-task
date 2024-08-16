@@ -290,7 +290,7 @@ export default function TaskDetailPage() {
 
   return (
     <div className="px-4 py-4 mx-auto max-w-7xl lg:px-12">
-      <div className="flex flex-row w-full gap-5 mt-5">
+      <div className="flex flex-col-reverse xl:flex-row w-full gap-5 mt-5">
         <article className="flex flex-col w-full gap-5">
           <header>
             <h1 className="text-4xl font-bold">{taskDetailItem.title}</h1>
