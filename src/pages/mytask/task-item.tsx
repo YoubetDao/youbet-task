@@ -16,9 +16,9 @@ const getRandomColor = () => _.sample(darkModeColors)
 export const TaskItem = ({ item }: { item: Task }) => {
   console.log(item)
   return (
-    <article className="rounded-2xl border group z-[1] duration-200 ease-in hover:border hover:border-opacity-80 hover:bg-white/10 relative w-full p-4 transition-all hover:scale-[0.998]">
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex flex-row items-center gap-3">
+    <article className="relative z-[1] hover:bg-white/10 p-4 border hover:border hover:border-opacity-80 rounded-2xl w-full transition-all duration-200 ease-in group hover:scale-[0.998]">
+      <div className="flex justify-between items-center gap-4">
+        <div className="flex flex-row items-center gap-3 w-full">
           {item.state === 'open' ? (
             <CircleDot className="w-6 h-6 text-green-600" />
           ) : (
@@ -27,22 +27,29 @@ export const TaskItem = ({ item }: { item: Task }) => {
           <Button
             asChild
             variant="link"
-            className="text-gray-50 !p-0 overflow-hidden text-2xl font-bold whitespace-nowrap text-ellipsis"
+            className="block !p-0 w-full font-bold text-2xl text-ellipsis text-gray-50 whitespace-nowrap overflow-hidden"
           >
-            <a href={item.htmlUrl} target="_blank" rel="noreferrer">
-              {item.title}
-            </a>
+            <span
+              className="z-10"
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                window.open(item.htmlUrl, '_blank')
+              }}
+            >
+              {`${item.title}dadsdasdsadsa`}
+            </span>
           </Button>
         </div>
       </div>
       <div className="flex-1">
-        <div className="flex flex-col justify-between h-full overflow-hidden rounded gap-2">
-          <div className="flex gap-4 flex-col">
-            <div className="mt-4 text-sm text-muted-foreground whitespace-nowrap text-ellipsis overflow-hidden">
+        <div className="flex flex-col justify-between gap-2 rounded h-full overflow-hidden">
+          <div className="flex flex-col gap-4">
+            <div className="mt-4 text-ellipsis text-muted-foreground text-sm whitespace-nowrap overflow-hidden">
               {item.body || 'No description...'}
             </div>
           </div>
-          <div className="flex justify-between mt-2 items-center">
+          <div className="flex justify-between items-center mt-2">
             <div className="flex flex-row items-center gap-4">
               <Avatar className="w-4 h-4">
                 <AvatarImage
@@ -56,7 +63,7 @@ export const TaskItem = ({ item }: { item: Task }) => {
               <div className="flex flex-row gap-2 pr-4">
                 {item.labels.length > 0 && (
                   <span
-                    className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    className="inline-flex items-center px-2.5 py-0.5 border rounded-full focus:ring-2 focus:ring-ring focus:ring-offset-2 font-semibold text-xs transition-colors focus:outline-none"
                     style={{ backgroundColor: getRandomColor() }}
                   >
                     {item.labels[0]}
