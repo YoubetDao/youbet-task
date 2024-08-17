@@ -71,7 +71,7 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'TaskDetail',
-    href: '/task-detail',
+    href: '/task/:githubId',
     component: 'taskDetail',
     description: 'task detail.',
     layout: 'dashboard',

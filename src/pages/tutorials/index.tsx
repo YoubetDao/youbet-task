@@ -73,9 +73,7 @@ function TutorialItem({ item }: { item: Project }) {
               </div>
             </div>
             {/* description */}
-            <div className="mt-2 text-sm text-muted-foreground">
-              {item.description || 'Decentralized social built with Nostr and powered by Starknet account abstraction.'}
-            </div>
+            <div className="mt-2 text-sm text-muted-foreground">{item.description || 'No description...'}</div>
             {/* tags */}
             <div className="flex gap-4 mt-5 text-xs ">
               {/* 简单/中等/困难 */}

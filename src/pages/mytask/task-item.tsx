@@ -39,7 +39,7 @@ export const TaskItem = ({ item }: { item: Task }) => {
         <div className="flex flex-col justify-between h-full overflow-hidden rounded gap-2">
           <div className="flex gap-4 flex-col">
             <div className="mt-4 text-sm text-muted-foreground whitespace-nowrap text-ellipsis overflow-hidden">
-              {item.body || 'Decentralized social built with Nostr and powered by Starknet account abstraction.'}
+              {item.body || 'No description...'}
             </div>
           </div>
           <div className="flex justify-between mt-2 items-center">

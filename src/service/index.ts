@@ -16,12 +16,25 @@ const api = {
       console.error('Error fetching user info:', error)
     }
   },
+  fetchTask: async (githubId: string): Promise<Task | null> => {
+    try {
+      const response = await http.get(`/task/${githubId}`)
+
+      if (response.data) {
+        return response.data
+      }
+
+      return null
+    } catch (error) {
+      console.error('Error fetching task info:', error)
+      return null
+    }
+  },
   fetchTasks: async (params: FetchIssuesParams): Promise<Task[] | null> => {
     try {
       const response = await http.get('/tasks', {
         params,
       })
-      console.log(response.data)
 
       if (response.data) {
         return response.data

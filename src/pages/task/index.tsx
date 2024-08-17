@@ -83,7 +83,6 @@ export default function TaskPage() {
         project,
         task: issueNumber,
       })
-      console.log(res)
     } catch (e) {
       console.log(e)
     }
@@ -98,7 +97,6 @@ export default function TaskPage() {
         project,
         task: issueNumber,
       })
-      console.log(res)
     } catch (e) {
       console.log(e)
     }
@@ -139,7 +137,8 @@ export default function TaskPage() {
             <SkeletonTasks />
           ) : tasks.length ? (
             tasks.map((item) => (
-              <TaskItem key={item._id} item={item} onClaim={handleClaim} onDisclaim={handleDisclaim} />
+              // TODO: item.title will be duplicated
+              <TaskItem key={item.htmlUrl} item={item} onClaim={handleClaim} onDisclaim={handleDisclaim} />
             ))
           ) : (
             <EmptyTasks />

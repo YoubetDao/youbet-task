@@ -8,26 +8,39 @@ import { usernameAtom } from '@/store'
 import { useAtom } from 'jotai'
 import { CircleDollarSign, FilePenLine } from 'lucide-react'
 import UtterancesComments from './utterances-comments'
-interface User {
-  login: string
-  htmlUrl: string
-  avatarUrl: string
+import { Task, User } from '@/types'
+import { useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import api from '@/service'
+import { SkeletonCard } from '@/components/skeleton-card'
+import ErrorPage from '../error'
+import http from '@/service/instance'
+
+function Skeleton() {
+  return (
+    <>
+      <SkeletonCard />
+      <SkeletonCard />
+      <SkeletonCard />
+      <SkeletonCard />
+    </>
+  )
 }
 
 type TaskDetailItem = {
   id: number
   title: string
   description: string
-  initiatedAt: string
+  createdAt: string
   updatedAt: string
   deadline: string
   assignee: User
-  participants: User[]
+  assignees: User[]
   reporter: User
   labels: { name: string; color: string }[]
   comments: number
   priority: 'P0' | 'P1' | 'P2'
-  state: 'Open' | 'In Progress' | 'Closed'
+  state: string
   level: 'Easy' | 'Medium' | 'Hard' | 'Legendary'
   relative: string[]
   htmlUrl: string
@@ -56,7 +69,7 @@ This document provides an overview of the efforts required to enhance the curren
 
   \`Note: Ensure regular updates and version control\`
   `,
-  initiatedAt: '2023-10-01T10:00:00Z',
+  createdAt: '2023-10-01T10:00:00Z',
   deadline: '2023-10-15T17:00:00Z',
   updatedAt: '2023-10-05T17:00:00Z',
   rewards: 10,
@@ -70,7 +83,7 @@ This document provides an overview of the efforts required to enhance the curren
     htmlUrl: 'https://github.com/Amateur0x1',
     avatarUrl: 'https://avatars.githubusercontent.com/u/157032610?v=4',
   },
-  participants: [
+  assignees: [
     {
       login: 'Amateur0x1',
       htmlUrl: 'https://github.com/Amateur0x1',
@@ -116,7 +129,7 @@ const renderLevel = (level: TaskDetailItem['level']) => {
         </Badge>
       )
     default:
-      return null // 或者返回一个默认的组件
+      return null
   }
 }
 
@@ -141,27 +154,59 @@ const renderPriority = (priority: TaskDetailItem['priority']) => {
         </Badge>
       )
     default:
-      return null // 可选：处理未知优先级
+      return null
   }
 }
 
-function QuestLog() {
+export interface QuestLogProps {
+  task: Task
+  fetchTask: () => void
+}
+
+function QuestLog({ task, fetchTask }: QuestLogProps) {
   const [username] = useAtom(usernameAtom)
-  const handleClaim = () => {
-    // Todo
+  const handleClaim = async () => {
+    const issueNumber = task.htmlUrl.split('/').pop()
+    const org = task.htmlUrl.split('/')[3]
+    const project = task.htmlUrl.split('/')[4]
+    try {
+      // TODO: the claim logic here will cause some exception. I don't know what happened.
+      const res = await http.post('/claim-task', {
+        org,
+        project,
+        task: issueNumber,
+      })
+    } catch (e) {
+      console.log(e)
+    }
+    fetchTask()
   }
 
-  const handleDisclaim = () => {
-    // Todo
+  const handleDisclaim = async () => {
+    const issueNumber = task.htmlUrl.split('/').pop()
+    const org = task.htmlUrl.split('/')[3]
+    const project = task.htmlUrl.split('/')[4]
+    try {
+      // TODO: the claim logic here will cause some exception. I don't know what happened.
+      const res = await http.post('/disclaim-task', {
+        org,
+        project,
+        task: issueNumber,
+      })
+    } catch (e) {
+      console.log(e)
+    }
+    fetchTask()
   }
+
   return (
     <div className="flex-shrink-0 basis-96 flex flex-col">
       <div className="items-center mt-2">
-        {taskDetailItem.state === 'Closed' ? (
+        {task.state === 'Closed' ? (
           <Button disabled className="w-24 border border-muted text-white hover:border-opacity-80 hover:bg-white/10">
             Closed
           </Button>
-        ) : !taskDetailItem.assignee ? (
+        ) : !task.assignee || !task.assignee.login ? (
           <Button
             onClick={handleClaim}
             variant="emphasis"
@@ -169,7 +214,7 @@ function QuestLog() {
           >
             Claim
           </Button>
-        ) : taskDetailItem.assignee.login === username ? (
+        ) : task.assignee.login === username ? (
           <Button
             onClick={handleDisclaim}
             variant="emphasis"
@@ -190,25 +235,16 @@ function QuestLog() {
         <CardContent className="flex flex-col gap-y-4 font-serif mt-2">
           <div className="flex flex-row items-center justify-start pt-2 ">
             <Label className="w-40">Assignee</Label>
-            <div className="flex flex-row items-center justify-between gap-2">
-              <Avatar className="h-7 w-7">
-                <AvatarImage src={taskDetailItem.assignee.avatarUrl} alt="Avatar" />
-                <AvatarFallback>{taskDetailItem.assignee.login.charAt(0)}</AvatarFallback>
-              </Avatar>
-              {taskDetailItem.assignee.login}
-            </div>
-          </div>
-          {/* <div className="flex flex-row items-center justify-between pt-2 ">
-            <Label className="w-40">Candidates</Label>
-            <div className="flex flex-row items-center justify-between gap-2">
-              {taskDetailItem.candidates.map((candidate, index) => (
-                <Avatar key={index} className="h-7 w-7">
-                  <AvatarImage src={candidate.avatarUrl} alt="Avatar" />
-                  <AvatarFallback>{candidate.login.charAt(0)}</AvatarFallback>
+            {task.assignee && Object.keys(task.assignee).length > 0 && (
+              <div className="flex flex-row items-center justify-between gap-2">
+                <Avatar className="h-7 w-7">
+                  <AvatarImage src={task.assignee.avatarUrl} alt="Avatar" />
+                  <AvatarFallback>{task.assignee.login.charAt(0)}</AvatarFallback>
                 </Avatar>
-              ))}
-            </div>
-          </div> */}
+                {task.assignee.login}
+              </div>
+            )}
+          </div>
           <div className="flex flex-row items-center justify-start pt-2 ">
             <Label className="w-40">Rewards</Label>
             <span className="flex flex-row items-center gap-1">
@@ -216,13 +252,13 @@ function QuestLog() {
             </span>
           </div>
           <div className="flex flex-row items-center justify-start pt-2 ">
-            <Label className="w-40">Initiated At</Label>
-            <span className="flex flex-row items-center gap-1">{taskDetailItem.initiatedAt}</span>
+            <Label className="w-40">Created At</Label>
+            <span className="flex flex-row items-center gap-1">{new Date(task.createdAt).toLocaleDateString()}</span>
           </div>
-          <div className="flex flex-row items-center justify-start pt-2 ">
+          {/* <div className="flex flex-row items-center justify-start pt-2 ">
             <Label className="w-40">Deadline</Label>
             <span className="flex flex-row items-center gap-1">{taskDetailItem.deadline}</span>
-          </div>
+          </div> */}
           <div className="flex flex-row items-center justify-start pt-2 ">
             <Label className="w-40">Level</Label>
             {renderLevel(taskDetailItem.level)}
@@ -258,20 +294,22 @@ function QuestLog() {
               <a href={taskDetailItem.development}>branch</a>
             </Button>
           </div> */}
-          <div className="flex flex-row items-center justify-start pt-2 ">
+          {/* <div className="flex flex-row items-center justify-start pt-2 ">
             <Label className="w-40">Reporter</Label>
-            <div className="flex flex-row items-center justify-between gap-2">
-              <Avatar className="h-7 w-7">
-                <AvatarImage src={taskDetailItem.assignee.avatarUrl} alt="Avatar" />
-                <AvatarFallback>{taskDetailItem.assignee.login.charAt(0)}</AvatarFallback>
-              </Avatar>
-              {taskDetailItem.assignee.login}
-            </div>
-          </div>
+            {task.assignee && (
+              <div className="flex flex-row items-center justify-between gap-2">
+                <Avatar className="h-7 w-7">
+                  <AvatarImage src={task.assignee.avatarUrl} alt="Avatar" />
+                  <AvatarFallback>{task.assignee.login.charAt(0)}</AvatarFallback>
+                </Avatar>
+                {task.assignee.login}
+              </div>
+            )}
+          </div> */}
           <div className="flex flex-row items-center justify-start pt-2 ">
-            <Label className="w-40">Participants</Label>
+            <Label className="w-40">assignees</Label>
             <div className="flex flex-row items-center justify-between gap-2">
-              {taskDetailItem.participants.map((participant, index) => (
+              {task.assignees.map((participant, index) => (
                 <Avatar key={index} className="h-7 w-7">
                   <AvatarImage src={participant.avatarUrl} alt="Avatar" />
                   <AvatarFallback>{participant.login.charAt(0)}</AvatarFallback>
@@ -286,18 +324,46 @@ function QuestLog() {
 }
 
 export default function TaskDetailPage() {
-  const { MdRenderer } = useMd(taskDetailItem.description)
+  const { githubId } = useParams()
+  const [task, setTask] = useState<Task | null>(null)
+  const [loading, setLoading] = useState(true)
+  const { MdRenderer } = useMd(task?.body || '')
+  const fetchTask = async () => {
+    if (githubId) {
+      try {
+        setLoading(true)
+        const task = await api.fetchTask(githubId)
+        setTask(task)
+        setLoading(false)
+      } catch (error) {
+        console.error('Error fetching content:', error)
+      }
+    }
+  }
+
+  useEffect(() => {
+    fetchTask()
+  }, [githubId])
+
+  if (loading) {
+    return <Skeleton />
+  }
+
+  if (task == null) {
+    return <ErrorPage />
+  }
 
   return (
     <div className="px-4 py-4 mx-auto max-w-7xl lg:px-12">
       <div className="flex flex-col-reverse xl:flex-row w-full gap-5 mt-5">
         <article className="flex flex-col w-full gap-5">
           <header>
-            <h1 className="text-4xl font-bold">{taskDetailItem.title}</h1>
+            <h1 className="text-4xl font-bold">{task.title}</h1>
           </header>
           <div className="flex flex-row gap-3">
-            {taskDetailItem.labels.length > 0 &&
-              taskDetailItem.labels.map((label, index) => (
+            {task.labelsWithColors &&
+              task.labelsWithColors.length > 0 &&
+              task.labelsWithColors.map((label, index) => (
                 <Badge key={index} variant="outline" style={{ backgroundColor: label.color }}>
                   {label.name}
                 </Badge>
@@ -309,45 +375,20 @@ export default function TaskDetailPage() {
               <div className="flex flex-row w-full justify-between items-center">
                 <Button variant="link" className="gap-3 text-blue-500">
                   <FilePenLine className="w-5 h-5" />
-                  <a href={taskDetailItem.htmlUrl}>Edit it in Github</a>
+                  <a href={task.htmlUrl}>Edit it in Github</a>
                 </Button>
-                <span className="text-l text-slate-500">Updated At: {taskDetailItem.updatedAt}</span>
+                <span className="text-l text-slate-500">Updated At: {task.updatedAt}</span>
               </div>
 
               <div className="w-full">
-                <UtterancesComments />
+                <UtterancesComments task={task} />
               </div>
             </div>
           </div>
         </article>
 
-        <QuestLog />
+        <QuestLog fetchTask={fetchTask} task={task} />
       </div>
     </div>
   )
 }
-
-// <Button variant="emphasis">
-//                 {taskDetailItem.isPinned ? (
-//                   <div className="flex flex-row gap-3 items-center text-l">
-//                     <Pin />
-//                     <Label className="w-40">Pin</Label>
-//                   </div>
-//                 ) : (
-//                   <div className="flex flex-row gap-3 items-center text-xl">
-//                     <PinOff />
-//                     <Label className="w-40">Unpin</Label>
-//                   </div>
-//                 )}
-//               </Button>
-//               <Button variant="emphasis" className="gap-3">
-//                 <Eye />
-//                 Watching
-//                 <span className="bg-slate-600 rounded-full p-1">{taskDetailItem.watchers}</span>
-//               </Button>
-//               <Button variant="emphasis" className="gap-3">
-//                 <ThumbsUp />
-//                 Supporters
-//                 <span className="bg-slate-600 rounded-full p-1">{taskDetailItem.supporters}</span>
-//               </Button>
-//               <div></div>

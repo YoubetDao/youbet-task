@@ -95,10 +95,12 @@ export interface FetchIssuesParams {
 
 export interface Task {
   htmlUrl: string
+  githubId: string
   title: string
   assignee?: User
   state: string
   labels: string[]
+  labelsWithColors?: { name: string; color: string }[]
   createdAt: string
   updatedAt: string
   body: string

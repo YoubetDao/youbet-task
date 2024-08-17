@@ -1,14 +1,22 @@
+import { Task } from '@/types'
 import React, { useEffect, useRef } from 'react'
 
-const UtterancesComments = () => {
+const UtterancesComments = ({ task }: { task: Task }) => {
   const containerRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
+    if (task.htmlUrl === undefined) {
+      return
+    }
+
+    const repo = task.htmlUrl.split('/')[3] + '/' + task.htmlUrl.split('/')[4]
+    const issueNumber = task.htmlUrl.split('/')[6]
+
     const script = document.createElement('script')
 
     script.src = 'https://utteranc.es/client.js'
-    script.setAttribute('repo', 'YoubetDao/youbet-test-repo')
-    script.setAttribute('issue-number', '15')
+    script.setAttribute('repo', repo)
+    script.setAttribute('issue-number', issueNumber)
     script.setAttribute('theme', 'github-dark')
     script.crossOrigin = 'anonymous'
     script.defer = true
@@ -17,7 +25,7 @@ const UtterancesComments = () => {
     if (containerRef.current) {
       containerRef.current.appendChild(script)
     }
-  }, [])
+  }, [task])
 
   return <div ref={containerRef} />
 }
