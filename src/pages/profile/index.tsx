@@ -144,7 +144,7 @@ export default function ProfilePage() {
           {/* GitHub 贡献图 Card */}
           <Card className="p-4 rounded-lg shadow-lg">
             <h3 className="mb-2 text-lg font-semibold text-white">Contributions</h3>
-            <GitHubCalendar username="wfnuser" />
+            <GitHubCalendar username={profile?.username || ''} />
           </Card>
 
           {/* 活动流 Card */}
