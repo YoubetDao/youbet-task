@@ -101,20 +101,22 @@ export const TaskItem = ({
                     Closed
                   </Button>
                 ) : !item.assignees.length ? (
-                  <Button
-                    onClick={handleClaim}
-                    className="w-24 text-white border border-white/80 bg-greyscale-50/8 hover:border-opacity-80 hover:bg-white/10"
-                  >
-                    Claim
-                  </Button>
-                ) : item.assignees.some((assignee) => assignee.login === username) ? (
-                  <Button
-                    onClick={handleDisclaim}
-                    className="w-24 text-white border border-white/80 bg-greyscale-50/8 hover:border-opacity-80 hover:bg-white/10"
-                  >
-                    Disclaim
-                  </Button>
+                  <></>
+                ) : // <Button
+                //   onClick={handleClaim}
+                //   className="w-24 text-white border border-white/80 bg-greyscale-50/8 hover:border-opacity-80 hover:bg-white/10"
+                // >
+                //   Claim
+                // </Button>
+                item.assignees.some((assignee) => assignee.login === username) ? (
+                  <></>
                 ) : (
+                  // <Button
+                  //   onClick={handleDisclaim}
+                  //   className="w-24 text-white border border-white/80 bg-greyscale-50/8 hover:border-opacity-80 hover:bg-white/10"
+                  // >
+                  //   Disclaim
+                  // </Button>
                   <Button
                     disabled
                     className="w-24 text-white border border-white/80 bg-greyscale-50/8 hover:border-opacity-80 hover:bg-white/10"
