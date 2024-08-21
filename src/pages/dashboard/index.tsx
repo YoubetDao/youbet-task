@@ -82,7 +82,7 @@ export default function Dashboard() {
 
         <div className="grid w-full grid-cols-4 gap-4">
           <div className="col-span-4 xl:col-span-1">
-            <TaskCompletionLeaderboard leaderboard={leaderboard} />
+            <TaskCompletionLeaderboard leaderboard={leaderboard.slice(0, 5)} />
           </div>
           <div className="col-span-4 xl:col-span-3">
             <ProjectRecommendations projects={projects.slice(0, 5)} />
