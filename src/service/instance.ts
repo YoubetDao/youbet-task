@@ -53,10 +53,17 @@ instance.interceptors.response.use(
       } else if (status === 403) {
         toast({
           title: 'Forbidden',
-          description: "Your account doesn't have permission to access this resource",
+          description: 'Permission denied. Please contact admin.',
         })
       } else if (status === 500) {
         // Internal Server Error: return the error response
+        toast({
+          title: 'Internal Server Error:',
+          description:
+            typeof error.response.data.message === 'string'
+              ? error.response.data.message
+              : JSON.stringify(error.response.data.message),
+        })
         return Promise.reject(error.response)
       }
     }
