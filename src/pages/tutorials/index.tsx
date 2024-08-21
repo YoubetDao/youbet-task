@@ -24,15 +24,15 @@ function SkeletonList() {
 // TODO: move color to some global config
 const DEFAULT_HARDNESS = {
   easy: {
-    name: '简单',
+    name: 'Easy',
     color: '#00C48C',
   },
   medium: {
-    name: '中等',
+    name: 'Medium',
     color: '#FFB000',
   },
   hard: {
-    name: '困难',
+    name: 'Hard',
     color: '#FF4D4F',
   },
 }
