@@ -1,6 +1,7 @@
 import Sidebar from '@/components/layout/Sidebar'
 import Title from '@/components/layout/Title'
 import Header from '@/components/layout/Header'
+import { Toaster } from '@/components/ui/toaster'
 import { Meteors } from '@/components/ui/meteors'
 
 export const description =
@@ -34,6 +35,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
           </div>
         </main>
+        <Toaster />
       </div>
     </div>
   )

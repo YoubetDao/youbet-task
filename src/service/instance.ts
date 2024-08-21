@@ -1,6 +1,7 @@
 import axios from 'axios'
 import qs from 'qs'
 import { store, tokenAtom, usernameAtom } from '@/store'
+import { toast } from '@/components/ui/use-toast'
 
 const instance = axios.create({
   baseURL: '/api',
@@ -50,13 +51,10 @@ instance.interceptors.response.use(
         // history.replace('/login') // Redirect to login page
         window.location.href = '/login'
       } else if (status === 403) {
-        // Forbidden: clear token and redirect to login
-        // Cookies.remove('token') // Remove token from cookie
-        // Cookies.remove('username')
-        store.set(tokenAtom, null)
-        store.set(usernameAtom, null)
-        // history.replace('/login') // Redirect to login page
-        window.location.href = '/login'
+        toast({
+          title: 'Forbidden',
+          description: "Your account doesn't have permission to access this resource",
+        })
       } else if (status === 500) {
         // Internal Server Error: return the error response
         return Promise.reject(error.response)
