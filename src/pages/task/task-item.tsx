@@ -5,7 +5,6 @@ import { useAtom } from 'jotai'
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { formatDistanceToNow } from 'date-fns'
 import { CircleCheck, CircleDot, Clock } from 'lucide-react'
-import _ from 'lodash'
 import { Link } from 'react-router-dom'
 
 const darkModeColors = [
@@ -14,7 +13,10 @@ const darkModeColors = [
   '#F09232', // 亮粉色
 ]
 
-const getRandomColor = () => _.sample(darkModeColors)
+const getRandomColor = (label: string) => {
+  const index = label.charCodeAt(0) % darkModeColors.length
+  return darkModeColors[index]
+}
 
 export const TaskItem = ({
   item,
@@ -47,9 +49,15 @@ export const TaskItem = ({
               )}
             </div>
             <Button asChild variant="link" className="px-0 !line-clamp-2 !p-0 w-full h-16 font-bold text-2xl break-all">
-              <a href={item.htmlUrl} target="_blank" rel="noreferrer">
+              <span
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  window.open(item.htmlUrl, '_blank')
+                }}
+              >
                 {item.title}
-              </a>
+              </span>
             </Button>
           </div>
         </div>
@@ -75,7 +83,7 @@ export const TaskItem = ({
                   {item.labels.length > 0 && (
                     <span
                       className="inline-flex items-center px-2.5 py-0.5 border rounded-full focus:ring-2 focus:ring-ring focus:ring-offset-2 font-semibold text-xs transition-colors focus:outline-none"
-                      style={{ backgroundColor: getRandomColor() }}
+                      style={{ backgroundColor: getRandomColor(item.labels[0]) }}
                     >
                       {item.labels[0]}
                     </span>
