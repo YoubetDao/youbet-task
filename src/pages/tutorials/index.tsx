@@ -1,5 +1,5 @@
 import { Input } from '@/components/ui/input'
-import { LucideSearch, LucideBookText, LucideClock8, LucideEye } from 'lucide-react'
+import { LucideSearch, LucideBookText, LucideClock8, LucideEye, Heart } from 'lucide-react'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { useState, useEffect } from 'react'
 import { Project } from '@/types'
@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 
 function SkeletonList() {
   return (
-    <div className="flex flex-col w-full gap-4">
+    <div className="flex flex-col gap-4 w-full">
       <SkeletonCard />
       <SkeletonCard />
       <SkeletonCard />
@@ -42,44 +42,38 @@ function TutorialItem({ item }: { item: Project }) {
   const { githubId } = item
   return (
     <Link to={`/tutorial/${githubId}`}>
-      <article className="rounded-2xl overflow-hidden cursor-pointer border group z-[1] duration-200 ease-in hover:border hover:border-opacity-80 hover:bg-white/10 relative w-full transition-all hover:scale-[0.998]">
+      <article className="relative z-[1] hover:bg-white/10 border hover:border hover:border-opacity-80 rounded-2xl w-full transition-all duration-200 cursor-pointer overflow-hidden ease-in group hover:scale-[0.998]">
         <div className="relative flex flex-col">
-          <div className="absolute flex items-center justify-center p-1 rounded-full top-2 left-2 bg-muted">
+          <div className="top-2 left-2 absolute flex justify-center items-center bg-muted p-1 rounded-full">
             <LucideBookText className="w-4 h-4" />
           </div>
           {/* box */}
           <div className="h-48 overflow-hidden">
-            <img src={item.owner.avatarUrl} alt={item.owner.login} className="object-cover w-full h-full" />
+            <img src={item.owner.avatarUrl} alt={item.owner.login} className="w-full h-full object-cover" />
           </div>
-          <div className="p-4 overflow-hidden lg:p-6 ">
+          <div className="p-4 lg:p-6 h-60">
             {/* name */}
-            <div className="flex items-center w-full gap-2">
-              <div>
-                <Button
-                  variant="link"
-                  className="flex-1 px-0 overflow-hidden text-xl font-bold whitespace-nowrap text-ellipsis"
-                >
-                  <span
-                    className="z-10"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      window.open(item.htmlUrl, '_blank')
-                    }}
-                  >
-                    {item.name}
-                  </span>
-                </Button>
-              </div>
-            </div>
+            <Button
+              asChild
+              variant="link"
+              className="px-0 !line-clamp-2 h-16 font-bold text-xl break-all"
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                window.open(item.htmlUrl, '_blank')
+              }}
+            >
+              <p>{item.name}</p>
+            </Button>
             {/* description */}
-            <div className="mt-2 text-sm text-muted-foreground">{item.description || 'No description...'}</div>
-            {/* tags */}
-            <div className="flex gap-4 mt-5 text-xs ">
+            <p className="mt-1 line-clamp-2 h-10 text-muted-foreground text-sm break-all">
+              {item.description || 'No description...'}
+            </p>
+            <div className="flex gap-4 mt-5 text-xs">
               {/* 简单/中等/困难 */}
               <div className="flex items-center gap-1 px-2">
                 <div
-                  className="w-2 h-2 rounded-full"
+                  className="rounded-full w-2 h-2"
                   style={{
                     backgroundColor: DEFAULT_HARDNESS[item.tutorial?.level as keyof typeof DEFAULT_HARDNESS].color,
                   }}
@@ -97,15 +91,20 @@ function TutorialItem({ item }: { item: Project }) {
               </div>
             </div>
             {/* categories */}
-            <div className="flex gap-2 pt-3 mt-3 text-xs border-t border-[#555]/20">
-              {item.tutorial.categories.map(
-                (category) =>
-                  category && (
-                    <div key={category} className="flex items-center justify-center px-2 border rounded-lg h-7">
-                      {category}
-                    </div>
-                  ),
-              )}
+            <div className="flex flex-row justify-between border-muted mt-3 pt-3 border-t h-12">
+              <div className="flex gap-2 text-xs">
+                {item.tutorial.categories.map(
+                  (category) =>
+                    category && (
+                      <div key={category} className="flex justify-center items-center px-2 border rounded-lg h-7">
+                        {category}
+                      </div>
+                    ),
+                )}
+              </div>
+              <Button variant="secondary" className="border-muted bg-black border h-7">
+                <Heart color="pink" />
+              </Button>
             </div>
           </div>
         </div>
@@ -147,9 +146,9 @@ function TutorialList({ categories }: { categories: string[] }) {
 
   if (loading) return <SkeletonList />
   return (
-    <div className="flex flex-col w-full gap-4 pt-4 overflow-hidden">
+    <div className="flex flex-col gap-4 pt-4 w-full overflow-hidden">
       <div>Tutorials({tutorials.length})</div>
-      <div className="grid flex-col w-full grid-cols-1 gap-4 lg:gap-6 lg:grid-cols-2 xl:grid-cols-3">
+      <div className="flex-col gap-4 lg:gap-6 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 w-full">
         {tutorials.map((item) => (
           <TutorialItem key={item._id} item={item} />
         ))}
@@ -181,12 +180,12 @@ export default function Tutorials() {
   }
 
   return (
-    <div className="px-4 py-4 mx-auto max-w-7xl lg:px-12">
-      <div className="flex flex-col w-full gap-2">
+    <div className="mx-auto px-4 lg:px-12 py-4 max-w-7xl">
+      <div className="flex flex-col gap-2 w-full">
         <div className="space-y-5">
           <div className="relative">
-            <Input placeholder="Search tutorial title or description" className="pl-8 bg-background/80" />
-            <LucideSearch className="absolute w-4 h-4 -translate-y-1/2 top-1/2 left-2" />
+            <Input placeholder="Search tutorial title or description" className="bg-background/80 pl-8" />
+            <LucideSearch className="top-1/2 left-2 absolute w-4 h-4 -translate-y-1/2" />
           </div>
           <div className="flex space-x-2">
             <ToggleGroup size="sm" type="single" value={all} onValueChange={handleSelectAll} className="items-start">
@@ -201,7 +200,7 @@ export default function Tutorials() {
             </ToggleGroup>
           </div>
         </div>
-        <div className="flex flex-col gap-2 lg:flex-row">
+        <div className="flex lg:flex-row flex-col gap-2">
           <TutorialList categories={all ? selectedCategories.concat([all]) : selectedCategories} />
         </div>
       </div>

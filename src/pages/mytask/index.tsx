@@ -1,7 +1,7 @@
 import { Task } from '@/types'
 import { useEffect, useState } from 'react'
 import { SkeletonCard } from '@/components/skeleton-card'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import http from '@/service/instance'
 import { usernameAtom } from '@/store'
 import { useAtom } from 'jotai'
@@ -61,7 +61,11 @@ export default function MyTask() {
           <SkeletonTasks />
         ) : tasks.length ? (
           // TODO: key should not be htmlUrl; but title is not unique.
-          tasks.map((item) => <TaskItem key={item.htmlUrl} item={item} />)
+          tasks.map((item, id) => (
+            <Link key={id} to={`/task/${item.githubId}`}>
+              <TaskItem item={item} />
+            </Link>
+          ))
         ) : (
           <EmptyTasks />
         )}
