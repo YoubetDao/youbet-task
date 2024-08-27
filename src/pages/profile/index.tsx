@@ -123,7 +123,7 @@ export default function ProfilePage() {
                   )}
 
                   <a
-                    href={`https://sepolia.scrollscan.dev/address/${linkedAddress}`}
+                    href={`https://opencampus-codex.blockscout.com/address/${linkedAddress}`}
                     className="text-gray-400 hover:text-gray-500"
                   >
                     <Wallet size={24} />
