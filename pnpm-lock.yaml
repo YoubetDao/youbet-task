@@ -165,8 +165,8 @@ importers:
         specifier: ^2.10.10
         version: 2.12.2(@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react-native@0.74.4(@babel/core@7.25.2)(@babel/preset-env@7.25.3(@babel/core@7.25.2))(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1))(@types/react@18.3.3)(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react-native@0.74.4(@babel/core@7.25.2)(@babel/preset-env@7.25.3(@babel/core@7.25.2))(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@3.29.4)(typescript@5.5.4)(utf-8-validate@5.0.10)(viem@2.17.11(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
       youbet-sdk:
-        specifier: ^0.0.7
-        version: 0.0.7(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+        specifier: ^0.0.10
+        version: 0.0.10(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       zod:
         specifier: ^3.23.8
         version: 3.23.8
@@ -7206,8 +7206,8 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
-  youbet-sdk@0.0.7:
-    resolution: {integrity: sha512-JCGDWKOF3I0lv3ArEYoFCdtYeLkQiXUmDR3LHHzXNoKa6a9P3PrtJVAUg+V3su17dYRHiG66RkJ4XM8mNn5Lxw==}
+  youbet-sdk@0.0.10:
+    resolution: {integrity: sha512-glQUpMijYhyfhKWK41/VvgLCFANC6/Tz48LrR6bOvLM3+27S4jQ/kVObM5HI0WtBJT9jB4TeBoVPdHFpPrsiZA==}
 
   zod@3.23.8:
     resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
@@ -9701,7 +9701,7 @@ snapshots:
 
   '@scure/bip32@1.4.0':
     dependencies:
-      '@noble/curves': 1.4.0
+      '@noble/curves': 1.4.2
       '@noble/hashes': 1.4.0
       '@scure/base': 1.1.7
 
@@ -15551,7 +15551,7 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
-  youbet-sdk@0.0.7(bufferutil@4.0.8)(utf-8-validate@5.0.10):
+  youbet-sdk@0.0.10(bufferutil@4.0.8)(utf-8-validate@5.0.10):
     dependencies:
       ethers: 6.13.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
