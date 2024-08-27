@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Github, Twitter, Wallet } from 'lucide-react'
 
 import { Profile } from '@/types'
+import { Button } from '@/components/ui/button'
 
 const sdk = new SDK({
   networkType: NetworkType.Testnet, // or NetworkType.Mainnet
@@ -31,10 +32,20 @@ function SkeletonTasks() {
 export default function ProfilePage() {
   const [linkedAddress, setLinkedAddress] = useState('')
   const [userPoints, setUserPoints] = useState('')
+  const [totalRewards, setTotalRewards] = useState(0)
+  const [claimedRewards, setClaimedRewards] = useState(0)
   const [loading, setLoading] = useState(true)
   const [username] = useAtom(usernameAtom)
   // use state as empty Profile
   const [profile, setProfile] = useState<Profile>()
+
+  const fetchRewards = async () => {
+    const totalRewards = await sdk.client.getTotalRewards(linkedAddress)
+    setTotalRewards(Number(totalRewards) / 10 ** 18)
+
+    const claimedRewards = await sdk.client.getClaimedRewards(linkedAddress)
+    setClaimedRewards(Number(claimedRewards) / 10 ** 18)
+  }
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -48,6 +59,12 @@ export default function ProfilePage() {
         if (linkedAddress !== '0x0000000000000000000000000000000000000000') {
           const points = await sdk.client.getUserPoints(linkedAddress)
           setUserPoints(points.toString())
+
+          const totalRewards = await sdk.client.getTotalRewards(linkedAddress)
+          setTotalRewards(Number(totalRewards) / 10 ** 18)
+
+          const claimedRewards = await sdk.client.getClaimedRewards(linkedAddress)
+          setClaimedRewards(Number(claimedRewards) / 10 ** 18)
         }
 
         const myinfo = (await http.get<Profile>(`/my-info`)).data
@@ -130,6 +147,26 @@ export default function ProfilePage() {
           <Card className="p-4 rounded-lg shadow-lg">
             <h3 className="text-lg font-semibold text-white">Points</h3>
             <p className="mb-2 font-bold text-gray-400 text-l">{userPoints}</p>
+            <h3 className="text-lg font-semibold text-white">Rewards</h3>
+            <p className="mb-2 font-bold text-gray-400 text-l">{totalRewards.toFixed(5)} EDU</p>
+            <Button
+              asChild
+              variant="link"
+              className="text-gray-50 !p-0 overflow-hidden text-lg font-bold whitespace-nowrap text-ellipsis"
+            >
+              <span
+                className="z-10"
+                onClick={async (e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  await sdk.contract.claimReward()
+                  fetchRewards()
+                }}
+              >
+                To Claim
+              </span>
+            </Button>
+            <p className="mb-2 font-bold text-gray-400 text-l">{(totalRewards - claimedRewards).toFixed(5)} EDU</p>
             <h3 className="text-lg font-semibold text-white">Skills</h3>
             <div className="flex flex-wrap">
               <span className="px-3 py-1 m-1 text-xs text-white bg-gray-700 rounded-full">C++</span>

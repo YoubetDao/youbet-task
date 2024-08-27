@@ -7,6 +7,11 @@ import { Link } from 'react-router-dom'
 import { SkeletonCard } from '@/components/skeleton-card'
 import http from '@/service/instance'
 import { Button } from '@/components/ui/button'
+import { NetworkType, SDK } from 'youbet-sdk'
+
+const sdk = new SDK({
+  networkType: NetworkType.Testnet,
+})
 
 function SkeletonList() {
   return (
@@ -45,7 +50,14 @@ function TutorialItem({ item }: { item: Project }) {
       <article className="rounded-2xl overflow-hidden cursor-pointer border group z-[1] duration-200 ease-in hover:border hover:border-opacity-80 hover:bg-white/10 relative w-full transition-all hover:scale-[0.998]">
         <div className="relative flex flex-col">
           <div className="absolute flex items-center justify-center p-1 rounded-full top-2 left-2 bg-muted">
-            <Heart className="w-4 h-4" />
+            <Heart
+              className="w-4 h-4"
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                sdk.contract.donateToProject(String(githubId), '0.01')
+              }}
+            />
           </div>
           {/* box */}
           <div className="h-48 overflow-hidden">
