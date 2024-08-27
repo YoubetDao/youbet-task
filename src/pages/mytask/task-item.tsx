@@ -15,7 +15,7 @@ const getRandomColor = () => _.sample(darkModeColors)
 
 export const TaskItem = ({ item }: { item: Task }) => {
   return (
-    <article className="relative z-[1] hover:bg-white/10 p-4 border hover:border hover:border-opacity-80 rounded-2xl w-full transition-all duration-200 ease-in group hover:scale-[0.998]">
+    <article className="relative z-[1] hover:bg-white/10 p-4 border hover:border hover:border-opacity-80 rounded-2xl w-full transition-all duration-200 ease-in group hover:scale-[0.998] h-full">
       <div className="flex justify-between items-center gap-4">
         <div className="flex flex-row items-start gap-3 w-full">
           <div className="mt-1 h-8">
@@ -50,16 +50,6 @@ export const TaskItem = ({ item }: { item: Task }) => {
                 <Clock className="w-4 h-4" />
                 <span className="text-xs">{formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })}</span>
               </div>
-            </div>
-            <div className="">
-              {item.labels.length > 0 && (
-                <span
-                  className="inline-flex items-center px-2.5 py-0.5 border rounded-full focus:ring-2 focus:ring-ring focus:ring-offset-2 font-semibold text-xs transition-colors focus:outline-none"
-                  style={{ backgroundColor: getRandomColor() }}
-                >
-                  {item.labels[0]}
-                </span>
-              )}
             </div>
 
             <div className="flex flex-row justify-between items-center gap-2 pr-4">
@@ -100,6 +90,16 @@ export const TaskItem = ({ item }: { item: Task }) => {
               </span>
             )}
           </div> */}
+          <div className="border-muted mt-2 pt-2 border-t">
+            {item.labels.length > 0 && (
+              <span
+                className="inline-flex items-center px-2.5 py-0.5 border rounded-full focus:ring-2 focus:ring-ring focus:ring-offset-2 font-semibold text-xs transition-colors focus:outline-none"
+                style={{ backgroundColor: getRandomColor() }}
+              >
+                {item.labels[0]}
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </article>
