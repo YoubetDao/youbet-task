@@ -7,7 +7,8 @@ import { useAtom } from 'jotai'
 import { Card } from '@/components/ui/card'
 import GitHubCalendar from 'react-github-calendar'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Github, Twitter, Wallet } from 'lucide-react'
+import { Github, Loader2, Twitter, Wallet } from 'lucide-react'
+import { useToast } from '@/components/ui/use-toast'
 
 import { Profile } from '@/types'
 import { Button } from '@/components/ui/button'
@@ -38,6 +39,8 @@ export default function ProfilePage() {
   const [username] = useAtom(usernameAtom)
   // use state as empty Profile
   const [profile, setProfile] = useState<Profile>()
+  const [claiming, setClaiming] = useState(false)
+  const { toast } = useToast()
 
   const fetchRewards = async () => {
     const totalRewards = await sdk.client.getTotalRewards(linkedAddress)
@@ -78,6 +81,23 @@ export default function ProfilePage() {
 
     fetchUserProfile()
   }, [username])
+
+  const handleClaim = async () => {
+    setClaiming(true)
+    try {
+      await sdk.contract.claimReward()
+      fetchRewards()
+    } catch (error) {
+      console.error('Error claiming rewards:', error)
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Error claiming rewards',
+      })
+    } finally {
+      setClaiming(false)
+    }
+  }
 
   if (loading) {
     return <SkeletonTasks />
@@ -132,7 +152,7 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            <div className="flex justify-center p-4 space-x-32 bg-gray-900 rounded-b-lg ">
+            <div className="grid items-center justify-between grid-cols-2 p-4 bg-gray-900 rounded-b-lg ">
               <div className="text-center">
                 <h3 className="text-2xl font-bold text-white">{profile?.followers}</h3>
                 <p className="text-gray-400">Followers</p>
@@ -144,34 +164,35 @@ export default function ProfilePage() {
             </div>
           </Card>
 
-          <Card className="p-4 rounded-lg shadow-lg">
-            <h3 className="text-lg font-semibold text-white">Points</h3>
-            <p className="mb-2 font-bold text-gray-400 text-l">{userPoints}</p>
-            <h3 className="text-lg font-semibold text-white">Rewards</h3>
-            <p className="mb-2 font-bold text-gray-400 text-l">{totalRewards.toFixed(5)} EDU</p>
-            <Button
-              asChild
-              variant="link"
-              className="text-gray-50 !p-0 overflow-hidden text-lg font-bold whitespace-nowrap text-ellipsis"
-            >
-              <span
-                className="z-10"
-                onClick={async (e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  await sdk.contract.claimReward()
-                  fetchRewards()
-                }}
-              >
-                To Claim
-              </span>
-            </Button>
-            <p className="mb-2 font-bold text-gray-400 text-l">{(totalRewards - claimedRewards).toFixed(5)} EDU</p>
-            <h3 className="text-lg font-semibold text-white">Skills</h3>
-            <div className="flex flex-wrap">
-              <span className="px-3 py-1 m-1 text-xs text-white bg-gray-700 rounded-full">C++</span>
-              <span className="px-3 py-1 m-1 text-xs text-white bg-gray-700 rounded-full">Java</span>
-              <span className="px-3 py-1 m-1 text-xs text-white bg-gray-700 rounded-full">Python</span>
+          <Card className="p-4 space-y-1 rounded-lg shadow-lg">
+            <div className="space-y-1">
+              <h3 className="text-lg font-semibold text-white">Points</h3>
+              <div className="flex items-center justify-between">
+                <p className="mb-2 font-bold text-gray-400 text-l">{userPoints}</p>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-lg font-semibold text-white">Rewards</h3>
+              <div className="flex items-center justify-between">
+                <p className="mb-2 font-bold text-gray-400 text-l">{totalRewards.toFixed(5)} EDU</p>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-lg font-semibold text-white">To Claim</h3>
+              <div className="flex items-center justify-between">
+                <p className="mb-2 font-bold text-gray-400 text-l">{(totalRewards - claimedRewards).toFixed(5)} EDU</p>
+                <Button onClick={handleClaim} size="sm" disabled={claiming}>
+                  Claim{claiming && <Loader2 className="w-4 h-4 ml-2 animate-spin" />}
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-lg font-semibold text-white">Skills</h3>
+              <div className="flex flex-wrap">
+                <span className="px-3 py-1 m-1 text-xs text-white bg-gray-700 rounded-full">C++</span>
+                <span className="px-3 py-1 m-1 text-xs text-white bg-gray-700 rounded-full">Java</span>
+                <span className="px-3 py-1 m-1 text-xs text-white bg-gray-700 rounded-full">Python</span>
+              </div>
             </div>
           </Card>
         </div>

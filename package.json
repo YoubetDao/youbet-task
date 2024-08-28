@@ -66,7 +66,7 @@
     "tailwindcss-animate": "^1.0.7",
     "viem": "~2.17.3",
     "wagmi": "^2.10.10",
-    "youbet-sdk": "^0.0.10",
+    "youbet-sdk": "^0.0.12",
     "zod": "^3.23.8"
   },
   "devDependencies": {
