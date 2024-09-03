@@ -91,6 +91,8 @@ export interface User {
 export interface FetchIssuesParams {
   org?: string
   project?: string
+  offset?: number
+  limit?: number
 }
 
 export interface Task {

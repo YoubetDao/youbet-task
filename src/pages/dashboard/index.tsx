@@ -67,11 +67,11 @@ export default function Dashboard() {
   const [userCount, setUserCount] = useState<number>(0)
 
   useEffect(() => {
-    api.fetchLeaderboard().then((leaderboardData) => {
-      setLeaderboard(leaderboardData || [])
-      setUserCount(leaderboardData?.length || 0)
+    api.fetchLeaderboard().then(({ data, totalCount }) => {
+      setLeaderboard(data)
+      setUserCount(totalCount || 0)
     })
-    api.fetchTasks({}).then((tasks) => {
+    api.fetchTasks({ limit: 1000 }).then((tasks) => {
       setOpenedCount((tasks || []).filter((task) => task.state === 'open').length)
       setTotalCount((tasks || []).length)
     })

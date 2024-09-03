@@ -150,8 +150,8 @@ function TutorialList({ categories }: { categories: string[] }) {
       setLoading(true)
       const categoryParam = categories.includes('All') ? '' : `?categories=${categories.join(',')}`
       const data = await http
-        .get(`/tutorials${categoryParam}`)
-        .then((res) => res.data)
+        .get(`/tutorials${categoryParam}?limit=100`)
+        .then((res) => res.data.data)
         .catch(() => [])
       setTutorials(data)
       setLoading(false)

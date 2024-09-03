@@ -36,8 +36,8 @@ const api = {
         params,
       })
 
-      if (response.data) {
-        return response.data
+      if (response.data && response.data.data) {
+        return response.data.data
       }
       return null
     } catch (error) {
@@ -47,26 +47,30 @@ const api = {
   },
   fetchProjects: async (): Promise<Project[] | null> => {
     try {
-      const response = await http.get('/projects')
-      if (response.data) {
-        return response.data
+      const response = await http.get('/projects?limit=1000')
+      if (response.data && response.data.data) {
+        return response.data.data
       }
     } catch (error) {
       console.log('Error fetching projects:', error)
     }
     return null
   },
-  fetchLeaderboard: async (): Promise<Profile[] | null> => {
+  fetchLeaderboard: async (): Promise<{ data: Profile[]; totalCount?: number }> => {
     try {
-      const response = await http.get('/leaderboard')
+      const response = await http.get('/leaderboard?limit=5')
 
       if (response.data) {
-        return response.data
+        return {
+          data: response.data.data,
+          totalCount: response.data.pagination.totalCount,
+        }
       }
-      return null
+
+      return { data: [], totalCount: 0 }
     } catch (error) {
       console.error('Error fetching leaderboard:', error)
-      return null
+      return { data: [] }
     }
   },
   fetchTutorialContent: async (githubId: string): Promise<string> => {

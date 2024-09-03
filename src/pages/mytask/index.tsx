@@ -40,8 +40,8 @@ export default function MyTask() {
 
       try {
         const myTasks = await http
-          .get<Task[]>('/my-tasks')
-          .then((res) => res.data)
+          .get('/my-tasks?limit=100')
+          .then((res) => res.data.data)
           .catch(() => [])
         setTasks(myTasks)
       } catch (error) {
@@ -55,8 +55,8 @@ export default function MyTask() {
   }, [project, username])
 
   return (
-    <div className="px-4 py-4 mx-auto max-w-7xl lg:px-12">
-      <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+    <div className="mx-auto px-4 lg:px-12 py-4 max-w-7xl">
+      <div className="gap-4 grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
         {loading ? (
           <SkeletonTasks />
         ) : tasks.length ? (
