@@ -83,26 +83,24 @@ export default function TaskPage() {
         project,
         task: issueNumber,
       })
+      setTasks(tasks.map((task) => (task._id === item._id ? { ...task, state: 'open' } : task)))
     } catch (e) {
       console.log(e)
     }
-    setTasks(tasks.map((task) => (task._id === item._id ? { ...task, state: 'open' } : task)))
-    // fetchTasks()
   }
 
   const handleDisclaim = async (item: Task) => {
     const issueNumber = item.htmlUrl.split('/').pop()
     try {
-      const res = await http.post('/disclaim-task', {
+      await http.post('/disclaim-task', {
         org: 'youbetdao',
         project,
         task: issueNumber,
       })
+      setTasks(tasks.map((task) => (task._id === item._id ? { ...task, state: 'closed' } : task)))
     } catch (e) {
       console.log(e)
     }
-    setTasks(tasks.map((task) => (task._id === item._id ? { ...task, state: 'closed' } : task)))
-    // fetchTasks()
   }
 
   return (
