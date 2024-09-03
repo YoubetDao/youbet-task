@@ -1,10 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { SkeletonCard } from '@/components/skeleton-card'
-import { Project } from '@/types'
-import { useState, useEffect } from 'react'
+import { Project, IResultPagination } from '@/types'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import http from '@/service/instance'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
@@ -22,16 +21,16 @@ import {
 } from 'lucide-react'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { useInfiniteScroll } from 'ahooks'
+import { getLoadMoreProjectList } from '@/services'
+import { DEFAULT_PAGINATION_LIMIT } from '@/constants/data'
 
-function SkeletonProjects() {
+function SkeletonProjects({ count = 6 }: { count?: number }) {
   return (
     <div className="flex flex-col w-full gap-4">
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
+      {Array.from({ length: count }).map((_, index) => (
+        <SkeletonCard key={index} />
+      ))}
     </div>
   )
 }
@@ -107,31 +106,13 @@ function ProjectItem({ item }: { item: Project }) {
 }
 
 interface ProjectListProps {
-  filterTags: string[]
+  loading: boolean
+  loadingMore: boolean
+  data: IResultPagination<Project> | undefined
 }
-
-function ProjectList({ filterTags }: ProjectListProps) {
-  const [projects, setProjects] = useState<Project[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchProjects = async () => {
-      setLoading(true)
-      const data = await http
-        .get(`/projects`, {
-          params: {
-            tags: filterTags,
-          },
-        })
-        .then((res) => res.data.data)
-        .catch(() => [])
-      setProjects(data)
-      setLoading(false)
-    }
-    fetchProjects()
-  }, [filterTags])
-
+function ProjectList({ loading, loadingMore, data }: ProjectListProps) {
   if (loading) return <SkeletonProjects />
+  if (!data) return null
 
   return (
     <div className="flex flex-col w-full gap-4 pt-4 overflow-hidden lg:pl-4">
@@ -153,12 +134,13 @@ function ProjectList({ filterTags }: ProjectListProps) {
             </SelectContent>
           </Select>
         </div>
-        <div className="text-sm text-muted-foreground">{projects.length} Projects</div>
+        <div className="text-sm text-muted-foreground">{data.pagination.totalCount} Projects</div>
       </div>
       <div className="flex flex-col w-full gap-4">
-        {projects.map((item) => (
+        {data.list.map((item) => (
           <ProjectItem key={item._id} item={item} />
         ))}
+        {loadingMore && <SkeletonProjects count={2} />}
       </div>
     </div>
   )
@@ -283,7 +265,26 @@ function FilterBoard({ filterTags, setFilterTags }: FilterBoardProps) {
 }
 
 export default function ProjectPage() {
+  const { data, loading, loadingMore, reload } = useInfiniteScroll<IResultPagination<Project>>(
+    (d) =>
+      getLoadMoreProjectList({
+        offset: d ? d.pagination.currentPage * DEFAULT_PAGINATION_LIMIT : 0,
+        limit: DEFAULT_PAGINATION_LIMIT,
+        filterTags,
+      }),
+    {
+      manual: true,
+      target: document.querySelector('#scrollRef'),
+      isNoMore: (data) => {
+        return data ? !data.pagination.hasNextPage : false
+      },
+    },
+  )
   const [filterTags, setFilterTags] = useState<string[]>([])
+
+  useEffect(() => {
+    reload()
+  }, [filterTags, reload])
 
   return (
     <div className="px-4 py-4 mx-auto lg:px-12 max-w-7xl">
@@ -294,7 +295,7 @@ export default function ProjectPage() {
         </div>
         <div className="flex flex-col gap-2 lg:flex-row">
           <FilterBoard filterTags={filterTags} setFilterTags={setFilterTags} />
-          <ProjectList filterTags={filterTags} />
+          <ProjectList loading={loading} loadingMore={loadingMore} data={data} />
         </div>
       </div>
     </div>
