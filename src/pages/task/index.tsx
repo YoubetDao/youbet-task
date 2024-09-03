@@ -78,7 +78,7 @@ export default function TaskPage() {
     const issueNumber = item.htmlUrl.split('/').pop()
     try {
       // TODO: the claim logic here will cause some exception. I don't know what happened.
-      const res = await http.post('/claim-task', {
+      await http.post('/claim-task', {
         org: 'youbetdao',
         project,
         task: issueNumber,
@@ -86,7 +86,8 @@ export default function TaskPage() {
     } catch (e) {
       console.log(e)
     }
-    fetchTasks()
+    setTasks(tasks.map((task) => (task._id === item._id ? { ...task, state: 'open' } : task)))
+    // fetchTasks()
   }
 
   const handleDisclaim = async (item: Task) => {
@@ -104,7 +105,7 @@ export default function TaskPage() {
   }
 
   return (
-    <div className="mx-auto px-4 lg:px-12 py-4 max-w-7xl">
+    <div className="px-4 py-4 mx-auto lg:px-12 max-w-7xl">
       <Breadcrumb className="py-2">
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -124,15 +125,15 @@ export default function TaskPage() {
       </Breadcrumb>
       <div className="flex flex-col gap-5">
         <div className="relative">
-          <Input placeholder="Search tutorial title or description" className="bg-background/80 pl-8" />
-          <LucideSearch className="top-1/2 left-2 absolute w-4 h-4 -translate-y-1/2" />
+          <Input placeholder="Search tutorial title or description" className="pl-8 bg-background/80" />
+          <LucideSearch className="absolute w-4 h-4 -translate-y-1/2 top-1/2 left-2" />
         </div>
         <div className="flex space-x-2">
           <ToggleGroup size="sm" type="single" value={all} onValueChange={handleSelectAll}>
             <ToggleGroupItem value="All">All</ToggleGroupItem>
           </ToggleGroup>
         </div>
-        <div className="gap-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {loading ? (
             <SkeletonTasks />
           ) : tasks.length ? (
