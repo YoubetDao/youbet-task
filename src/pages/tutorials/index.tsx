@@ -47,9 +47,9 @@ function TutorialItem({ item }: { item: Project }) {
   const { githubId } = item
   return (
     <Link to={`/tutorial/${githubId}`}>
-      <article className="rounded-2xl overflow-hidden cursor-pointer border group z-[1] duration-200 ease-in hover:border hover:border-opacity-80 hover:bg-white/10 relative w-full transition-all hover:scale-[0.998]">
+      <article className="relative z-[1] hover:bg-white/10 border hover:border hover:border-opacity-80 rounded-2xl w-full h-full transition-all duration-200 cursor-pointer overflow-hidden ease-in group hover:scale-[0.998]">
         <div className="relative flex flex-col">
-          <div className="absolute flex items-center justify-center p-1 rounded-full top-2 left-2 bg-muted">
+          <div className="top-2 left-2 absolute flex justify-center items-center bg-muted p-1 rounded-full">
             <Heart
               className="w-4 h-4"
               onClick={(e) => {
@@ -61,15 +61,15 @@ function TutorialItem({ item }: { item: Project }) {
           </div>
           {/* box */}
           <div className="h-48 overflow-hidden">
-            <img src={item.owner.avatarUrl} alt={item.owner.login} className="object-cover w-full h-full" />
+            <img src={item.owner.avatarUrl} alt={item.owner.login} className="w-full h-full object-cover" />
           </div>
-          <div className="p-4 overflow-hidden lg:p-6 ">
+          <div className="p-4 lg:p-6 overflow-hidden">
             {/* name */}
-            <div className="flex items-center w-full gap-2">
+            <div className="flex items-center gap-2 w-full">
               <div>
                 <Button
                   variant="link"
-                  className="flex-1 px-0 overflow-hidden text-xl font-bold whitespace-nowrap text-ellipsis"
+                  className="flex-1 px-0 font-bold text-ellipsis text-xl whitespace-nowrap overflow-hidden"
                 >
                   <span
                     className="z-10"
@@ -85,13 +85,15 @@ function TutorialItem({ item }: { item: Project }) {
               </div>
             </div>
             {/* description */}
-            <div className="mt-2 text-sm text-muted-foreground">{item.description || 'No description...'}</div>
+            <div className="mt-2 !line-clamp-3 text-muted-foreground text-sm break-all">
+              {item.description || 'No description...'}
+            </div>
             {/* tags */}
-            <div className="flex gap-4 mt-5 text-xs ">
+            <div className="flex gap-4 mt-5 text-xs">
               {/* 简单/中等/困难 */}
               <div className="flex items-center gap-1 px-2">
                 <div
-                  className="w-2 h-2 rounded-full"
+                  className="rounded-full w-2 h-2"
                   style={{
                     backgroundColor: DEFAULT_HARDNESS[item.tutorial?.level as keyof typeof DEFAULT_HARDNESS].color,
                   }}
@@ -109,11 +111,11 @@ function TutorialItem({ item }: { item: Project }) {
               </div>
             </div>
             {/* categories */}
-            <div className="flex gap-2 pt-3 mt-3 text-xs border-t border-[#555]/20">
+            <div className="flex gap-2 border-[#555]/20 mt-3 pt-3 border-t text-xs">
               {item.tutorial.categories.map(
                 (category) =>
                   category && (
-                    <div key={category} className="flex items-center justify-center px-2 border rounded-lg h-7">
+                    <div key={category} className="flex justify-center items-center px-2 border rounded-lg h-7">
                       {category}
                     </div>
                   ),

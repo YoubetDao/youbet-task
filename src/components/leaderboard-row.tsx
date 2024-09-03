@@ -13,13 +13,13 @@ const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ avatarSrc, name, bio, c
   return (
     <a href={githubUrl} target="_blank" rel="noopener noreferrer">
       <div className="flex items-start mb-6">
-        <Avatar className="h-9 w-9">
+        <Avatar className="w-9 h-9">
           <AvatarImage src={avatarSrc} alt="Avatar" />
           <AvatarFallback>{name.charAt(0)}</AvatarFallback>
         </Avatar>
-        <div className="flex flex-col flex-wrap flex-1 w-0 ml-4 space-y-1 break-words">
-          <p className="w-full text-sm font-medium leading-none">{name}</p>
-          <p className="w-full text-sm text-muted-foreground">{bio}</p>
+        <div className="flex flex-col flex-wrap flex-1 space-y-1 ml-4 w-0 break-words">
+          <p className="w-full font-medium text-sm leading-none">{name}</p>
+          <p className="!line-clamp-5 w-full text-muted-foreground text-sm">{bio}</p>
         </div>
         <div className="ml-2 font-medium shrink-0">{completedTasks} </div>
       </div>

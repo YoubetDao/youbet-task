@@ -79,16 +79,6 @@ export const TaskItem = ({
                   <Clock className="w-4 h-4" />
                   <span className="text-xs">{formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })}</span>
                 </div>
-                <div className="flex flex-row gap-2 pr-4">
-                  {item.labels.length > 0 && (
-                    <span
-                      className="inline-flex items-center px-2.5 py-0.5 border rounded-full focus:ring-2 focus:ring-ring focus:ring-offset-2 font-semibold text-xs transition-colors focus:outline-none"
-                      style={{ backgroundColor: getRandomColor(item.labels[0]) }}
-                    >
-                      {item.labels[0]}
-                    </span>
-                  )}
-                </div>
               </div>
 
               <div>
@@ -135,6 +125,16 @@ export const TaskItem = ({
                 </span>
               </div>
             )} */}
+          </div>
+          <div className="flex flex-row gap-2 mt-2 pt-2 pr-4 border-t">
+            {item.labels.length > 0 && (
+              <span
+                className="inline-flex items-center px-2.5 py-0.5 border rounded-full focus:ring-2 focus:ring-ring focus:ring-offset-2 font-semibold text-xs transition-colors focus:outline-none"
+                style={{ backgroundColor: getRandomColor(item.labels[0]) }}
+              >
+                {item.labels[0]}
+              </span>
+            )}
           </div>
         </div>
       </Link>
