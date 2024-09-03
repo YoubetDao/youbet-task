@@ -101,7 +101,8 @@ export default function TaskPage() {
     } catch (e) {
       console.log(e)
     }
-    fetchTasks()
+    setTasks(tasks.map((task) => (task._id === item._id ? { ...task, state: 'closed' } : task)))
+    // fetchTasks()
   }
 
   return (
