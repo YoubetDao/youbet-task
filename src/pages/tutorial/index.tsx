@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom'
 import MdView from './md-view'
 import { useEffect, useState } from 'react'
-import api from '@/service'
+import { fetchTutorialContent } from '@/service'
 import { SkeletonCard } from '@/components/skeleton-card'
 
 function Skeleton() {
@@ -24,7 +24,7 @@ const Tutorial = () => {
       if (githubId) {
         try {
           setLoading(true)
-          const response = await api.fetchTutorialContent(githubId)
+          const response = await fetchTutorialContent(githubId)
           setContent(response)
           setLoading(false)
         } catch (error) {
