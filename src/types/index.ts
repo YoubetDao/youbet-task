@@ -2,6 +2,23 @@ import { Icons } from '@/components/icons'
 import { Pages } from '@/router/pages'
 import { Layouts } from '@/router/layouts'
 
+export interface IPagination {
+  totalCount: number
+  totalPages: number
+  currentPage: number
+  hasNextPage: boolean
+  hasPrevPage: boolean
+}
+export interface IResultPaginationData<T> {
+  data: T[]
+  pagination: IPagination
+}
+
+export interface IResultPagination<T> {
+  list: T[]
+  pagination: IPagination
+}
+
 interface BaseItem {
   id: string
   createAt: string
