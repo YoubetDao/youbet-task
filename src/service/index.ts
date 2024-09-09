@@ -90,3 +90,68 @@ export async function fetchTutorialContent(githubId: string) {
     return ''
   }
 }
+
+export async function disclaimTask(params: { org: string; project?: string; task?: string }) {
+  try {
+    const response = await http.post('/disclaim-task', params)
+    if (response.data) {
+      return response.data
+    }
+    return ''
+  } catch (error) {
+    console.error('Error fetching tutorial content:', error)
+    return ''
+  }
+}
+
+export async function claimTask(params: { org: string; project?: string; task?: string }) {
+  try {
+    const response = await http.post('/claim-task', params)
+    if (response.data) {
+      return response.data
+    }
+    return ''
+  } catch (error) {
+    console.error('Error fetching tutorial content:', error)
+    return ''
+  }
+}
+
+export async function getLinkedWallet(github: string) {
+  try {
+    const response = await http.get<string>(`/get-linked-wallet?github=${github}`)
+    if (response.data) {
+      return response.data
+    }
+    return ''
+  } catch (error) {
+    console.error('Error fetching linked wallet:', error)
+    return ''
+  }
+}
+
+export async function linkWallet(params: { github: string; address: string }) {
+  try {
+    const response = await http.post('/link-wallet', params)
+    if (response.data) {
+      return response.data
+    }
+    return ''
+  } catch (error) {
+    console.error('Error linking wallet:', error)
+    return ''
+  }
+}
+
+export async function getMyInfo() {
+  try {
+    const response = await http.get<Profile>(`/my-info`)
+    if (response.data) {
+      return response.data
+    }
+    return
+  } catch (error) {
+    console.error('Error fetching my info:', error)
+    return
+  }
+}

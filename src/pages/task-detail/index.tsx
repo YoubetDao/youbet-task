@@ -11,10 +11,9 @@ import UtterancesComments from './utterances-comments'
 import { Task, User } from '@/types'
 import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { fetchTask as getTaskDetail } from '@/service'
+import { claimTask, disclaimTask, fetchTask as getTaskDetail } from '@/service'
 import { SkeletonCard } from '@/components/skeleton-card'
 import ErrorPage from '../error'
-import http from '@/service/instance'
 
 function Skeleton() {
   return (
@@ -171,7 +170,7 @@ function QuestLog({ task, fetchTask }: QuestLogProps) {
     const project = task.htmlUrl.split('/')[4]
     try {
       // TODO: the claim logic here will cause some exception. I don't know what happened.
-      const res = await http.post('/claim-task', {
+      const res = await claimTask({
         org,
         project,
         task: issueNumber,
@@ -188,7 +187,7 @@ function QuestLog({ task, fetchTask }: QuestLogProps) {
     const project = task.htmlUrl.split('/')[4]
     try {
       // TODO: the claim logic here will cause some exception. I don't know what happened.
-      const res = await http.post('/disclaim-task', {
+      const res = await disclaimTask({
         org,
         project,
         task: issueNumber,
