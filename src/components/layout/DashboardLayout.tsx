@@ -27,7 +27,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </div>
       <div className="flex flex-col flex-1 overflow-hidden">
         <Header />
-        <main className="flex flex-col flex-1 gap-4 p-4 overflow-auto lg:gap-6 lg:p-6 scroll-smooth">
+        <main className="flex flex-col flex-1 gap-4 p-4 overflow-auto lg:gap-6 lg:p-6 scroll-smooth" id="scrollRef">
           <div>
             {children}
             <div className="pointer-events-none fixed bottom-0 left-[220px] right-0 top-14 md:left-[220px] lg:left-[280px] lg:top-[60px] overflow-hidden z-[-1]">

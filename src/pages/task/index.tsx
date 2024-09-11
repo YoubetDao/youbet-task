@@ -84,10 +84,10 @@ export default function TaskPage() {
         project,
         task: issueNumber,
       })
+      setTasks(tasks.map((task) => (task._id === item._id ? { ...task, state: 'open' } : task)))
     } catch (e) {
       console.log(e)
     }
-    fetchTasks()
   }
 
   const handleDisclaim = async (item: Task) => {
@@ -98,10 +98,10 @@ export default function TaskPage() {
         project,
         task: issueNumber,
       })
+      setTasks(tasks.map((task) => (task._id === item._id ? { ...task, state: 'closed' } : task)))
     } catch (e) {
       console.log(e)
     }
-    fetchTasks()
   }
 
   return (

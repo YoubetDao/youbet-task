@@ -78,3 +78,5 @@ export const navItems: NavItem[] = [
     hideInMenu: true,
   },
 ]
+
+export const DEFAULT_PAGINATION_LIMIT = 4

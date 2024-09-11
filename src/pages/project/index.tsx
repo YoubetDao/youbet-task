@@ -1,10 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { SkeletonCard } from '@/components/skeleton-card'
-import { Project } from '@/types'
-import { useState, useEffect } from 'react'
+import { Project, IResultPagination } from '@/types'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import http from '@/service/instance'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
@@ -22,16 +21,16 @@ import {
 } from 'lucide-react'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { useInfiniteScroll } from 'ahooks'
+import { getLoadMoreProjectList } from '@/services'
+import { DEFAULT_PAGINATION_LIMIT } from '@/constants/data'
 
-function SkeletonProjects() {
+function SkeletonProjects({ count = 6 }: { count?: number }) {
   return (
-    <div className="flex flex-col gap-4 w-full">
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
+    <div className="flex flex-col w-full gap-4">
+      {Array.from({ length: count }).map((_, index) => (
+        <SkeletonCard key={index} />
+      ))}
     </div>
   )
 }
@@ -62,8 +61,8 @@ function ProjectItem({ item }: { item: Project }) {
             </Avatar>
           </div>
           <div className="pt-4 pr-4 overflow-hidden">
-            <div className="flex items-center gap-2 w-full">
-              <div className="flex-1 font-bold text-2xl text-ellipsis whitespace-nowrap overflow-hidden">
+            <div className="flex items-center w-full gap-2">
+              <div className="flex-1 overflow-hidden text-2xl font-bold text-ellipsis whitespace-nowrap">
                 <Button
                   asChild
                   variant="link"
@@ -81,18 +80,18 @@ function ProjectItem({ item }: { item: Project }) {
                   </span>
                 </Button>
               </div>
-              <div className="md:flex gap-2 hidden">{renderTags(item.youbetExtra?.tags || [])}</div>
+              <div className="hidden gap-2 md:flex">{renderTags(item.youbetExtra?.tags || [])}</div>
             </div>
-            <div className="mt-2 text-muted-foreground text-sm">{item.description || 'No description...'}</div>
-            <div className="flex md:flex-row flex-col gap-4 mt-5 text-xs">
-              <div className="flex md:justify-center md:items-center gap-1">
+            <div className="mt-2 text-sm text-muted-foreground">{item.description || 'No description...'}</div>
+            <div className="flex flex-col gap-4 mt-5 text-xs md:flex-row">
+              <div className="flex gap-1 md:justify-center md:items-center">
                 <Avatar className="w-4 h-4">
                   <AvatarImage src={item.owner.avatarUrl} />
                   <AvatarFallback>{item.owner.login}</AvatarFallback>
                 </Avatar>
                 <span>project owner</span>
               </div>
-              <div className="flex md:justify-center md:items-center gap-1">
+              <div className="flex gap-1 md:justify-center md:items-center">
                 <LucideUser className="w-4 h-4" />
                 {Math.floor(Math.random() * 10)} contributors
               </div>
@@ -107,37 +106,23 @@ function ProjectItem({ item }: { item: Project }) {
 }
 
 interface ProjectListProps {
-  filterTags: string[]
+  loading: boolean
+  loadingMore: boolean
+  data: IResultPagination<Project> | undefined
 }
-
-function ProjectList({ filterTags }: ProjectListProps) {
-  const [projects, setProjects] = useState<Project[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchProjects = async () => {
-      setLoading(true)
-      const data = await http
-        .get(`/projects?tags=${filterTags.join(',')}`)
-        .then((res) => res.data.data)
-        .catch(() => [])
-      setProjects(data)
-      setLoading(false)
-    }
-    fetchProjects()
-  }, [filterTags])
-
+function ProjectList({ loading, loadingMore, data }: ProjectListProps) {
   if (loading) return <SkeletonProjects />
+  if (!data) return null
 
   return (
-    <div className="flex flex-col gap-4 pt-4 lg:pl-4 w-full overflow-hidden">
-      <div className="flex justify-between items-center">
+    <div className="flex flex-col w-full gap-4 pt-4 overflow-hidden lg:pl-4">
+      <div className="flex items-center justify-between">
         <div>
           <Select defaultValue="treading">
             <SelectTrigger>
               <div>
                 <span>Sort by </span>
-                <span className="text-primary lowercase">
+                <span className="lowercase text-primary">
                   <SelectValue />
                 </span>
               </div>
@@ -149,12 +134,13 @@ function ProjectList({ filterTags }: ProjectListProps) {
             </SelectContent>
           </Select>
         </div>
-        <div className="text-muted-foreground text-sm">{projects.length} Projects</div>
+        <div className="text-sm text-muted-foreground">{data.pagination.totalCount} Projects</div>
       </div>
-      <div className="flex flex-col gap-4 w-full">
-        {projects.map((item) => (
+      <div className="flex flex-col w-full gap-4">
+        {data.list.map((item) => (
           <ProjectItem key={item._id} item={item} />
         ))}
+        {loadingMore && <SkeletonProjects count={2} />}
       </div>
     </div>
   )
@@ -202,15 +188,15 @@ function FilterBoard({ filterTags, setFilterTags }: FilterBoardProps) {
   ]
 
   return (
-    <div className="flex-shrink-0 pt-4 w-full lg:w-48 xl:w-96">
-      <Card className="top-0 left-0 sticky bg-transparent">
+    <div className="flex-shrink-0 w-full pt-4 lg:w-48 xl:w-96">
+      <Card className="sticky top-0 left-0 bg-transparent">
         <CardHeader className="py-4">
           <CardTitle className="relative text-lg">
             <span>Filter</span>
             <Button
               variant="ghost"
               size="sm"
-              className="top-1/2 right-0 absolute flex items-center gap-1 text-primary text-xs hover:text-primary -translate-y-1/2 cursor-pointer"
+              className="absolute right-0 flex items-center gap-1 text-xs -translate-y-1/2 cursor-pointer top-1/2 text-primary hover:text-primary"
               onClick={() => setFilterTags([])}
             >
               <LucideRefreshCcw className="w-3 h-3" />
@@ -229,7 +215,7 @@ function FilterBoard({ filterTags, setFilterTags }: FilterBoardProps) {
             ))}
           </ToggleGroup>
           {/* select */}
-          {/* <div className="space-y-3 border-muted pt-2 border-t">
+          {/* <div className="pt-2 space-y-3 border-t border-muted">
             <Label>Ecosystems</Label>
             <Select>
               <SelectTrigger className="w-full max-w-[180px]">
@@ -243,7 +229,7 @@ function FilterBoard({ filterTags, setFilterTags }: FilterBoardProps) {
             </Select>
           </div> */}
           {/* select */}
-          <div className="space-y-3 border-muted pt-2 border-t">
+          <div className="pt-2 space-y-3 border-t border-muted">
             <Label>Languages</Label>
             <Select>
               <SelectTrigger className="w-full max-w-[180px]">
@@ -259,7 +245,7 @@ function FilterBoard({ filterTags, setFilterTags }: FilterBoardProps) {
             </Select>
           </div>
           {/* select */}
-          {/* <div className="space-y-3 border-muted pt-2 border-t">
+          {/* <div className="pt-2 space-y-3 border-t border-muted">
             <Label>Categories</Label>
             <Select>
               <SelectTrigger className="w-full max-w-[180px]">
@@ -279,18 +265,37 @@ function FilterBoard({ filterTags, setFilterTags }: FilterBoardProps) {
 }
 
 export default function ProjectPage() {
+  const { data, loading, loadingMore, reload } = useInfiniteScroll<IResultPagination<Project>>(
+    (d) =>
+      getLoadMoreProjectList({
+        offset: d ? d.pagination.currentPage * DEFAULT_PAGINATION_LIMIT : 0,
+        limit: DEFAULT_PAGINATION_LIMIT,
+        filterTags,
+      }),
+    {
+      manual: true,
+      target: document.querySelector('#scrollRef'),
+      isNoMore: (data) => {
+        return data ? !data.pagination.hasNextPage : false
+      },
+    },
+  )
   const [filterTags, setFilterTags] = useState<string[]>([])
 
+  useEffect(() => {
+    reload()
+  }, [filterTags, reload])
+
   return (
-    <div className="mx-auto px-4 lg:px-12 py-4 max-w-7xl">
-      <div className="flex flex-col gap-2 w-full">
+    <div className="px-4 py-4 mx-auto lg:px-12 max-w-7xl">
+      <div className="flex flex-col w-full gap-2">
         <div className="relative">
-          <Input placeholder="Search project title or description" className="bg-background/80 pl-8" />
-          <LucideSearch className="top-1/2 left-2 absolute w-4 h-4 -translate-y-1/2" />
+          <Input placeholder="Search project title or description" className="pl-8 bg-background/80" />
+          <LucideSearch className="absolute w-4 h-4 -translate-y-1/2 top-1/2 left-2" />
         </div>
-        <div className="flex lg:flex-row flex-col gap-2">
+        <div className="flex flex-col gap-2 lg:flex-row">
           <FilterBoard filterTags={filterTags} setFilterTags={setFilterTags} />
-          <ProjectList filterTags={filterTags} />
+          <ProjectList loading={loading} loadingMore={loadingMore} data={data} />
         </div>
       </div>
     </div>

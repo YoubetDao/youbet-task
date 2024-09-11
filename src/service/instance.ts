@@ -6,7 +6,9 @@ import { toast } from '@/components/ui/use-toast'
 const instance = axios.create({
   baseURL: '/api',
   paramsSerializer(params) {
-    return qs.stringify(params, { indices: false })
+    // qs.stringify({ a: ['b', 'c'] }, { arrayFormat: 'comma' })
+    // 'a=b,c'
+    return qs.stringify(params, { arrayFormat: 'comma' })
   },
 })
 
