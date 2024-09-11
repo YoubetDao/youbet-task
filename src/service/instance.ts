@@ -55,9 +55,10 @@ instance.interceptors.response.use(
           title: 'Forbidden',
           description: 'Permission denied. Please contact admin.',
         })
-      } else if (status === 500) {
+      } else if (status >= 400 && status <= 599) {
         // Internal Server Error: return the error response
         toast({
+          variant: 'destructive',
           title: 'Internal Server Error:',
           description:
             typeof error.response.data.message === 'string'
