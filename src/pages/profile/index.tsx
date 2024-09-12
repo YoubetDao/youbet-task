@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { NetworkType, SDK } from 'youbet-sdk'
 import { SkeletonCard } from '@/components/skeleton-card'
-import http from '@/service/instance'
 import { usernameAtom } from '@/store'
 import { useAtom } from 'jotai'
 import { Card } from '@/components/ui/card'
@@ -12,6 +11,7 @@ import { useToast } from '@/components/ui/use-toast'
 
 import { Profile } from '@/types'
 import { Button } from '@/components/ui/button'
+import { getLinkedWallet, getMyInfo } from '@/service'
 
 const sdk = new SDK({
   networkType: NetworkType.Testnet, // or NetworkType.Mainnet
@@ -55,8 +55,7 @@ export default function ProfilePage() {
       try {
         if (!username) return
 
-        const response = await http.get<string>(`/get-linked-wallet?github=${username}`)
-        const linkedAddress = response.data
+        const linkedAddress = await getLinkedWallet(username)
         setLinkedAddress(linkedAddress)
 
         if (linkedAddress !== '0x0000000000000000000000000000000000000000') {
@@ -70,7 +69,7 @@ export default function ProfilePage() {
           setClaimedRewards(Number(claimedRewards) / 10 ** 18)
         }
 
-        const myinfo = (await http.get<Profile>(`/my-info`)).data
+        const myinfo = await getMyInfo()
         setProfile(myinfo)
       } catch (error) {
         console.error('Error fetching user profile:', error)

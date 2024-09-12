@@ -17,6 +17,7 @@ import { EmptyTasks } from './empty-task'
 import { Input } from '@/components/ui/input'
 import { LucideSearch } from 'lucide-react'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+import { claimTask, disclaimTask } from '@/service'
 
 const sdk = new SDK({
   networkType: NetworkType.Testnet, // or NetworkType.Testnet
@@ -78,7 +79,7 @@ export default function TaskPage() {
     const issueNumber = item.htmlUrl.split('/').pop()
     try {
       // TODO: the claim logic here will cause some exception. I don't know what happened.
-      await http.post('/claim-task', {
+      const res = claimTask({
         org: 'youbetdao',
         project,
         task: issueNumber,
@@ -92,7 +93,7 @@ export default function TaskPage() {
   const handleDisclaim = async (item: Task) => {
     const issueNumber = item.htmlUrl.split('/').pop()
     try {
-      await http.post('/disclaim-task', {
+      const res = await disclaimTask({
         org: 'youbetdao',
         project,
         task: issueNumber,

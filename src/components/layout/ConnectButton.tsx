@@ -1,9 +1,9 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
-import http from '../../service/instance'
 import { usernameAtom } from '@/store'
 import { useAtom } from 'jotai'
 import { useAccount } from 'wagmi'
 import { useEffect } from 'react'
+import { getLinkedWallet, linkWallet } from '@/service'
 
 export const CustomConnectButton = () => {
   const [github] = useAtom(usernameAtom)
@@ -11,23 +11,23 @@ export const CustomConnectButton = () => {
   const { address } = useAccount()
 
   useEffect(() => {
-    const linkWallet = async () => {
+    const checkAndLinkWallet = async () => {
       if (!github) return
       console.log('call link')
       // 获取当前github用户绑定的钱包地址
-      const linkedAddress = await http.get<string>(`/get-linked-wallet?github=${github}`).then((res) => res.data)
+      const linkedAddress = await getLinkedWallet(github)
       console.log(linkedAddress)
       // 如果没有绑定过钱包
       if (linkedAddress == '0x0000000000000000000000000000000000000000') {
         if (!address) return
-        const res = await http.post('/link-wallet', {
+        const res = await linkWallet({
           github,
           address,
         })
         console.log(res)
       }
     }
-    linkWallet()
+    checkAndLinkWallet()
   }, [address, github])
 
   return (
