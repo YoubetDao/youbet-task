@@ -9,15 +9,16 @@ export const useTimeTracking = () => {
     const startTime = Date.now()
 
     return () => {
-      const endTime = Date.now()
-      const timeSpent = endTime - startTime
-
-      ReactGA.event({
-        category: 'User',
-        action: 'Time Spent',
-        label: location.pathname,
-        value: Math.round(timeSpent / 1000), // Convert to seconds
-      })
+      if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        const endTime = Date.now()
+        const timeSpent = endTime - startTime
+        ReactGA.event({
+          category: 'User',
+          action: 'Time Spent',
+          label: location.pathname,
+          value: Math.round(timeSpent / 1000), // Convert to seconds
+        })
+      }
     }
   }, [location])
 }

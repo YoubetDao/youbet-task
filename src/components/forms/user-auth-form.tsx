@@ -17,11 +17,13 @@ const GithubSignInButton = () => {
       variant="outline"
       type="button"
       onClick={() => {
-        ReactGA.event({
-          category: 'User',
-          action: 'Clicked Login',
-          label: 'GitHub',
-        })
+        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+          ReactGA.event({
+            category: 'User',
+            action: 'Clicked Login',
+            label: 'GitHub',
+          })
+        }
         githubOAuth()
       }}
     >

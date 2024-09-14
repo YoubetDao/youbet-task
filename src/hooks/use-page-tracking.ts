@@ -6,6 +6,8 @@ export const usePageTracking = () => {
   const location = useLocation()
 
   useEffect(() => {
-    ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search })
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search })
+    }
   }, [location])
 }
