@@ -26,9 +26,16 @@ export const TaskItem = ({ item }: { item: Task }) => {
             )}
           </div>
           <Button asChild variant="link" className="px-0 !line-clamp-2 !p-0 w-full h-16 font-bold text-2xl break-all">
-            <a href={item.htmlUrl} target="_blank" rel="noreferrer">
-              {item.title}
-            </a>
+            <span
+              className="z-10"
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                window.open(item.htmlUrl, '_blank')
+              }}
+            >
+              {`${item.title}`}
+            </span>
           </Button>
         </div>
       </div>
