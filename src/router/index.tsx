@@ -5,6 +5,14 @@ import { navItems } from '@/constants/data'
 import { Pages } from '@/router/pages'
 import { Layouts } from '@/router/layouts'
 import { Helmet } from 'react-helmet'
+import { usePageTracking } from '@/hooks/use-page-tracking'
+import { useTimeTracking } from '@/hooks/use-time-tracking'
+
+function PageTracker() {
+  usePageTracking()
+  useTimeTracking()
+  return null
+}
 
 const getDefaultLayout = ({ children }: { children: React.ReactNode }) => children
 
@@ -39,7 +47,12 @@ const routerObjects: RouteObject[] = navItems.map((item) => {
 export function createRouter(): ReturnType<typeof createBrowserRouter> {
   const routeWrappers = routerObjects.map((router) => {
     const Component = router.Component
-    const page = Component ? <Component /> : null
+    const page = Component ? (
+      <>
+        <PageTracker />
+        <Component />
+      </>
+    ) : null
     return {
       ...router,
       element: page,

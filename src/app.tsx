@@ -8,6 +8,10 @@ import { WagmiProvider } from 'wagmi'
 import '@rainbow-me/rainbowkit/styles.css'
 import { Provider } from 'jotai'
 import { store } from './store'
+import ReactGA from 'react-ga4'
+
+const TRACKING_ID = 'G-S7DE4BCME4'
+ReactGA.initialize(TRACKING_ID)
 
 // TODO: should be configured by the user
 const eduChain = {

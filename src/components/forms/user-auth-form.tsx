@@ -1,8 +1,6 @@
 import { Button } from '@/components/ui/button'
-// import { signIn } from 'next-auth/react'
-// import { useSearchParams } from 'next/navigation'
 import { Icons } from '@/components/icons'
-// import GithubSignInButton from '../github-auth-button'
+import ReactGA from 'react-ga4'
 
 const CLIENT_ID = import.meta.env.VITE_GITHUB_OAUTH_CLIENT_ID
 const REDIRECT_URI = `${location.origin}/auth/github/callback`
@@ -12,11 +10,21 @@ const githubOAuth = () => {
 }
 
 const GithubSignInButton = () => {
-  // const searchParams = new URLSearchParams(useLocation().search)
-  // const callbackUrl = searchParams.get('callbackUrl')
-
+  // TODO: after login should return to the page that the user was on
   return (
-    <Button className="w-full" variant="outline" type="button" onClick={() => githubOAuth()}>
+    <Button
+      className="w-full"
+      variant="outline"
+      type="button"
+      onClick={() => {
+        ReactGA.event({
+          category: 'User',
+          action: 'Clicked Login',
+          label: 'GitHub',
+        })
+        githubOAuth()
+      }}
+    >
       <Icons.github className="mr-2 w-4 h-4" />
       Continue with Github
     </Button>
