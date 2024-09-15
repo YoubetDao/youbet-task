@@ -55,11 +55,11 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'Tutorial',
-    href: '/tutorial/:githubId',
+    href: '/tutorial/:githubId/:owner/:repo/:path',
     icon: 'tutorial',
     component: 'tutorial',
     description: 'tutorial.',
-    layout: 'dashboard',
+    layout: 'tutorial',
     hideInMenu: true,
   },
   {

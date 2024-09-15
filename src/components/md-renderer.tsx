@@ -18,15 +18,15 @@ const MdRenderer = forwardRef<HTMLElement, IMarkdownRendererProps>(({ content, .
   )
 })
 
-interface ITocSidebarProps extends React.HTMLAttributes<HTMLElement> {
+interface IToCSidebarProps extends React.HTMLAttributes<HTMLElement> {
   toc: { id: string; title: string; slug: string }[]
   activeId?: string
 }
 
-const TocSidebar = ({ toc, activeId, ...props }: ITocSidebarProps) => {
+const ToCSidebar = ({ toc, activeId, ...props }: IToCSidebarProps) => {
   return (
     <aside {...props}>
-      <ul className="space-y-1">
+      <ul>
         {toc.map(({ id, title, slug }) => (
           <li key={title} className={`${id} toc-item ${activeId === slug ? 'active' : ''}`}>
             <a href={`#${slug}`}>{title}</a>
@@ -91,8 +91,8 @@ export const useMd = (content: string, toc?: boolean) => {
       MdRenderer: (props: React.HTMLProps<HTMLElement>) => (
         <MdRenderer {...props} content={mdProcessor.getContentHtml()} ref={contentRef} />
       ),
-      TocSidebar: (props: React.HTMLProps<HTMLElement>) => (
-        <TocSidebar {...props} toc={mdProcessor.getTocData()} activeId={activeId} />
+      ToCSidebar: (props: React.HTMLProps<HTMLElement>) => (
+        <ToCSidebar {...props} toc={mdProcessor.getToCData()} activeId={activeId} />
       ),
     }
   }

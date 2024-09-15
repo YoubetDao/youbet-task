@@ -139,3 +139,10 @@ export interface Profile {
   twitterUsername?: string
   completedTasks?: number
 }
+
+export interface Chapter {
+  title: string
+  path: string
+  children: Chapter[] | null
+  level: number
+}
