@@ -1,4 +1,5 @@
 import { NavItem } from '@/types'
+import { SdkCtorOptions } from 'youbet-sdk'
 
 export const navItems: NavItem[] = [
   {
@@ -80,3 +81,12 @@ export const navItems: NavItem[] = [
 ]
 
 export const DEFAULT_PAGINATION_LIMIT = 4
+
+export const openCampusTestOptions: SdkCtorOptions = {
+  networkOptions: {
+    rpcUrl: 'https://open-campus-codex-sepolia.drpc.org',
+    chainId: 656476,
+    contractAddress: '0xd8dcbd828a40f6590a5bee5095c38994dab3bdee',
+  },
+  chainName: 'OpenCampus-Testnet',
+}

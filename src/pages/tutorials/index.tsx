@@ -7,11 +7,10 @@ import { Link } from 'react-router-dom'
 import { SkeletonCard } from '@/components/skeleton-card'
 import http from '@/service/instance'
 import { Button } from '@/components/ui/button'
-import { NetworkType, SDK } from 'youbet-sdk'
+import { SDK } from 'youbet-sdk'
+import { openCampusTestOptions } from '@/constants/data'
 
-const sdk = new SDK({
-  networkType: NetworkType.Testnet,
-})
+const sdk = new SDK(openCampusTestOptions)
 
 function SkeletonList() {
   return (

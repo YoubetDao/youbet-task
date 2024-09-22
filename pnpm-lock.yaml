@@ -174,8 +174,8 @@ importers:
         specifier: ^2.10.10
         version: 2.12.2(@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react-native@0.74.4(@babel/core@7.25.2)(@babel/preset-env@7.25.3(@babel/core@7.25.2))(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1))(@types/react@18.3.3)(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react-native@0.74.4(@babel/core@7.25.2)(@babel/preset-env@7.25.3(@babel/core@7.25.2))(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@3.29.4)(typescript@5.5.4)(utf-8-validate@5.0.10)(viem@2.17.11(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
       youbet-sdk:
-        specifier: ^0.0.12
-        version: 0.0.12(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+        specifier: ^0.0.15
+        version: 0.0.15(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       zod:
         specifier: ^3.23.8
         version: 3.23.8
@@ -7240,8 +7240,8 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
-  youbet-sdk@0.0.12:
-    resolution: {integrity: sha512-sX2KQJ33kbplrtOYd3Rn+ppsCE2Ash3+QCzHxf8j3eJBzx9/loTgK8H53ayhKi7dlfEHjUEjL0e7I4Ne2/0uYQ==}
+  youbet-sdk@0.0.15:
+    resolution: {integrity: sha512-sXuXkTzF78eEr3NIq3z8EugZGHHdGhfm5pLnpmxooaefyI3qFkuESC8hlw+uyYwMUvshTfxRa+WmXGIE40vBVw==}
 
   zod@3.23.8:
     resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
@@ -15611,7 +15611,7 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
-  youbet-sdk@0.0.12(bufferutil@4.0.8)(utf-8-validate@5.0.10):
+  youbet-sdk@0.0.15(bufferutil@4.0.8)(utf-8-validate@5.0.10):
     dependencies:
       ethers: 6.13.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
