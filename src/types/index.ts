@@ -127,6 +127,21 @@ export interface Task {
   _id: string
 }
 
+export interface TaskApply {
+  _id: string
+  githubId: string
+  project: string
+  task: string
+  user: {
+    login: string
+  }
+  comment?: string
+  htmlUrl?: string
+  createdAt: Date
+  updatedAt: Date
+  canceledAt?: Date
+}
+
 export interface Profile {
   username: string
   email?: string
