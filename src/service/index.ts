@@ -87,6 +87,6 @@ export async function getOwnerAndRepo(githubId: string) {
 }
 
 export async function getMdBookContent(owner: string, repo: string, path: string) {
-  const response = await http.get<string>(`/fetch-markdown?owner=${owner}&repo=${repo}$path=${path}.md`)
+  const response = await http.get<string>(`/fetch-markdown?owner=${owner}&repo=${repo}&path=${path}.md`)
   return response.data
 }
