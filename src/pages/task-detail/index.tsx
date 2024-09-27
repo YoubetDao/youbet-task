@@ -4,16 +4,14 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
-import { usernameAtom } from '@/store'
-import { useAtom } from 'jotai'
-import { CircleDollarSign, FilePenLine } from 'lucide-react'
+import { CircleDollarSign, FilePenLine, Loader2 } from 'lucide-react'
 import UtterancesComments from './utterances-comments'
-import { Task, User } from '@/types'
+import { Task, TaskApply, User } from '@/types'
 import { useParams } from 'react-router-dom'
-import { useEffect, useState } from 'react'
-import { claimTask, disclaimTask, fetchTask as getTaskDetail } from '@/service'
+import { applyTask, fetchTask as getTaskDetail, myAppliesForTask, withdrawApply } from '@/service'
 import { SkeletonCard } from '@/components/skeleton-card'
 import ErrorPage from '../error'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 function Skeleton() {
   return (
@@ -44,61 +42,6 @@ type TaskDetailItem = {
   relative: string[]
   htmlUrl: string
   rewards: number
-}
-
-const taskDetailItem: TaskDetailItem = {
-  id: 101,
-  title: 'Improve Documentation',
-  description: `
-  ## Background
-This document provides an overview of the efforts required to enhance the current product documentation.
-This document provides an overview of the efforts required to enhance the current product documentation.
-
-This document provides an overview of the efforts required to enhance the current product documentation.
-
-
-
-  ## Overview
-  This document provides an overview of the efforts required to enhance the current product documentation.
-
-
-  ## References
-  - [Markdown Tutorial](https://www.markdownguide.org)
-  - [Technical Writing Tips](https://www.techwriting101.org)
-
-  \`Note: Ensure regular updates and version control\`
-  `,
-  createdAt: '2023-10-01T10:00:00Z',
-  deadline: '2023-10-15T17:00:00Z',
-  updatedAt: '2023-10-05T17:00:00Z',
-  rewards: 10,
-  reporter: {
-    login: 'Amateur0x1',
-    htmlUrl: 'https://github.com/Amateur0x1',
-    avatarUrl: 'https://avatars.githubusercontent.com/u/157032610?v=4',
-  },
-  assignee: {
-    login: 'Amateur0x1',
-    htmlUrl: 'https://github.com/Amateur0x1',
-    avatarUrl: 'https://avatars.githubusercontent.com/u/157032610?v=4',
-  },
-  assignees: [
-    {
-      login: 'Amateur0x1',
-      htmlUrl: 'https://github.com/Amateur0x1',
-      avatarUrl: 'https://avatars.githubusercontent.com/u/157032610?v=4',
-    },
-  ],
-  labels: [
-    { name: 'Documentation', color: '#ff5733' },
-    { name: 'Urgent', color: '#c70039' },
-  ],
-  priority: 'P1',
-  state: 'Open',
-  level: 'Legendary',
-  relative: ['https://github.com/YoubetDao/youbet-test-repo/issues/15'],
-  comments: 42,
-  htmlUrl: 'https://github.com/YoubetDao/youbet-test-repo/issues/15',
 }
 
 const renderLevel = (level: TaskDetailItem['level']) => {
@@ -157,85 +100,87 @@ const renderPriority = (priority: TaskDetailItem['priority']) => {
   }
 }
 
-export interface QuestLogProps {
-  task: Task
-  fetchTask: () => void
-}
+function QuestLog() {
+  const { githubId = '' } = useParams()
+  const { data: task } = useTask(githubId)
+  const { data: myApplies = [], isLoading: isMyAppliesLoading } = useMyApplies(githubId)
+  const queryClient = useQueryClient()
+  const { mutateAsync: applyTaskAsync, isLoading: _isClaiming } = useMutation({
+    mutationFn: applyTask,
+  })
+  const isClaiming = _isClaiming || isMyAppliesLoading
+  const { mutateAsync: withdrawApplyAsync, isLoading: _isWithdrawing } = useMutation({
+    mutationFn: withdrawApply,
+  })
+  const isWithdrawing = _isWithdrawing || isMyAppliesLoading
 
-function QuestLog({ task, fetchTask }: QuestLogProps) {
-  const [username] = useAtom(usernameAtom)
   const handleClaim = async () => {
-    const issueNumber = task.htmlUrl.split('/').pop()
-    const org = task.htmlUrl.split('/')[3]
-    const project = task.htmlUrl.split('/')[4]
     try {
-      // TODO: the claim logic here will cause some exception. I don't know what happened.
-      const res = await claimTask({
-        org,
-        project,
-        task: issueNumber,
+      await applyTaskAsync({
+        taskGithubId: githubId,
+        comment: 'I would like to claim this issue.',
       })
-    } catch (e) {
-      console.log(e)
+    } catch (error) {
+      console.error('Error claiming task:', error)
     }
-    fetchTask()
+    queryClient.invalidateQueries({ queryKey: ['myApplies', githubId] })
   }
 
   const handleDisclaim = async () => {
-    const issueNumber = task.htmlUrl.split('/').pop()
-    const org = task.htmlUrl.split('/')[3]
-    const project = task.htmlUrl.split('/')[4]
-    try {
-      // TODO: the claim logic here will cause some exception. I don't know what happened.
-      const res = await disclaimTask({
-        org,
-        project,
-        task: issueNumber,
+    if (myApplies.length > 0) {
+      await withdrawApplyAsync({
+        id: myApplies[0]._id,
       })
-    } catch (e) {
-      console.log(e)
+      queryClient.invalidateQueries({ queryKey: ['myApplies', githubId] })
     }
-    fetchTask()
+  }
+
+  if (task == null) {
+    return null
   }
 
   return (
     <div className="flex flex-col flex-shrink-0 basis-96">
       <div className="items-center mt-2">
-        {task.state === 'Closed' ? (
-          <Button disabled className="w-24 text-white border border-muted hover:bg-white/10 hover:border-opacity-80">
+        {task.state === 'closed' ? (
+          <Button disabled className="border-muted hover:bg-white/10 border hover:border-opacity-80 text-white">
             Closed
           </Button>
-        ) : !task.assignee || !task.assignee.login ? (
+        ) : task.assignee && task.assignee.login ? (
+          <Button disabled className="border-muted hover:bg-white/10 border hover:border-opacity-80 text-white">
+            Assigned
+          </Button>
+        ) : myApplies.length == 0 ? (
           <Button
+            disabled={isClaiming}
             onClick={handleClaim}
             variant="emphasis"
-            className="w-24 text-white border border-muted hover:bg-white/10 hover:border-opacity-80"
+            className="border-muted hover:bg-white/10 border hover:border-opacity-80 text-white"
           >
-            Claim
-          </Button>
-        ) : task.assignee.login === username ? (
-          <Button
-            onClick={handleDisclaim}
-            variant="emphasis"
-            className="w-24 text-white border border-muted bg-gray-8/50 hover:bg-white/10 hover:border-opacity-80 text-l"
-          >
-            Disclaim
+            Apply
+            {isClaiming && <Loader2 className="ml-2 w-4 h-4 animate-spin" />}
           </Button>
         ) : (
-          <Button disabled className="w-24 text-white border border-muted hover:bg-white/10 hover:border-opacity-80">
-            Claimed
+          <Button
+            disabled={isWithdrawing}
+            onClick={handleDisclaim}
+            variant="emphasis"
+            className="border-muted bg-gray-8/50 hover:bg-white/10 border hover:border-opacity-80 text-l text-white"
+          >
+            Withdraw
+            {isWithdrawing && <Loader2 className="ml-2 w-4 h-4 animate-spin" />}
           </Button>
         )}
       </div>
-      <Card className="sticky top-0 left-0 mt-4 bg-transparent">
-        <CardHeader className="flex flex-row items-center justify-between py-4 border-b border-muted">
+      <Card className="top-0 left-0 sticky bg-transparent mt-4">
+        <CardHeader className="flex flex-row justify-between items-center border-muted py-4 border-b">
           <CardTitle className="relative justify-center text-2xl">Quest Log</CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col mt-2 font-serif gap-y-4">
-          <div className="flex flex-row items-center justify-start pt-2">
+        <CardContent className="flex flex-col gap-y-4 mt-2 font-serif">
+          <div className="flex flex-row justify-start items-center pt-2">
             <Label className="w-40">Assignee</Label>
             {task.assignee && Object.keys(task.assignee).length > 0 && (
-              <div className="flex flex-row items-center justify-between gap-2">
+              <div className="flex flex-row justify-between items-center gap-2">
                 <Avatar className="w-7 h-7">
                   <AvatarImage src={task.assignee.avatarUrl} alt="Avatar" />
                   <AvatarFallback>{task.assignee.login.charAt(0)}</AvatarFallback>
@@ -244,23 +189,19 @@ function QuestLog({ task, fetchTask }: QuestLogProps) {
               </div>
             )}
           </div>
-          <div className="flex flex-row items-center justify-start pt-2">
+          <div className="flex flex-row justify-start items-center pt-2">
             <Label className="w-40">Rewards</Label>
             <span className="flex flex-row items-center gap-1">
-              <CircleDollarSign /> {taskDetailItem.rewards}
+              <CircleDollarSign /> {10}
             </span>
           </div>
-          <div className="flex flex-row items-center justify-start pt-2">
+          <div className="flex flex-row justify-start items-center pt-2">
             <Label className="w-40">Created At</Label>
             <span className="flex flex-row items-center gap-1">{new Date(task.createdAt).toLocaleDateString()}</span>
           </div>
-          {/* <div className="flex flex-row items-center justify-start pt-2">
-            <Label className="w-40">Deadline</Label>
-            <span className="flex flex-row items-center gap-1">{taskDetailItem.deadline}</span>
-          </div> */}
-          <div className="flex flex-row items-center justify-start pt-2">
+          <div className="flex flex-row justify-start items-center pt-2">
             <Label className="w-40">Level</Label>
-            {renderLevel(taskDetailItem.level)}
+            {renderLevel('Easy')}
             {/* <Select>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder={taskDetailItem.difficulty} />
@@ -273,9 +214,9 @@ function QuestLog({ task, fetchTask }: QuestLogProps) {
               </SelectContent>
             </Select> */}
           </div>
-          <div className="flex flex-row items-center justify-start pt-2">
+          <div className="flex flex-row justify-start items-center pt-2">
             <Label className="w-40">Priority</Label>
-            {renderPriority(taskDetailItem.priority)}
+            {renderPriority('P0')}
             {/* <Select>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder={taskDetailItem.priority} />
@@ -287,16 +228,16 @@ function QuestLog({ task, fetchTask }: QuestLogProps) {
               </SelectContent>
             </Select> */}
           </div>
-          {/* <div className="flex flex-row items-center justify-between pt-2">
+          {/* <div className="flex flex-row justify-between items-center pt-2">
             <Label className="w-40">Development</Label>
             <Button asChild variant="link" className="font-bold text-l">
               <a href={taskDetailItem.development}>branch</a>
             </Button>
           </div> */}
-          {/* <div className="flex flex-row items-center justify-start pt-2">
+          {/* <div className="flex flex-row justify-start items-center pt-2">
             <Label className="w-40">Reporter</Label>
             {task.assignee && (
-              <div className="flex flex-row items-center justify-between gap-2">
+              <div className="flex flex-row justify-between items-center gap-2">
                 <Avatar className="w-7 h-7">
                   <AvatarImage src={task.assignee.avatarUrl} alt="Avatar" />
                   <AvatarFallback>{task.assignee.login.charAt(0)}</AvatarFallback>
@@ -305,9 +246,9 @@ function QuestLog({ task, fetchTask }: QuestLogProps) {
               </div>
             )}
           </div> */}
-          <div className="flex flex-row items-center justify-start pt-2">
+          <div className="flex flex-row justify-start items-center pt-2">
             <Label className="w-40">assignees</Label>
-            <div className="flex flex-row items-center justify-between gap-2">
+            <div className="flex flex-row justify-between items-center gap-2">
               {task.assignees.map((participant, index) => (
                 <Avatar key={index} className="w-7 h-7">
                   <AvatarImage src={participant.avatarUrl} alt="Avatar" />
@@ -322,27 +263,26 @@ function QuestLog({ task, fetchTask }: QuestLogProps) {
   )
 }
 
+function useTask(githubId?: string) {
+  return useQuery<Task>({
+    queryKey: ['task', githubId],
+    queryFn: () => getTaskDetail(githubId as string),
+    enabled: !!githubId,
+  })
+}
+
+function useMyApplies(githubId?: string) {
+  return useQuery<TaskApply[]>({
+    queryKey: ['myApplies', githubId],
+    queryFn: () => myAppliesForTask(githubId as string),
+    enabled: !!githubId,
+  })
+}
+
 export default function TaskDetailPage() {
   const { githubId } = useParams()
-  const [task, setTask] = useState<Task | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: task, isInitialLoading: loading } = useTask(githubId)
   const { MdRenderer } = useMd(task?.body || '')
-  const fetchTask = async () => {
-    if (githubId) {
-      try {
-        setLoading(true)
-        const task = await getTaskDetail(githubId)
-        setTask(task)
-        setLoading(false)
-      } catch (error) {
-        console.error('Error fetching content:', error)
-      }
-    }
-  }
-
-  useEffect(() => {
-    fetchTask()
-  }, [githubId])
 
   if (loading) {
     return <Skeleton />
@@ -353,11 +293,11 @@ export default function TaskDetailPage() {
   }
 
   return (
-    <div className="px-4 py-4 mx-auto lg:px-12 max-w-7xl">
-      <div className="flex flex-col-reverse w-full gap-5 mt-5 xl:flex-row">
-        <article className="flex flex-col w-full gap-5">
+    <div className="mx-auto px-4 lg:px-12 py-4 max-w-7xl">
+      <div className="flex xl:flex-row flex-col-reverse gap-5 mt-5 w-full">
+        <article className="flex flex-col gap-5 w-full">
           <header>
-            <h1 className="text-4xl font-bold">{task.title}</h1>
+            <h1 className="font-bold text-4xl">{task.title}</h1>
           </header>
           <div className="flex flex-row gap-3">
             {task.labelsWithColors &&
@@ -369,9 +309,9 @@ export default function TaskDetailPage() {
               ))}
           </div>
           <div className="flex flex-row w-full">
-            <div className="flex flex-col items-start flex-1 gap-10 mr-4">
+            <div className="flex flex-col flex-1 items-start gap-10 mr-4">
               <MdRenderer />
-              <div className="flex flex-row items-center justify-between w-full">
+              <div className="flex flex-row justify-between items-center w-full">
                 <Button variant="link" className="gap-3 text-blue-500">
                   <FilePenLine className="w-5 h-5" />
                   <a href={task.htmlUrl}>Edit it in Github</a>
@@ -386,7 +326,7 @@ export default function TaskDetailPage() {
           </div>
         </article>
 
-        <QuestLog fetchTask={fetchTask} task={task} />
+        <QuestLog />
       </div>
     </div>
   )

@@ -34,7 +34,7 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
   (response) => {
-    if (response.status === 200) {
+    if (response.status >= 200 && response.status < 300) {
       return response
     } else {
       const messages = response.data.messages || ['got errors']

@@ -45,6 +45,21 @@ export async function claimTask(params: { org: string; project?: string; task?: 
   return response.data
 }
 
+export async function applyTask(params: { taskGithubId: string; comment: string }) {
+  const response = await http.post('/apply-task', params)
+  return response.data
+}
+
+export async function withdrawApply(params: { id: string }) {
+  const response = await http.post('/cancel-task-apply', params)
+  return response.data
+}
+
+export async function myAppliesForTask(taskGithubId: string) {
+  const response = await http.get(`/task/${taskGithubId}/my-applies`)
+  return response.data
+}
+
 export async function getLinkedWallet(github: string) {
   const response = await http.get<string>(`/get-linked-wallet?github=${github}`)
   return response.data
