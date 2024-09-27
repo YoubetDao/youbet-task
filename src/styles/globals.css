@@ -77,22 +77,19 @@
 }
 
 @layer components {
-  .toc-h1 a {
-    @apply block ml-1 font-medium text-slate-300 hover:text-purple-700;
+  .toc-h1 {
+    @apply ml-1 font-bold mb-2 text-white hover:text-foreground hover:border-slate-500 hover:bg-slate-800 cursor-pointer;
   }
 
-  .toc-h2 a {
-    @apply items-start ml-4 text-slate-300 hover:text-purple-700;
+  .toc-h2 {
+    @apply ml-1 px-3 border-l border-slate-600 text-muted-foreground hover:text-foreground hover:border-slate-500 hover:bg-slate-800 cursor-pointer;
   }
 
-  .toc-h3 a {
-    @apply items-start ml-8 text-slate-300 hover:text-purple-700;
+  .toc-h3 {
+    @apply ml-1 px-7 border-l border-slate-600 text-muted-foreground hover:text-foreground hover:border-slate-500 hover:bg-slate-800 cursor-pointer;
   }
 
   .toc-item.active {
-    @apply font-bold;
-
-    background: linear-gradient(to right, rgb(128 0 128 / 50%), rgb(128 0 128 / 20%));
-    border-radius: 8px;
+    @apply font-bold text-blue-400;
   }
 }

@@ -1,4 +1,4 @@
-import { Project, Task, FetchIssuesParams, Profile } from '@/types'
+import { Project, Task, FetchIssuesParams, Profile, Chapter } from '@/types'
 import http from './instance'
 
 export async function fetchUserInfo(code: string) {
@@ -57,5 +57,21 @@ export async function linkWallet(params: { github: string; address: string }) {
 
 export async function getMyInfo() {
   const response = await http.get<Profile>(`/my-info`)
+  return response.data
+}
+
+export async function getTutorialToC(owner: string, repo: string) {
+  // TODO: const response = await http.get<Chapter[]>(`/tutorial-chapters?owner=${owner}&repo=${repo}`)
+  const response = await http.get<Chapter[]>(`/tutorial-chapters?owner=${owner}&repo=${repo}`)
+  return response.data
+}
+
+export async function getOwnerAndRepo(githubId: string) {
+  const response = await http.get<Project>(`/project/${githubId}/detail`)
+  return response.data
+}
+
+export async function getMdBookContent(owner: string, repo: string, path: string) {
+  const response = await http.get<string>(`/fetch-markdown?owner=${owner}&repo=${repo}$path=${path}.md`)
   return response.data
 }

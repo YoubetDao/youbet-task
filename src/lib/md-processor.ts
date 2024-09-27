@@ -1,6 +1,5 @@
 import markdownIt from 'markdown-it'
 import markdownItAnchor from 'markdown-it-anchor'
-
 export class MarkdownProcessor {
   private contentHtml: string
   private toc: { id: string; title: string; slug: string }[] = []
@@ -10,7 +9,8 @@ export class MarkdownProcessor {
       html: true,
       linkify: true,
       typographer: true,
-    }).use(markdownItAnchor, {
+    })
+    md.use(markdownItAnchor, {
       level: [1, 2, 3],
       slugify: (s) => encodeURIComponent(String(s).trim().toLowerCase()),
       permalink: markdownItAnchor.permalink.linkInsideHeader({
@@ -22,6 +22,7 @@ export class MarkdownProcessor {
         this.toc.push({ id, title, slug })
       },
     })
+    // TODO: add code pre color
 
     this.contentHtml = md.render(content)
   }
@@ -30,7 +31,7 @@ export class MarkdownProcessor {
     return this.contentHtml
   }
 
-  public getTocData(): { id: string; title: string; slug: string }[] {
+  public getToCData(): { id: string; title: string; slug: string }[] {
     return this.toc
   }
 }

@@ -3,12 +3,15 @@ import { LucideSearch, LucideClock8, LucideEye, Heart } from 'lucide-react'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { useState, useEffect } from 'react'
 import { Project } from '@/types'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { SkeletonCard } from '@/components/skeleton-card'
 import http from '@/service/instance'
 import { Button } from '@/components/ui/button'
-import { SDK } from 'youbet-sdk'
 import { openCampusTestOptions } from '@/constants/data'
+import { SDK } from 'youbet-sdk'
+import { getTutorialToC } from '@/service'
+import { tutorialToCAtom } from '@/store'
+import { useSetAtom } from 'jotai'
 
 const sdk = new SDK(openCampusTestOptions)
 
@@ -42,88 +45,99 @@ const DEFAULT_HARDNESS = {
 }
 
 function TutorialItem({ item }: { item: Project }) {
-  if (!item.tutorial) return
-  const { githubId } = item
+  const navigate = useNavigate()
+  const setTutorialToC = useSetAtom(tutorialToCAtom)
+
+  const handleNavigation = async () => {
+    const data = await getTutorialToC(item.owner.login, item.name)
+    setTutorialToC(data)
+    const computedPath = `/tutorial/${item.githubId}/${item.owner.login}/${item.name}/${encodeURIComponent(
+      data[0].path?.match(/^(.*?).md$/)?.[1] ?? '',
+    )}`
+    navigate(computedPath)
+  }
+
   return (
-    <Link to={`/tutorial/${githubId}`}>
-      <article className="relative z-[1] hover:bg-white/10 border hover:border hover:border-opacity-80 rounded-2xl w-full h-full transition-all duration-200 cursor-pointer overflow-hidden ease-in group hover:scale-[0.998]">
-        <div className="relative flex flex-col">
-          <div className="top-2 left-2 absolute flex justify-center items-center bg-muted p-1 rounded-full">
-            <Heart
-              className="w-4 h-4"
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                sdk.contract.donateToProject(String(githubId), '0.01')
-              }}
-            />
-          </div>
-          {/* box */}
-          <div className="h-48 overflow-hidden">
-            <img src={item.owner.avatarUrl} alt={item.owner.login} className="w-full h-full object-cover" />
-          </div>
-          <div className="p-4 lg:p-6 overflow-hidden">
-            {/* name */}
-            <div className="flex items-center gap-2 w-full">
-              <div>
-                <Button
-                  variant="link"
-                  className="flex-1 px-0 font-bold text-ellipsis text-xl whitespace-nowrap overflow-hidden"
-                >
-                  <span
-                    className="z-10"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      window.open(item.htmlUrl, '_blank')
-                    }}
-                  >
-                    {item.name}
-                  </span>
-                </Button>
-              </div>
-            </div>
-            {/* description */}
-            <div className="mt-2 !line-clamp-3 text-muted-foreground text-sm break-all">
-              {item.description || 'No description...'}
-            </div>
-            {/* tags */}
-            <div className="flex gap-4 mt-5 text-xs">
-              {/* 简单/中等/困难 */}
-              <div className="flex items-center gap-1 px-2">
-                <div
-                  className="rounded-full w-2 h-2"
-                  style={{
-                    backgroundColor: DEFAULT_HARDNESS[item.tutorial?.level as keyof typeof DEFAULT_HARDNESS].color,
+    <article
+      className="relative z-[1] hover:bg-white/10 border hover:border hover:border-opacity-80 rounded-2xl w-full h-full transition-all duration-200 cursor-pointer overflow-hidden ease-in group hover:scale-[0.998]"
+      onClick={handleNavigation}
+    >
+      <div className="relative flex flex-col">
+        <div className="top-2 left-2 absolute flex justify-center items-center bg-muted p-1 rounded-full">
+          <Heart
+            className="w-4 h-4"
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              sdk.contract.donateToProject(String(item.githubId), '0.01')
+            }}
+          />
+        </div>
+        {/* box */}
+        <div className="h-48 overflow-hidden">
+          <img src={item.owner.avatarUrl} alt={item.owner.login} className="w-full h-full object-cover" />
+        </div>
+        <div className="p-4 lg:p-6 overflow-hidden">
+          {/* name */}
+          <div className="flex items-center gap-2 w-full">
+            <div>
+              <Button
+                variant="link"
+                className="flex-1 px-0 font-bold text-ellipsis text-xl whitespace-nowrap overflow-hidden"
+              >
+                <span
+                  className="z-10"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    window.open(item.htmlUrl, '_blank')
                   }}
-                ></div>
-                <span>{DEFAULT_HARDNESS[item.tutorial?.level as keyof typeof DEFAULT_HARDNESS].name}</span>
-              </div>
-              <div className="flex items-center gap-1 px-2">
-                <LucideEye className="w-4 h-4" />
-                <span>{0}</span>
-              </div>
-              {/* 时间 */}
-              <div className="flex items-center gap-1 px-2">
-                <LucideClock8 className="w-3 h-3" />
-                <span>{item.tutorial.time}</span>
-              </div>
+                >
+                  {item.name}
+                </span>
+              </Button>
             </div>
-            {/* categories */}
-            <div className="flex gap-2 border-[#555]/20 mt-3 pt-3 border-t text-xs">
-              {item.tutorial.categories.map(
-                (category) =>
-                  category && (
-                    <div key={category} className="flex justify-center items-center px-2 border rounded-lg h-7">
-                      {category}
-                    </div>
-                  ),
-              )}
+          </div>
+          {/* description */}
+          <div className="mt-2 !line-clamp-3 text-muted-foreground text-sm break-all">
+            {item.description || 'No description...'}
+          </div>
+          {/* tags */}
+          <div className="flex gap-4 mt-5 text-xs">
+            {/* 简单/中等/困难 */}
+            <div className="flex items-center gap-1 px-2">
+              <div
+                className="rounded-full w-2 h-2"
+                style={{
+                  backgroundColor: DEFAULT_HARDNESS[item.tutorial?.level as keyof typeof DEFAULT_HARDNESS].color,
+                }}
+              ></div>
+              <span>{DEFAULT_HARDNESS[item.tutorial?.level as keyof typeof DEFAULT_HARDNESS].name}</span>
             </div>
+            <div className="flex items-center gap-1 px-2">
+              <LucideEye className="w-4 h-4" />
+              <span>{0}</span>
+            </div>
+            {/* 时间 */}
+            <div className="flex items-center gap-1 px-2">
+              <LucideClock8 className="w-3 h-3" />
+              <span>{item.tutorial?.time}</span>
+            </div>
+          </div>
+          {/* categories */}
+          <div className="flex gap-2 border-[#555]/20 mt-3 pt-3 border-t text-xs">
+            {item.tutorial?.categories.map(
+              (category) =>
+                category && (
+                  <div key={category} className="flex justify-center items-center px-2 border rounded-lg h-7">
+                    {category}
+                  </div>
+                ),
+            )}
           </div>
         </div>
-      </article>
-    </Link>
+      </div>
+    </article>
   )
 }
 
