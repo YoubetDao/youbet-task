@@ -7,6 +7,8 @@ import {
   FetchPullRequestParams,
   IResultPaginationData,
   PullRequest,
+  FetchTaskAppliesParams,
+  PopulatedTaskApply,
 } from '@/types'
 import http from './instance'
 
@@ -102,5 +104,10 @@ export async function getMdBookContent(owner: string, repo: string, path: string
 
 export async function fetchPullRequests(params: FetchPullRequestParams) {
   const response = await http.get<IResultPaginationData<PullRequest>>('/pull-requests', { params })
+  return response.data
+}
+
+export async function fetchTaskApplies(params: FetchTaskAppliesParams) {
+  const response = await http.get<IResultPaginationData<PopulatedTaskApply>>('/task-applies', { params })
   return response.data
 }
