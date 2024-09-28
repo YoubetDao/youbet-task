@@ -1,4 +1,13 @@
-import { Project, Task, FetchIssuesParams, Profile, Chapter } from '@/types'
+import {
+  Project,
+  Task,
+  FetchIssuesParams,
+  Profile,
+  Chapter,
+  FetchPullRequestParams,
+  IResultPaginationData,
+  PullRequest,
+} from '@/types'
 import http from './instance'
 
 export async function fetchUserInfo(code: string) {
@@ -88,5 +97,10 @@ export async function getOwnerAndRepo(githubId: string) {
 
 export async function getMdBookContent(owner: string, repo: string, path: string) {
   const response = await http.get<string>(`/fetch-markdown?owner=${owner}&repo=${repo}&path=${path}.md`)
+  return response.data
+}
+
+export async function fetchPullRequests(params: FetchPullRequestParams) {
+  const response = await http.get<IResultPaginationData<PullRequest>>('/pull-requests', { params })
   return response.data
 }

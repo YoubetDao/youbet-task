@@ -19,6 +19,11 @@ export interface IResultPagination<T> {
   pagination: IPagination
 }
 
+export interface PaginationParams {
+  offset?: number
+  limit?: number
+}
+
 interface BaseItem {
   id: string
   createAt: string
@@ -89,6 +94,36 @@ export interface FetchIssuesParams {
   project?: string
   offset?: number
   limit?: number
+}
+export interface FetchPullRequestParams extends PaginationParams {
+  state?: string
+  search?: string
+}
+
+export interface PullRequest {
+  _id: string
+  githubId: number
+  title: string
+  body: string
+  state: string
+  createdAt: string
+  updatedAt: string
+  closedAt: string | null
+  mergedAt: string | null
+  htmlUrl: string
+  project: string
+  user: {
+    login: string
+    htmlUrl: string
+    avatarUrl: string
+  }
+  assignees: {
+    login: string
+    htmlUrl: string
+    avatarUrl: string
+  }[]
+  labels: string[]
+  namespace: string
 }
 
 export interface Task {
