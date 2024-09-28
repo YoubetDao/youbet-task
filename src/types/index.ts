@@ -126,19 +126,11 @@ export interface PullRequest {
   namespace: string
 }
 
-export interface Task {
-  htmlUrl: string
-  githubId: string
-  title: string
-  assignee?: User
-  state: string
-  labels: string[]
-  labelsWithColors?: { name: string; color: string }[]
-  createdAt: string
-  updatedAt: string
-  body: string
-  assignees: User[]
-  _id: string
+export type FetchTaskAppliesParams = PaginationParams
+
+export interface PopulatedTaskApply extends Omit<TaskApply, 'task' | 'user'> {
+  task: Task
+  user: User
 }
 
 export interface TaskApply {
@@ -154,6 +146,21 @@ export interface TaskApply {
   createdAt: Date
   updatedAt: Date
   canceledAt?: Date
+}
+
+export interface Task {
+  htmlUrl: string
+  githubId: string
+  title: string
+  assignee?: User
+  state: string
+  labels: string[]
+  labelsWithColors?: { name: string; color: string }[]
+  createdAt: string
+  updatedAt: string
+  body: string
+  assignees: User[]
+  _id: string
 }
 
 export interface Profile {
