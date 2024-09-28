@@ -16,16 +16,14 @@ function PageTracker() {
 
 const getDefaultLayout = ({ children }: { children: React.ReactNode }) => children
 
-const routerObjects: RouteObject[] = navItems.map((item) => {
-  const Page = Pages[item.component]
-  const Layout = item.layout ? Layouts[item.layout] : getDefaultLayout
-  // 设置 `private` 属性的默认值
-  // const isPrivate = item.component !== 'callback' && item.component !== 'login'
+const createRouterObjects = (items: typeof navItems): RouteObject[] => {
+  const flattenRoutes: RouteObject[] = []
 
-  const Component = () => {
-    // const [token] = useAtom(tokenAtom)
+  items.forEach((item) => {
+    const Page = Pages[item.component]
+    const Layout = item.layout ? Layouts[item.layout] : getDefaultLayout
 
-    return (
+    const Component = () => (
       <>
         <Helmet>
           <title>{item.title} - YouBet Task</title>
@@ -36,29 +34,33 @@ const routerObjects: RouteObject[] = navItems.map((item) => {
         </Layout>
       </>
     )
-  }
 
-  return {
-    path: item.href,
-    Component,
-  }
-})
+    flattenRoutes.push({
+      path: item.href,
+      element: <Component />,
+    })
 
-export function createRouter(): ReturnType<typeof createBrowserRouter> {
-  const routeWrappers = routerObjects.map((router) => {
-    const Component = router.Component
-    const page = Component ? (
-      <>
-        <PageTracker />
-        <Component />
-      </>
-    ) : null
-    return {
-      ...router,
-      element: page,
-      Component: null,
-      ErrorBoundary: Pages.error,
+    if (item.children) {
+      flattenRoutes.push(...createRouterObjects(item.children))
     }
   })
+
+  return flattenRoutes
+}
+
+export function createRouter(): ReturnType<typeof createBrowserRouter> {
+  const routeObjects = createRouterObjects(navItems)
+
+  const routeWrappers = routeObjects.map((router) => ({
+    ...router,
+    element: router.element ? (
+      <>
+        <PageTracker />
+        {router.element}
+      </>
+    ) : null,
+    ErrorBoundary: Pages.error,
+  }))
+
   return createBrowserRouter(routeWrappers)
 }
