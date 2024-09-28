@@ -126,7 +126,9 @@ export interface PullRequest {
   namespace: string
 }
 
-export type FetchTaskAppliesParams = PaginationParams
+export interface FetchTaskAppliesParams extends PaginationParams {
+  search?: string
+}
 
 export interface PopulatedTaskApply extends Omit<TaskApply, 'task' | 'user'> {
   task: Task

@@ -145,7 +145,7 @@ function TaskAppliesTable(): React.ReactElement {
 
 const queryClient = new QueryClient()
 
-export default function taskApplyAdmin() {
+export default function TaskApplyAdmin() {
   return (
     <div className="mx-auto px-4 lg:px-12 py-4 max-w-7xl">
       <QueryClientProvider client={queryClient}>
