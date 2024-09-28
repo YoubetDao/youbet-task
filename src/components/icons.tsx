@@ -11,6 +11,9 @@ import {
   UserCircle2,
   BookOpen,
   LucideSchool,
+  Settings,
+  GitPullRequest,
+  ClipboardList,
 } from 'lucide-react'
 
 export const Icons = {
@@ -25,6 +28,9 @@ export const Icons = {
   profile: UserCircle2,
   tutorial: BookOpen,
   school: LucideSchool,
+  settings: Settings,
+  clipboardList: ClipboardList,
+  gitPullRequest: GitPullRequest,
   github: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"

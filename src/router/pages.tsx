@@ -9,6 +9,8 @@ import Tutorial from '@/pages/tutorial'
 import Tutorials from '@/pages/tutorials'
 import TaskDetailPage from '@/pages/task-detail'
 import ErrorPage from '@/pages/error'
+import PullRequestAdmin from '@/pages/pull-request'
+import TaskApplyAdmin from '@/pages/task-apply'
 
 export const Pages = {
   dashboard: Dashboard,
@@ -22,4 +24,6 @@ export const Pages = {
   tutorials: Tutorials,
   taskDetail: TaskDetailPage,
   error: ErrorPage,
+  pullRequestAdmin: PullRequestAdmin,
+  taskApplyAdmin: TaskApplyAdmin,
 }

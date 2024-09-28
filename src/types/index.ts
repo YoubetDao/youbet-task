@@ -78,27 +78,6 @@ export interface Project {
   youbetExtra?: YoubetExtra
 }
 
-interface PullRequest {
-  url: string
-  html_url: string
-  diff_url: string
-  patch_url: string
-  merged_at: string
-}
-
-interface Reactions {
-  url: string
-  total_count: number
-  '+1': number
-  '-1': number
-  laugh: number
-  hooray: number
-  confused: number
-  heart: number
-  rocket: number
-  eyes: number
-}
-
 export interface User {
   login: string
   htmlUrl: string

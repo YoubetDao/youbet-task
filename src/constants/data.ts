@@ -78,6 +78,29 @@ export const navItems: NavItem[] = [
     layout: 'dashboard',
     hideInMenu: true,
   },
+  {
+    title: 'Admin',
+    href: '#',
+    icon: 'settings',
+    component: 'error',
+    layout: 'dashboard',
+    children: [
+      {
+        title: 'Pull Requests',
+        href: '/admin/pull-requests',
+        icon: 'gitPullRequest',
+        component: 'pullRequestAdmin',
+        layout: 'dashboard',
+      },
+      {
+        title: 'Task Apply',
+        href: '/admin/task-apply',
+        icon: 'clipboardList',
+        component: 'taskApplyAdmin',
+        layout: 'dashboard',
+      },
+    ],
+  },
 ]
 
 export const DEFAULT_PAGINATION_LIMIT = 4
