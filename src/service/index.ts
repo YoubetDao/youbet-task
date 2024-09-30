@@ -9,7 +9,11 @@ import {
   PullRequest,
   FetchTaskAppliesParams,
   PopulatedTaskApply,
+  GithubOrganization,
+  GithubRepo,
+  Tutorial,
 } from '@/types'
+// import { Project, Task, FetchIssuesParams, Profile, GithubOrganization, GithubRepo, Tutorial } from '@/types'
 import http from './instance'
 
 export async function fetchUserInfo(code: string) {
@@ -109,5 +113,20 @@ export async function fetchPullRequests(params: FetchPullRequestParams) {
 
 export async function fetchTaskApplies(params: FetchTaskAppliesParams) {
   const response = await http.get<IResultPaginationData<PopulatedTaskApply>>('/task-applies', { params })
+  return response.data
+}
+
+export async function getUserOrgs() {
+  const response = await http.get<GithubOrganization[]>('/user-orgs')
+  return response.data
+}
+
+export async function getRepos(org: string) {
+  const response = await http.get<GithubRepo[]>(`/org-repos?org=${org}`)
+  return response.data
+}
+
+export async function importProjectForUser(params: { org: string; project: string; tutorial?: Tutorial }) {
+  const response = await http.post('/import-project-for-user', params)
   return response.data
 }

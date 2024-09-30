@@ -24,6 +24,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useInfiniteScroll } from 'ahooks'
 import { getLoadMoreProjectList } from '@/services'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constants/data'
+import ImportProjectDialog from '@/components/import-project'
 
 function SkeletonProjects({ count = 6 }: { count?: number }) {
   return (
@@ -289,9 +290,12 @@ export default function ProjectPage() {
   return (
     <div className="px-4 py-4 mx-auto lg:px-12 max-w-7xl">
       <div className="flex flex-col w-full gap-2">
-        <div className="relative">
-          <Input placeholder="Search project title or description" className="pl-8 bg-background/80" />
-          <LucideSearch className="absolute w-4 h-4 -translate-y-1/2 top-1/2 left-2" />
+        <div className="flex items-center justify-between gap-2">
+          <div className="relative flex-1">
+            <Input placeholder="Search project title or description" className="pl-8 bg-background/80" />
+            <LucideSearch className="absolute w-4 h-4 -translate-y-1/2 top-1/2 left-2" />
+          </div>
+          <ImportProjectDialog />
         </div>
         <div className="flex flex-col gap-2 lg:flex-row">
           <FilterBoard filterTags={filterTags} setFilterTags={setFilterTags} />
