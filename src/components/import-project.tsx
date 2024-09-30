@@ -9,6 +9,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { getRepos, getUserOrgs, importProjectForUser } from '@/service'
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -41,12 +42,6 @@ export default function ImportProject() {
     mutationFn: importProjectForUser,
   })
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values)
-    await importTutorial(values)
-    setOpen(false)
-  }
-
   const { data: userOrOrgOptions, isLoading: isUserOrOrgOptionsLoading } = useQuery({
     queryKey: ['userOrOrgOptions'],
     queryFn: () => getUserOrgs(),
@@ -61,8 +56,19 @@ export default function ImportProject() {
 
   const isConfirmButtonDisabled = isUserOrOrgOptionsLoading || form.formState.isSubmitting
 
+  const handleOpenChange = (open: boolean) => {
+    setOpen(open)
+    form.reset()
+  }
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log(values)
+    await importTutorial(values)
+    handleOpenChange(false)
+  }
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button>Import Project</Button>
       </DialogTrigger>
@@ -133,7 +139,9 @@ export default function ImportProject() {
             {/* Button */}
             <div className="flex items-center justify-end gap-2">
               {/* Cancel */}
-              <Button variant="outline">Cancel</Button>
+              <DialogClose asChild>
+                <Button variant="outline">Cancel</Button>
+              </DialogClose>
               <Button type="submit" disabled={isConfirmButtonDisabled}>
                 Import{isImportTutorialLoading && <Loader2 className="w-4 h-4 ml-2 animate-spin" />}
               </Button>
