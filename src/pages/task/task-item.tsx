@@ -39,9 +39,9 @@ export const TaskItem = ({
   return (
     <article className="relative z-[1] hover:bg-white/10 p-4 border hover:border hover:border-opacity-80 rounded-2xl w-full transition-all duration-200 ease-in group hover:scale-[0.998]">
       <Link to={`/task/${item.githubId}`}>
-        <div className="flex justify-between items-center gap-4 h-12">
-          <div className="flex flex-row justify-center items-start gap-2 w-full">
-            <div className="mt-1 h-8">
+        <div className="flex items-center justify-between h-12 gap-4">
+          <div className="flex flex-row items-start justify-center w-full gap-2">
+            <div className="h-8 mt-1">
               {item.state === 'open' ? (
                 <CircleDot className="w-6 text-green-600" />
               ) : (
@@ -62,18 +62,16 @@ export const TaskItem = ({
           </div>
         </div>
         <div className="flex-1">
-          <div className="flex flex-col justify-between gap-2 rounded h-full overflow-hidden">
+          <div className="flex flex-col justify-between h-full gap-2 overflow-hidden rounded">
             <div className="flex flex-col gap-4">
               <div className="mt-2 !line-clamp-2 h-10 text-muted-foreground text-sm break-all">
                 {item.body || 'No description...'}
               </div>
             </div>
-            <div className="flex justify-between items-center h-9">
+            <div className="flex items-center justify-between h-9">
               <div className="flex flex-row items-center gap-4">
                 <Avatar className="w-4 h-4">
-                  <AvatarImage
-                    src={item.assignees[0]?.avatarUrl || 'https://avatars.githubusercontent.com/u/8191686?v=4'}
-                  />
+                  <AvatarImage src={item.assignees[0]?.avatarUrl || item.user.avatarUrl} />
                 </Avatar>
                 <div className="flex flex-row items-center gap-2">
                   <Clock className="w-4 h-4" />
@@ -85,7 +83,7 @@ export const TaskItem = ({
                 {item.state === 'closed' ? (
                   <Button
                     disabled
-                    className="border-white/80 bg-greyscale-50/8 hover:bg-white/10 border hover:border-opacity-80 w-24 text-white"
+                    className="w-24 text-white border border-white/80 bg-greyscale-50/8 hover:bg-white/10 hover:border-opacity-80"
                   >
                     Closed
                   </Button>
@@ -93,7 +91,7 @@ export const TaskItem = ({
                   <></>
                 ) : // <Button
                 //   onClick={handleClaim}
-                //   className="border-white/80 bg-greyscale-50/8 hover:bg-white/10 border hover:border-opacity-80 w-24 text-white"
+                //   className="w-24 text-white border border-white/80 bg-greyscale-50/8 hover:bg-white/10 hover:border-opacity-80"
                 // >
                 //   Claim
                 // </Button>
@@ -102,13 +100,13 @@ export const TaskItem = ({
                 ) : (
                   // <Button
                   //   onClick={handleDisclaim}
-                  //   className="border-white/80 bg-greyscale-50/8 hover:bg-white/10 border hover:border-opacity-80 w-24 text-white"
+                  //   className="w-24 text-white border border-white/80 bg-greyscale-50/8 hover:bg-white/10 hover:border-opacity-80"
                   // >
                   //   Disclaim
                   // </Button>
                   <Button
                     disabled
-                    className="border-white/80 bg-greyscale-50/8 hover:bg-white/10 border hover:border-opacity-80 w-24 text-white"
+                    className="w-24 text-white border border-white/80 bg-greyscale-50/8 hover:bg-white/10 hover:border-opacity-80"
                   >
                     Claimed
                   </Button>
@@ -126,7 +124,7 @@ export const TaskItem = ({
               </div>
             )} */}
           </div>
-          <div className="flex flex-row gap-2 mt-2 pt-2 pr-4 border-t">
+          <div className="flex flex-row gap-2 pt-2 pr-4 mt-2 border-t">
             {item.labels.length > 0 && (
               <span
                 className="inline-flex items-center px-2.5 py-0.5 border rounded-full focus:ring-2 focus:ring-ring focus:ring-offset-2 font-semibold text-xs transition-colors focus:outline-none"

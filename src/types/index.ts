@@ -163,6 +163,7 @@ export interface Task {
   body: string
   assignees: User[]
   _id: string
+  user: User
 }
 
 export interface Profile {
