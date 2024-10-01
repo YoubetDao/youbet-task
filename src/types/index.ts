@@ -39,6 +39,7 @@ export interface NavItem {
   description?: string
   hideInMenu?: boolean
   children?: NavItem[]
+  disabled?: boolean
 }
 
 export interface ProjectItem extends BaseItem {

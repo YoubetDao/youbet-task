@@ -1,12 +1,13 @@
 import React from 'react'
 import { createBrowserRouter, RouteObject } from 'react-router-dom'
 
-import { navItems } from '@/constants/data'
+import { getNavItems } from '@/constants/data'
 import { Pages } from '@/router/pages'
 import { Layouts } from '@/router/layouts'
 import { Helmet } from 'react-helmet'
 import { usePageTracking } from '@/hooks/use-page-tracking'
 import { useTimeTracking } from '@/hooks/use-time-tracking'
+import { NavItem } from '@/types'
 
 function PageTracker() {
   usePageTracking()
@@ -16,7 +17,7 @@ function PageTracker() {
 
 const getDefaultLayout = ({ children }: { children: React.ReactNode }) => children
 
-const createRouterObjects = (items: typeof navItems): RouteObject[] => {
+const createRouterObjects = (items: NavItem[]): RouteObject[] => {
   const flattenRoutes: RouteObject[] = []
 
   items.forEach((item) => {
@@ -49,6 +50,7 @@ const createRouterObjects = (items: typeof navItems): RouteObject[] => {
 }
 
 export function createRouter(): ReturnType<typeof createBrowserRouter> {
+  const navItems = getNavItems()
   const routeObjects = createRouterObjects(navItems)
 
   const routeWrappers = routeObjects.map((router) => ({

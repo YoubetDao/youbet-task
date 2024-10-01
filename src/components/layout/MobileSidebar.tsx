@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { Menu, ChevronDown, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
-import { navItems } from '@/constants/data'
+import { getNavItems } from '@/constants/data'
 import { Icons } from '@/components/icons'
 import { cn } from '@/lib/utils'
 import useLocalStorageState from '@/hooks/use-localstorage-state'
@@ -10,6 +10,7 @@ import useLocalStorageState from '@/hooks/use-localstorage-state'
 export default function MobileSidebar() {
   const location = useLocation()
   const [expandedItems, setExpandedItems] = useLocalStorageState<string[]>('sidebarExpandedItems', [])
+  const navItems = getNavItems()
 
   const toggleExpand = (title: string) => {
     setExpandedItems((prev) => (prev.includes(title) ? prev.filter((item) => item !== title) : [...prev, title]))
@@ -63,10 +64,10 @@ export default function MobileSidebar() {
       </SheetTrigger>
       <SheetContent side="left" className="flex flex-col">
         <SheetTitle>
-          <img src="/logo.png" alt="YouBet Task" className="inline-block mr-2 rounded-lg w-6 h-6" />
+          <img src="/logo.png" alt="YouBet Task" className="inline-block w-6 h-6 mr-2 rounded-lg" />
           YouBet Task
         </SheetTitle>
-        <nav className="gap-2 grid mt-4 font-medium text-lg">{navItems.map((item) => renderMenuItem(item))}</nav>
+        <nav className="grid gap-2 mt-4 text-lg font-medium">{navItems.map((item) => renderMenuItem(item))}</nav>
       </SheetContent>
     </Sheet>
   )
