@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-import { useQuery, QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { fetchTaskApplies } from '@/service'
+import { useQuery, QueryClient, QueryClientProvider, useMutation, useQueryClient } from '@tanstack/react-query'
 import { PopulatedTaskApply, IResultPaginationData } from '@/types'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Input } from '@/components/ui/input'
@@ -9,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
 import { format } from 'date-fns'
 import { SkeletonCard } from '@/components/skeleton-card'
+import { fetchTaskApplies, approveTaskApply, rejectTaskApply } from '@/service'
 
 function LoadingPage(): React.ReactElement {
   return (
@@ -27,6 +27,7 @@ function TaskAppliesTable(): React.ReactElement {
   const [page, setPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({})
   const pageSize = 10
 
   const { data, isLoading } = useQuery<IResultPaginationData<PopulatedTaskApply>>(
@@ -46,6 +47,28 @@ function TaskAppliesTable(): React.ReactElement {
 
   const filteredData =
     data?.data.filter((apply) => apply.task.title.toLowerCase().includes(searchTerm.toLowerCase())) || []
+
+  const queryClient = useQueryClient()
+
+  const approveMutation = useMutation(approveTaskApply, {
+    onMutate: (applyId) => {
+      setLoadingStates((prev) => ({ ...prev, [applyId]: true }))
+    },
+    onSettled: (_, __, applyId) => {
+      setLoadingStates((prev) => ({ ...prev, [applyId]: false }))
+      queryClient.invalidateQueries(['taskApplies'])
+    },
+  })
+
+  const rejectMutation = useMutation(rejectTaskApply, {
+    onMutate: (applyId) => {
+      setLoadingStates((prev) => ({ ...prev, [applyId]: true }))
+    },
+    onSettled: (_, __, applyId) => {
+      setLoadingStates((prev) => ({ ...prev, [applyId]: false }))
+      queryClient.invalidateQueries(['taskApplies'])
+    },
+  })
 
   if (isLoading) return <LoadingPage />
 
@@ -76,6 +99,7 @@ function TaskAppliesTable(): React.ReactElement {
             <TableHead className="text-gray-400">Task Title</TableHead>
             <TableHead className="text-gray-400">User</TableHead>
             <TableHead className="text-gray-400">Applied At</TableHead>
+            <TableHead className="text-gray-400">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -92,6 +116,22 @@ function TaskAppliesTable(): React.ReactElement {
                 </a>
               </TableCell>
               <TableCell>{format(new Date(apply.createdAt), 'MMMM do, yyyy')}</TableCell>
+              <TableCell>
+                {!apply.canceledAt && !apply.approvedAt ? (
+                  <div className="flex space-x-2">
+                    <Button onClick={() => approveMutation.mutate(apply._id)} disabled={loadingStates[apply._id]}>
+                      Approve
+                    </Button>
+                    <Button onClick={() => rejectMutation.mutate(apply._id)} disabled={loadingStates[apply._id]}>
+                      Reject
+                    </Button>
+                  </div>
+                ) : (
+                  <span className="text-gray-400">
+                    {apply.approvedAt ? 'Approved' : apply.canceledAt ? 'Canceled' : 'Rejected'}
+                  </span>
+                )}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

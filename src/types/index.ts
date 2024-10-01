@@ -149,6 +149,7 @@ export interface TaskApply {
   createdAt: Date
   updatedAt: Date
   canceledAt?: Date
+  approvedAt?: Date
 }
 
 export interface Task {

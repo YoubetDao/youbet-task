@@ -130,3 +130,13 @@ export async function importProjectForUser(params: { org: string; project: strin
   const response = await http.post('/import-project-for-user', params)
   return response.data
 }
+
+export async function approveTaskApply(id: string) {
+  const response = await http.post(`/approve-task-apply/${id}`)
+  return response.data
+}
+
+export async function rejectTaskApply(id: string) {
+  const response = await http.post(`/reject-task-apply/${id}`)
+  return response.data
+}
