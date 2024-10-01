@@ -1,13 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/icons'
 import ReactGA from 'react-ga4'
-
-const CLIENT_ID = import.meta.env.VITE_GITHUB_OAUTH_CLIENT_ID
-const REDIRECT_URI = `${location.origin}/auth/github/callback`
-
-const githubOAuth = () => {
-  window.location.href = `http://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=user:email,repo`
-}
+import { githubOAuthUri } from '@/lib/auth'
 
 const GithubSignInButton = () => {
   // TODO: after login should return to the page that the user was on
@@ -24,10 +18,10 @@ const GithubSignInButton = () => {
             label: 'GitHub',
           })
         }
-        githubOAuth()
+        window.location.href = githubOAuthUri()
       }}
     >
-      <Icons.github className="mr-2 w-4 h-4" />
+      <Icons.github className="w-4 h-4 mr-2" />
       Continue with Github
     </Button>
   )
@@ -38,10 +32,10 @@ export default function UserAuthForm() {
     <>
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <span className="border-t w-full" />
+          <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">Continue with</span>
+          <span className="px-2 bg-background text-muted-foreground">Continue with</span>
         </div>
       </div>
       <GithubSignInButton />
