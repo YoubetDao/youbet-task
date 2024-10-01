@@ -5,6 +5,9 @@ import path from 'path'
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
+  const baseUrl = env.VITE_BASE_URL || '/api'
+  const apiTarget = env.VITE_API_TARGET || 'http://43.132.156.239:5060'
+  const baseUrlReg = new RegExp(`^${baseUrl}`)
 
   return {
     plugins: [
@@ -27,12 +30,13 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       host: true,
+      // TODO: port change to 9257
       port: 3000,
       proxy: {
-        '/api': {
-          target: env.VITE_API_TARGET || 'http://43.132.156.239:5060',
+        [baseUrl]: {
+          target: apiTarget,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ''),
+          rewrite: (path) => path.replace(baseUrlReg, ''),
         },
       },
     },
