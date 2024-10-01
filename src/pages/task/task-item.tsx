@@ -71,7 +71,7 @@ export const TaskItem = ({
             <div className="flex items-center justify-between h-9">
               <div className="flex flex-row items-center gap-4">
                 <Avatar className="w-4 h-4">
-                  <AvatarImage src={item.assignees[0]?.avatarUrl || item.user.avatarUrl} />
+                  <AvatarImage src={item.assignees[0]?.avatarUrl || item.user?.avatarUrl} />
                 </Avatar>
                 <div className="flex flex-row items-center gap-2">
                   <Clock className="w-4 h-4" />
