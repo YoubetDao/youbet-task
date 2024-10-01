@@ -48,3 +48,7 @@ src
 ├── styles      # Less files
 ├── types       # Typescript types
 └── vite-env.d.ts
+
+## github oauth
+
+window.location.href = https://github.com/login/oauth/authorize?client_id=Ov23li86Nz0RcXbj54Z5&redirect_uri=http://localhost:3000/auth/github/callback&response_type=code&scope=user:email,repo&prompt=consent

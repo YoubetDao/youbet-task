@@ -17,6 +17,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Loader2 } from 'lucide-react'
+import { githubOAuthForOrganizationUri } from '@/lib/auth'
 
 const formSchema = z.object({
   org: z.string().min(2, {
@@ -75,7 +76,7 @@ export default function ImportProject() {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Import Project</DialogTitle>
-          <DialogDescription>Import Project From Your Repo.</DialogDescription>
+          <DialogDescription>Only support public repositories.</DialogDescription>
         </DialogHeader>
         {/* form */}
         <Form {...form}>
@@ -95,7 +96,7 @@ export default function ImportProject() {
                     </FormControl>
                     <SelectContent>
                       {userOrOrgOptions?.map((item) => (
-                        <SelectItem key={item.id} value={String(item.id)}>
+                        <SelectItem key={item.id} value={String(item.login)}>
                           <img
                             src={item.avatar_url}
                             alt={item.login}
@@ -104,38 +105,45 @@ export default function ImportProject() {
                           <span>{item.login}</span>
                         </SelectItem>
                       ))}
+                      <Button
+                        onClick={() => (window.location.href = githubOAuthForOrganizationUri())}
+                        className="w-full mt-2"
+                      >
+                        <span>Add Another Organization</span>
+                      </Button>
                     </SelectContent>
                   </Select>
-
                   <FormMessage />
                 </FormItem>
               )}
             />
             {/* Select Repos */}
-            <FormField
-              control={form.control}
-              name="project"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Select Repos</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Repos" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {repos?.map((item) => (
-                        <SelectItem key={item.id} value={String(item.id)}>
-                          <span>{item.name}</span>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {repos && (
+              <FormField
+                control={form.control}
+                name="project"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Select Repos</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Repos" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {repos?.map((item) => (
+                          <SelectItem key={item.id} value={String(item.name)}>
+                            <span>{item.name}</span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
             {/* Button */}
             <div className="flex items-center justify-end gap-2">
               {/* Cancel */}
