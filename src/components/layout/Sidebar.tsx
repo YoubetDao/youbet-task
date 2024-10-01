@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { navItems } from '@/constants/data'
+import { getNavItems } from '@/constants/data'
 import { Icons } from '@/components/icons'
 import { cn } from '@/lib/utils'
 import { ChevronDown, ChevronRight } from 'lucide-react'
@@ -8,7 +8,7 @@ import useLocalStorageState from '@/hooks/use-localstorage-state'
 export default function Sidebar() {
   const location = useLocation()
   const [expandedItems, setExpandedItems] = useLocalStorageState<string[]>('sidebarExpandedItems', [])
-
+  const navItems = getNavItems()
   const toggleExpand = (title: string) => {
     setExpandedItems((prev) => (prev.includes(title) ? prev.filter((item) => item !== title) : [...prev, title]))
   }
@@ -52,7 +52,7 @@ export default function Sidebar() {
   }
 
   return (
-    <nav className="items-start grid px-2 lg:px-4 font-medium text-sm">
+    <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
       {navItems.map((item) => renderMenuItem(item))}
     </nav>
   )
