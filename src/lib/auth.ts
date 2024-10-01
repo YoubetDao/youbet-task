@@ -9,6 +9,6 @@ export const githubOAuthUri = () => {
   return `http://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${getRedirectUri()}&response_type=code&scope=user:email,repo`
 }
 
-export const githubOAuthForOrganizationUri = () => {
+export const githubOAuthContentUri = () => {
   return `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${getRedirectUri()}&response_type=code&scope=user:email,repo&prompt=consent`
 }

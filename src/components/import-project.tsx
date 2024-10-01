@@ -17,7 +17,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Loader2 } from 'lucide-react'
-import { githubOAuthForOrganizationUri } from '@/lib/auth'
+import { githubOAuthContentUri } from '@/lib/auth'
 
 const formSchema = z.object({
   org: z.string().min(2, {
@@ -105,10 +105,7 @@ export default function ImportProject() {
                           <span>{item.login}</span>
                         </SelectItem>
                       ))}
-                      <Button
-                        onClick={() => (window.location.href = githubOAuthForOrganizationUri())}
-                        className="w-full mt-2"
-                      >
+                      <Button onClick={() => (window.location.href = githubOAuthContentUri())} className="w-full mt-2">
                         <span>Add Another Organization</span>
                       </Button>
                     </SelectContent>
