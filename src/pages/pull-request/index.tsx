@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useQuery, QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { fetchPullRequests } from '@/service'
 import { PullRequest, IResultPaginationData } from '@/types'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -30,19 +30,18 @@ function PullRequestsTable(): React.ReactElement {
   const [statusFilter, setStatusFilter] = useState('all')
   const pageSize = 10
 
-  const { data, isLoading } = useQuery<IResultPaginationData<PullRequest>>(
-    ['pullRequests', page, pageSize, searchTerm, statusFilter],
-    () =>
-      fetchPullRequests({
+  const { data, isLoading } = useQuery<IResultPaginationData<PullRequest>>({
+    queryKey: ['pullRequests', page, pageSize, searchTerm, statusFilter],
+    queryFn: () => {
+      return fetchPullRequests({
         state: statusFilter === 'all' ? undefined : statusFilter,
         offset: (page - 1) * pageSize,
         limit: pageSize,
         search: searchTerm,
-      }),
-    {
-      keepPreviousData: true,
+      })
     },
-  )
+    keepPreviousData: true,
+  })
 
   const totalPages = Math.ceil((data?.pagination.totalCount || 0) / pageSize)
 
@@ -62,7 +61,7 @@ function PullRequestsTable(): React.ReactElement {
           placeholder="Filter pull requests..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="border-gray-700 bg-transparent max-w-sm"
+          className="max-w-sm bg-transparent border-gray-700"
         />
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="border-gray-700 bg-transparent w-[180px]">
@@ -105,7 +104,7 @@ function PullRequestsTable(): React.ReactElement {
           ))}
         </TableBody>
       </Table>
-      <div className="flex justify-between items-center text-gray-400 text-sm">
+      <div className="flex items-center justify-between text-sm text-gray-400">
         <div>
           Page {page} of {totalPages}
         </div>
@@ -115,7 +114,7 @@ function PullRequestsTable(): React.ReactElement {
             size="icon"
             onClick={() => setPage(1)}
             disabled={page === 1}
-            className="border-gray-700 bg-transparent hover:bg-gray-800 text-gray-400"
+            className="text-gray-400 bg-transparent border-gray-700 hover:bg-gray-800"
           >
             <ChevronsLeft className="w-4 h-4" />
           </Button>
@@ -124,7 +123,7 @@ function PullRequestsTable(): React.ReactElement {
             size="icon"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="border-gray-700 bg-transparent hover:bg-gray-800 text-gray-400"
+            className="text-gray-400 bg-transparent border-gray-700 hover:bg-gray-800"
           >
             <ChevronLeft className="w-4 h-4" />
           </Button>
@@ -133,7 +132,7 @@ function PullRequestsTable(): React.ReactElement {
             size="icon"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="border-gray-700 bg-transparent hover:bg-gray-800 text-gray-400"
+            className="text-gray-400 bg-transparent border-gray-700 hover:bg-gray-800"
           >
             <ChevronRight className="w-4 h-4" />
           </Button>
@@ -142,7 +141,7 @@ function PullRequestsTable(): React.ReactElement {
             size="icon"
             onClick={() => setPage(totalPages)}
             disabled={page === totalPages}
-            className="border-gray-700 bg-transparent hover:bg-gray-800 text-gray-400"
+            className="text-gray-400 bg-transparent border-gray-700 hover:bg-gray-800"
           >
             <ChevronsRight className="w-4 h-4" />
           </Button>
@@ -152,14 +151,10 @@ function PullRequestsTable(): React.ReactElement {
   )
 }
 
-const queryClient = new QueryClient()
-
 export default function PullRequestAdmin() {
   return (
-    <div className="mx-auto px-4 lg:px-12 py-4 max-w-7xl">
-      <QueryClientProvider client={queryClient}>
-        <PullRequestsTable />
-      </QueryClientProvider>
+    <div className="px-4 py-4 mx-auto lg:px-12 max-w-7xl">
+      <PullRequestsTable />
     </div>
   )
 }
