@@ -73,9 +73,10 @@ export default function Dashboard() {
       setLeaderboard(data)
       setUserCount(totalCount || 0)
     })
-    fetchTasks({ limit: 1000 }).then((tasks) => {
-      setOpenedCount((tasks || []).filter((task) => task.state === 'open').length)
-      setTotalCount((tasks || []).length)
+    fetchTasks({ project: '', offset: 0, limit: 1000 }).then((tasks) => {
+      const openedTasks = (tasks?.data || []).filter((task) => task.state === 'open')
+      setOpenedCount(openedTasks.length)
+      setTotalCount(tasks?.pagination.totalCount || 0)
     })
     fetchProjects().then((projects) => {
       setProjects(projects || [])
