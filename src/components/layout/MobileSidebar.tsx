@@ -6,6 +6,7 @@ import { getNavItems } from '@/constants/data'
 import { Icons } from '@/components/icons'
 import { cn } from '@/lib/utils'
 import useLocalStorageState from '@/hooks/use-localstorage-state'
+import { BRAND_NAME, BRAND_LOGO } from '@/lib/config'
 
 export default function MobileSidebar() {
   const location = useLocation()
@@ -64,8 +65,8 @@ export default function MobileSidebar() {
       </SheetTrigger>
       <SheetContent side="left" className="flex flex-col">
         <SheetTitle>
-          <img src="/logo.png" alt="YouBet Task" className="inline-block w-6 h-6 mr-2 rounded-lg" />
-          YouBet Task
+          <img src={BRAND_LOGO} alt="logo" className="inline-block w-6 h-6 mr-2 rounded-lg" />
+          {BRAND_NAME}
         </SheetTitle>
         <nav className="grid gap-2 mt-4 text-lg font-medium">{navItems.map((item) => renderMenuItem(item))}</nav>
       </SheetContent>
