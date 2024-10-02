@@ -6,6 +6,8 @@ import { Profile, Project } from '@/types'
 import { LucideUsers, LucidePackage, LucideListChecks, LucideCircleCheck, LucideStar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Link } from 'react-router-dom'
+import { BRAND_NAME } from '@/lib/config'
+import Footer from '@/components/footer'
 
 function StatsCard({ title, value, icon }: { title: string; value: number; icon: React.ReactNode }) {
   return (
@@ -84,7 +86,7 @@ export default function Dashboard() {
     <div className="px-4 py-4 mx-auto lg:px-12 max-w-7xl">
       <div className="flex flex-col w-full gap-4 overflow-hidden">
         <div className="space-y-4">
-          <h2 className="text-3xl font-bold tracking-tight">Hi, Welcome to YouBet Task 👋</h2>
+          <h2 className="text-3xl font-bold tracking-tight">Hi, Welcome to {BRAND_NAME} 👋</h2>
           <div className="grid items-center justify-between grid-cols-2 gap-4 lg:grid-cols-4">
             <StatsCard title="Total Users" value={userCount} icon={<LucideUsers className="w-4 h-4" />} />
             <StatsCard title="Total Projects" value={projects.length} icon={<LucidePackage className="w-4 h-4" />} />
@@ -101,6 +103,7 @@ export default function Dashboard() {
             <ProjectRecommendations projects={projects.slice(0, 5)} />
           </div>
         </div>
+        <Footer />
       </div>
     </div>
   )

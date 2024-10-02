@@ -8,6 +8,7 @@ import { Helmet } from 'react-helmet'
 import { usePageTracking } from '@/hooks/use-page-tracking'
 import { useTimeTracking } from '@/hooks/use-time-tracking'
 import { NavItem } from '@/types'
+import { BRAND_NAME } from '@/lib/config'
 
 function PageTracker() {
   usePageTracking()
@@ -27,7 +28,9 @@ const createRouterObjects = (items: NavItem[]): RouteObject[] => {
     const Component = () => (
       <>
         <Helmet>
-          <title>{item.title} - YouBet Task</title>
+          <title>
+            {item.title} - {BRAND_NAME}
+          </title>
           {item.description && <meta name="description" content={item.description} />}
         </Helmet>
         <Layout>
