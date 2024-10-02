@@ -14,12 +14,13 @@ const Callback = () => {
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search)
     const code = searchParams.get('code')
+    const redirectUri = searchParams.get('redirect_uri')
 
     if (code) {
       fetchUserInfo(code).then((data) => {
         setToken(data.jwt)
         setUsername(data.username)
-        navigate('/')
+        navigate(redirectUri || '/')
       })
     }
   }, [location, navigate, setToken, setUsername])

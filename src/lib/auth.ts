@@ -1,12 +1,15 @@
 const CLIENT_ID = import.meta.env.VITE_GITHUB_OAUTH_CLIENT_ID
 
 export const getRedirectUri = () => {
-  const href = window.location.href
-  return `${location.origin}/auth/github/callback?redirect_uri=${encodeURIComponent(href)}`
+  const location = window.location
+  const searchParams = new URLSearchParams(location.search)
+  const redirectUri = searchParams.get('redirect_uri') || location.origin
+  const url = `${location.origin}/auth/github/callback?redirect_uri=${encodeURIComponent(redirectUri)}`
+  return url
 }
 
 export const githubOAuthUri = () => {
-  return `http://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${getRedirectUri()}&response_type=code&scope=user:email,repo`
+  return `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${getRedirectUri()}&response_type=code&scope=user:email,repo`
 }
 
 export const githubOAuthContentUri = () => {
