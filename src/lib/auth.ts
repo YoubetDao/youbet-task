@@ -3,7 +3,7 @@ const CLIENT_ID = import.meta.env.VITE_GITHUB_OAUTH_CLIENT_ID
 export const getRedirectUri = () => {
   const location = window.location
   const searchParams = new URLSearchParams(location.search)
-  const redirectUri = searchParams.get('redirect_uri') || location.origin
+  const redirectUri = searchParams.get('redirect_uri') || '/'
   const url = `${location.origin}/auth/github/callback?redirect_uri=${encodeURIComponent(redirectUri)}`
   return url
 }
