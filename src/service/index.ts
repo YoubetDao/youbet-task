@@ -16,6 +16,21 @@ import {
 // import { Project, Task, FetchIssuesParams, Profile, GithubOrganization, GithubRepo, Tutorial } from '@/types'
 import http from './instance'
 
+export async function getLoadMoreProjectList(params: {
+  offset: number | undefined
+  limit: number
+  filterTags: string[]
+}) {
+  const res = await http.get<IResultPaginationData<Project>>(`/projects`, {
+    params: {
+      tags: params.filterTags,
+      offset: params.offset,
+      limit: params.limit,
+    },
+  })
+  return { list: res.data.data, pagination: res.data.pagination }
+}
+
 export async function fetchUserInfo(code: string) {
   const response = await http.get('/auth/github/callback', { params: { code } })
   console.log('User info:', response.data)

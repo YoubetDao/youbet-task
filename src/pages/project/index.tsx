@@ -22,7 +22,7 @@ import {
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useInfiniteScroll } from 'ahooks'
-import { getLoadMoreProjectList } from '@/services'
+import { getLoadMoreProjectList } from '@/service'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constants/data'
 import ImportProjectDialog from '@/components/import-project'
 import { getAppearances } from '@/lib/appearances'

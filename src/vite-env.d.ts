@@ -4,6 +4,8 @@
 interface ImportMetaEnv {
   readonly VITE_APPEARANCES_SHOW_IMPORT_PROJECT?: 'true' | 'false'
   readonly VITE_APPEARANCES_SHOW_TUTORIALS?: 'true' | 'false'
+  readonly VITE_BASE_URL?: string
+  readonly VITE_API_NAMESPACE?: string
 }
 
 interface ImportMeta {

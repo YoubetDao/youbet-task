@@ -4,7 +4,7 @@ import { store, tokenAtom, usernameAtom } from '@/store'
 import { toast } from '@/components/ui/use-toast'
 
 const instance = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_BASE_URL,
   paramsSerializer(params) {
     // qs.stringify({ a: ['b', 'c'] }, { arrayFormat: 'comma' })
     // 'a=b,c'
@@ -27,6 +27,8 @@ instance.interceptors.request.use(
     //   searchParams.append('t', String(Date.now()))
     //   config.url = u.pathname + searchParams.toString()
     // }
+    const namespace = import.meta.env.VITE_API_NAMESPACE
+    config.params = { ...config.params, ...(namespace ? { namespace } : {}) }
     return config
   },
   (error) => Promise.reject(error),
