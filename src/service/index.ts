@@ -1,7 +1,6 @@
 import {
   Project,
   Task,
-  FetchIssuesParams,
   Profile,
   Chapter,
   FetchPullRequestParams,
@@ -40,11 +39,6 @@ export async function fetchUserInfo(code: string) {
 export async function fetchTask(githubId: string) {
   const response = await http.get(`/task/${githubId}`)
   return response.data as Task
-}
-
-export async function fetchTasks(params: FetchIssuesParams) {
-  const response = await http.get('/tasks', { params })
-  return response.data.data as Task[]
 }
 
 export async function fetchProjects() {
@@ -153,5 +147,20 @@ export async function approveTaskApply(id: string) {
 
 export async function rejectTaskApply(id: string) {
   const response = await http.post(`/reject-task-apply/${id}`)
+  return response.data
+}
+
+export async function fetchTutorials(params: { categories: string[]; offset: number; limit: number }) {
+  const response = await http.get<IResultPaginationData<Project>>('/tutorials', { params })
+  return response.data
+}
+
+export async function fetchTasks(params: { project: string; offset: number; limit: number }) {
+  const response = await http.get<IResultPaginationData<Task>>('/tasks', { params })
+  return response.data
+}
+
+export async function fetchMyTasks(params: { offset: number; limit: number }) {
+  const response = await http.get<IResultPaginationData<Task>>('/my-tasks', { params })
   return response.data
 }

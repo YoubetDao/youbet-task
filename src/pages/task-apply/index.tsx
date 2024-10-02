@@ -5,10 +5,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
 import { format } from 'date-fns'
 import { SkeletonCard } from '@/components/skeleton-card'
 import { fetchTaskApplies, approveTaskApply, rejectTaskApply } from '@/service'
+import PaginationFast from '@/components/pagination-fast'
 
 function LoadingPage(): React.ReactElement {
   return (
@@ -79,7 +79,7 @@ function TaskAppliesTable(): React.ReactElement {
           placeholder="Filter task applies..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="border-gray-700 bg-transparent max-w-sm"
+          className="max-w-sm bg-transparent border-gray-700"
         />
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="border-gray-700 bg-transparent w-[180px]">
@@ -136,49 +136,7 @@ function TaskAppliesTable(): React.ReactElement {
           ))}
         </TableBody>
       </Table>
-      <div className="flex justify-between items-center text-gray-400 text-sm">
-        <div>
-          Page {page} of {totalPages}
-        </div>
-        <div className="flex space-x-1">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setPage(1)}
-            disabled={page === 1}
-            className="border-gray-700 bg-transparent hover:bg-gray-800 text-gray-400"
-          >
-            <ChevronsLeft className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
-            className="border-gray-700 bg-transparent hover:bg-gray-800 text-gray-400"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-            className="border-gray-700 bg-transparent hover:bg-gray-800 text-gray-400"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setPage(totalPages)}
-            disabled={page === totalPages}
-            className="border-gray-700 bg-transparent hover:bg-gray-800 text-gray-400"
-          >
-            <ChevronsRight className="w-4 h-4" />
-          </Button>
-        </div>
-      </div>
+      <PaginationFast page={page} totalPages={totalPages} onPageChange={setPage} />
     </div>
   )
 }
@@ -187,7 +145,7 @@ const queryClient = new QueryClient()
 
 export default function TaskApplyAdmin() {
   return (
-    <div className="mx-auto px-4 lg:px-12 py-4 max-w-7xl">
+    <div className="px-4 py-4 mx-auto lg:px-12 max-w-7xl">
       <QueryClientProvider client={queryClient}>
         <TaskAppliesTable />
       </QueryClientProvider>

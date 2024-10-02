@@ -1,5 +1,5 @@
 import { Task } from '@/types'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { SkeletonCard } from '@/components/skeleton-card'
 import { Link, useParams } from 'react-router-dom'
 import {
@@ -10,15 +10,16 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
-import http from '@/service/instance'
 import { SDK } from 'youbet-sdk'
 import { TaskItem } from './task-item'
 import { EmptyTasks } from './empty-task'
 import { Input } from '@/components/ui/input'
 import { LucideSearch } from 'lucide-react'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-import { claimTask, disclaimTask } from '@/service'
+import { claimTask, disclaimTask, fetchTasks } from '@/service'
 import { openCampusTestOptions } from '@/constants/data'
+import { useQuery } from '@tanstack/react-query'
+import PaginationFast from '@/components/pagination-fast'
 
 const sdk = new SDK(openCampusTestOptions)
 
@@ -36,25 +37,36 @@ function SkeletonTasks() {
 }
 
 export default function TaskPage() {
-  const [tasks, setTasks] = useState<Task[]>([])
-  const [loading, setLoading] = useState(false)
   const { project } = useParams<{ project: string }>()
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [all, setAll] = useState<string>('All')
+  const [page, setPage] = useState(1)
+  const pageSize = 10
+  const { data, isLoading: loading } = useQuery({
+    queryKey: ['tasks', project, page],
+    queryFn: () =>
+      fetchTasks({
+        project: project || '',
+        offset: (page - 1) * pageSize,
+        limit: pageSize,
+      }),
+  })
+  const tasks = data?.data || []
+  const totalPages = Math.ceil((data?.pagination.totalCount || 0) / pageSize)
 
-  const fetchTasks = async () => {
-    setLoading(true)
-    const data = await http
-      .get(`/tasks?project=${project}&limit=100`)
-      .then((res) => res.data.data)
-      .catch(() => [])
-    setTasks(data)
-    setLoading(false)
-  }
+  // const fetchTasks = async () => {
+  //   setLoading(true)
+  //   const data = await http
+  //     .get(`/tasks?project=${project}&limit=100`)
+  //     .then((res) => res.data.data)
+  //     .catch(() => [])
+  //   setTasks(data)
+  //   setLoading(false)
+  // }
 
-  useEffect(() => {
-    fetchTasks()
-  }, [project])
+  // useEffect(() => {
+  //   fetchTasks()
+  // }, [project])
 
   const handleCategoryChange = (value: string[]) => {
     if (value.length) {
@@ -83,7 +95,7 @@ export default function TaskPage() {
         project,
         task: issueNumber,
       })
-      setTasks(tasks.map((task) => (task._id === item._id ? { ...task, state: 'open' } : task)))
+      // setTasks(tasks.map((task) => (task._id === item._id ? { ...task, state: 'open' } : task)))
     } catch (e) {
       console.log(e)
     }
@@ -97,14 +109,14 @@ export default function TaskPage() {
         project,
         task: issueNumber,
       })
-      setTasks(tasks.map((task) => (task._id === item._id ? { ...task, state: 'closed' } : task)))
+      // setTasks(tasks.map((task) => (task._id === item._id ? { ...task, state: 'closed' } : task)))
     } catch (e) {
       console.log(e)
     }
   }
 
   return (
-    <div className="mx-auto px-4 lg:px-12 py-4 max-w-7xl">
+    <div className="px-4 py-4 mx-auto lg:px-12 max-w-7xl">
       <Breadcrumb className="py-2">
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -124,26 +136,26 @@ export default function TaskPage() {
       </Breadcrumb>
       <div className="flex flex-col gap-5">
         <div className="relative">
-          <Input placeholder="Search tutorial title or description" className="bg-background/80 pl-8" />
-          <LucideSearch className="top-1/2 left-2 absolute w-4 h-4 -translate-y-1/2" />
+          <Input placeholder="Search tutorial title or description" className="pl-8 bg-background/80" />
+          <LucideSearch className="absolute w-4 h-4 -translate-y-1/2 top-1/2 left-2" />
         </div>
         <div className="flex space-x-2">
           <ToggleGroup size="sm" type="single" value={all} onValueChange={handleSelectAll}>
             <ToggleGroupItem value="All">All</ToggleGroupItem>
           </ToggleGroup>
         </div>
-        <div className="gap-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {loading ? (
             <SkeletonTasks />
           ) : tasks.length ? (
             tasks.map((item) => (
-              // TODO: item.title will be duplicated
-              <TaskItem key={item.htmlUrl} item={item} onClaim={handleClaim} onDisclaim={handleDisclaim} />
+              <TaskItem key={item._id} item={item} onClaim={handleClaim} onDisclaim={handleDisclaim} />
             ))
           ) : (
             <EmptyTasks />
           )}
         </div>
+        {!loading && tasks.length && <PaginationFast page={page} totalPages={totalPages} onPageChange={setPage} />}
       </div>
     </div>
   )

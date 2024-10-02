@@ -5,10 +5,9 @@ import { PullRequest, IResultPaginationData } from '@/types'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Button } from '@/components/ui/button'
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
 import { format } from 'date-fns'
 import { SkeletonCard } from '@/components/skeleton-card'
+import PaginationFast from '@/components/pagination-fast'
 
 function LoadingPage(): React.ReactElement {
   return (
@@ -104,49 +103,7 @@ function PullRequestsTable(): React.ReactElement {
           ))}
         </TableBody>
       </Table>
-      <div className="flex items-center justify-between text-sm text-gray-400">
-        <div>
-          Page {page} of {totalPages}
-        </div>
-        <div className="flex space-x-1">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setPage(1)}
-            disabled={page === 1}
-            className="text-gray-400 bg-transparent border-gray-700 hover:bg-gray-800"
-          >
-            <ChevronsLeft className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
-            className="text-gray-400 bg-transparent border-gray-700 hover:bg-gray-800"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-            className="text-gray-400 bg-transparent border-gray-700 hover:bg-gray-800"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setPage(totalPages)}
-            disabled={page === totalPages}
-            className="text-gray-400 bg-transparent border-gray-700 hover:bg-gray-800"
-          >
-            <ChevronsRight className="w-4 h-4" />
-          </Button>
-        </div>
-      </div>
+      <PaginationFast page={page} totalPages={totalPages} onPageChange={setPage} />
     </div>
   )
 }

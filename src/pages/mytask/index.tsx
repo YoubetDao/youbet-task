@@ -1,12 +1,11 @@
-import { Task } from '@/types'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { SkeletonCard } from '@/components/skeleton-card'
-import { Link, useParams } from 'react-router-dom'
-import http from '@/service/instance'
-import { usernameAtom } from '@/store'
-import { useAtom } from 'jotai'
+import { Link } from 'react-router-dom'
 import { TaskItem } from './task-item'
 import { EmptyTasks } from './empty-task'
+import PaginationFast from '@/components/pagination-fast'
+import { useQuery } from '@tanstack/react-query'
+import { fetchMyTasks } from '@/service'
 
 function SkeletonTasks() {
   return (
@@ -22,41 +21,24 @@ function SkeletonTasks() {
 }
 
 export default function MyTask() {
-  const org = 'youbetdao'
-
-  const [tasks, setTasks] = useState<Task[]>([])
-  const [loading, setLoading] = useState(false)
-  const { project } = useParams<{ project: string }>()
-  const [username] = useAtom(usernameAtom)
-
-  useEffect(() => {
-    const fetchTasks = async () => {
-      if (!username) {
-        setTasks([])
-        return
-      }
-
-      setLoading(true)
-
-      try {
-        const myTasks = await http
-          .get('/my-tasks?limit=100')
-          .then((res) => res.data.data)
-          .catch(() => [])
-        setTasks(myTasks)
-      } catch (error) {
-        console.error('Error fetching tasks:', error)
-        setTasks([])
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchTasks()
-  }, [project, username])
+  // const [username] = useAtom(usernameAtom)
+  const [page, setPage] = useState(1)
+  const pageSize = 10
+  const { data, isLoading: loading } = useQuery({
+    queryKey: ['my-tasks', page],
+    queryFn: () =>
+      fetchMyTasks({
+        offset: (page - 1) * pageSize,
+        limit: pageSize,
+      }),
+    // enabled: !!username,
+  })
+  const tasks = data?.data || []
+  const totalPages = Math.ceil((data?.pagination.totalCount || 0) / pageSize)
 
   return (
-    <div className="mx-auto px-4 lg:px-12 py-4 max-w-7xl">
-      <div className="gap-4 grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+    <div className="px-4 py-4 mx-auto lg:px-12 max-w-7xl">
+      <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
         {loading ? (
           <SkeletonTasks />
         ) : tasks.length ? (
@@ -70,6 +52,7 @@ export default function MyTask() {
           <EmptyTasks />
         )}
       </div>
+      <PaginationFast page={page} totalPages={totalPages} onPageChange={setPage} />
     </div>
   )
 }
