@@ -53,7 +53,8 @@ instance.interceptors.response.use(
         store.set(tokenAtom, null)
         store.set(usernameAtom, null)
         // history.replace('/login') // Redirect to login page
-        window.location.href = '/login'
+        const pathname = window.location.pathname
+        window.location.href = `/login?redirect_uri=${encodeURIComponent(pathname)}`
       } else if (status === 403) {
         toast({
           title: 'Forbidden',
