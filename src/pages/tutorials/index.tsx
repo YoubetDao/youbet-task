@@ -5,7 +5,6 @@ import { useState } from 'react'
 import { Project } from '@/types'
 import { useNavigate } from 'react-router-dom'
 import { SkeletonCard } from '@/components/skeleton-card'
-import { Button } from '@/components/ui/button'
 import { openCampusTestOptions } from '@/constants/data'
 import { SDK } from 'youbet-sdk'
 import { fetchTutorials, getTutorialToC } from '@/service'
@@ -76,29 +75,24 @@ function TutorialItem({ item }: { item: Project }) {
           />
         </div>
         {/* box */}
-        <div className="h-48 overflow-hidden">
+        <div className="h-48">
           <img src={item.owner.avatarUrl} alt={item.owner.login} className="object-cover w-full h-full" />
         </div>
-        <div className="p-4 overflow-hidden lg:p-6">
+        <div className="p-4 lg:p-6">
           {/* name */}
-          <div className="flex items-center w-full gap-2">
-            <div>
-              <Button
-                variant="link"
-                className="flex-1 px-0 overflow-hidden text-xl font-bold text-ellipsis whitespace-nowrap"
-              >
-                <span
-                  className="z-10"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    window.open(item.htmlUrl, '_blank')
-                  }}
-                >
-                  {item.name}
-                </span>
-              </Button>
-            </div>
+          <div className="flex text-left">
+            <a
+              className="px-0 text-xl font-bold overflow-hidden whitespace-nowrap text-ellipsis underline-offset-4 hover:underline"
+              href={item.htmlUrl}
+              title={item.name}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => {
+                e.stopPropagation()
+              }}
+            >
+              {item.name}
+            </a>
           </div>
           {/* description */}
           <div className="mt-2 !line-clamp-3 text-muted-foreground text-sm break-all">
@@ -116,6 +110,7 @@ function TutorialItem({ item }: { item: Project }) {
               ></div>
               <span>{DEFAULT_HARDNESS[item.tutorial?.level as keyof typeof DEFAULT_HARDNESS].name}</span>
             </div>
+            {/* TODO: add watching number */}
             <div className="flex items-center gap-1 px-2">
               <LucideEye className="w-4 h-4" />
               <span>{0}</span>
