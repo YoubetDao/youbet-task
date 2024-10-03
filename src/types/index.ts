@@ -213,3 +213,5 @@ export interface GithubRepo {
   description: string
   created_at: string
 }
+
+export type TaskState = '' | 'open' | 'closed'
