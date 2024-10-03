@@ -1,17 +1,18 @@
 import { Input } from '@/components/ui/input'
 import { LucideSearch, LucideClock8, LucideEye, Heart } from 'lucide-react'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Project } from '@/types'
 import { useNavigate } from 'react-router-dom'
 import { SkeletonCard } from '@/components/skeleton-card'
-import http from '@/service/instance'
 import { Button } from '@/components/ui/button'
 import { openCampusTestOptions } from '@/constants/data'
 import { SDK } from 'youbet-sdk'
-import { getTutorialToC } from '@/service'
+import { fetchTutorials, getTutorialToC } from '@/service'
 import { tutorialToCAtom } from '@/store'
 import { useSetAtom } from 'jotai'
+import { useQuery } from '@tanstack/react-query'
+import PaginationFast from '@/components/pagination-fast'
 // import ImportTutorialDialog from '@/components/import-project'
 
 const sdk = new SDK(openCampusTestOptions)
@@ -156,22 +157,19 @@ const DEFAULT_CATEGORIES = [
 ]
 
 function TutorialList({ categories }: { categories: string[] }) {
-  const [tutorials, setTutorials] = useState<Project[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchProjects = async () => {
-      setLoading(true)
-      const categoryParam = categories.includes('All') ? '' : `?categories=${categories.join(',')}`
-      const data = await http
-        .get(`/tutorials${categoryParam}?limit=100`)
-        .then((res) => res.data.data)
-        .catch(() => [])
-      setTutorials(data)
-      setLoading(false)
-    }
-    fetchProjects()
-  }, [categories])
+  const [page, setPage] = useState(1)
+  const pageSize = 10
+  const { data, isLoading: loading } = useQuery({
+    queryKey: ['tutorials', categories, page],
+    queryFn: () =>
+      fetchTutorials({
+        categories: categories.includes('All') ? [] : categories,
+        offset: (page - 1) * pageSize,
+        limit: pageSize,
+      }),
+  })
+  const totalPages = Math.ceil((data?.pagination.totalCount || 0) / pageSize)
+  const tutorials = data?.data || []
 
   if (loading) return <SkeletonList />
   return (
@@ -179,9 +177,10 @@ function TutorialList({ categories }: { categories: string[] }) {
       <div>Tutorials({tutorials.length})</div>
       <div className="grid flex-col w-full grid-cols-1 gap-4 lg:gap-6 lg:grid-cols-2 xl:grid-cols-3">
         {tutorials.map((item) => (
-          <TutorialItem key={item._id} item={item} />
+          <TutorialItem key={item.githubId} item={item} />
         ))}
       </div>
+      <PaginationFast page={page} totalPages={totalPages} onPageChange={setPage} />
     </div>
   )
 }
