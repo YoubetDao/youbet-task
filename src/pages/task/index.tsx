@@ -1,4 +1,4 @@
-import { Task } from '@/types'
+import { Task, TaskState } from '@/types'
 import { useState } from 'react'
 import { SkeletonCard } from '@/components/skeleton-card'
 import { Link, useParams } from 'react-router-dom'
@@ -36,39 +36,28 @@ function SkeletonTasks() {
   )
 }
 
+const DEFAULT_CATEGORIES = ['open', 'closed']
+
 export default function TaskPage() {
   const { project } = useParams<{ project: string }>()
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [selectedCategories, setSelectedCategories] = useState<TaskState[]>([])
   const [all, setAll] = useState<string>('All')
   const [page, setPage] = useState(1)
   const pageSize = 10
   const { data, isLoading: loading } = useQuery({
-    queryKey: ['tasks', project, page],
+    queryKey: ['tasks', project, page, selectedCategories],
     queryFn: () =>
       fetchTasks({
         project: project || '',
         offset: (page - 1) * pageSize,
         limit: pageSize,
+        states: selectedCategories,
       }),
   })
   const tasks = data?.data || []
   const totalPages = Math.ceil((data?.pagination.totalCount || 0) / pageSize)
 
-  // const fetchTasks = async () => {
-  //   setLoading(true)
-  //   const data = await http
-  //     .get(`/tasks?project=${project}&limit=100`)
-  //     .then((res) => res.data.data)
-  //     .catch(() => [])
-  //   setTasks(data)
-  //   setLoading(false)
-  // }
-
-  // useEffect(() => {
-  //   fetchTasks()
-  // }, [project])
-
-  const handleCategoryChange = (value: string[]) => {
+  const handleCategoryChange = (value: TaskState[]) => {
     if (value.length) {
       setAll('')
     } else {
@@ -140,8 +129,15 @@ export default function TaskPage() {
           <LucideSearch className="absolute w-4 h-4 -translate-y-1/2 top-1/2 left-2" />
         </div>
         <div className="flex space-x-2">
-          <ToggleGroup size="sm" type="single" value={all} onValueChange={handleSelectAll}>
+          <ToggleGroup size="sm" type="single" value={all} onValueChange={handleSelectAll} className="items-start">
             <ToggleGroupItem value="All">All</ToggleGroupItem>
+          </ToggleGroup>
+          <ToggleGroup size="sm" type="multiple" value={selectedCategories} onValueChange={handleCategoryChange}>
+            {DEFAULT_CATEGORIES.map((category) => (
+              <ToggleGroupItem key={category} value={category}>
+                {category}
+              </ToggleGroupItem>
+            ))}
           </ToggleGroup>
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
