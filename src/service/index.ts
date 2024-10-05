@@ -11,6 +11,7 @@ import {
   GithubOrganization,
   GithubRepo,
   Tutorial,
+  PrRewardInfo,
   TaskState,
 } from '@/types'
 // import { Project, Task, FetchIssuesParams, Profile, GithubOrganization, GithubRepo, Tutorial } from '@/types'
@@ -163,5 +164,10 @@ export async function fetchTasks(params: { project: string; offset: number; limi
 
 export async function fetchMyTasks(params: { offset: number; limit: number; states: TaskState[] }) {
   const response = await http.get<IResultPaginationData<Task>>('/my-tasks', { params })
+  return response.data
+}
+
+export async function postPrRewardInfo(params: PrRewardInfo) {
+  const response = await http.post('/rewards', params)
   return response.data
 }

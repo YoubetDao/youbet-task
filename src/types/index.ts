@@ -125,6 +125,7 @@ export interface PullRequest {
   }[]
   labels: string[]
   namespace: string
+  rewardGranted: boolean
 }
 
 export interface FetchTaskAppliesParams extends PaginationParams {
@@ -212,6 +213,37 @@ export interface GithubRepo {
   html_url: string
   description: string
   created_at: string
+}
+
+export interface PrRewardInfo {
+  recipientName: string
+  source: Source
+  /**
+   * pending, received, done
+   */
+  status: string
+  transactionInfo: TransactionInfo
+  /**
+   * Crypto, NFT, Alipay…
+   */
+  type: string
+}
+
+export interface Source {
+  projectGithubId?: number
+  pullRequestGithubId?: number
+  pullRequestGitHubId?: number
+  taskGithubId?: number
+}
+
+export interface TransactionInfo {
+  amount: number
+  decimals: number
+  from: string
+  network: string
+  symbol: string
+  to: string
+  transactionId: string
 }
 
 export type TaskState = '' | 'open' | 'closed'
