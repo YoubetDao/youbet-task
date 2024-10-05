@@ -245,3 +245,5 @@ export interface TransactionInfo {
   to: string
   transactionId: string
 }
+
+export type TaskState = '' | 'open' | 'closed'

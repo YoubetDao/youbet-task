@@ -12,6 +12,7 @@ import {
   GithubRepo,
   Tutorial,
   PrRewardInfo,
+  TaskState,
 } from '@/types'
 // import { Project, Task, FetchIssuesParams, Profile, GithubOrganization, GithubRepo, Tutorial } from '@/types'
 import http from './instance'
@@ -156,12 +157,12 @@ export async function fetchTutorials(params: { categories: string[]; offset: num
   return response.data
 }
 
-export async function fetchTasks(params: { project: string; offset: number; limit: number }) {
+export async function fetchTasks(params: { project: string; offset: number; limit: number; states: TaskState[] }) {
   const response = await http.get<IResultPaginationData<Task>>('/tasks', { params })
   return response.data
 }
 
-export async function fetchMyTasks(params: { offset: number; limit: number }) {
+export async function fetchMyTasks(params: { offset: number; limit: number; states: TaskState[] }) {
   const response = await http.get<IResultPaginationData<Task>>('/my-tasks', { params })
   return response.data
 }
