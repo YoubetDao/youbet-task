@@ -123,3 +123,12 @@ export const openCampusTestOptions: SdkCtorOptions = {
   },
   chainName: 'OpenCampus-Testnet',
 }
+
+export const neoTestOptions: SdkCtorOptions = {
+  networkOptions: {
+    rpcUrl: 'https://neoxt4seed1.ngd.network',
+    chainId: 12227332,
+    contractAddress: '0x31794487C8AEFEec3daDad01b33e9Cc70Fe02aEe',
+  },
+  chainName: 'NeoX T4',
+}

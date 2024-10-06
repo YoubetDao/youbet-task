@@ -31,10 +31,26 @@ export const eduChain = {
   },
 }
 
+export const neoTestChain = {
+  id: 12227332,
+  name: 'NeoX T4',
+  nativeCurrency: {
+    name: 'GAS',
+    symbol: 'GAS',
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://neoxt4seed1.ngd.network'],
+      webSocket: ['wss://neoxt4wss1.ngd.network'],
+    },
+  },
+}
+
 export const config = getDefaultConfig({
   appName: 'Kuibu',
   projectId: '05c3ea68819376e65dc4a8802f90f41b',
-  chains: [eduChain, polygon],
+  chains: [neoTestChain, polygon],
   ssr: true,
 })
 
@@ -45,7 +61,7 @@ export default function App() {
     <Provider store={store}>
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
-          <RainbowKitProvider initialChain={eduChain}>
+          <RainbowKitProvider initialChain={neoTestChain}>
             <RouterProvider router={createRouter()} />
             <ReactQueryDevtools />
           </RainbowKitProvider>

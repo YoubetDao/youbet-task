@@ -12,9 +12,9 @@ import { useToast } from '@/components/ui/use-toast'
 import { Profile } from '@/types'
 import { Button } from '@/components/ui/button'
 import { getLinkedWallet, getMyInfo } from '@/service'
-import { openCampusTestOptions } from '@/constants/data'
+import { neoTestOptions } from '@/constants/data'
 
-const sdk = new SDK(openCampusTestOptions)
+const sdk = new SDK(neoTestOptions)
 
 function SkeletonTasks() {
   return (
@@ -141,7 +141,7 @@ export default function ProfilePage() {
                   )}
 
                   <a
-                    href={`https://opencampus-codex.blockscout.com/address/${linkedAddress}`}
+                    href={`https://xt4scan.ngd.network/address/${linkedAddress}`}
                     className="text-gray-400 hover:text-gray-500"
                   >
                     <Wallet size={24} />
@@ -172,13 +172,13 @@ export default function ProfilePage() {
             <div className="space-y-1">
               <h3 className="font-semibold text-lg text-white">Rewards</h3>
               <div className="flex justify-between items-center">
-                <p className="mb-2 font-bold text-gray-400 text-l">{totalRewards.toFixed(5)} EDU</p>
+                <p className="mb-2 font-bold text-gray-400 text-l">{totalRewards.toFixed(5)} GAS</p>
               </div>
             </div>
             <div className="space-y-1">
               <h3 className="font-semibold text-lg text-white">To Claim</h3>
               <div className="flex justify-between items-center">
-                <p className="mb-2 font-bold text-gray-400 text-l">{(totalRewards - claimedRewards).toFixed(5)} EDU</p>
+                <p className="mb-2 font-bold text-gray-400 text-l">{(totalRewards - claimedRewards).toFixed(5)} GAS</p>
                 <Button onClick={handleClaim} size="sm" disabled={claiming}>
                   Claim{claiming && <Loader2 className="ml-2 w-4 h-4 animate-spin" />}
                 </Button>

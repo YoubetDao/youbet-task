@@ -4,8 +4,7 @@ import { useAtom } from 'jotai'
 import { useAccount, useSwitchChain } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { getLinkedWallet, linkWallet } from '@/service'
-import { eduChain } from '@/app'
-import { polygon } from 'viem/chains'
+import { neoTestChain } from '@/app'
 
 export const CustomConnectButton = () => {
   const [github] = useAtom(usernameAtom)
@@ -18,9 +17,9 @@ export const CustomConnectButton = () => {
 
     if (currentPath.includes('admin')) {
       setIsAdmin(true)
-      switchChain({ chainId: polygon.id })
+      // switchChain({ chainId: polygon.id })
     } else {
-      switchChain({ chainId: eduChain.id })
+      switchChain({ chainId: neoTestChain.id })
       setIsAdmin(false)
     }
   }, [switchChain])
@@ -68,9 +67,9 @@ export const CustomConnectButton = () => {
                   </button>
                 )
               }
-              if (chain.id !== eduChain.id && !isAdmin) {
+              if (chain.id !== neoTestChain.id && !isAdmin) {
                 return (
-                  <button type="button" onClick={() => switchChain({ chainId: eduChain.id })}>
+                  <button type="button" onClick={() => switchChain({ chainId: neoTestChain.id })}>
                     Wrong network
                   </button>
                 )
