@@ -1,4 +1,4 @@
-export const BRAND_NAME = import.meta.env.VITE_BRAND_NAME || 'YouBet Task'
+export const BRAND_NAME = import.meta.env.VITE_BRAND_NAME || 'According Work'
 export const COMPANY_NAME = import.meta.env.VITE_COMPANY_NAME || 'YouBet'
 export const BRAND_LOGO = import.meta.env.VITE_BRAND_LOGO || '/logo.png'
 
