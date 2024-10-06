@@ -10,18 +10,14 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
-import { SDK } from 'youbet-sdk'
 import { TaskItem } from './task-item'
 import { EmptyTasks } from './empty-task'
 import { Input } from '@/components/ui/input'
 import { LucideSearch } from 'lucide-react'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { claimTask, disclaimTask, fetchTasks } from '@/service'
-import { openCampusTestOptions } from '@/constants/data'
 import { useQuery } from '@tanstack/react-query'
 import PaginationFast from '@/components/pagination-fast'
-
-const sdk = new SDK(openCampusTestOptions)
 
 function SkeletonTasks() {
   return (
@@ -105,7 +101,7 @@ export default function TaskPage() {
   }
 
   return (
-    <div className="px-4 py-4 mx-auto lg:px-12 max-w-7xl">
+    <div className="mx-auto px-4 lg:px-12 py-4 max-w-7xl">
       <Breadcrumb className="py-2">
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -125,8 +121,8 @@ export default function TaskPage() {
       </Breadcrumb>
       <div className="flex flex-col gap-5">
         <div className="relative">
-          <Input placeholder="Search tutorial title or description" className="pl-8 bg-background/80" />
-          <LucideSearch className="absolute w-4 h-4 -translate-y-1/2 top-1/2 left-2" />
+          <Input placeholder="Search tutorial title or description" className="bg-background/80 pl-8" />
+          <LucideSearch className="top-1/2 left-2 absolute w-4 h-4 -translate-y-1/2" />
         </div>
         <div className="flex space-x-2">
           <ToggleGroup size="sm" type="single" value={all} onValueChange={handleSelectAll} className="items-start">
@@ -140,7 +136,7 @@ export default function TaskPage() {
             ))}
           </ToggleGroup>
         </div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="gap-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
           {loading ? (
             <SkeletonTasks />
           ) : tasks.length ? (
