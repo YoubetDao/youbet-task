@@ -72,7 +72,7 @@ export default function ProfilePage() {
           } catch (error) {
             console.error('Error fetching total rewards:', error)
           }
-          setTotalRewards(Number(totalRewards) / 10 ** 18)
+          setTotalRewards(Number(totalRewards) / 10 ** 9)
 
           let claimedRewards = 0
           try {
@@ -80,7 +80,7 @@ export default function ProfilePage() {
           } catch (error) {
             console.error('Error fetching claimed rewards:', error)
           }
-          setClaimedRewards(Number(claimedRewards) / 10 ** 18)
+          setClaimedRewards(Number(claimedRewards) / 10 ** 9)
         }
       } catch (error) {
         console.error('Error fetching user profile:', error)
@@ -156,7 +156,7 @@ export default function ProfilePage() {
                   )}
 
                   <a
-                    href={`https://opencampus-codex.blockscout.com/address/${linkedAddress}`}
+                    href={`https://explorer.solana.com/address/${linkedAddress}?cluster=devnet`}
                     className="text-gray-400 hover:text-gray-500"
                   >
                     <Wallet size={24} />
