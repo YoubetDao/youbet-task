@@ -3,8 +3,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { RouterProvider } from 'react-router-dom'
 import { createRouter } from './router'
-import { RainbowKitProvider, getDefaultConfig } from '@rainbow-me/rainbowkit'
-import { WagmiProvider } from 'wagmi'
+import { getDefaultConfig } from '@rainbow-me/rainbowkit'
+import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react'
+import { WalletModalProvider } from '@solana/wallet-adapter-react-ui'
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
+import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom'
+import { clusterApiUrl } from '@solana/web3.js'
 import '@rainbow-me/rainbowkit/styles.css'
 import { Provider } from 'jotai'
 import { store } from './store'
@@ -41,16 +45,22 @@ export const config = getDefaultConfig({
 export default function App() {
   const queryClient = useMemo(() => new QueryClient({}), [])
 
+  const network = WalletAdapterNetwork.Devnet
+  const endpoint = clusterApiUrl(network)
+  const wallets = [new PhantomWalletAdapter()]
+
   return (
     <Provider store={store}>
-      <WagmiProvider config={config}>
-        <QueryClientProvider client={queryClient}>
-          <RainbowKitProvider initialChain={eduChain}>
-            <RouterProvider router={createRouter()} />
-            <ReactQueryDevtools />
-          </RainbowKitProvider>
-        </QueryClientProvider>
-      </WagmiProvider>
+      <QueryClientProvider client={queryClient}>
+        <ConnectionProvider endpoint={endpoint}>
+          <WalletProvider wallets={wallets} autoConnect>
+            <WalletModalProvider>
+              <RouterProvider router={createRouter()} />
+              <ReactQueryDevtools />
+            </WalletModalProvider>
+          </WalletProvider>
+        </ConnectionProvider>
+      </QueryClientProvider>
     </Provider>
   )
 }

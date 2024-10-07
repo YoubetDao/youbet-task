@@ -1,6 +1,6 @@
 import { User, Github } from 'lucide-react'
 
-import { Button, buttonVariants } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,10 +11,9 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useNavigate } from 'react-router-dom'
 import MobileSidebar from './MobileSidebar'
-import { CustomConnectButton } from './ConnectButton'
-import { cn } from '@/lib/utils'
 import { tokenAtom, usernameAtom } from '@/store'
 import { useAtom } from 'jotai'
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 
 export default function Header() {
   const navigate = useNavigate()
@@ -30,11 +29,11 @@ export default function Header() {
   }
 
   return (
-    <header className="flex h-14 flex-shrink-0 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+    <header className="flex flex-shrink-0 items-center gap-4 bg-muted/40 px-4 lg:px-6 border-b h-14 lg:h-[60px]">
       <MobileSidebar />
       <div className="flex-1 w-full"></div>
-      <div className={cn(buttonVariants({ variant: 'outline' }), 'border rounded-full')}>
-        <CustomConnectButton />
+      <div>
+        <WalletMultiButton />
       </div>
 
       {!!token && (
