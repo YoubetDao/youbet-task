@@ -1,5 +1,6 @@
 import { getAppearances } from '@/lib/appearances'
 import { NavItem } from '@/types'
+import { Connection } from '@solana/web3.js'
 import { SdkCtorOptions } from 'youbet-sdk'
 
 export const getNavItems = (): NavItem[] => {
@@ -116,10 +117,16 @@ export const getNavItems = (): NavItem[] => {
 export const DEFAULT_PAGINATION_LIMIT = 4
 
 export const openCampusTestOptions: SdkCtorOptions = {
+  chainName: 'solana',
   networkOptions: {
-    rpcUrl: 'https://open-campus-codex-sepolia.drpc.org',
-    chainId: 656476,
-    contractAddress: '0xd8dcbd828a40f6590a5bee5095c38994dab3bdee',
+    contractAddress: '',
+    rpcUrl: 'https://api.devnet.solana.com',
+    chainId: 0,
   },
-  chainName: 'OpenCampus-Testnet',
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  wallet: window.solana,
+  connection: new Connection('https://api.devnet.solana.com', {
+    commitment: 'confirmed',
+  }),
 }

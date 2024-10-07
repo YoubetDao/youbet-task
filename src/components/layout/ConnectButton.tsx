@@ -5,7 +5,45 @@ import { useAccount, useSwitchChain } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { getLinkedWallet, linkWallet } from '@/service'
 import { eduChain } from '@/app'
+import { useWallet } from '@solana/wallet-adapter-react'
 import { polygon } from 'viem/chains'
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
+
+export const SolanaConnectButton = () => {
+  const { publicKey, connected } = useWallet()
+  const [github] = useAtom(usernameAtom)
+  const [isChecking, setIsChecking] = useState(false)
+
+  useEffect(() => {
+    const checkAndLinkWallet = async () => {
+      if (connected && publicKey && github) {
+        setIsChecking(true)
+        try {
+          const linkedAddress = await getLinkedWallet(github)
+          if (linkedAddress === '0x0000000000000000000000000000000000000000') {
+            // 如果没有链接的钱包，则进行链接
+            await linkWallet({
+              github,
+              address: publicKey.toString(),
+            })
+            console.log('Wallet linked successfully')
+          } else {
+            console.log(linkedAddress)
+            console.log('Wallet already linked')
+          }
+        } catch (error) {
+          console.error('Failed to check or link wallet:', error)
+        } finally {
+          setIsChecking(false)
+        }
+      }
+    }
+
+    checkAndLinkWallet()
+  }, [connected, publicKey, github])
+
+  return <WalletMultiButton />
+}
 
 export const CustomConnectButton = () => {
   const [github] = useAtom(usernameAtom)

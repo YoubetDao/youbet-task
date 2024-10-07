@@ -13,13 +13,13 @@ function StatsCard({ title, value, icon }: { title: string; value: number; icon:
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-sm font-medium">
+        <CardTitle className="flex items-center gap-2 font-medium text-sm">
           {icon}
           {title}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
+        <div className="font-bold text-2xl">{value}</div>
       </CardContent>
     </Card>
   )
@@ -38,7 +38,7 @@ function ProjectRecommendations({ projects }: { projects: any[] }) {
         <div className="space-y-4">
           {projects.map((project, index) => (
             <Link key={index} to={`/projects/${project.name}/tasks`}>
-              <div className="pb-4 mb-4 border-b">
+              <div className="mb-4 pb-4 border-b">
                 <Button
                   asChild
                   variant="link"
@@ -51,7 +51,7 @@ function ProjectRecommendations({ projects }: { projects: any[] }) {
                 >
                   <p>{project.name}</p>
                 </Button>
-                <p className="text-sm text-gray-400">{project.description}</p>
+                <p className="text-gray-400 text-sm">{project.description}</p>
               </div>
             </Link>
           ))}
@@ -84,11 +84,11 @@ export default function Dashboard() {
   }, [])
 
   return (
-    <div className="px-4 py-4 mx-auto lg:px-12 max-w-7xl">
-      <div className="flex flex-col w-full gap-4 overflow-hidden">
+    <div className="mx-auto px-4 lg:px-12 py-4 max-w-7xl">
+      <div className="flex flex-col gap-4 w-full overflow-hidden">
         <div className="space-y-4">
-          <h2 className="text-3xl font-bold tracking-tight">Hi, Welcome to {BRAND_NAME} 👋</h2>
-          <div className="grid items-center justify-between grid-cols-2 gap-4 lg:grid-cols-4">
+          <h2 className="font-bold text-3xl tracking-tight">Hi, Welcome to {BRAND_NAME} 👋</h2>
+          <div className="justify-between items-center gap-4 grid grid-cols-2 lg:grid-cols-4">
             <StatsCard title="Total Users" value={userCount} icon={<LucideUsers className="w-4 h-4" />} />
             <StatsCard title="Total Projects" value={projects.length} icon={<LucidePackage className="w-4 h-4" />} />
             <StatsCard title="Total Tasks" value={totalCount} icon={<LucideListChecks className="w-4 h-4" />} />
@@ -96,7 +96,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="grid w-full grid-cols-4 gap-4">
+        <div className="gap-4 grid grid-cols-4 w-full">
           <div className="col-span-4 xl:col-span-1">
             <TaskCompletionLeaderboard leaderboard={leaderboard.slice(0, 5)} />
           </div>

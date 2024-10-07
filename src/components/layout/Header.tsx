@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom'
 import MobileSidebar from './MobileSidebar'
 import { tokenAtom, usernameAtom } from '@/store'
 import { useAtom } from 'jotai'
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
+import { SolanaConnectButton } from './ConnectButton'
 
 export default function Header() {
   const navigate = useNavigate()
@@ -33,7 +33,7 @@ export default function Header() {
       <MobileSidebar />
       <div className="flex-1 w-full"></div>
       <div>
-        <WalletMultiButton />
+        <SolanaConnectButton />
       </div>
 
       {!!token && (

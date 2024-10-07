@@ -58,23 +58,38 @@ export default function ProfilePage() {
         setLinkedAddress(linkedAddress)
 
         if (linkedAddress !== '0x0000000000000000000000000000000000000000') {
-          const points = await sdk.client.getUserPoints(linkedAddress)
+          let points = 0
+          try {
+            points = await sdk.client.getUserPoints(linkedAddress)
+          } catch (error) {
+            console.error('Error fetching user points:', error)
+          }
           setUserPoints(points.toString())
 
-          const totalRewards = await sdk.client.getTotalRewards(linkedAddress)
+          let totalRewards = 0
+          try {
+            totalRewards = await sdk.client.getTotalRewards(linkedAddress)
+          } catch (error) {
+            console.error('Error fetching total rewards:', error)
+          }
           setTotalRewards(Number(totalRewards) / 10 ** 18)
 
-          const claimedRewards = await sdk.client.getClaimedRewards(linkedAddress)
+          let claimedRewards = 0
+          try {
+            claimedRewards = await sdk.client.getClaimedRewards(linkedAddress)
+          } catch (error) {
+            console.error('Error fetching claimed rewards:', error)
+          }
           setClaimedRewards(Number(claimedRewards) / 10 ** 18)
         }
-
-        const myinfo = await getMyInfo()
-        setProfile(myinfo)
       } catch (error) {
         console.error('Error fetching user profile:', error)
       } finally {
         setLoading(false)
       }
+
+      const myinfo = await getMyInfo()
+      setProfile(myinfo)
     }
 
     fetchUserProfile()
@@ -172,13 +187,13 @@ export default function ProfilePage() {
             <div className="space-y-1">
               <h3 className="font-semibold text-lg text-white">Rewards</h3>
               <div className="flex justify-between items-center">
-                <p className="mb-2 font-bold text-gray-400 text-l">{totalRewards.toFixed(5)} EDU</p>
+                <p className="mb-2 font-bold text-gray-400 text-l">{totalRewards.toFixed(5)} SOL</p>
               </div>
             </div>
             <div className="space-y-1">
               <h3 className="font-semibold text-lg text-white">To Claim</h3>
               <div className="flex justify-between items-center">
-                <p className="mb-2 font-bold text-gray-400 text-l">{(totalRewards - claimedRewards).toFixed(5)} EDU</p>
+                <p className="mb-2 font-bold text-gray-400 text-l">{(totalRewards - claimedRewards).toFixed(5)} SOL</p>
                 <Button onClick={handleClaim} size="sm" disabled={claiming}>
                   Claim{claiming && <Loader2 className="ml-2 w-4 h-4 animate-spin" />}
                 </Button>
