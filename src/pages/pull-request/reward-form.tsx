@@ -13,7 +13,6 @@ import { useQueryClient } from '@tanstack/react-query'
 import { DialogContent, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Dialog } from '@radix-ui/react-dialog'
 import { postPrRewardInfo } from '@/service'
-import { polygon } from 'viem/chains'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { POLYGON_USDT_ADDRESS, USDT_ABI, USDT_DECIMAL, USDT_SYMBOL } from '@/constants/contracts/usdt'
@@ -53,7 +52,7 @@ export const RewardDialogForm = ({ trigger, prGithubId, addressFrom, chain }: IR
 
   const onOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
-      switchChain({ chainId: polygon.id })
+      // switchChain({ chainId: polygon.id })
     }
 
     setOpen(isOpen)

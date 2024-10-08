@@ -172,13 +172,15 @@ export default function ProfilePage() {
             <div className="space-y-1">
               <h3 className="font-semibold text-lg text-white">Rewards</h3>
               <div className="flex justify-between items-center">
-                <p className="mb-2 font-bold text-gray-400 text-l">{totalRewards.toFixed(5)} EDU</p>
+                <p className="mb-2 font-bold text-gray-400 text-l">{totalRewards.toFixed(5)} rootMUDx</p>
               </div>
             </div>
             <div className="space-y-1">
               <h3 className="font-semibold text-lg text-white">To Claim</h3>
               <div className="flex justify-between items-center">
-                <p className="mb-2 font-bold text-gray-400 text-l">{(totalRewards - claimedRewards).toFixed(5)} EDU</p>
+                <p className="mb-2 font-bold text-gray-400 text-l">
+                  {(totalRewards - claimedRewards).toFixed(5)} rootMUDx
+                </p>
                 <Button onClick={handleClaim} size="sm" disabled={claiming}>
                   Claim{claiming && <Loader2 className="ml-2 w-4 h-4 animate-spin" />}
                 </Button>

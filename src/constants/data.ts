@@ -117,9 +117,9 @@ export const DEFAULT_PAGINATION_LIMIT = 4
 
 export const openCampusTestOptions: SdkCtorOptions = {
   networkOptions: {
-    rpcUrl: 'https://open-campus-codex-sepolia.drpc.org',
-    chainId: 656476,
-    contractAddress: '0xd8dcbd828a40f6590a5bee5095c38994dab3bdee',
+    rpcUrl: 'https://mainnet.optimism.io',
+    chainId: 10,
+    contractAddress: '0x009B2B2509d08f4Ed860b2f528ef2166bBE33D00',
   },
-  chainName: 'OpenCampus-Testnet',
+  chainName: 'optimism',
 }
