@@ -29,7 +29,7 @@ import { getAppearances } from '@/lib/appearances'
 
 function SkeletonProjects({ count = 6 }: { count?: number }) {
   return (
-    <div className="flex flex-col w-full gap-4">
+    <div className="flex w-full flex-col gap-4">
       {Array.from({ length: count }).map((_, index) => (
         <SkeletonCard key={index} />
       ))}
@@ -42,7 +42,7 @@ function renderTags(tags: string[]): React.ReactNode[] {
     return (
       <div
         key={tag}
-        className="relative flex justify-center items-center border-greyscale-50/12 border-white/80 bg-greyscale-50/8 bg-muted p-1.5 border rounded-full w-7 h-7 transition-all duration-300 overflow-hidden ease-in"
+        className="border-greyscale-50/12 bg-greyscale-50/8 relative flex h-7 w-7 items-center justify-center overflow-hidden rounded-full border border-white/80 bg-muted p-1.5 transition-all duration-300 ease-in"
       >
         {getIconFromKey(tag)}
       </div>
@@ -53,7 +53,7 @@ function renderTags(tags: string[]): React.ReactNode[] {
 function ProjectItem({ item }: { item: Project }) {
   return (
     <Link key={item._id} to={`/projects/${item.name}/tasks`}>
-      <article className="relative z-[1] hover:bg-white/10 p-4 lg:p-6 !pt-0 !pr-0 border hover:border hover:border-opacity-80 rounded-2xl w-full transition-all duration-200 cursor-pointer ease-in group hover:scale-[0.998]">
+      <article className="group relative z-[1] w-full cursor-pointer rounded-2xl border p-4 !pr-0 !pt-0 transition-all duration-200 ease-in hover:scale-[0.998] hover:border hover:border-opacity-80 hover:bg-white/10 lg:p-6">
         <div className="flex gap-5">
           {/* 头像 */}
           <div className="pt-4">
@@ -62,13 +62,13 @@ function ProjectItem({ item }: { item: Project }) {
               <AvatarFallback>{item.owner.login}</AvatarFallback>
             </Avatar>
           </div>
-          <div className="pt-4 pr-4 overflow-hidden">
-            <div className="flex items-center w-full gap-2">
-              <div className="flex-1 overflow-hidden text-2xl font-bold text-ellipsis whitespace-nowrap">
+          <div className="overflow-hidden pr-4 pt-4">
+            <div className="flex w-full items-center gap-2">
+              <div className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-2xl font-bold">
                 <Button
                   asChild
                   variant="link"
-                  className="!p-0 font-bold text-2xl text-ellipsis text-gray-50 whitespace-nowrap overflow-hidden"
+                  className="overflow-hidden text-ellipsis whitespace-nowrap !p-0 text-2xl font-bold text-gray-50"
                 >
                   <span
                     className="z-10"
@@ -85,16 +85,16 @@ function ProjectItem({ item }: { item: Project }) {
               <div className="hidden gap-2 md:flex">{renderTags(item.youbetExtra?.tags || [])}</div>
             </div>
             <div className="mt-2 text-sm text-muted-foreground">{item.description || 'No description...'}</div>
-            <div className="flex flex-col gap-4 mt-5 text-xs md:flex-row">
-              <div className="flex gap-1 md:justify-center md:items-center">
-                <Avatar className="w-4 h-4">
+            <div className="mt-5 flex flex-col gap-4 text-xs md:flex-row">
+              <div className="flex gap-1 md:items-center md:justify-center">
+                <Avatar className="h-4 w-4">
                   <AvatarImage src={item.owner.avatarUrl} />
                   <AvatarFallback>{item.owner.login}</AvatarFallback>
                 </Avatar>
                 <span>project owner</span>
               </div>
-              <div className="flex gap-1 md:justify-center md:items-center">
-                <LucideUser className="w-4 h-4" />
+              <div className="flex gap-1 md:items-center md:justify-center">
+                <LucideUser className="h-4 w-4" />
                 {Math.floor(Math.random() * 10)} contributors
               </div>
               {/* <div>Ecosystems</div> */}
@@ -117,7 +117,7 @@ function ProjectList({ loading, loadingMore, data }: ProjectListProps) {
   if (!data) return null
 
   return (
-    <div className="flex flex-col w-full gap-4 pt-4 overflow-hidden lg:pl-4">
+    <div className="flex w-full flex-col gap-4 overflow-hidden pt-4 lg:pl-4">
       <div className="flex items-center justify-between">
         <div>
           <Select defaultValue="treading">
@@ -138,7 +138,7 @@ function ProjectList({ loading, loadingMore, data }: ProjectListProps) {
         </div>
         <div className="text-sm text-muted-foreground">{data.pagination.totalCount} Projects</div>
       </div>
-      <div className="flex flex-col w-full gap-4">
+      <div className="flex w-full flex-col gap-4">
         {data.list.map((item) => (
           <ProjectItem key={item._id} item={item} />
         ))}
@@ -150,13 +150,13 @@ function ProjectList({ loading, loadingMore, data }: ProjectListProps) {
 
 function getIconFromKey(key: string) {
   return {
-    'issues-available': <LucideThumbsUp className="w-4 h-4" />,
-    'hot-community': <LucideFlame className="w-4 h-4" />,
-    'good-first-issues': <LucideSprout className="w-4 h-4" />,
-    'big-whale': <LucideSparkles className="w-4 h-4" />,
-    'potential-reward': <LucideGift className="w-4 h-4" />,
-    'work-in-progress': <LucidePickaxe className="w-4 h-4" />,
-    'fast-and-furious': <LucideZap className="w-4 h-4" />,
+    'issues-available': <LucideThumbsUp className="h-4 w-4" />,
+    'hot-community': <LucideFlame className="h-4 w-4" />,
+    'good-first-issues': <LucideSprout className="h-4 w-4" />,
+    'big-whale': <LucideSparkles className="h-4 w-4" />,
+    'potential-reward': <LucideGift className="h-4 w-4" />,
+    'work-in-progress': <LucidePickaxe className="h-4 w-4" />,
+    'fast-and-furious': <LucideZap className="h-4 w-4" />,
   }[key]
 }
 
@@ -190,18 +190,18 @@ function FilterBoard({ filterTags, setFilterTags }: FilterBoardProps) {
   ]
 
   return (
-    <div className="flex-shrink-0 w-full pt-4 lg:w-48 xl:w-96">
-      <Card className="sticky top-0 left-0 bg-transparent">
+    <div className="w-full flex-shrink-0 pt-4 lg:w-48 xl:w-96">
+      <Card className="sticky left-0 top-0 bg-transparent">
         <CardHeader className="py-4">
           <CardTitle className="relative text-lg">
             <span>Filter</span>
             <Button
               variant="ghost"
               size="sm"
-              className="absolute right-0 flex items-center gap-1 text-xs -translate-y-1/2 cursor-pointer top-1/2 text-primary hover:text-primary"
+              className="absolute right-0 top-1/2 flex -translate-y-1/2 cursor-pointer items-center gap-1 text-xs text-primary hover:text-primary"
               onClick={() => setFilterTags([])}
             >
-              <LucideRefreshCcw className="w-3 h-3" />
+              <LucideRefreshCcw className="h-3 w-3" />
               Clear all
             </Button>
           </CardTitle>
@@ -231,7 +231,7 @@ function FilterBoard({ filterTags, setFilterTags }: FilterBoardProps) {
             </Select>
           </div> */}
           {/* select */}
-          <div className="pt-2 space-y-3 border-t border-muted">
+          <div className="space-y-3 border-t border-muted pt-2">
             <Label>Languages</Label>
             <Select>
               <SelectTrigger className="w-full max-w-[180px]">
@@ -290,12 +290,12 @@ export default function ProjectPage() {
   const appearances = getAppearances()
 
   return (
-    <div className="px-4 py-4 mx-auto lg:px-12 max-w-7xl">
-      <div className="flex flex-col w-full gap-2">
+    <div className="mx-auto max-w-7xl px-4 py-4 lg:px-12">
+      <div className="flex w-full flex-col gap-2">
         <div className="flex items-center justify-between gap-2">
           <div className="relative flex-1">
-            <Input placeholder="Search project title or description" className="pl-8 bg-background/80" />
-            <LucideSearch className="absolute w-4 h-4 -translate-y-1/2 top-1/2 left-2" />
+            <Input placeholder="Search project title or description" className="bg-background/80 pl-8" />
+            <LucideSearch className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2" />
           </div>
           {appearances.showImportProject && <ImportProjectDialog />}
         </div>

@@ -11,7 +11,7 @@ const MdRenderer = forwardRef<HTMLElement, IMarkdownRendererProps>(({ content, .
     <div {...props}>
       <article
         ref={ref}
-        className="prose dark:prose-invert max-w-none full-width-article"
+        className="full-width-article prose max-w-none dark:prose-invert"
         dangerouslySetInnerHTML={{ __html: content }}
       />
     </div>

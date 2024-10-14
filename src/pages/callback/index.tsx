@@ -26,7 +26,7 @@ const Callback = () => {
   }, [location, navigate, setToken, setUsername])
 
   return (
-    <div className="flex flex-col items-center justify-center w-screen h-screen">
+    <div className="flex h-screen w-screen flex-col items-center justify-center">
       <Loading />
       <span>Redirecting</span>
     </div>

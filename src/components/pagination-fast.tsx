@@ -23,36 +23,36 @@ export default function PaginationFast({
           size="icon"
           onClick={() => onPageChange(1)}
           disabled={page === 1}
-          className="text-gray-400 bg-transparent border-gray-700 hover:bg-gray-800"
+          className="border-gray-700 bg-transparent text-gray-400 hover:bg-gray-800"
         >
-          <ChevronsLeft className="w-4 h-4" />
+          <ChevronsLeft className="h-4 w-4" />
         </Button>
         <Button
           variant="outline"
           size="icon"
           onClick={() => onPageChange(Math.max(1, page - 1))}
           disabled={page === 1}
-          className="text-gray-400 bg-transparent border-gray-700 hover:bg-gray-800"
+          className="border-gray-700 bg-transparent text-gray-400 hover:bg-gray-800"
         >
-          <ChevronLeft className="w-4 h-4" />
+          <ChevronLeft className="h-4 w-4" />
         </Button>
         <Button
           variant="outline"
           size="icon"
           onClick={() => onPageChange(Math.min(minTotalPages, page + 1))}
           disabled={page === minTotalPages}
-          className="text-gray-400 bg-transparent border-gray-700 hover:bg-gray-800"
+          className="border-gray-700 bg-transparent text-gray-400 hover:bg-gray-800"
         >
-          <ChevronRight className="w-4 h-4" />
+          <ChevronRight className="h-4 w-4" />
         </Button>
         <Button
           variant="outline"
           size="icon"
           onClick={() => onPageChange(minTotalPages)}
           disabled={page === minTotalPages}
-          className="text-gray-400 bg-transparent border-gray-700 hover:bg-gray-800"
+          className="border-gray-700 bg-transparent text-gray-400 hover:bg-gray-800"
         >
-          <ChevronsRight className="w-4 h-4" />
+          <ChevronsRight className="h-4 w-4" />
         </Button>
       </div>
     </div>

@@ -8,7 +8,5 @@
   "editor.quickSuggestions": {
     "strings": true
   },
-  "cSpell.words": [
-    "Wagmi"
-  ]
+  "cSpell.words": ["Wagmi"]
 }

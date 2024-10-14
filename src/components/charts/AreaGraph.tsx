@@ -69,10 +69,10 @@ export function AreaGraph() {
         </ChartContainer>
       </CardContent>
       <CardFooter>
-        <div className="flex items-start w-full gap-2 text-sm">
+        <div className="flex w-full items-start gap-2 text-sm">
           <div className="grid gap-2">
             <div className="flex items-center gap-2 font-medium leading-none">
-              Trending up by 5.2% this month <TrendingUp className="w-4 h-4" />
+              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
             </div>
             <div className="flex items-center gap-2 leading-none text-muted-foreground">January - June 2024</div>
           </div>

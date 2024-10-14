@@ -72,13 +72,13 @@ const Tutorial = () => {
 
   return (
     <div className="flex flex-col">
-      <article className="mx-auto px-4 lg:px-12 py-4 max-w-7xl">
-        <header className="flex flex-row justify-between mb-8">
-          <h1 className="flex-1 max-w-[720px] font-bold text-5xl text-start break-words">{title ?? 'Not Found'}</h1>
-          <section className="flex flex-row gap-2 h-12">
+      <article className="mx-auto max-w-7xl px-4 py-4 lg:px-12">
+        <header className="mb-8 flex flex-row justify-between">
+          <h1 className="max-w-[720px] flex-1 break-words text-start text-5xl font-bold">{title ?? 'Not Found'}</h1>
+          <section className="flex h-12 flex-row gap-2">
             <Button variant="outline" title="Source">
               <a
-                className="flex flex-row justify-center items-center gap-2"
+                className="flex flex-row items-center justify-center gap-2"
                 href={`https://github.com/${owner}/${repo}/blob/master/src/${decodeURIComponent(path ?? '')}.md`}
               >
                 <Link size={14} />
@@ -86,7 +86,7 @@ const Tutorial = () => {
             </Button>
             <Button variant="outline" title="Edit">
               <a
-                className="flex flex-row justify-center items-center gap-2"
+                className="flex flex-row items-center justify-center gap-2"
                 href={`https://github.com/${owner}/${repo}/blob/master/src/${decodeURIComponent(path ?? '')}.md`}
               >
                 <Pen size={14} />

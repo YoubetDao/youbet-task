@@ -100,12 +100,12 @@ export default function ImportProject() {
                           <img
                             src={item.avatar_url}
                             alt={item.login}
-                            className="inline-block w-4 h-4 mr-2 rounded-full"
+                            className="mr-2 inline-block h-4 w-4 rounded-full"
                           />
                           <span>{item.login}</span>
                         </SelectItem>
                       ))}
-                      <Button onClick={() => (window.location.href = githubOAuthContentUri())} className="w-full mt-2">
+                      <Button onClick={() => (window.location.href = githubOAuthContentUri())} className="mt-2 w-full">
                         <span>Add Another Organization</span>
                       </Button>
                     </SelectContent>
@@ -148,7 +148,7 @@ export default function ImportProject() {
                 <Button variant="outline">Cancel</Button>
               </DialogClose>
               <Button type="submit" disabled={isConfirmButtonDisabled}>
-                Import{isImportTutorialLoading && <Loader2 className="w-4 h-4 ml-2 animate-spin" />}
+                Import{isImportTutorialLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
               </Button>
             </div>
           </form>
