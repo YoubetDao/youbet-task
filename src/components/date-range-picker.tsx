@@ -22,7 +22,7 @@ export function CalendarDateRangePicker({ className }: React.HTMLAttributes<HTML
             variant={'outline'}
             className={cn('w-[260px] justify-start text-left font-normal', !date && 'text-muted-foreground')}
           >
-            <CalendarIcon className="w-4 h-4 mr-2" />
+            <CalendarIcon className="mr-2 h-4 w-4" />
             {date?.from ? (
               date.to ? (
                 <>

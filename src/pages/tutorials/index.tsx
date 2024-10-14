@@ -18,7 +18,7 @@ const sdk = new SDK(openCampusTestOptions)
 
 function SkeletonList() {
   return (
-    <div className="flex flex-col w-full gap-4">
+    <div className="flex w-full flex-col gap-4">
       <SkeletonCard />
       <SkeletonCard />
       <SkeletonCard />
@@ -60,13 +60,13 @@ function TutorialItem({ item }: { item: Project }) {
 
   return (
     <article
-      className="relative z-[1] hover:bg-white/10 border hover:border hover:border-opacity-80 rounded-2xl w-full h-full transition-all duration-200 cursor-pointer overflow-hidden ease-in group hover:scale-[0.998]"
+      className="group relative z-[1] h-full w-full cursor-pointer overflow-hidden rounded-2xl border transition-all duration-200 ease-in hover:scale-[0.998] hover:border hover:border-opacity-80 hover:bg-white/10"
       onClick={handleNavigation}
     >
       <div className="relative flex flex-col">
-        <div className="absolute flex items-center justify-center p-1 rounded-full top-2 left-2 bg-muted">
+        <div className="absolute left-2 top-2 flex items-center justify-center rounded-full bg-muted p-1">
           <Heart
-            className="w-4 h-4"
+            className="h-4 w-4"
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
@@ -76,13 +76,13 @@ function TutorialItem({ item }: { item: Project }) {
         </div>
         {/* box */}
         <div className="h-48">
-          <img src={item.owner.avatarUrl} alt={item.owner.login} className="object-cover w-full h-full" />
+          <img src={item.owner.avatarUrl} alt={item.owner.login} className="h-full w-full object-cover" />
         </div>
         <div className="p-4 lg:p-6">
           {/* name */}
           <div className="flex text-left">
             <a
-              className="px-0 text-xl font-bold overflow-hidden whitespace-nowrap text-ellipsis underline-offset-4 hover:underline"
+              className="overflow-hidden text-ellipsis whitespace-nowrap px-0 text-xl font-bold underline-offset-4 hover:underline"
               href={item.htmlUrl}
               title={item.name}
               target="_blank"
@@ -95,15 +95,15 @@ function TutorialItem({ item }: { item: Project }) {
             </a>
           </div>
           {/* description */}
-          <div className="mt-2 !line-clamp-3 text-muted-foreground text-sm break-all">
+          <div className="mt-2 !line-clamp-3 break-all text-sm text-muted-foreground">
             {item.description || 'No description...'}
           </div>
           {/* tags */}
-          <div className="flex gap-4 mt-5 text-xs">
+          <div className="mt-5 flex gap-4 text-xs">
             {/* 简单/中等/困难 */}
             <div className="flex items-center gap-1 px-2">
               <div
-                className="w-2 h-2 rounded-full"
+                className="h-2 w-2 rounded-full"
                 style={{
                   backgroundColor: DEFAULT_HARDNESS[item.tutorial?.level as keyof typeof DEFAULT_HARDNESS].color,
                 }}
@@ -112,21 +112,21 @@ function TutorialItem({ item }: { item: Project }) {
             </div>
             {/* TODO: add watching number */}
             <div className="flex items-center gap-1 px-2">
-              <LucideEye className="w-4 h-4" />
+              <LucideEye className="h-4 w-4" />
               <span>{0}</span>
             </div>
             {/* 时间 */}
             <div className="flex items-center gap-1 px-2">
-              <LucideClock8 className="w-3 h-3" />
+              <LucideClock8 className="h-3 w-3" />
               <span>{item.tutorial?.time}</span>
             </div>
           </div>
           {/* categories */}
-          <div className="flex gap-2 border-[#555]/20 mt-3 pt-3 border-t text-xs">
+          <div className="mt-3 flex gap-2 border-t border-[#555]/20 pt-3 text-xs">
             {item.tutorial?.categories.map(
               (category) =>
                 category && (
-                  <div key={category} className="flex items-center justify-center px-2 border rounded-lg h-7">
+                  <div key={category} className="flex h-7 items-center justify-center rounded-lg border px-2">
                     {category}
                   </div>
                 ),
@@ -168,9 +168,9 @@ function TutorialList({ categories }: { categories: string[] }) {
 
   if (loading) return <SkeletonList />
   return (
-    <div className="flex flex-col w-full gap-4 pt-4 overflow-hidden">
+    <div className="flex w-full flex-col gap-4 overflow-hidden pt-4">
       <div>Tutorials({tutorials.length})</div>
-      <div className="grid flex-col w-full grid-cols-1 gap-4 lg:gap-6 lg:grid-cols-2 xl:grid-cols-3">
+      <div className="grid w-full grid-cols-1 flex-col gap-4 lg:grid-cols-2 lg:gap-6 xl:grid-cols-3">
         {tutorials.map((item) => (
           <TutorialItem key={item.githubId} item={item} />
         ))}
@@ -203,13 +203,13 @@ export default function Tutorials() {
   }
 
   return (
-    <div className="px-4 py-4 mx-auto lg:px-12 max-w-7xl">
-      <div className="flex flex-col w-full gap-2">
+    <div className="mx-auto max-w-7xl px-4 py-4 lg:px-12">
+      <div className="flex w-full flex-col gap-2">
         <div className="space-y-5">
           <div className="flex items-center gap-2">
             <div className="relative flex-1">
-              <Input placeholder="Search tutorial title or description" className="pl-8 bg-background/80" />
-              <LucideSearch className="absolute w-4 h-4 -translate-y-1/2 top-1/2 left-2" />
+              <Input placeholder="Search tutorial title or description" className="bg-background/80 pl-8" />
+              <LucideSearch className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2" />
             </div>
             {/* <ImportTutorialDialog /> */}
           </div>

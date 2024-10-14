@@ -37,18 +37,18 @@ export const TaskItem = ({
   }
 
   return (
-    <article className="relative z-[1] hover:bg-white/10 p-4 border hover:border hover:border-opacity-80 rounded-2xl w-full transition-all duration-200 ease-in group hover:scale-[0.998]">
+    <article className="group relative z-[1] w-full rounded-2xl border p-4 transition-all duration-200 ease-in hover:scale-[0.998] hover:border hover:border-opacity-80 hover:bg-white/10">
       <Link to={`/task/${item.githubId}`}>
-        <div className="flex items-center justify-between h-12 gap-4">
-          <div className="flex flex-row items-start justify-center w-full gap-2">
-            <div className="h-8 mt-1">
+        <div className="flex h-12 items-center justify-between gap-4">
+          <div className="flex w-full flex-row items-start justify-center gap-2">
+            <div className="mt-1 h-8">
               {item.state === 'open' ? (
                 <CircleDot className="w-6 text-green-600" />
               ) : (
                 <CircleCheck className="w-6 text-purple-600" />
               )}
             </div>
-            <Button asChild variant="link" className="px-0 !line-clamp-2 !p-0 w-full h-16 font-bold text-2xl break-all">
+            <Button asChild variant="link" className="!line-clamp-2 h-16 w-full break-all !p-0 px-0 text-2xl font-bold">
               <span
                 onClick={(e) => {
                   e.preventDefault()
@@ -62,19 +62,19 @@ export const TaskItem = ({
           </div>
         </div>
         <div className="flex-1">
-          <div className="flex flex-col justify-between h-full gap-2 overflow-hidden rounded">
+          <div className="flex h-full flex-col justify-between gap-2 overflow-hidden rounded">
             <div className="flex flex-col gap-4">
-              <div className="mt-2 !line-clamp-2 h-10 text-muted-foreground text-sm break-all">
+              <div className="mt-2 !line-clamp-2 h-10 break-all text-sm text-muted-foreground">
                 {item.body || 'No description...'}
               </div>
             </div>
-            <div className="flex items-center justify-between h-9">
+            <div className="flex h-9 items-center justify-between">
               <div className="flex flex-row items-center gap-4">
-                <Avatar className="w-4 h-4">
+                <Avatar className="h-4 w-4">
                   <AvatarImage src={item.assignees[0]?.avatarUrl || item.user?.avatarUrl} />
                 </Avatar>
                 <div className="flex flex-row items-center gap-2">
-                  <Clock className="w-4 h-4" />
+                  <Clock className="h-4 w-4" />
                   <span className="text-xs">{formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })}</span>
                 </div>
               </div>
@@ -83,7 +83,7 @@ export const TaskItem = ({
                 {item.state === 'closed' ? (
                   <Button
                     disabled
-                    className="w-24 text-white border border-white/80 bg-greyscale-50/8 hover:bg-white/10 hover:border-opacity-80"
+                    className="bg-greyscale-50/8 w-24 border border-white/80 text-white hover:border-opacity-80 hover:bg-white/10"
                   >
                     Closed
                   </Button>
@@ -106,7 +106,7 @@ export const TaskItem = ({
                   // </Button>
                   <Button
                     disabled
-                    className="w-24 text-white border border-white/80 bg-greyscale-50/8 hover:bg-white/10 hover:border-opacity-80"
+                    className="bg-greyscale-50/8 w-24 border border-white/80 text-white hover:border-opacity-80 hover:bg-white/10"
                   >
                     Claimed
                   </Button>
@@ -124,10 +124,10 @@ export const TaskItem = ({
               </div>
             )} */}
           </div>
-          <div className="flex flex-row gap-2 pt-2 pr-4 mt-2 border-t">
+          <div className="mt-2 flex flex-row gap-2 border-t pr-4 pt-2">
             {item.labels.length > 0 && (
               <span
-                className="inline-flex items-center px-2.5 py-0.5 border rounded-full focus:ring-2 focus:ring-ring focus:ring-offset-2 font-semibold text-xs transition-colors focus:outline-none"
+                className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                 style={{ backgroundColor: getRandomColor(item.labels[0]) }}
               >
                 {item.labels[0]}

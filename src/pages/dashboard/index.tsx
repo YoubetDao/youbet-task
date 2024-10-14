@@ -30,7 +30,7 @@ function ProjectRecommendations({ projects }: { projects: any[] }) {
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <LucideStar className="w-6 h-6" />
+          <LucideStar className="h-6 w-6" />
           Recommended Projects
         </CardTitle>
       </CardHeader>
@@ -38,11 +38,11 @@ function ProjectRecommendations({ projects }: { projects: any[] }) {
         <div className="space-y-4">
           {projects.map((project, index) => (
             <Link key={index} to={`/projects/${project.name}/tasks`}>
-              <div className="pb-4 mb-4 border-b">
+              <div className="mb-4 border-b pb-4">
                 <Button
                   asChild
                   variant="link"
-                  className="z-10 px-0 font-semibold !text-lg"
+                  className="z-10 px-0 !text-lg font-semibold"
                   onClick={(e) => {
                     e.preventDefault()
                     e.stopPropagation()
@@ -84,15 +84,15 @@ export default function Dashboard() {
   }, [])
 
   return (
-    <div className="px-4 py-4 mx-auto lg:px-12 max-w-7xl">
-      <div className="flex flex-col w-full gap-4 overflow-hidden">
+    <div className="mx-auto max-w-7xl px-4 py-4 lg:px-12">
+      <div className="flex w-full flex-col gap-4 overflow-hidden">
         <div className="space-y-4">
           <h2 className="text-3xl font-bold tracking-tight">Hi, Welcome to {BRAND_NAME} 👋</h2>
-          <div className="grid items-center justify-between grid-cols-2 gap-4 lg:grid-cols-4">
-            <StatsCard title="Total Users" value={userCount} icon={<LucideUsers className="w-4 h-4" />} />
-            <StatsCard title="Total Projects" value={projects.length} icon={<LucidePackage className="w-4 h-4" />} />
-            <StatsCard title="Total Tasks" value={totalCount} icon={<LucideListChecks className="w-4 h-4" />} />
-            <StatsCard title="Opened Tasks" value={openedCount} icon={<LucideCircleCheck className="w-4 h-4" />} />
+          <div className="grid grid-cols-2 items-center justify-between gap-4 lg:grid-cols-4">
+            <StatsCard title="Total Users" value={userCount} icon={<LucideUsers className="h-4 w-4" />} />
+            <StatsCard title="Total Projects" value={projects.length} icon={<LucidePackage className="h-4 w-4" />} />
+            <StatsCard title="Total Tasks" value={totalCount} icon={<LucideListChecks className="h-4 w-4" />} />
+            <StatsCard title="Opened Tasks" value={openedCount} icon={<LucideCircleCheck className="h-4 w-4" />} />
           </div>
         </div>
 

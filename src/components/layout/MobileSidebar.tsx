@@ -30,7 +30,7 @@ export default function MobileSidebar() {
         <Link
           to={item.href}
           className={cn(
-            'flex items-center gap-4 py-2 rounded-xl text-muted-foreground hover:text-foreground',
+            'flex items-center gap-4 rounded-xl py-2 text-muted-foreground hover:text-foreground',
             isActive && 'bg-muted text-foreground',
           )}
           onClick={(e) => {
@@ -40,11 +40,11 @@ export default function MobileSidebar() {
             }
           }}
         >
-          <Icon className="w-5 h-5" />
+          <Icon className="h-5 w-5" />
           <span className="flex-1">{item.title}</span>
           {hasChildren && (
             <span className="ml-auto">
-              {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+              {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
             </span>
           )}
         </Link>
@@ -58,17 +58,17 @@ export default function MobileSidebar() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline" size="icon" className="md:hidden shrink-0">
-          <Menu className="w-5 h-5" />
+        <Button variant="outline" size="icon" className="shrink-0 md:hidden">
+          <Menu className="h-5 w-5" />
           <span className="sr-only">Toggle navigation menu</span>
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="flex flex-col">
         <SheetTitle>
-          <img src={BRAND_LOGO} alt="logo" className="inline-block w-6 h-6 mr-2 rounded-lg" />
+          <img src={BRAND_LOGO} alt="logo" className="mr-2 inline-block h-6 w-6 rounded-lg" />
           {BRAND_NAME}
         </SheetTitle>
-        <nav className="grid gap-2 mt-4 text-lg font-medium">{navItems.map((item) => renderMenuItem(item))}</nav>
+        <nav className="mt-4 grid gap-2 text-lg font-medium">{navItems.map((item) => renderMenuItem(item))}</nav>
       </SheetContent>
     </Sheet>
   )

@@ -8,9 +8,9 @@ const MdView = ({ content }: IMarkdownRendererProps) => {
   const { MdRenderer, ToCSidebar } = useMd(content, true)
 
   return (
-    <div className="flex flex-col-reverse w-full gap-10 xl:flex-row">
-      {MdRenderer && <MdRenderer className="flex-1 max-w-[720px]" />}
-      {ToCSidebar && <ToCSidebar className="xl:sticky top-0 overflow-y-auto h-full w-[312px] py-2 gap-2" />}
+    <div className="flex w-full flex-col-reverse gap-10 xl:flex-row">
+      {MdRenderer && <MdRenderer className="max-w-[720px] flex-1" />}
+      {ToCSidebar && <ToCSidebar className="top-0 h-full w-[312px] gap-2 overflow-y-auto py-2 xl:sticky" />}
     </div>
   )
 }

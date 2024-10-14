@@ -15,9 +15,9 @@ const getRandomColor = () => _.sample(darkModeColors)
 
 export const TaskItem = ({ item }: { item: Task }) => {
   return (
-    <article className="relative z-[1] hover:bg-white/10 p-4 border hover:border hover:border-opacity-80 rounded-2xl w-full transition-all duration-200 ease-in group hover:scale-[0.998] h-full">
-      <div className="flex justify-between items-center gap-4">
-        <div className="flex flex-row items-start gap-3 w-full">
+    <article className="group relative z-[1] h-full w-full rounded-2xl border p-4 transition-all duration-200 ease-in hover:scale-[0.998] hover:border hover:border-opacity-80 hover:bg-white/10">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex w-full flex-row items-start gap-3">
           <div className="mt-1 h-8">
             {item.state === 'open' ? (
               <CircleDot className="w-6 text-green-600" />
@@ -25,7 +25,7 @@ export const TaskItem = ({ item }: { item: Task }) => {
               <CircleCheck className="w-6 text-purple-600" />
             )}
           </div>
-          <Button asChild variant="link" className="px-0 !line-clamp-2 !p-0 w-full h-16 font-bold text-2xl break-all">
+          <Button asChild variant="link" className="!line-clamp-2 h-16 w-full break-all !p-0 px-0 text-2xl font-bold">
             <span
               className="z-10"
               onClick={(e) => {
@@ -40,31 +40,31 @@ export const TaskItem = ({ item }: { item: Task }) => {
         </div>
       </div>
       <div className="flex-1">
-        <div className="flex flex-col justify-between gap-2 rounded h-full overflow-hidden">
+        <div className="flex h-full flex-col justify-between gap-2 overflow-hidden rounded">
           <div className="flex flex-col gap-4">
-            <div className="mt-1 text-ellipsis text-muted-foreground text-sm whitespace-nowrap overflow-hidden">
+            <div className="mt-1 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-muted-foreground">
               {item.body || 'No description...'}
             </div>
           </div>
-          <div className="flex flex-row justify-between items-center mt-2">
+          <div className="mt-2 flex flex-row items-center justify-between">
             <div className="flex flex-row items-center gap-4">
-              <Avatar className="w-4 h-4">
+              <Avatar className="h-4 w-4">
                 <AvatarImage
                   src={item.assignees[0]?.avatarUrl || 'https://avatars.githubusercontent.com/u/8191686?v=4'}
                 />
               </Avatar>
               <div className="flex flex-row items-center gap-2">
-                <Clock className="w-4 h-4" />
+                <Clock className="h-4 w-4" />
                 <span className="text-xs">{formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })}</span>
               </div>
             </div>
 
-            <div className="flex flex-row justify-between items-center gap-2 pr-4">
+            <div className="flex flex-row items-center justify-between gap-2 pr-4">
               <div>
                 {item.state === 'closed' ? (
                   <Button
                     disabled
-                    className="border-white/80 bg-greyscale-50/8 hover:bg-white/10 border hover:border-opacity-80 w-24 text-white"
+                    className="bg-greyscale-50/8 w-24 border border-white/80 text-white hover:border-opacity-80 hover:bg-white/10"
                   >
                     Closed
                   </Button>
@@ -79,7 +79,7 @@ export const TaskItem = ({ item }: { item: Task }) => {
                   // </Button>
                   <Button
                     disabled
-                    className="border-white/80 bg-greyscale-50/8 hover:bg-white/10 border hover:border-opacity-80 w-24 text-white"
+                    className="bg-greyscale-50/8 w-24 border border-white/80 text-white hover:border-opacity-80 hover:bg-white/10"
                   >
                     Claimed
                   </Button>
@@ -97,10 +97,10 @@ export const TaskItem = ({ item }: { item: Task }) => {
               </span>
             )}
           </div> */}
-          <div className="border-muted mt-2 pt-2 border-t">
+          <div className="mt-2 border-t border-muted pt-2">
             {item.labels.length > 0 && (
               <span
-                className="inline-flex items-center px-2.5 py-0.5 border rounded-full focus:ring-2 focus:ring-ring focus:ring-offset-2 font-semibold text-xs transition-colors focus:outline-none"
+                className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                 style={{ backgroundColor: getRandomColor() }}
               >
                 {item.labels[0]}

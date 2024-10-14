@@ -65,10 +65,10 @@ function PullRequestsTable(): React.ReactElement {
           placeholder="Filter pull requests..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="border-gray-700 bg-transparent max-w-sm"
+          className="max-w-sm border-gray-700 bg-transparent"
         />
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="border-gray-700 bg-transparent w-[180px]">
+          <SelectTrigger className="w-[180px] border-gray-700 bg-transparent">
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
           <SelectContent>
@@ -146,7 +146,7 @@ function PullRequestsTable(): React.ReactElement {
 
 export default function PullRequestAdmin() {
   return (
-    <div className="mx-auto px-4 lg:px-12 py-4 max-w-7xl">
+    <div className="mx-auto max-w-7xl px-4 py-4 lg:px-12">
       <PullRequestsTable />
     </div>
   )

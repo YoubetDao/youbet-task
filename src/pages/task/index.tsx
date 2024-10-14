@@ -105,7 +105,7 @@ export default function TaskPage() {
   }
 
   return (
-    <div className="px-4 py-4 mx-auto lg:px-12 max-w-7xl">
+    <div className="mx-auto max-w-7xl px-4 py-4 lg:px-12">
       <Breadcrumb className="py-2">
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -125,8 +125,8 @@ export default function TaskPage() {
       </Breadcrumb>
       <div className="flex flex-col gap-5">
         <div className="relative">
-          <Input placeholder="Search tutorial title or description" className="pl-8 bg-background/80" />
-          <LucideSearch className="absolute w-4 h-4 -translate-y-1/2 top-1/2 left-2" />
+          <Input placeholder="Search tutorial title or description" className="bg-background/80 pl-8" />
+          <LucideSearch className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2" />
         </div>
         <div className="flex space-x-2">
           <ToggleGroup size="sm" type="single" value={all} onValueChange={handleSelectAll} className="items-start">

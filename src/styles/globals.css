@@ -72,21 +72,21 @@
   }
 
   body {
-    @apply bg-background text-foreground font-["Boogaloo-Regular"];
+    @apply bg-background font-["Boogaloo-Regular"] text-foreground;
   }
 }
 
 @layer components {
   .toc-h1 {
-    @apply ml-1 font-bold mb-2 text-white hover:text-foreground hover:border-slate-500 hover:bg-slate-800 cursor-pointer;
+    @apply mb-2 ml-1 cursor-pointer font-bold text-white hover:border-slate-500 hover:bg-slate-800 hover:text-foreground;
   }
 
   .toc-h2 {
-    @apply ml-1 px-3 border-l border-slate-600 text-muted-foreground hover:text-foreground hover:border-slate-500 hover:bg-slate-800 cursor-pointer;
+    @apply ml-1 cursor-pointer border-l border-slate-600 px-3 text-muted-foreground hover:border-slate-500 hover:bg-slate-800 hover:text-foreground;
   }
 
   .toc-h3 {
-    @apply ml-1 px-7 border-l border-slate-600 text-muted-foreground hover:text-foreground hover:border-slate-500 hover:bg-slate-800 cursor-pointer;
+    @apply ml-1 cursor-pointer border-l border-slate-600 px-7 text-muted-foreground hover:border-slate-500 hover:bg-slate-800 hover:text-foreground;
   }
 
   .toc-item.active {

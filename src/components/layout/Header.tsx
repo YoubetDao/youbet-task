@@ -32,8 +32,8 @@ export default function Header() {
   return (
     <header className="flex h-14 flex-shrink-0 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
       <MobileSidebar />
-      <div className="flex-1 w-full"></div>
-      <div className={cn(buttonVariants({ variant: 'outline' }), 'border rounded-full')}>
+      <div className="w-full flex-1"></div>
+      <div className={cn(buttonVariants({ variant: 'outline' }), 'rounded-full border')}>
         <CustomConnectButton />
       </div>
 
@@ -41,7 +41,7 @@ export default function Header() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="secondary" size="icon" className="rounded-full">
-              <User className="w-5 h-5" />
+              <User className="h-5 w-5" />
               <span className="sr-only">Toggle user menu</span>
             </Button>
           </DropdownMenuTrigger>
@@ -57,7 +57,7 @@ export default function Header() {
       )}
       {!token && (
         <Button variant="secondary" className="space-x-2 rounded-full" onClick={handleLogin}>
-          <Github className="w-5 h-5" />
+          <Github className="h-5 w-5" />
           <span>Login</span>
         </Button>
       )}

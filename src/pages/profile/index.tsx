@@ -102,25 +102,25 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="mx-auto px-4 lg:px-12 py-4 max-w-7xl">
-      <div className="flex lg:flex-row flex-col lg:space-x-6 space-y-6 lg:space-y-0 mx-auto max-w-7xl">
+    <div className="mx-auto max-w-7xl px-4 py-4 lg:px-12">
+      <div className="mx-auto flex max-w-7xl flex-col space-y-6 lg:flex-row lg:space-x-6 lg:space-y-0">
         {/* 左侧布局 */}
-        <div className="space-y-6 w-full lg:w-1/3">
+        <div className="w-full space-y-6 lg:w-1/3">
           {/* 个人信息 Card */}
-          <Card className="shadow-lg rounded-lg">
+          <Card className="rounded-lg shadow-lg">
             <div className="flex items-center space-x-6 p-4">
-              <div className="flex-shrink-0 rounded-full w-16 h-16 overflow-hidden">
-                <Avatar className="w-full h-full">
+              <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-full">
+                <Avatar className="h-full w-full">
                   <AvatarImage src={profile?.avatarUrl} alt="Avatar" className="object-cover" />
                   <AvatarFallback>{profile?.displayName?.charAt(0)}</AvatarFallback>
                 </Avatar>
               </div>
               <div className="flex-grow">
-                <h2 className="font-semibold text-2xl text-white leading-relaxed">
+                <h2 className="text-2xl font-semibold leading-relaxed text-white">
                   {profile?.displayName || profile?.username}
                 </h2>
-                <p className="text-gray-400 leading-relaxed">{profile?.bio || 'No bio...'}</p>
-                <div className="flex space-x-4 mt-2">
+                <p className="leading-relaxed text-gray-400">{profile?.bio || 'No bio...'}</p>
+                <div className="mt-2 flex space-x-4">
                   <a
                     href={`https://github.com/${profile?.username}`}
                     target="_blank"
@@ -150,74 +150,74 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            <div className="justify-between items-center grid grid-cols-2 bg-gray-900 p-4 rounded-b-lg">
+            <div className="grid grid-cols-2 items-center justify-between rounded-b-lg bg-gray-900 p-4">
               <div className="text-center">
-                <h3 className="font-bold text-2xl text-white">{profile?.followers}</h3>
+                <h3 className="text-2xl font-bold text-white">{profile?.followers}</h3>
                 <p className="text-gray-400">Followers</p>
               </div>
               <div className="text-center">
-                <h3 className="font-bold text-2xl text-white">{profile?.following}</h3>
+                <h3 className="text-2xl font-bold text-white">{profile?.following}</h3>
                 <p className="text-gray-400">Following</p>
               </div>
             </div>
           </Card>
 
-          <Card className="space-y-1 shadow-lg p-4 rounded-lg">
+          <Card className="space-y-1 rounded-lg p-4 shadow-lg">
             <div className="space-y-1">
-              <h3 className="font-semibold text-lg text-white">Points</h3>
-              <div className="flex justify-between items-center">
-                <p className="mb-2 font-bold text-gray-400 text-l">{userPoints}</p>
+              <h3 className="text-lg font-semibold text-white">Points</h3>
+              <div className="flex items-center justify-between">
+                <p className="text-l mb-2 font-bold text-gray-400">{userPoints}</p>
               </div>
             </div>
             <div className="space-y-1">
-              <h3 className="font-semibold text-lg text-white">Rewards</h3>
-              <div className="flex justify-between items-center">
-                <p className="mb-2 font-bold text-gray-400 text-l">{totalRewards.toFixed(5)} EDU</p>
+              <h3 className="text-lg font-semibold text-white">Rewards</h3>
+              <div className="flex items-center justify-between">
+                <p className="text-l mb-2 font-bold text-gray-400">{totalRewards.toFixed(5)} EDU</p>
               </div>
             </div>
             <div className="space-y-1">
-              <h3 className="font-semibold text-lg text-white">To Claim</h3>
-              <div className="flex justify-between items-center">
-                <p className="mb-2 font-bold text-gray-400 text-l">{(totalRewards - claimedRewards).toFixed(5)} EDU</p>
+              <h3 className="text-lg font-semibold text-white">To Claim</h3>
+              <div className="flex items-center justify-between">
+                <p className="text-l mb-2 font-bold text-gray-400">{(totalRewards - claimedRewards).toFixed(5)} EDU</p>
                 <Button onClick={handleClaim} size="sm" disabled={claiming}>
-                  Claim{claiming && <Loader2 className="ml-2 w-4 h-4 animate-spin" />}
+                  Claim{claiming && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
                 </Button>
               </div>
             </div>
             <div className="space-y-1">
-              <h3 className="font-semibold text-lg text-white">Skills</h3>
+              <h3 className="text-lg font-semibold text-white">Skills</h3>
               <div className="flex flex-wrap">
-                <span className="bg-gray-700 m-1 px-3 py-1 rounded-full text-white text-xs">C++</span>
-                <span className="bg-gray-700 m-1 px-3 py-1 rounded-full text-white text-xs">Java</span>
-                <span className="bg-gray-700 m-1 px-3 py-1 rounded-full text-white text-xs">Python</span>
+                <span className="m-1 rounded-full bg-gray-700 px-3 py-1 text-xs text-white">C++</span>
+                <span className="m-1 rounded-full bg-gray-700 px-3 py-1 text-xs text-white">Java</span>
+                <span className="m-1 rounded-full bg-gray-700 px-3 py-1 text-xs text-white">Python</span>
               </div>
             </div>
           </Card>
         </div>
 
         {/* 右侧布局 */}
-        <div className="space-y-6 w-full lg:w-2/3">
+        <div className="w-full space-y-6 lg:w-2/3">
           {/* GitHub 贡献图 Card */}
-          <Card className="shadow-lg p-4 rounded-lg">
-            <h3 className="mb-2 font-semibold text-lg text-white">Contributions</h3>
+          <Card className="rounded-lg p-4 shadow-lg">
+            <h3 className="mb-2 text-lg font-semibold text-white">Contributions</h3>
             <GitHubCalendar username={profile?.username || ''} />
           </Card>
 
           {/* 活动流 Card */}
-          <Card className="shadow-lg p-4 rounded-lg">
-            <h3 className="mb-2 font-semibold text-lg text-white">Recent Activities</h3>
+          <Card className="rounded-lg p-4 shadow-lg">
+            <h3 className="mb-2 text-lg font-semibold text-white">Recent Activities</h3>
             <ul className="space-y-4">
               <li className="flex items-center space-x-4">
                 <span className="text-gray-400">[PR] Merged PR #42 in youbet-task</span>
-                <span className="text-gray-500 text-xs">2 hours ago</span>
+                <span className="text-xs text-gray-500">2 hours ago</span>
               </li>
               <li className="flex items-center space-x-4">
                 <span className="text-gray-400">[Issue] Opened Issue #7 in youbet-task</span>
-                <span className="text-gray-500 text-xs">4 hours ago</span>
+                <span className="text-xs text-gray-500">4 hours ago</span>
               </li>
               <li className="flex items-center space-x-4">
                 <span className="text-gray-400">[Comment] Commented on Issue #7 in youbet-task</span>
-                <span className="text-gray-500 text-xs">6 hours ago</span>
+                <span className="text-xs text-gray-500">6 hours ago</span>
               </li>
               {/* 继续添加更多的活动 */}
             </ul>

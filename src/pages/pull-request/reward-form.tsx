@@ -143,7 +143,7 @@ export const RewardDialogForm = ({ trigger, prGithubId, addressFrom, chain }: IR
                       render={({ field }) => (
                         <FormItem>
                           <section className="flex items-center">
-                            <FormLabel className="flex-shrink-0 w-20 text-white">Amount</FormLabel>
+                            <FormLabel className="w-20 flex-shrink-0 text-white">Amount</FormLabel>
                             <FormControl>
                               <Input
                                 placeholder="Enter reward amount"
@@ -184,7 +184,7 @@ export const RewardDialogForm = ({ trigger, prGithubId, addressFrom, chain }: IR
                     render={({ field }) => (
                       <FormItem>
                         <section className="flex items-center">
-                          <FormLabel className="flex-shrink-0 w-20 text-white">Address</FormLabel>
+                          <FormLabel className="w-20 flex-shrink-0 text-white">Address</FormLabel>
                           <FormControl>
                             <Input
                               placeholder="Enter wallet address"
@@ -204,7 +204,7 @@ export const RewardDialogForm = ({ trigger, prGithubId, addressFrom, chain }: IR
                     render={({ field }) => (
                       <FormItem>
                         <section className="flex items-center">
-                          <FormLabel className="flex-shrink-0 w-20 text-white">GitHub ID</FormLabel>
+                          <FormLabel className="w-20 flex-shrink-0 text-white">GitHub ID</FormLabel>
                           <FormControl>
                             <Input
                               placeholder="Enter GitHub ID"
@@ -220,7 +220,7 @@ export const RewardDialogForm = ({ trigger, prGithubId, addressFrom, chain }: IR
                   />
 
                   <FormDescription className="flex items-center">
-                    <Label className="flex-shrink-0 w-20 text-white">Chain</Label>
+                    <Label className="w-20 flex-shrink-0 text-white">Chain</Label>
                     <Select
                       defaultValue={`${chain.id}`}
                       onValueChange={(value) => {
@@ -252,8 +252,8 @@ export const RewardDialogForm = ({ trigger, prGithubId, addressFrom, chain }: IR
               </form>
             </>
           ) : (
-            <div className="flex flex-1 justify-center items-center">
-              <div className="border-8 border-slate-500 m-28 border-t-transparent border-solid rounded-full w-48 h-48 animate-spin" />
+            <div className="flex flex-1 items-center justify-center">
+              <div className="m-28 h-48 w-48 animate-spin rounded-full border-8 border-solid border-slate-500 border-t-transparent" />
             </div>
           )}
         </Form>

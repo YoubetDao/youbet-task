@@ -22,15 +22,15 @@ const TutorialToC = React.memo(({ tutorialToC, path, depth = 0 }: ITutorialToC) 
     return (
       <li
         id={chapter.path.match(/^(.*?).md$/)?.[1]}
-        className={`py-1 border-slate-600   ${depth === 0 ? 'border-none pl-1 mb-1' : 'pl-2 border-l-2'} ${
+        className={`border-slate-600 py-1   ${depth === 0 ? 'mb-1 border-none pl-1' : 'border-l-2 pl-2'} ${
           depth === 0 && chapter.children?.length === 0 ? 'mb-3' : ''
         }
-        ${isActive ? '' : 'hover:border-slate-500 hover:bg-slate-800 cursor-pointer'}
+        ${isActive ? '' : 'cursor-pointer hover:border-slate-500 hover:bg-slate-800'}
         `}
       >
         <a href={isActive ? undefined : encodeURIComponent(chapter.path.match(/^(.*?).md$/)?.[1] || '')}>
           <p
-            className={`pl-${depth * 2} text-muted-foreground break-words text-left ${
+            className={`pl-${depth * 2} break-words text-left text-muted-foreground ${
               depth === 0 ? 'text-white' : ''
             } ${isActive ? '!text-blue-400' : 'text-muted-foreground hover:text-foreground'}`}
           >
@@ -42,7 +42,7 @@ const TutorialToC = React.memo(({ tutorialToC, path, depth = 0 }: ITutorialToC) 
   }
 
   return (
-    <ul className="flex flex-col mb-6">
+    <ul className="mb-6 flex flex-col">
       {tutorialToC.map((chapter, index) => (
         <Fragment key={index}>
           {renderTitle(chapter, depth)}
@@ -64,24 +64,24 @@ export default function TutorialLayout({ children }: { children: React.ReactNode
   return (
     <div className="grid h-screen w-full overflow-hidden md:grid-cols-[240px_1fr] lg:grid-cols-[300px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
-        <div className="flex flex-col h-full max-h-screen gap-2">
+        <div className="flex h-full max-h-screen flex-col gap-2">
           <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
             <Title />
           </div>
           <div className="flex-1 overflow-y-auto">
             <Sidebar />
             {/* <Separator.Root className="mx-4 lg:mx-6 h-[2px] w-[85%] bg-muted mt-2" /> */}
-            <section className="flex flex-col items-start px-4 text-sm font-medium lg:px-6 py-4">
+            <section className="flex flex-col items-start px-4 py-4 text-sm font-medium lg:px-6">
               {tutorialToC && <TutorialToC tutorialToC={tutorialToC} path={path} />}
             </section>
           </div>
         </div>
       </div>
-      <div className="flex flex-col flex-1 overflow-hidden">
+      <div className="flex flex-1 flex-col overflow-hidden">
         <Header />
-        <main className="flex flex-col flex-1 gap-4 p-4 overflow-auto lg:gap-6 lg:p-6 scroll-smooth" id="scrollRef">
+        <main className="flex flex-1 flex-col gap-4 overflow-auto scroll-smooth p-4 lg:gap-6 lg:p-6" id="scrollRef">
           {children}
-          <div className="pointer-events-none fixed bottom-0 left-[220px] right-0 top-14 md:left-[220px] lg:left-[280px] lg:top-[60px] overflow-hidden z-[-1]">
+          <div className="pointer-events-none fixed bottom-0 left-[220px] right-0 top-14 z-[-1] overflow-hidden md:left-[220px] lg:left-[280px] lg:top-[60px]">
             <Meteors number={20} />
           </div>
         </main>

@@ -13,7 +13,7 @@ export function TaskCompletionLeaderboard({ leaderboard }: TaskCompletionLeaderb
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="relative">
-          <LucideCrown className="absolute w-6 h-6 -top-5 -left-5 -rotate-12" />
+          <LucideCrown className="absolute -left-5 -top-5 h-6 w-6 -rotate-12" />
           Task Completion Leaderboard
         </CardTitle>
       </CardHeader>

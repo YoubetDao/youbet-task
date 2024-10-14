@@ -79,10 +79,10 @@ function TaskAppliesTable(): React.ReactElement {
           placeholder="Filter task applies..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-sm bg-transparent border-gray-700"
+          className="max-w-sm border-gray-700 bg-transparent"
         />
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="border-gray-700 bg-transparent w-[180px]">
+          <SelectTrigger className="w-[180px] border-gray-700 bg-transparent">
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
           <SelectContent>
@@ -145,7 +145,7 @@ const queryClient = new QueryClient()
 
 export default function TaskApplyAdmin() {
   return (
-    <div className="px-4 py-4 mx-auto lg:px-12 max-w-7xl">
+    <div className="mx-auto max-w-7xl px-4 py-4 lg:px-12">
       <QueryClientProvider client={queryClient}>
         <TaskAppliesTable />
       </QueryClientProvider>

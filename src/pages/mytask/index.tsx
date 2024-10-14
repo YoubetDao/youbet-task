@@ -62,7 +62,7 @@ export default function MyTask() {
   const totalPages = Math.ceil((data?.pagination.totalCount || 0) / pageSize)
 
   return (
-    <div className="px-4 py-4 mx-auto lg:px-12 max-w-7xl">
+    <div className="mx-auto max-w-7xl px-4 py-4 lg:px-12">
       <div className="flex flex-col gap-5">
         <div className="flex space-x-2">
           <ToggleGroup size="sm" type="single" value={all} onValueChange={handleSelectAll} className="items-start">

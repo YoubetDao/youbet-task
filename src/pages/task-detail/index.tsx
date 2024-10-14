@@ -140,14 +140,14 @@ function QuestLog() {
   }
 
   return (
-    <div className="flex flex-col flex-shrink-0 basis-96">
-      <div className="items-center mt-2">
+    <div className="flex flex-shrink-0 basis-96 flex-col">
+      <div className="mt-2 items-center">
         {task.state === 'closed' ? (
-          <Button disabled className="border-muted hover:bg-white/10 border hover:border-opacity-80 text-white">
+          <Button disabled className="border border-muted text-white hover:border-opacity-80 hover:bg-white/10">
             Closed
           </Button>
         ) : task.assignee && task.assignee.login ? (
-          <Button disabled className="border-muted hover:bg-white/10 border hover:border-opacity-80 text-white">
+          <Button disabled className="border border-muted text-white hover:border-opacity-80 hover:bg-white/10">
             Assigned
           </Button>
         ) : myApplies.length == 0 ? (
@@ -155,33 +155,33 @@ function QuestLog() {
             disabled={isClaiming}
             onClick={handleClaim}
             variant="emphasis"
-            className="border-muted hover:bg-white/10 border hover:border-opacity-80 text-white"
+            className="border border-muted text-white hover:border-opacity-80 hover:bg-white/10"
           >
             Apply
-            {isClaiming && <Loader2 className="ml-2 w-4 h-4 animate-spin" />}
+            {isClaiming && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
           </Button>
         ) : (
           <Button
             disabled={isWithdrawing}
             onClick={handleDisclaim}
             variant="emphasis"
-            className="border-muted bg-gray-8/50 hover:bg-white/10 border hover:border-opacity-80 text-l text-white"
+            className="bg-gray-8/50 text-l border border-muted text-white hover:border-opacity-80 hover:bg-white/10"
           >
             Withdraw
-            {isWithdrawing && <Loader2 className="ml-2 w-4 h-4 animate-spin" />}
+            {isWithdrawing && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
           </Button>
         )}
       </div>
-      <Card className="top-0 left-0 sticky bg-transparent mt-4">
-        <CardHeader className="flex flex-row justify-between items-center border-muted py-4 border-b">
+      <Card className="sticky left-0 top-0 mt-4 bg-transparent">
+        <CardHeader className="flex flex-row items-center justify-between border-b border-muted py-4">
           <CardTitle className="relative justify-center text-2xl">Quest Log</CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col gap-y-4 mt-2 font-serif">
-          <div className="flex flex-row justify-start items-center pt-2">
+        <CardContent className="mt-2 flex flex-col gap-y-4 font-serif">
+          <div className="flex flex-row items-center justify-start pt-2">
             <Label className="w-40">Assignee</Label>
             {task.assignee && Object.keys(task.assignee).length > 0 && (
-              <div className="flex flex-row justify-between items-center gap-2">
-                <Avatar className="w-7 h-7">
+              <div className="flex flex-row items-center justify-between gap-2">
+                <Avatar className="h-7 w-7">
                   <AvatarImage src={task.assignee.avatarUrl} alt="Avatar" />
                   <AvatarFallback>{task.assignee.login.charAt(0)}</AvatarFallback>
                 </Avatar>
@@ -189,17 +189,17 @@ function QuestLog() {
               </div>
             )}
           </div>
-          <div className="flex flex-row justify-start items-center pt-2">
+          <div className="flex flex-row items-center justify-start pt-2">
             <Label className="w-40">Rewards</Label>
             <span className="flex flex-row items-center gap-1">
               <CircleDollarSign /> {10}
             </span>
           </div>
-          <div className="flex flex-row justify-start items-center pt-2">
+          <div className="flex flex-row items-center justify-start pt-2">
             <Label className="w-40">Created At</Label>
             <span className="flex flex-row items-center gap-1">{new Date(task.createdAt).toLocaleDateString()}</span>
           </div>
-          <div className="flex flex-row justify-start items-center pt-2">
+          <div className="flex flex-row items-center justify-start pt-2">
             <Label className="w-40">Level</Label>
             {renderLevel('Easy')}
             {/* <Select>
@@ -214,7 +214,7 @@ function QuestLog() {
               </SelectContent>
             </Select> */}
           </div>
-          <div className="flex flex-row justify-start items-center pt-2">
+          <div className="flex flex-row items-center justify-start pt-2">
             <Label className="w-40">Priority</Label>
             {renderPriority('P0')}
             {/* <Select>
@@ -246,11 +246,11 @@ function QuestLog() {
               </div>
             )}
           </div> */}
-          <div className="flex flex-row justify-start items-center pt-2">
+          <div className="flex flex-row items-center justify-start pt-2">
             <Label className="w-40">assignees</Label>
-            <div className="flex flex-row justify-between items-center gap-2">
+            <div className="flex flex-row items-center justify-between gap-2">
               {task.assignees.map((participant, index) => (
-                <Avatar key={index} className="w-7 h-7">
+                <Avatar key={index} className="h-7 w-7">
                   <AvatarImage src={participant.avatarUrl} alt="Avatar" />
                   <AvatarFallback>{participant.login.charAt(0)}</AvatarFallback>
                 </Avatar>
@@ -293,11 +293,11 @@ export default function TaskDetailPage() {
   }
 
   return (
-    <div className="mx-auto px-4 lg:px-12 py-4 max-w-7xl">
-      <div className="flex xl:flex-row flex-col-reverse gap-5 mt-5 w-full">
-        <article className="flex flex-col gap-5 w-full">
+    <div className="mx-auto max-w-7xl px-4 py-4 lg:px-12">
+      <div className="mt-5 flex w-full flex-col-reverse gap-5 xl:flex-row">
+        <article className="flex w-full flex-col gap-5">
           <header>
-            <h1 className="font-bold text-4xl">{task.title}</h1>
+            <h1 className="text-4xl font-bold">{task.title}</h1>
           </header>
           <div className="flex flex-row gap-3">
             {task.labelsWithColors &&
@@ -308,12 +308,12 @@ export default function TaskDetailPage() {
                 </Badge>
               ))}
           </div>
-          <div className="flex flex-row w-full">
-            <div className="flex flex-col flex-1 items-start gap-10 mr-4">
+          <div className="flex w-full flex-row">
+            <div className="mr-4 flex flex-1 flex-col items-start gap-10">
               <MdRenderer />
-              <div className="flex flex-row justify-between items-center w-full">
+              <div className="flex w-full flex-row items-center justify-between">
                 <Button variant="link" className="gap-3 text-blue-500">
-                  <FilePenLine className="w-5 h-5" />
+                  <FilePenLine className="h-5 w-5" />
                   <a href={task.htmlUrl}>Edit it in Github</a>
                 </Button>
                 <span className="text-l text-slate-500">Updated At: {task.updatedAt}</span>

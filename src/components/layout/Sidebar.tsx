@@ -26,7 +26,7 @@ export default function Sidebar() {
         <Link
           to={item.href}
           className={cn(
-            'flex items-center gap-4 px-3 py-2 rounded-xl text-muted-foreground hover:text-foreground',
+            'flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground',
             isActive && 'bg-muted text-foreground',
           )}
           onClick={(e) => {
@@ -36,11 +36,11 @@ export default function Sidebar() {
             }
           }}
         >
-          <Icon className="w-4 h-4" />
+          <Icon className="h-4 w-4" />
           <span className="flex-1">{item.title}</span>
           {hasChildren && (
             <span className="ml-auto">
-              {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+              {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
             </span>
           )}
         </Link>
