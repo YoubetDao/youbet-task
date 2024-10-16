@@ -60,8 +60,6 @@ export const useMd = (content: string, toc?: boolean) => {
 
     const observerCallback: IntersectionObserverCallback = (entries) => {
       const intersectingEntries = entries.filter((entry) => entry.isIntersecting)
-
-      // let minYEntry: IntersectionObserverEntry | null = null
       let minYTop = Infinity
       let minYId = ''
 

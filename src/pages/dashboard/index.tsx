@@ -84,28 +84,26 @@ export default function Dashboard() {
   }, [])
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-4 lg:px-12">
-      <div className="flex w-full flex-col gap-4 overflow-hidden">
-        <div className="space-y-4">
-          <h2 className="text-3xl font-bold tracking-tight">Hi, Welcome to {BRAND_NAME} 👋</h2>
-          <div className="grid grid-cols-2 items-center justify-between gap-4 lg:grid-cols-4">
-            <StatsCard title="Total Users" value={userCount} icon={<LucideUsers className="h-4 w-4" />} />
-            <StatsCard title="Total Projects" value={projects.length} icon={<LucidePackage className="h-4 w-4" />} />
-            <StatsCard title="Total Tasks" value={totalCount} icon={<LucideListChecks className="h-4 w-4" />} />
-            <StatsCard title="Opened Tasks" value={openedCount} icon={<LucideCircleCheck className="h-4 w-4" />} />
-          </div>
+    <div className="flex w-full flex-col gap-4 overflow-hidden">
+      <div className="space-y-4">
+        <h2 className="text-3xl font-bold tracking-tight">Hi, Welcome to {BRAND_NAME} 👋</h2>
+        <div className="grid grid-cols-2 items-center justify-between gap-4 lg:grid-cols-4">
+          <StatsCard title="Total Users" value={userCount} icon={<LucideUsers className="h-4 w-4" />} />
+          <StatsCard title="Total Projects" value={projects.length} icon={<LucidePackage className="h-4 w-4" />} />
+          <StatsCard title="Total Tasks" value={totalCount} icon={<LucideListChecks className="h-4 w-4" />} />
+          <StatsCard title="Opened Tasks" value={openedCount} icon={<LucideCircleCheck className="h-4 w-4" />} />
         </div>
-
-        <div className="grid w-full grid-cols-4 gap-4">
-          <div className="col-span-4 xl:col-span-1">
-            <TaskCompletionLeaderboard leaderboard={leaderboard.slice(0, 5)} />
-          </div>
-          <div className="col-span-4 xl:col-span-3">
-            <ProjectRecommendations projects={projects.slice(0, 5)} />
-          </div>
-        </div>
-        <Footer />
       </div>
+
+      <div className="grid w-full grid-cols-4 gap-4">
+        <div className="col-span-4 xl:col-span-1">
+          <TaskCompletionLeaderboard leaderboard={leaderboard.slice(0, 5)} />
+        </div>
+        <div className="col-span-4 xl:col-span-3">
+          <ProjectRecommendations projects={projects.slice(0, 5)} />
+        </div>
+      </div>
+      <Footer />
     </div>
   )
 }
