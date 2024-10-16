@@ -34,4 +34,13 @@ export class MarkdownProcessor {
   public getToCData(): { id: string; title: string; slug: string }[] {
     return this.toc
   }
+
+  public static getPlainText(mdText: string): string {
+    const md = markdownIt({
+      html: true,
+    })
+    const html = md.render(mdText || '')
+    const text = html.replace(/<[^>]+>/g, '')
+    return text
+  }
 }

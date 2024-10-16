@@ -63,7 +63,6 @@ export default function ImportProject() {
   }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values)
     await importTutorial(values)
     handleOpenChange(false)
   }
