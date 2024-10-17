@@ -203,32 +203,30 @@ export default function Tutorials() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-4 lg:px-12">
-      <div className="flex w-full flex-col gap-2">
-        <div className="space-y-5">
-          <div className="flex items-center gap-2">
-            <div className="relative flex-1">
-              <Input placeholder="Search tutorial title or description" className="bg-background/80 pl-8" />
-              <LucideSearch className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2" />
-            </div>
-            {/* <ImportTutorialDialog /> */}
+    <div className="flex w-full flex-col gap-2">
+      <div className="space-y-5">
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Input placeholder="Search tutorial title or description" className="bg-background/80 pl-8" />
+            <LucideSearch className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2" />
           </div>
-          <div className="flex space-x-2">
-            <ToggleGroup size="sm" type="single" value={all} onValueChange={handleSelectAll} className="items-start">
-              <ToggleGroupItem value="All">All</ToggleGroupItem>
-            </ToggleGroup>
-            <ToggleGroup size="sm" type="multiple" value={selectedCategories} onValueChange={handleCategoryChange}>
-              {DEFAULT_CATEGORIES.map((category) => (
-                <ToggleGroupItem key={category} value={category}>
-                  {category}
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
-          </div>
+          {/* <ImportTutorialDialog /> */}
         </div>
-        <div className="flex flex-col gap-2 lg:flex-row">
-          <TutorialList categories={all ? selectedCategories.concat([all]) : selectedCategories} />
+        <div className="flex space-x-2">
+          <ToggleGroup size="sm" type="single" value={all} onValueChange={handleSelectAll} className="items-start">
+            <ToggleGroupItem value="All">All</ToggleGroupItem>
+          </ToggleGroup>
+          <ToggleGroup size="sm" type="multiple" value={selectedCategories} onValueChange={handleCategoryChange}>
+            {DEFAULT_CATEGORIES.map((category) => (
+              <ToggleGroupItem key={category} value={category}>
+                {category}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
         </div>
+      </div>
+      <div className="flex flex-col gap-2 lg:flex-row">
+        <TutorialList categories={all ? selectedCategories.concat([all]) : selectedCategories} />
       </div>
     </div>
   )

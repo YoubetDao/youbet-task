@@ -62,36 +62,34 @@ export default function MyTask() {
   const totalPages = Math.ceil((data?.pagination.totalCount || 0) / pageSize)
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-4 lg:px-12">
-      <div className="flex flex-col gap-5">
-        <div className="flex space-x-2">
-          <ToggleGroup size="sm" type="single" value={all} onValueChange={handleSelectAll} className="items-start">
-            <ToggleGroupItem value="All">All</ToggleGroupItem>
-          </ToggleGroup>
-          <ToggleGroup size="sm" type="multiple" value={selectedCategories} onValueChange={handleCategoryChange}>
-            {DEFAULT_CATEGORIES.map((category) => (
-              <ToggleGroupItem key={category} value={category}>
-                {category}
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
-        </div>
-        <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
-          {loading ? (
-            <SkeletonTasks />
-          ) : tasks.length ? (
-            // TODO: key should not be htmlUrl; but title is not unique.
-            tasks.map((item, id) => (
-              <Link key={id} to={`/task/${item.githubId}`}>
-                <TaskItem item={item} />
-              </Link>
-            ))
-          ) : (
-            <EmptyTasks />
-          )}
-        </div>
-        <PaginationFast page={page} totalPages={totalPages} onPageChange={setPage} />
+    <div className="flex flex-col gap-5">
+      <div className="flex space-x-2">
+        <ToggleGroup size="sm" type="single" value={all} onValueChange={handleSelectAll} className="items-start">
+          <ToggleGroupItem value="All">All</ToggleGroupItem>
+        </ToggleGroup>
+        <ToggleGroup size="sm" type="multiple" value={selectedCategories} onValueChange={handleCategoryChange}>
+          {DEFAULT_CATEGORIES.map((category) => (
+            <ToggleGroupItem key={category} value={category}>
+              {category}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
       </div>
+      <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+        {loading ? (
+          <SkeletonTasks />
+        ) : tasks.length ? (
+          // TODO: key should not be htmlUrl; but title is not unique.
+          tasks.map((item, id) => (
+            <Link key={id} to={`/task/${item.githubId}`}>
+              <TaskItem item={item} />
+            </Link>
+          ))
+        ) : (
+          <EmptyTasks />
+        )}
+      </div>
+      <PaginationFast page={page} totalPages={totalPages} onPageChange={setPage} />
     </div>
   )
 }

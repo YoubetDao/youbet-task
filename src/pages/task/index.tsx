@@ -105,7 +105,7 @@ export default function TaskPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-4 lg:px-12">
+    <>
       <Breadcrumb className="py-2">
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -153,6 +153,6 @@ export default function TaskPage() {
         </div>
         {!loading && tasks.length && <PaginationFast page={page} totalPages={totalPages} onPageChange={setPage} />}
       </div>
-    </div>
+    </>
   )
 }

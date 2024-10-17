@@ -290,19 +290,17 @@ export default function ProjectPage() {
   const appearances = getAppearances()
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-4 lg:px-12">
-      <div className="flex w-full flex-col gap-2">
-        <div className="flex items-center justify-between gap-2">
-          <div className="relative flex-1">
-            <Input placeholder="Search project title or description" className="bg-background/80 pl-8" />
-            <LucideSearch className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2" />
-          </div>
-          {appearances.showImportProject && <ImportProjectDialog />}
+    <div className="flex w-full flex-col gap-2">
+      <div className="flex items-center justify-between gap-2">
+        <div className="relative flex-1">
+          <Input placeholder="Search project title or description" className="bg-background/80 pl-8" />
+          <LucideSearch className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2" />
         </div>
-        <div className="flex flex-col gap-2 lg:flex-row">
-          <FilterBoard filterTags={filterTags} setFilterTags={setFilterTags} />
-          <ProjectList loading={loading} loadingMore={loadingMore} data={data} />
-        </div>
+        {appearances.showImportProject && <ImportProjectDialog />}
+      </div>
+      <div className="flex flex-col gap-2 lg:flex-row">
+        <FilterBoard filterTags={filterTags} setFilterTags={setFilterTags} />
+        <ProjectList loading={loading} loadingMore={loadingMore} data={data} />
       </div>
     </div>
   )

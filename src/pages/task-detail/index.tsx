@@ -217,35 +217,8 @@ function QuestLog() {
           <div className="flex flex-row items-center justify-start pt-2">
             <Label className="w-40">Priority</Label>
             {renderPriority('P0')}
-            {/* <Select>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder={taskDetailItem.priority} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="low">Low</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="high">High</SelectItem>
-              </SelectContent>
-            </Select> */}
           </div>
-          {/* <div className="flex flex-row justify-between items-center pt-2">
-            <Label className="w-40">Development</Label>
-            <Button asChild variant="link" className="font-bold text-l">
-              <a href={taskDetailItem.development}>branch</a>
-            </Button>
-          </div> */}
-          {/* <div className="flex flex-row justify-start items-center pt-2">
-            <Label className="w-40">Reporter</Label>
-            {task.assignee && (
-              <div className="flex flex-row justify-between items-center gap-2">
-                <Avatar className="w-7 h-7">
-                  <AvatarImage src={task.assignee.avatarUrl} alt="Avatar" />
-                  <AvatarFallback>{task.assignee.login.charAt(0)}</AvatarFallback>
-                </Avatar>
-                {task.assignee.login}
-              </div>
-            )}
-          </div> */}
+
           <div className="flex flex-row items-center justify-start pt-2">
             <Label className="w-40">assignees</Label>
             <div className="flex flex-row items-center justify-between gap-2">
@@ -293,41 +266,39 @@ export default function TaskDetailPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-4 lg:px-12">
-      <div className="mt-5 flex w-full flex-col-reverse gap-5 xl:flex-row">
-        <article className="flex w-full flex-col gap-5">
-          <header>
-            <h1 className="text-4xl font-bold">{task.title}</h1>
-          </header>
-          <div className="flex flex-row gap-3">
-            {task.labelsWithColors &&
-              task.labelsWithColors.length > 0 &&
-              task.labelsWithColors.map((label, index) => (
-                <Badge key={index} variant="outline" style={{ backgroundColor: label.color }}>
-                  {label.name}
-                </Badge>
-              ))}
-          </div>
-          <div className="flex w-full flex-row">
-            <div className="mr-4 flex flex-1 flex-col items-start gap-10">
-              <MdRenderer />
-              <div className="flex w-full flex-row items-center justify-between">
-                <Button variant="link" className="gap-3 text-blue-500">
-                  <FilePenLine className="h-5 w-5" />
-                  <a href={task.htmlUrl}>Edit it in Github</a>
-                </Button>
-                <span className="text-l text-slate-500">Updated At: {task.updatedAt}</span>
-              </div>
+    <div className="mt-5 flex w-full flex-col-reverse gap-5 xl:flex-row">
+      <article className="flex w-full flex-col gap-5">
+        <header>
+          <h1 className="text-4xl font-bold">{task.title}</h1>
+        </header>
+        <div className="flex flex-row gap-3">
+          {task.labelsWithColors &&
+            task.labelsWithColors.length > 0 &&
+            task.labelsWithColors.map((label, index) => (
+              <Badge key={index} variant="outline" style={{ backgroundColor: label.color }}>
+                {label.name}
+              </Badge>
+            ))}
+        </div>
+        <div className="flex w-full flex-row">
+          <div className="mr-4 flex flex-1 flex-col items-start gap-10">
+            <MdRenderer />
+            <div className="flex w-full flex-row items-center justify-between">
+              <Button variant="link" className="gap-3 text-blue-500">
+                <FilePenLine className="h-5 w-5" />
+                <a href={task.htmlUrl}>Edit it in Github</a>
+              </Button>
+              <span className="text-l text-slate-500">Updated At: {task.updatedAt}</span>
+            </div>
 
-              <div className="w-full">
-                <UtterancesComments task={task} />
-              </div>
+            <div className="w-full">
+              <UtterancesComments task={task} />
             </div>
           </div>
-        </article>
+        </div>
+      </article>
 
-        <QuestLog />
-      </div>
+      <QuestLog />
     </div>
   )
 }

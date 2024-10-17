@@ -145,10 +145,8 @@ const queryClient = new QueryClient()
 
 export default function TaskApplyAdmin() {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-4 lg:px-12">
-      <QueryClientProvider client={queryClient}>
-        <TaskAppliesTable />
-      </QueryClientProvider>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <TaskAppliesTable />
+    </QueryClientProvider>
   )
 }
