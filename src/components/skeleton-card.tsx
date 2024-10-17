@@ -11,3 +11,15 @@ export function SkeletonCard() {
     </div>
   )
 }
+
+export function SkeletonCardList({ count = 6 }: { count?: number }) {
+  return (
+    <>
+      {Array(count)
+        .fill(0)
+        .map((_, i) => (
+          <SkeletonCard key={i} />
+        ))}
+    </>
+  )
+}

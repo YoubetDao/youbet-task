@@ -34,7 +34,6 @@ export async function getLoadMoreProjectList(params: {
 
 export async function fetchUserInfo(code: string) {
   const response = await http.get('/auth/github/callback', { params: { code } })
-  console.log('User info:', response.data)
   return response.data.data
 }
 

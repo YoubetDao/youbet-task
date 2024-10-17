@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from 'clsx'
+import _ from 'lodash'
 import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
@@ -15,4 +16,12 @@ export function safeJSONParse<T>(value?: string, defaultValue?: T): T | undefine
   } catch (error) {
     return defaultValue
   }
+}
+
+export const getRandomColor = (colors: string[]) => {
+  return _.sample(colors)
+}
+
+export const capitalize = (str: string) => {
+  return _.capitalize(str)
 }
