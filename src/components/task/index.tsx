@@ -27,7 +27,7 @@ export const TaskCatalog = ({ project }: ITaskCatalog) => {
     queryKey = ['my-tasks', page, selectedCategories]
     queryFn = () =>
       fetchMyTasks({
-        offset: (page || 1 - 1) * pageSize,
+        offset: (page - 1) * pageSize,
         limit: pageSize,
         states: selectedCategories,
       })
