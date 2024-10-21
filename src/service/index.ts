@@ -156,7 +156,13 @@ export async function fetchTutorials(params: { categories: string[]; offset: num
   return response.data
 }
 
-export async function fetchTasks(params: { project: string; offset: number; limit: number; states: TaskState[] }) {
+export async function fetchTasks(params: {
+  project: string
+  offset: number
+  limit: number
+  states: TaskState[]
+  assignmentStatus?: string
+}) {
   const response = await http.get<IResultPaginationData<Task>>('/tasks', { params })
   return response.data
 }

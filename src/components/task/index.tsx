@@ -33,12 +33,17 @@ export const TaskCatalog = ({ project }: ITaskCatalog) => {
       })
   } else {
     queryKey = ['tasks', project, page, pageSize, selectedCategories]
+    let assignmentStatus: string
+    if (selectedCategories.length == 1 && selectedCategories.includes('open')) {
+      assignmentStatus = 'unassigned'
+    }
     queryFn = () =>
       fetchTasks({
         project: project || '',
         offset: (page - 1) * pageSize,
         limit: pageSize,
         states: selectedCategories,
+        assignmentStatus,
       })
   }
 
