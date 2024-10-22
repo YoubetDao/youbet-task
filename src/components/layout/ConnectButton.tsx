@@ -4,7 +4,7 @@ import { useAtom } from 'jotai'
 import { useAccount, useSwitchChain } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { getLinkedWallet, linkWallet } from '@/service'
-import { optimism } from 'viem/chains'
+import { moonbaseAlpha } from 'viem/chains'
 
 export const CustomConnectButton = () => {
   const [github] = useAtom(usernameAtom)
@@ -19,7 +19,7 @@ export const CustomConnectButton = () => {
       setIsAdmin(true)
       // switchChain({ chainId: polygon.id })
     } else {
-      switchChain({ chainId: optimism.id })
+      switchChain({ chainId: moonbaseAlpha.id })
       setIsAdmin(false)
     }
   }, [switchChain])
@@ -67,9 +67,9 @@ export const CustomConnectButton = () => {
                   </button>
                 )
               }
-              if (chain.id !== optimism.id && !isAdmin) {
+              if (chain.id !== moonbaseAlpha.id && !isAdmin) {
                 return (
-                  <button type="button" onClick={() => switchChain({ chainId: optimism.id })}>
+                  <button type="button" onClick={() => switchChain({ chainId: moonbaseAlpha.id })}>
                     Wrong network
                   </button>
                 )

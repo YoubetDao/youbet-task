@@ -117,9 +117,9 @@ export const DEFAULT_PAGINATION_LIMIT = 4
 
 export const openCampusTestOptions: SdkCtorOptions = {
   networkOptions: {
-    rpcUrl: 'https://mainnet.optimism.io',
-    chainId: 10,
-    contractAddress: '0x009B2B2509d08f4Ed860b2f528ef2166bBE33D00',
+    rpcUrl: 'https://rpc.api.moonbase.moonbeam.network',
+    chainId: 1287,
+    contractAddress: '0x977BCA065Cb342c568A33EA0A12e9cB27645BD1d',
   },
-  chainName: 'optimism',
+  chainName: 'Moonbase',
 }

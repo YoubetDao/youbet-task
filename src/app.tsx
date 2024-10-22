@@ -9,7 +9,7 @@ import '@rainbow-me/rainbowkit/styles.css'
 import { Provider } from 'jotai'
 import { store } from './store'
 import ReactGA from 'react-ga4'
-import { optimism } from 'viem/chains'
+import { moonbaseAlpha } from 'viem/chains'
 
 const TRACKING_ID = 'G-S7DE4BCME4'
 ReactGA.initialize(TRACKING_ID)
@@ -17,7 +17,7 @@ ReactGA.initialize(TRACKING_ID)
 export const config = getDefaultConfig({
   appName: 'Kuibu',
   projectId: '05c3ea68819376e65dc4a8802f90f41b',
-  chains: [optimism],
+  chains: [moonbaseAlpha],
   ssr: true,
 })
 
@@ -28,7 +28,7 @@ export default function App() {
     <Provider store={store}>
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
-          <RainbowKitProvider initialChain={optimism}>
+          <RainbowKitProvider initialChain={moonbaseAlpha}>
             <RouterProvider router={createRouter()} />
             <ReactQueryDevtools />
           </RainbowKitProvider>
