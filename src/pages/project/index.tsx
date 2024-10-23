@@ -120,7 +120,7 @@ function ProjectList({ loading, loadingMore, data }: ProjectListProps) {
     <div className="flex w-full flex-col gap-4 overflow-hidden pt-4 lg:pl-4">
       <div className="flex items-center justify-between">
         <div>
-          <Select defaultValue="treading">
+          <Select defaultValue="trending">
             <SelectTrigger>
               <div>
                 <span>Sort by </span>
@@ -130,7 +130,7 @@ function ProjectList({ loading, loadingMore, data }: ProjectListProps) {
               </div>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="treading">Treading projects</SelectItem>
+              <SelectItem value="trending">Trending projects</SelectItem>
               <SelectItem value="project">Project name</SelectItem>
               <SelectItem value="contributors">Number of contributors</SelectItem>
             </SelectContent>
