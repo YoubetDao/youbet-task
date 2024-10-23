@@ -1,4 +1,3 @@
-import { TaskState } from '@/types'
 import { SkeletonCardList } from '../skeleton-card'
 import { TaskCard } from './task-card'
 import { EmptyTasks } from './empty-tasks'
@@ -8,8 +7,11 @@ import { capitalize } from 'lodash'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { fetchMyTasks, fetchTasks } from '@/service'
+import { TaskState } from '@/types'
 
-const DEFAULT_CATEGORIES = ['open', 'closed']
+// TODO: should separate this in another way since project task and my task have different filter
+const DEFAULT_CATEGORIES = ['all', 'open', 'closed']
+const ASSIGNMENT_STATUS = ['all', 'unassigned', 'assigned']
 
 interface ITaskCatalog {
   project?: string
@@ -17,33 +19,29 @@ interface ITaskCatalog {
 
 export const TaskCatalog = ({ project }: ITaskCatalog) => {
   const [page, setPage] = useState(1)
-  const [selectedCategories, setSelectedCategories] = useState<TaskState[]>(['open'])
-  const [all, setAll] = useState<'All' | ''>('')
+  const [selectedCategory, setSelectedCategory] = useState<string>('open')
+  const [selectedAssignment, setSelectedAssignment] = useState<string>('unassigned')
   const pageSize = 9
   let queryKey
   let queryFn
 
   if (!project) {
-    queryKey = ['my-tasks', page, selectedCategories]
+    queryKey = ['my-tasks', page, selectedCategory]
     queryFn = () =>
       fetchMyTasks({
         offset: (page - 1) * pageSize,
         limit: pageSize,
-        states: selectedCategories,
+        states: selectedCategory !== 'all' ? [selectedCategory as TaskState] : [],
       })
   } else {
-    queryKey = ['tasks', project, page, pageSize, selectedCategories]
-    let assignmentStatus: string
-    if (selectedCategories.length == 1 && selectedCategories.includes('open')) {
-      assignmentStatus = 'unassigned'
-    }
+    queryKey = ['tasks', project, page, pageSize, selectedCategory, selectedAssignment]
     queryFn = () =>
       fetchTasks({
         project: project || '',
         offset: (page - 1) * pageSize,
         limit: pageSize,
-        states: selectedCategories,
-        assignmentStatus,
+        states: selectedCategory !== 'all' ? [selectedCategory as TaskState] : [],
+        assignmentStatus: selectedAssignment !== 'all' ? selectedAssignment : undefined,
       })
   }
 
@@ -55,23 +53,12 @@ export const TaskCatalog = ({ project }: ITaskCatalog) => {
   const tasks = data?.data || []
   const totalPages = Math.ceil((data?.pagination.totalCount || 0) / pageSize)
 
-  const handleCategoryChange = async (value: TaskState[]) => {
-    if (value.length) {
-      setAll('')
-    } else {
-      setAll('All')
-    }
-
-    setSelectedCategories(value)
+  const handleCategoryChange = (value: string) => {
+    setSelectedCategory(value)
   }
 
-  const handleSelectAll = async (value: 'All' | '') => {
-    if (value) {
-      setSelectedCategories([])
-      setAll(value)
-    } else {
-      setAll('')
-    }
+  const handleAssignmentChange = (value: string) => {
+    setSelectedAssignment(value)
   }
 
   const Tasks = () => {
@@ -84,30 +71,37 @@ export const TaskCatalog = ({ project }: ITaskCatalog) => {
 
   return (
     <main className="flex flex-col gap-5">
-      <header className="flex space-x-2" aria-label="Filter Controls">
-        <ToggleGroup
-          size="sm"
-          type="single"
-          value={all}
-          onValueChange={handleSelectAll}
-          className="items-start"
-          aria-label="Select All"
-        >
-          <ToggleGroupItem value="All">All</ToggleGroupItem>
-        </ToggleGroup>
-        <ToggleGroup
-          size="sm"
-          type="multiple"
-          value={selectedCategories}
-          onValueChange={handleCategoryChange}
-          aria-label="Select Categories"
-        >
-          {DEFAULT_CATEGORIES.map((category) => (
-            <ToggleGroupItem key={category} value={category}>
-              {capitalize(category)}
-            </ToggleGroupItem>
-          ))}
-        </ToggleGroup>
+      <header className="flex flex-col space-y-2" aria-label="Filter Controls">
+        <div className="flex space-x-2">
+          <ToggleGroup
+            size="sm"
+            type="single"
+            value={selectedCategory}
+            onValueChange={handleCategoryChange}
+            aria-label="Select Category"
+          >
+            {DEFAULT_CATEGORIES.map((category) => (
+              <ToggleGroupItem key={category} value={category}>
+                {capitalize(category)}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
+        </div>
+        {project && (
+          <ToggleGroup
+            size="sm"
+            type="single"
+            value={selectedAssignment}
+            onValueChange={handleAssignmentChange}
+            aria-label="Select Assignment Status"
+          >
+            {ASSIGNMENT_STATUS.map((status) => (
+              <ToggleGroupItem key={status} value={status}>
+                {capitalize(status)}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
+        )}
       </header>
       <section className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3" aria-labelledby="tasks-heading">
         <h2 id="tasks-heading" className="sr-only">
