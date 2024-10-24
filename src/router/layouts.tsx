@@ -1,7 +1,7 @@
-import DashboardLayout from '@/components/layout/DashboardLayout'
+import DefaultLayout from '@/components/layout/DefaultLayout'
 import TutorialLayout from '@/components/layout/TutorialLayout'
 
 export const Layouts = {
-  dashboard: DashboardLayout,
+  dashboard: DefaultLayout,
   tutorial: TutorialLayout,
 }

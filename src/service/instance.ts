@@ -1,13 +1,11 @@
 import axios from 'axios'
 import qs from 'qs'
-import { store, tokenAtom, usernameAtom } from '@/store'
+import { store, tokenAtom, usernameAtom, userRoleAtom } from '@/store'
 import { toast } from '@/components/ui/use-toast'
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
   paramsSerializer(params) {
-    // qs.stringify({ a: ['b', 'c'] }, { arrayFormat: 'comma' })
-    // 'a=b,c'
     return qs.stringify(params, { arrayFormat: 'comma' })
   },
 })
@@ -56,6 +54,8 @@ instance.interceptors.response.use(
         const pathname = window.location.pathname
         window.location.href = `/login?redirect_uri=${encodeURIComponent(pathname)}`
       } else if (status === 403) {
+        store.set(userRoleAtom, null)
+        window.location.href = '/'
         toast({
           title: 'Forbidden',
           description: 'Permission denied. Please contact admin.',

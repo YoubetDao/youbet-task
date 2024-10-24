@@ -4,11 +4,17 @@ import { Icons } from '@/components/icons'
 import { cn } from '@/lib/utils'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import useLocalStorageState from '@/hooks/use-localstorage-state'
+import { useAtom } from 'jotai'
+import { userRoleAtom } from '@/store'
+import { useEffect } from 'react'
+import { getMyInfo } from '@/service'
 
 export default function Sidebar() {
   const location = useLocation()
   const [expandedItems, setExpandedItems] = useLocalStorageState<string[]>('sidebarExpandedItems', [])
+  const [userRole, setUserRole] = useAtom(userRoleAtom)
   const navItems = getNavItems()
+
   const toggleExpand = (title: string) => {
     setExpandedItems((prev) => (prev.includes(title) ? prev.filter((item) => item !== title) : [...prev, title]))
   }
@@ -51,9 +57,33 @@ export default function Sidebar() {
     )
   }
 
+  useEffect(() => {
+    const getUserRole = async () => {
+      try {
+        const myinfo = await getMyInfo()
+
+        if (myinfo.adminNamespaces.length > 0) setUserRole('admin')
+        else setUserRole(null)
+      } catch (error) {
+        console.error('Error fetching user profile:', error)
+      }
+    }
+
+    getUserRole()
+  }, [setUserRole])
+
   return (
     <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-      {navItems.map((item) => renderMenuItem(item))}
+      {navItems.map((item) => {
+        if (userRole === 'admin') {
+          return renderMenuItem(item)
+        } else {
+          if (item.title !== 'Admin') {
+            return renderMenuItem(item)
+          }
+          return
+        }
+      })}
     </nav>
   )
 }

@@ -21,12 +21,16 @@ export async function getLoadMoreProjectList(params: {
   offset: number | undefined
   limit: number
   filterTags: string[]
+  sort: string
+  search: string
 }) {
   const res = await http.get<IResultPaginationData<Project>>(`/projects`, {
     params: {
       tags: params.filterTags,
       offset: params.offset,
       limit: params.limit,
+      sort: params.sort,
+      search: params.search,
     },
   })
   return { list: res.data.data, pagination: res.data.pagination }
@@ -151,7 +155,13 @@ export async function rejectTaskApply(id: string) {
   return response.data
 }
 
-export async function fetchTutorials(params: { categories: string[]; offset: number; limit: number }) {
+export async function fetchTutorials(params: {
+  categories: string[]
+  offset: number
+  limit: number
+  sort: string
+  search: string
+}) {
   const response = await http.get<IResultPaginationData<Project>>('/tutorials', { params })
   return response.data
 }

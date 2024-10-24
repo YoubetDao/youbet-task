@@ -59,12 +59,11 @@ export default function ProfilePage() {
 
         if (linkedAddress !== '0x0000000000000000000000000000000000000000') {
           const points = await sdk.client.getUserPoints(linkedAddress)
-          setUserPoints(points.toString())
-
           const totalRewards = await sdk.client.getTotalRewards(linkedAddress)
-          setTotalRewards(Number(totalRewards) / 10 ** 18)
-
           const claimedRewards = await sdk.client.getClaimedRewards(linkedAddress)
+
+          setTotalRewards(Number(totalRewards) / 10 ** 18)
+          setUserPoints(points.toString())
           setClaimedRewards(Number(claimedRewards) / 10 ** 18)
         }
 
