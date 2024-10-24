@@ -9,10 +9,13 @@ export interface IPagination {
   hasNextPage: boolean
   hasPrevPage: boolean
 }
+
 export interface IResultPaginationData<T> {
   data: T[]
   pagination: IPagination
 }
+
+export type UserRole = 'admin' | null
 
 export interface IResultPagination<T> {
   list: T[]
@@ -82,6 +85,7 @@ export interface Project {
   owner: User
   tutorial?: Tutorial
   youbetExtra?: YoubetExtra
+  contributors: number
 }
 
 export interface User {
@@ -99,12 +103,14 @@ export interface FetchIssuesParams {
 export interface FetchPullRequestParams extends PaginationParams {
   state?: string
   search?: string
+  sort?: string
 }
 
 export interface PullRequest {
   _id: string
   githubId: number
   title: string
+  projectName: string
   body: string
   state: string
   createdAt: string
@@ -130,6 +136,7 @@ export interface PullRequest {
 
 export interface FetchTaskAppliesParams extends PaginationParams {
   search?: string
+  sort?: string
 }
 
 export interface PopulatedTaskApply extends Omit<TaskApply, 'task' | 'user'> {
@@ -142,6 +149,7 @@ export interface TaskApply {
   githubId: string
   project: string
   task: string
+  projectName: string
   user: {
     login: string
   }
@@ -170,6 +178,7 @@ export interface Task {
 }
 
 export interface Profile {
+  _id: string
   username: string
   email?: string
   avatarUrl: string
@@ -180,6 +189,9 @@ export interface Profile {
   following?: number
   twitterUsername?: string
   completedTasks?: number
+  githubAccessToken?: string
+  adminNamespaces: string[]
+  adminProjects?: string[]
 }
 
 export interface Chapter {
