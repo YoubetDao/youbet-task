@@ -1,5 +1,4 @@
 import { z } from 'zod'
-
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -35,13 +34,6 @@ interface IRewardForm {
 }
 
 export const RewardDialogForm = ({ trigger, prGithubId, addressFrom, chain }: IRewardForm) => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      coin: USDT_SYMBOL,
-    },
-  })
-
   const queryClient = useQueryClient()
   const { toast } = useToast()
   const { sendTransactionAsync } = useSendTransaction()
@@ -50,6 +42,13 @@ export const RewardDialogForm = ({ trigger, prGithubId, addressFrom, chain }: IR
   const { switchChain } = useSwitchChain()
   const { writeContractAsync } = useWriteContract()
   const { chains } = useConfig()
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      coin: USDT_SYMBOL,
+    },
+  })
 
   const onOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
@@ -243,7 +242,6 @@ export const RewardDialogForm = ({ trigger, prGithubId, addressFrom, chain }: IR
                     </Select>
                   </FormDescription>
                 </div>
-
                 <DialogFooter className="flex flex-1 justify-end pt-4">
                   <Button variant="secondary" type="submit">
                     Submit

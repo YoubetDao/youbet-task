@@ -7,6 +7,6 @@ export const iframeHeight = '800px'
 
 export const containerClassName = 'w-full h-full'
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DefaultLayout({ children }: { children: React.ReactNode }) {
   return <BaseLayout>{children}</BaseLayout>
 }
