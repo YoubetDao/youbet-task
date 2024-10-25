@@ -1,5 +1,4 @@
 import { User, Github } from 'lucide-react'
-
 import { Button, buttonVariants } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -13,18 +12,20 @@ import { useNavigate } from 'react-router-dom'
 import MobileSidebar from './MobileSidebar'
 import { CustomConnectButton } from './ConnectButton'
 import { cn } from '@/lib/utils'
-import { tokenAtom, usernameAtom } from '@/store'
+import { userPermissionAtom, store, tokenAtom, usernameAtom } from '@/store'
 import { useAtom } from 'jotai'
 
 export default function Header() {
   const navigate = useNavigate()
   const [token, setToken] = useAtom(tokenAtom)
-  const [, setUsername] = useAtom(usernameAtom)
+
   const handleLogout = () => {
     setToken(null)
-    setUsername(null)
+    store.set(usernameAtom, null)
+    store.set(userPermissionAtom, null)
     navigate('/login')
   }
+
   const handleLogin = () => {
     navigate('/login')
   }

@@ -1,9 +1,11 @@
 import { getAppearances } from '@/lib/appearances'
-import { NavItem } from '@/types'
+import { store, userPermissionAtom } from '@/store'
+import { NavItem, UserPermission } from '@/types'
 import { SdkCtorOptions } from 'youbet-sdk'
 
 export const getNavItems = (): NavItem[] => {
   const appearances = getAppearances()
+  const userPermission = store.get(userPermissionAtom)
 
   const navItems: NavItem[] = [
     {
@@ -89,6 +91,7 @@ export const getNavItems = (): NavItem[] => {
       icon: 'settings',
       component: 'error',
       layout: 'dashboard',
+      hideInMenu: !userPermission,
       children: [
         {
           title: 'Pull Requests',
@@ -96,6 +99,7 @@ export const getNavItems = (): NavItem[] => {
           icon: 'gitPullRequest',
           component: 'pullRequestAdmin',
           layout: 'dashboard',
+          hideInMenu: userPermission !== UserPermission.PullRequest && userPermission !== UserPermission.All,
         },
         {
           title: 'Task Apply',
@@ -103,6 +107,7 @@ export const getNavItems = (): NavItem[] => {
           icon: 'clipboardList',
           component: 'taskApplyAdmin',
           layout: 'dashboard',
+          hideInMenu: userPermission !== UserPermission.TaskApplies && userPermission !== UserPermission.All,
         },
       ],
     },

@@ -13,6 +13,7 @@ import {
   Tutorial,
   PrRewardInfo,
   TaskState,
+  UserInfo,
 } from '@/types'
 // import { Project, Task, FetchIssuesParams, Profile, GithubOrganization, GithubRepo, Tutorial } from '@/types'
 import http from './instance'
@@ -32,7 +33,7 @@ export async function getLoadMoreProjectList(params: {
   return { list: res.data.data, pagination: res.data.pagination }
 }
 
-export async function fetchUserInfo(code: string) {
+export async function fetchUserInfo(code: string): Promise<UserInfo> {
   const response = await http.get('/auth/github/callback', { params: { code } })
   return response.data.data
 }
