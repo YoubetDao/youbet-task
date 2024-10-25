@@ -1,4 +1,4 @@
-import { SkeletonCardList } from '../skeleton-card'
+import { LoadingCards } from '../skeleton-card'
 import { TaskCard } from './task-card'
 import { EmptyTasks } from './empty-tasks'
 import PaginationFast from '@/components/pagination-fast'
@@ -62,7 +62,7 @@ export const TaskCatalog = ({ project }: ITaskCatalog) => {
   }
 
   const Tasks = () => {
-    if (loading) return <SkeletonCardList count={3} />
+    if (loading) return <LoadingCards count={3} />
     if (tasks.length) {
       return tasks.map((item) => <TaskCard key={item._id} item={item} />)
     }

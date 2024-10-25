@@ -3,12 +3,10 @@ import { Button } from '@/components/ui/button'
 import { SkeletonCard } from '@/components/skeleton-card'
 import { Project, IResultPagination } from '@/types'
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Input } from '@/components/ui/input'
 import {
-  LucideSearch,
   LucideFlame,
   LucideThumbsUp,
   LucideSprout,
@@ -26,6 +24,7 @@ import { getLoadMoreProjectList } from '@/service'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constants/data'
 import ImportProjectDialog from '@/components/import-project'
 import { getAppearances } from '@/lib/appearances'
+import { SearchInput } from '@/components/search'
 
 function SkeletonProjects({ count = 6 }: { count?: number }) {
   return (
@@ -55,7 +54,6 @@ function ProjectItem({ item }: { item: Project }) {
     <Link key={item._id} to={`/projects/${item.name}/tasks`}>
       <article className="group relative z-[1] w-full cursor-pointer rounded-2xl border p-4 !pr-0 !pt-0 transition-all duration-200 ease-in hover:scale-[0.998] hover:border hover:border-opacity-80 hover:bg-white/10 lg:p-6">
         <div className="flex gap-5">
-          {/* 头像 */}
           <div className="pt-4">
             <Avatar>
               <AvatarImage src={item.owner.avatarUrl} />
@@ -95,9 +93,8 @@ function ProjectItem({ item }: { item: Project }) {
               </div>
               <div className="flex gap-1 md:items-center md:justify-center">
                 <LucideUser className="h-4 w-4" />
-                {Math.floor(Math.random() * 10)} contributors
+                {item.contributors} contributors
               </div>
-              {/* <div>Ecosystems</div> */}
               <div>Languages</div>
             </div>
           </div>
@@ -111,31 +108,17 @@ interface ProjectListProps {
   loading: boolean
   loadingMore: boolean
   data: IResultPagination<Project> | undefined
+  appearances: ReturnType<typeof getAppearances>
 }
-function ProjectList({ loading, loadingMore, data }: ProjectListProps) {
+
+function ProjectList({ loading, loadingMore, data, appearances }: ProjectListProps) {
   if (loading) return <SkeletonProjects />
   if (!data) return null
 
   return (
     <div className="flex w-full flex-col gap-4 overflow-hidden pt-4 lg:pl-4">
       <div className="flex items-center justify-between">
-        <div>
-          <Select defaultValue="trending">
-            <SelectTrigger>
-              <div>
-                <span>Sort by </span>
-                <span className="lowercase text-primary">
-                  <SelectValue />
-                </span>
-              </div>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="trending">Trending projects</SelectItem>
-              <SelectItem value="project">Project name</SelectItem>
-              <SelectItem value="contributors">Number of contributors</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        {appearances.showImportProject && <ImportProjectDialog />}
         <div className="text-sm text-muted-foreground">{data.pagination.totalCount} Projects</div>
       </div>
       <div className="flex w-full flex-col gap-4">
@@ -167,11 +150,6 @@ interface FilterBoardProps {
 
 function FilterBoard({ filterTags, setFilterTags }: FilterBoardProps) {
   const tags = [
-    // {
-    //   label: 'Issues available',
-    //   value: 'issues-available',
-    //   icon: getIconFromKey('issues-available'),
-    // },
     {
       label: 'Hot Community',
       value: 'hot-community',
@@ -216,21 +194,6 @@ function FilterBoard({ filterTags, setFilterTags }: FilterBoardProps) {
               </ToggleGroupItem>
             ))}
           </ToggleGroup>
-          {/* select */}
-          {/* <div className="pt-2 space-y-3 border-t border-muted">
-            <Label>Ecosystems</Label>
-            <Select>
-              <SelectTrigger className="w-full max-w-[180px]">
-                <SelectValue placeholder="Theme" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="light">Light</SelectItem>
-                <SelectItem value="dark">Dark</SelectItem>
-                <SelectItem value="system">System</SelectItem>
-              </SelectContent>
-            </Select>
-          </div> */}
-          {/* select */}
           <div className="space-y-3 border-t border-muted pt-2">
             <Label>Languages</Label>
             <Select>
@@ -246,20 +209,6 @@ function FilterBoard({ filterTags, setFilterTags }: FilterBoardProps) {
               </SelectContent>
             </Select>
           </div>
-          {/* select */}
-          {/* <div className="pt-2 space-y-3 border-t border-muted">
-            <Label>Categories</Label>
-            <Select>
-              <SelectTrigger className="w-full max-w-[180px]">
-                <SelectValue placeholder="Theme" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="light">Light</SelectItem>
-                <SelectItem value="dark">Dark</SelectItem>
-                <SelectItem value="system">System</SelectItem>
-              </SelectContent>
-            </Select>
-          </div> */}
         </CardContent>
       </Card>
     </div>
@@ -267,12 +216,18 @@ function FilterBoard({ filterTags, setFilterTags }: FilterBoardProps) {
 }
 
 export default function ProjectPage() {
+  const [urlParam, setUrlParam] = useSearchParams('')
+  const appearances = getAppearances()
+  const [filterTags, setFilterTags] = useState<string[]>([])
+
   const { data, loading, loadingMore, reload } = useInfiniteScroll<IResultPagination<Project>>(
     (d) =>
       getLoadMoreProjectList({
         offset: d ? d.pagination.currentPage * DEFAULT_PAGINATION_LIMIT : 0,
         limit: DEFAULT_PAGINATION_LIMIT,
         filterTags,
+        search: decodeURIComponent(urlParam.get('search') || ''),
+        sort: decodeURIComponent(urlParam.get('sort') || ''),
       }),
     {
       manual: true,
@@ -282,25 +237,28 @@ export default function ProjectPage() {
       },
     },
   )
-  const [filterTags, setFilterTags] = useState<string[]>([])
+
+  const handleSubmit = (searchValue: string, sortValue: string) => {
+    setUrlParam(`search=${searchValue}&sort=${sortValue}`)
+  }
 
   useEffect(() => {
     reload()
-  }, [filterTags, reload])
-  const appearances = getAppearances()
+  }, [filterTags, reload, urlParam])
 
   return (
     <div className="flex w-full flex-col gap-2">
       <div className="flex items-center justify-between gap-2">
-        <div className="relative flex-1">
-          <Input placeholder="Search project title or description" className="bg-background/80 pl-8" />
-          <LucideSearch className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2" />
-        </div>
-        {appearances.showImportProject && <ImportProjectDialog />}
+        <SearchInput
+          searchInitialValue={urlParam.get('search') || ''}
+          sortInitialValue={urlParam.get('sort') || ''}
+          placeholder="Filter task applies..."
+          handleSubmit={handleSubmit}
+        />
       </div>
       <div className="flex flex-col gap-2 lg:flex-row">
         <FilterBoard filterTags={filterTags} setFilterTags={setFilterTags} />
-        <ProjectList loading={loading} loadingMore={loadingMore} data={data} />
+        <ProjectList loading={loading} loadingMore={loadingMore} data={data} appearances={appearances} />
       </div>
     </div>
   )

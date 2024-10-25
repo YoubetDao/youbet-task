@@ -14,19 +14,22 @@ import {
   PrRewardInfo,
   TaskState,
 } from '@/types'
-// import { Project, Task, FetchIssuesParams, Profile, GithubOrganization, GithubRepo, Tutorial } from '@/types'
 import http from './instance'
 
 export async function getLoadMoreProjectList(params: {
   offset: number | undefined
   limit: number
   filterTags: string[]
+  sort: string
+  search: string
 }) {
   const res = await http.get<IResultPaginationData<Project>>(`/projects`, {
     params: {
       tags: params.filterTags,
       offset: params.offset,
       limit: params.limit,
+      sort: params.sort,
+      search: params.search,
     },
   })
   return { list: res.data.data, pagination: res.data.pagination }
@@ -101,7 +104,6 @@ export async function getMyInfo() {
 }
 
 export async function getTutorialToC(owner: string, repo: string) {
-  // TODO: const response = await http.get<Chapter[]>(`/tutorial-chapters?owner=${owner}&repo=${repo}`)
   const response = await http.get<Chapter[]>(`/tutorial-chapters?owner=${owner}&repo=${repo}`)
   return response.data
 }
@@ -151,7 +153,13 @@ export async function rejectTaskApply(id: string) {
   return response.data
 }
 
-export async function fetchTutorials(params: { categories: string[]; offset: number; limit: number }) {
+export async function fetchTutorials(params: {
+  categories: string[]
+  offset: number
+  limit: number
+  sort: string
+  search: string
+}) {
   const response = await http.get<IResultPaginationData<Project>>('/tutorials', { params })
   return response.data
 }
