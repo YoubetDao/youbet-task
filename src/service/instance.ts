@@ -6,8 +6,6 @@ import { toast } from '@/components/ui/use-toast'
 const instance = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
   paramsSerializer(params) {
-    // qs.stringify({ a: ['b', 'c'] }, { arrayFormat: 'comma' })
-    // 'a=b,c'
     return qs.stringify(params, { arrayFormat: 'comma' })
   },
 })
@@ -15,18 +13,13 @@ const instance = axios.create({
 instance.interceptors.request.use(
   (config) => {
     const token = store.get(tokenAtom)
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
+
     config.headers.Accept = 'application/json'
     config.headers['Content-Type'] = 'application/json'
-    // if (config.url && config.method?.toLocaleUpperCase() === 'GET') {
-    //   const u = new URL(window.location.origin + config.url)
-    //   const searchParams = u.searchParams
-    //   // add timestamp to prevent caching
-    //   searchParams.append('t', String(Date.now()))
-    //   config.url = u.pathname + searchParams.toString()
-    // }
     const namespace = import.meta.env.VITE_API_NAMESPACE
     config.params = { ...config.params, ...(namespace ? { namespace } : {}) }
     return config
@@ -47,21 +40,18 @@ instance.interceptors.response.use(
     if (error.response) {
       const status = error.response.status
       if (status === 401) {
-        // Unauthorized: clear token and redirect to login
-        // Cookies.remove('token') // Remove token from cookie
-        // Cookies.remove('username')
         store.set(tokenAtom, null)
         store.set(usernameAtom, null)
-        // history.replace('/login') // Redirect to login page
         const pathname = window.location.pathname
         window.location.href = `/login?redirect_uri=${encodeURIComponent(pathname)}`
       } else if (status === 403) {
+        window.location.href = '/'
+
         toast({
           title: 'Forbidden',
           description: 'Permission denied. Please contact admin.',
         })
       } else if (status >= 400 && status <= 599) {
-        // Internal Server Error: return the error response
         toast({
           variant: 'destructive',
           title: 'Internal Server Error:',

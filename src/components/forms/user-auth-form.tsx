@@ -4,7 +4,6 @@ import ReactGA from 'react-ga4'
 import { githubOAuthUri } from '@/lib/auth'
 
 const GithubSignInButton = () => {
-  // TODO: after login should return to the page that the user was on
   return (
     <Button
       className="w-full"

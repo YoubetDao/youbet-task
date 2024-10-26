@@ -84,6 +84,12 @@ export interface Project {
   youbetExtra?: YoubetExtra
 }
 
+export enum UserPermission {
+  All = 'all',
+  PullRequest = 'pull-request',
+  TaskApplies = 'task-applies',
+}
+
 export interface User {
   login: string
   htmlUrl: string
@@ -170,6 +176,7 @@ export interface Task {
 }
 
 export interface Profile {
+  _id: string
   username: string
   email?: string
   avatarUrl: string
@@ -180,6 +187,34 @@ export interface Profile {
   following?: number
   twitterUsername?: string
   completedTasks?: number
+  githubAccessToken?: string
+  adminNamespaces: string[]
+  adminProjects?: string[]
+}
+
+export interface UserInfo {
+  id: string
+  username: string
+  displayName: string
+  photos: Photo[]
+  emails: Email[]
+  jwt: string
+  location: string | null
+  bio: string | null
+  followers: number
+  following: number
+  twitterUsername: string | null
+  githubAccessToken: string
+  adminNamespaces: string[]
+  adminProjects: string[]
+}
+
+export interface Photo {
+  value: string
+}
+
+export interface Email {
+  value: string
 }
 
 export interface Chapter {

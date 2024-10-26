@@ -9,6 +9,7 @@ export default function Sidebar() {
   const location = useLocation()
   const [expandedItems, setExpandedItems] = useLocalStorageState<string[]>('sidebarExpandedItems', [])
   const navItems = getNavItems()
+
   const toggleExpand = (title: string) => {
     setExpandedItems((prev) => (prev.includes(title) ? prev.filter((item) => item !== title) : [...prev, title]))
   }
