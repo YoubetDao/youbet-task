@@ -4,11 +4,14 @@ import { Icons } from '@/components/icons'
 import { cn } from '@/lib/utils'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import useLocalStorageState from '@/hooks/use-localstorage-state'
+import { userPermissionAtom } from '@/store'
+import { useAtom } from 'jotai'
 
 export default function Sidebar() {
   const location = useLocation()
   const [expandedItems, setExpandedItems] = useLocalStorageState<string[]>('sidebarExpandedItems', [])
-  const navItems = getNavItems()
+  const [userPermission] = useAtom(userPermissionAtom)
+  const navItems = getNavItems(userPermission ?? undefined)
 
   const toggleExpand = (title: string) => {
     setExpandedItems((prev) => (prev.includes(title) ? prev.filter((item) => item !== title) : [...prev, title]))

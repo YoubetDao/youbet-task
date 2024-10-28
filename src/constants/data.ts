@@ -1,11 +1,9 @@
 import { getAppearances } from '@/lib/appearances'
-import { store, userPermissionAtom } from '@/store'
 import { NavItem, UserPermission } from '@/types'
 import { SdkCtorOptions } from 'youbet-sdk'
 
-export const getNavItems = (): NavItem[] => {
+export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
   const appearances = getAppearances()
-  const userPermission = store.get(userPermissionAtom)
 
   const navItems: NavItem[] = [
     {
