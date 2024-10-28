@@ -10,9 +10,40 @@ import {
 import { Input } from '@/components/ui/input'
 import { LucideSearch } from 'lucide-react'
 import { TaskCatalog } from '@/components/task'
+import { CategoryGroup } from '@/components/category-group'
+import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { fetchTasks } from '@/service'
+
+const ASSIGNMENT_STATUS = ['all', 'unassigned', 'assigned', 'open', 'closed']
 
 export default function TaskPage() {
   const { project } = useParams<{ project: string }>()
+  const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  const [page, setPage] = useState(1)
+  const pageSize = 9
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['tasks', project, page, pageSize, selectedCategory],
+    queryFn: () =>
+      fetchTasks({
+        project: project || '',
+        offset: (page - 1) * pageSize,
+        limit: pageSize,
+        assignmentStatus:
+          selectedCategory !== 'all' && selectedCategory !== 'open' && selectedCategory !== 'closed'
+            ? selectedCategory
+            : undefined,
+        states:
+          selectedCategory !== 'all' && selectedCategory !== 'assigned' && selectedCategory !== 'unassigned'
+            ? selectedCategory
+            : undefined,
+      }),
+  })
+
+  const onCategoryChange = (value: string) => {
+    setSelectedCategory(value)
+  }
 
   return (
     <>
@@ -34,12 +65,29 @@ export default function TaskPage() {
         </BreadcrumbList>
       </Breadcrumb>
       <div className="flex flex-col gap-5">
-        {/* // TODO: add search logic */}
         <div className="relative">
           <Input placeholder="Search tutorial title or description" className="bg-background/80 pl-8" />
           <LucideSearch className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2" />
         </div>
-        <TaskCatalog project={project} />
+        <main className="flex flex-col gap-5">
+          <header className="flex flex-col space-y-2" aria-label="Filter Controls">
+            <div className="flex space-x-2">
+              <CategoryGroup
+                selectedCategory={selectedCategory}
+                onCategoryChange={onCategoryChange}
+                categories={ASSIGNMENT_STATUS}
+              />
+            </div>
+          </header>
+          <TaskCatalog
+            page={page}
+            pageSize={pageSize}
+            totalPages={Math.ceil((data?.pagination.totalCount || 0) / pageSize)}
+            setPage={setPage}
+            isLoading={isLoading}
+            tasks={data?.data}
+          />
+        </main>
       </div>
     </>
   )
