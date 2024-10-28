@@ -7,40 +7,41 @@ import { Badge } from '@/components/ui/badge'
 import { MarkdownProcessor } from '@/lib/md-processor'
 import { Card, CardDescription, CardFooter, CardTitle } from '../ui/card'
 
+type TaskState = 'open' | 'closed' | 'assigned'
+
 interface ITaskItemProps {
   item: Task
 }
 
-type TaskState = 'open' | 'closed' | 'assigned'
-
-const TaskStateBadge = ({ state }: { state: 'assigned' | 'open' | 'closed' }) => {
-  switch (state) {
-    case 'open':
-      return (
-        <Badge variant="default" className="bg-green-500">
-          Open
-        </Badge>
-      )
-    case 'closed':
-      return <Badge variant="default">Closed</Badge>
-    case 'assigned':
-      return (
-        <Badge variant="default" className="bg-blue-500">
-          Assigned
-        </Badge>
-      )
-    default:
-      return null
-  }
-}
-
 export const TaskCard = ({ item }: ITaskItemProps) => {
   let state: TaskState
+  console.log(item.state)
 
   if (item.state === 'open') {
     state = item.assignees.length ? 'assigned' : 'open'
   } else {
     state = 'closed'
+  }
+
+  const TaskStateBadge = ({ state }: { state: TaskState }) => {
+    switch (state) {
+      case 'open':
+        return (
+          <Badge variant="default" className="bg-green-500">
+            Open
+          </Badge>
+        )
+      case 'closed':
+        return <Badge variant="default">Closed</Badge>
+      case 'assigned':
+        return (
+          <Badge variant="default" className="bg-blue-500">
+            Assigned
+          </Badge>
+        )
+      default:
+        return null
+    }
   }
 
   return (

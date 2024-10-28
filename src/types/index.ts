@@ -286,4 +286,6 @@ export interface TransactionInfo {
   transactionId: string
 }
 
-export type TaskState = '' | 'open' | 'closed'
+export type MyTaskState = '' | 'open' | 'closed'
+
+export type TaskState = '' | 'assigned' | 'unassigned'
