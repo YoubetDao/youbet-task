@@ -25,7 +25,7 @@ function StatsCard({ title, value, icon }: { title: string; value: number; icon:
   )
 }
 
-function ProjectRecommendations({ projects }: { projects: any[] }) {
+function ProjectRecommendations({ projects }: { projects: Project[] }) {
   return (
     <Card className="w-full">
       <CardHeader>

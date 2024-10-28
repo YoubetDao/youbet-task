@@ -1,9 +1,8 @@
-import { Input } from '@/components/ui/input'
-import { LucideSearch, LucideClock8, LucideEye, Heart } from 'lucide-react'
+import { LucideClock8, LucideEye, Heart } from 'lucide-react'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { useState } from 'react'
 import { Project } from '@/types'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { SkeletonCard } from '@/components/skeleton-card'
 import { openCampusTestOptions } from '@/constants/data'
 import { SDK } from 'youbet-sdk'
@@ -12,6 +11,7 @@ import { tutorialToCAtom } from '@/store'
 import { useSetAtom } from 'jotai'
 import { useQuery } from '@tanstack/react-query'
 import PaginationFast from '@/components/pagination-fast'
+import { SearchInput } from '@/components/search'
 // import ImportTutorialDialog from '@/components/import-project'
 
 const sdk = new SDK(openCampusTestOptions)
@@ -151,38 +151,33 @@ const DEFAULT_CATEGORIES = [
   'Zero Knowledge',
 ]
 
-function TutorialList({ categories }: { categories: string[] }) {
+export default function Tutorials() {
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [urlParam, setUrlParam] = useSearchParams('')
+  const [all, setAll] = useState<string>('All')
   const [page, setPage] = useState(1)
   const pageSize = 10
-  const { data, isLoading: loading } = useQuery({
-    queryKey: ['tutorials', categories, page],
-    queryFn: () =>
-      fetchTutorials({
-        categories: categories.includes('All') ? [] : categories,
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['tutorials', selectedCategories, page, urlParam.toString()],
+    queryFn: async () => {
+      const tutorials = await fetchTutorials({
+        categories: selectedCategories.includes('All') ? [] : selectedCategories,
         offset: (page - 1) * pageSize,
         limit: pageSize,
-      }),
+        sort: decodeURIComponent(urlParam.get('sort') || ''),
+        search: decodeURIComponent(urlParam.get('search') || ''),
+      })
+      return tutorials
+    },
   })
+
   const totalPages = Math.ceil((data?.pagination.totalCount || 0) / pageSize)
   const tutorials = data?.data || []
 
-  if (loading) return <SkeletonList />
-  return (
-    <div className="flex w-full flex-col gap-4 overflow-hidden pt-4">
-      <div>Tutorials({tutorials.length})</div>
-      <div className="grid w-full grid-cols-1 flex-col gap-4 lg:grid-cols-2 lg:gap-6 xl:grid-cols-3">
-        {tutorials.map((item) => (
-          <TutorialItem key={item.githubId} item={item} />
-        ))}
-      </div>
-      <PaginationFast page={page} totalPages={totalPages} onPageChange={setPage} />
-    </div>
-  )
-}
-
-export default function Tutorials() {
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
-  const [all, setAll] = useState<string>('All')
+  const handleSubmit = (searchValue: string, sortValue: string) => {
+    setUrlParam(`search=${searchValue}&sort=${sortValue}`)
+  }
 
   const handleCategoryChange = (value: string[]) => {
     if (value.length) {
@@ -205,13 +200,13 @@ export default function Tutorials() {
   return (
     <div className="flex w-full flex-col gap-2">
       <div className="space-y-5">
-        <div className="flex items-center gap-2">
-          <div className="relative flex-1">
-            <Input placeholder="Search tutorial title or description" className="bg-background/80 pl-8" />
-            <LucideSearch className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2" />
-          </div>
-          {/* <ImportTutorialDialog /> */}
-        </div>
+        <SearchInput
+          searchInitialValue={urlParam.get('search') || ''}
+          sortInitialValue={urlParam.get('sort') || ''}
+          placeholder="Filter task applies..."
+          handleSubmit={handleSubmit}
+        />
+
         <div className="flex space-x-2">
           <ToggleGroup size="sm" type="single" value={all} onValueChange={handleSelectAll} className="items-start">
             <ToggleGroupItem value="All">All</ToggleGroupItem>
@@ -225,9 +220,21 @@ export default function Tutorials() {
           </ToggleGroup>
         </div>
       </div>
-      <div className="flex flex-col gap-2 lg:flex-row">
-        <TutorialList categories={all ? selectedCategories.concat([all]) : selectedCategories} />
-      </div>
+      {!isLoading ? (
+        <div className="flex flex-col gap-2 lg:flex-row">
+          <div className="flex w-full flex-col gap-4 overflow-hidden pt-4">
+            <div>Tutorials({tutorials.length})</div>
+            <div className="grid w-full grid-cols-1 flex-col gap-4 lg:grid-cols-2 lg:gap-6 xl:grid-cols-3">
+              {tutorials.map((item) => (
+                <TutorialItem key={item.githubId} item={item} />
+              ))}
+            </div>
+            <PaginationFast page={page} totalPages={totalPages} onPageChange={setPage} />
+          </div>
+        </div>
+      ) : (
+        <SkeletonList />
+      )}
     </div>
   )
 }

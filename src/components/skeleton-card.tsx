@@ -12,7 +12,7 @@ export function SkeletonCard() {
   )
 }
 
-export function SkeletonCardList({ count = 6 }: { count?: number }) {
+export function LoadingCards({ count = 6 }: { count?: number }) {
   return (
     <>
       {Array(count)

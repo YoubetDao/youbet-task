@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import { Fragment } from 'react'
 import { Chapter } from '@/types'
 import { useParams } from 'react-router-dom'
 import { useAtomValue } from 'jotai'
