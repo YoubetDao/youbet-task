@@ -19,14 +19,15 @@ export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
       icon: 'package',
       component: 'project',
       layout: 'dashboard',
-    },
-    {
-      title: 'Tasks',
-      href: '/projects/:project/tasks',
-      icon: 'listChecks',
-      component: 'task',
-      layout: 'dashboard',
-      hideInMenu: true,
+      children: [
+        {
+          title: 'Tasks',
+          href: '/projects/:project/tasks',
+          component: 'task',
+          layout: 'dashboard',
+          hideInMenu: true,
+        },
+      ],
     },
     {
       title: 'Tutorials',
