@@ -146,7 +146,6 @@ export default function ImportProject() {
     await importTutorial(values)
     handleOpenChange(false)
   }
-
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
@@ -206,10 +205,13 @@ export default function ImportProject() {
                         placeholder="Select repository..."
                         onSelect={field.onChange}
                         value={field.value}
-                        options={repos.map((item) => ({
-                          value: String(item.name),
-                          label: item.name,
-                        }))}
+                        options={repos
+                          ?.filter((item) => item.owner.login === form.watch('org'))
+                          .map((item) => ({
+                            value: String(item.name),
+                            label: item.name,
+                            key: item.full_name,
+                          }))}
                         isLoading={isUserOrOrgOptionsLoading}
                       />
                     </FormControl>
