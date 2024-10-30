@@ -41,6 +41,7 @@
     "axios": "^1.7.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "cmdk": "1.0.0",
     "daisyui": "^4.12.10",
     "date-fns": "^3.6.0",
     "framer-motion": "^11.3.21",

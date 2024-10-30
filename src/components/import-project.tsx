@@ -16,8 +16,81 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { Loader2 } from 'lucide-react'
+import { Loader2, ChevronsUpDown } from 'lucide-react'
 import { githubOAuthContentUri } from '@/lib/auth'
+import { Command, CommandInput, CommandList, CommandItem, CommandEmpty } from '@/components/ui/command'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+
+interface ComboboxProps {
+  options: Array<{ value: string; label: React.ReactNode }>
+  placeholder?: string
+  onSelect: (value: string) => void
+  isLoading?: boolean
+  customOptionLabel?: string
+  onCustomOptionSelect?: () => void
+  value?: string
+}
+
+export function Combobox({
+  options,
+  placeholder = 'Select...',
+  onSelect,
+  isLoading = false,
+  customOptionLabel,
+  onCustomOptionSelect,
+  value,
+}: ComboboxProps) {
+  const [open, setOpen] = useState(false)
+  const [searchValue, setSearchValue] = useState('')
+
+  const filteredOptions = options.filter((option) => option.value.toLowerCase().includes(searchValue.toLowerCase()))
+
+  // 获取当前选中项的显示文本
+  const selectedItem = options.find((option) => option.value === value)
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between">
+          <span className="truncate">{selectedItem ? selectedItem.label : placeholder}</span>
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+        <Command shouldFilter={false}>
+          <CommandInput placeholder="Search..." value={searchValue} onValueChange={setSearchValue} />
+          <CommandList>
+            {isLoading ? (
+              <div className="flex items-center justify-center py-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+              </div>
+            ) : (
+              <>
+                {filteredOptions.map((option) => (
+                  <CommandItem
+                    key={option.value}
+                    value={option.value}
+                    onSelect={(currentValue) => {
+                      onSelect(currentValue)
+                      setOpen(false)
+                      setSearchValue('')
+                    }}
+                  >
+                    {option.label}
+                  </CommandItem>
+                ))}
+                {filteredOptions.length === 0 && !isLoading && <CommandEmpty>No results found.</CommandEmpty>}
+              </>
+            )}
+            {customOptionLabel && onCustomOptionSelect && (
+              <CommandItem onSelect={onCustomOptionSelect}>{customOptionLabel}</CommandItem>
+            )}
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  )
+}
 
 const formSchema = z.object({
   org: z.string().min(2, {
@@ -127,21 +200,19 @@ export default function ImportProject() {
                 name="project"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Select Repos</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select Repos" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {repos?.map((item) => (
-                          <SelectItem key={item.id} value={String(item.name)}>
-                            <span>{item.name}</span>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>Select Repository</FormLabel>
+                    <FormControl>
+                      <Combobox
+                        placeholder="Select repository..."
+                        onSelect={field.onChange}
+                        value={field.value}
+                        options={repos.map((item) => ({
+                          value: String(item.name),
+                          label: item.name,
+                        }))}
+                        isLoading={isUserOrOrgOptionsLoading}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
