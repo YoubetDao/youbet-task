@@ -4,8 +4,7 @@ import { useAtom } from 'jotai'
 import { useAccount, useSwitchChain } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { getLinkedWallet, linkWallet } from '@/service'
-import { eduChain } from '@/app'
-import { polygon } from 'viem/chains'
+import { currentChain, paymentChain } from '@/constants/data'
 
 export const CustomConnectButton = () => {
   const [github] = useAtom(usernameAtom)
@@ -18,9 +17,9 @@ export const CustomConnectButton = () => {
 
     if (currentPath.includes('admin')) {
       setIsAdmin(true)
-      switchChain({ chainId: polygon.id })
+      switchChain({ chainId: paymentChain.id })
     } else {
-      switchChain({ chainId: eduChain.id })
+      switchChain({ chainId: currentChain.id })
       setIsAdmin(false)
     }
   }, [switchChain])
@@ -42,7 +41,7 @@ export const CustomConnectButton = () => {
 
   return (
     <ConnectButton.Custom>
-      {({ account, chain, openAccountModal, openChainModal, openConnectModal, authenticationStatus, mounted }) => {
+      {({ account, chain, openAccountModal, openConnectModal, authenticationStatus, mounted }) => {
         // Note: If your app doesn't use authentication, you
         // can remove all 'authenticationStatus' checks
         const ready = mounted && authenticationStatus !== 'loading'
@@ -68,9 +67,9 @@ export const CustomConnectButton = () => {
                   </button>
                 )
               }
-              if (chain.id !== eduChain.id && !isAdmin) {
+              if (chain.id !== currentChain.id && !isAdmin) {
                 return (
-                  <button type="button" onClick={() => switchChain({ chainId: eduChain.id })}>
+                  <button type="button" onClick={() => switchChain({ chainId: currentChain.id })}>
                     Wrong network
                   </button>
                 )

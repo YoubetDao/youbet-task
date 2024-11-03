@@ -12,10 +12,10 @@ import { useQueryClient } from '@tanstack/react-query'
 import { DialogContent, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Dialog } from '@radix-ui/react-dialog'
 import { postPrRewardInfo } from '@/service'
-import { polygon } from 'viem/chains'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
-import { POLYGON_USDT_ADDRESS, USDT_ABI, USDT_DECIMAL, USDT_SYMBOL } from '@/constants/contracts/usdt'
+import { PAYMENT_USDT_ADDRESS, USDT_ABI, USDT_DECIMAL, USDT_SYMBOL } from '@/constants/contracts/usdt'
+import { paymentChain } from '@/constants/data'
 
 const formSchema = z.object({
   amount: z.string().regex(/^(0|[1-9]\d*)(\.\d+)?$/, {
@@ -52,7 +52,7 @@ export const RewardDialogForm = ({ trigger, prGithubId, addressFrom, chain }: IR
 
   const onOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
-      switchChain({ chainId: polygon.id })
+      switchChain({ chainId: paymentChain.id })
     }
 
     setOpen(isOpen)
@@ -71,7 +71,7 @@ export const RewardDialogForm = ({ trigger, prGithubId, addressFrom, chain }: IR
       } else {
         transaction = await writeContractAsync({
           abi: USDT_ABI,
-          address: POLYGON_USDT_ADDRESS, // USDT contract address on Polygon
+          address: PAYMENT_USDT_ADDRESS, // USDT contract address on Current Payment Chain
           functionName: 'transfer',
           args: [values.address, parseFloat(values.amount) * Math.pow(10, USDT_DECIMAL)],
         })

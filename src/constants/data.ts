@@ -1,6 +1,7 @@
 import { getAppearances } from '@/lib/appearances'
 import { NavItem, UserPermission } from '@/types'
-import { SdkCtorOptions } from 'youbet-sdk'
+import { SdkCtorOptions, SDK } from 'youbet-sdk'
+import { polygon } from 'viem/chains'
 
 export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
   const appearances = getAppearances()
@@ -119,11 +120,36 @@ export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
 
 export const DEFAULT_PAGINATION_LIMIT = 4
 
-export const openCampusTestOptions: SdkCtorOptions = {
+// TODO: unify the options with viem chains
+const openCampusTestOptions: SdkCtorOptions = {
   networkOptions: {
     rpcUrl: 'https://open-campus-codex-sepolia.drpc.org',
     chainId: 656476,
     contractAddress: '0xd8dcbd828a40f6590a5bee5095c38994dab3bdee',
   },
-  chainName: 'OpenCampus-Testnet',
+  chainName: 'EduChain-Testnet',
 }
+
+const eduChain = {
+  id: 656476,
+  name: 'EduChain',
+  nativeCurrency: {
+    name: 'EDU',
+    symbol: 'EDU',
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://open-campus-codex-sepolia.drpc.org'],
+      webSocket: ['wss://open-campus-codex-sepolia.drpc.org'],
+    },
+  },
+}
+
+// TODO: should support multiple chains and configured by the user
+export const currentChain = eduChain
+// TODO: for openbuild payment - currently only polygon is supported
+export const paymentChain = polygon
+export const currentChainOptions = openCampusTestOptions
+// TODO: move to other file
+export const sdk = new SDK(currentChainOptions)

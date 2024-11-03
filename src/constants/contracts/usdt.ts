@@ -401,6 +401,7 @@ export const USDT_ABI = [
 ]
 
 export const POLYGON_USDT_ADDRESS = '0xc2132d05d31c914a87c6611c10748aeb04b58e8f'
+export const PAYMENT_USDT_ADDRESS = POLYGON_USDT_ADDRESS
 
 export const USDT_DECIMAL = 6
 

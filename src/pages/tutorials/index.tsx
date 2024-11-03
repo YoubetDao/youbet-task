@@ -4,8 +4,7 @@ import { useState } from 'react'
 import { Project } from '@/types'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { SkeletonCard } from '@/components/skeleton-card'
-import { openCampusTestOptions } from '@/constants/data'
-import { SDK } from 'youbet-sdk'
+import { sdk } from '@/constants/data'
 import { fetchTutorials, getTutorialToC } from '@/service'
 import { tutorialToCAtom } from '@/store'
 import { useSetAtom } from 'jotai'
@@ -13,8 +12,6 @@ import { useQuery } from '@tanstack/react-query'
 import PaginationFast from '@/components/pagination-fast'
 import { SearchInput } from '@/components/search'
 // import ImportTutorialDialog from '@/components/import-project'
-
-const sdk = new SDK(openCampusTestOptions)
 
 function SkeletonList() {
   return (

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { SDK } from 'youbet-sdk'
 import { SkeletonCard } from '@/components/skeleton-card'
 import { usernameAtom } from '@/store'
 import { useAtom } from 'jotai'
@@ -12,9 +11,7 @@ import { useToast } from '@/components/ui/use-toast'
 import { Profile } from '@/types'
 import { Button } from '@/components/ui/button'
 import { getLinkedWallet, getMyInfo } from '@/service'
-import { openCampusTestOptions } from '@/constants/data'
-
-const sdk = new SDK(openCampusTestOptions)
+import { currentChain, sdk } from '@/constants/data'
 
 function SkeletonTasks() {
   return (
@@ -170,13 +167,17 @@ export default function ProfilePage() {
           <div className="space-y-1">
             <h3 className="text-lg font-semibold text-white">Rewards</h3>
             <div className="flex items-center justify-between">
-              <p className="text-l mb-2 font-bold text-gray-400">{totalRewards.toFixed(5)} EDU</p>
+              <p className="text-l mb-2 font-bold text-gray-400">
+                {totalRewards.toFixed(5)} {currentChain.nativeCurrency.symbol}
+              </p>
             </div>
           </div>
           <div className="space-y-1">
             <h3 className="text-lg font-semibold text-white">To Claim</h3>
             <div className="flex items-center justify-between">
-              <p className="text-l mb-2 font-bold text-gray-400">{(totalRewards - claimedRewards).toFixed(5)} EDU</p>
+              <p className="text-l mb-2 font-bold text-gray-400">
+                {(totalRewards - claimedRewards).toFixed(5)} {currentChain.nativeCurrency.symbol}
+              </p>
               <Button onClick={handleClaim} size="sm" disabled={claiming}>
                 Claim{claiming && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
               </Button>
