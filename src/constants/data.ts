@@ -1,7 +1,6 @@
 import { getAppearances } from '@/lib/appearances'
 import { NavItem, UserPermission } from '@/types'
 import { SdkCtorOptions, SDK } from 'youbet-sdk'
-import { polygon } from 'viem/chains'
 
 export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
   const appearances = getAppearances()
@@ -146,10 +145,34 @@ const eduChain = {
   },
 }
 
+const aiaTestOptions: SdkCtorOptions = {
+  networkOptions: {
+    rpcUrl: 'https://aia-dataseed1-testnet.aiachain.org',
+    chainId: 1320,
+    contractAddress: '0x414459b4b2e91F300C733d1B00c088f9088Fd4db',
+  },
+  chainName: 'AiaChain-Testnet',
+}
+
+const aiaChain = {
+  id: 1320,
+  name: 'AiaChain',
+  nativeCurrency: {
+    name: 'AIA',
+    symbol: 'AIA',
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://aia-dataseed1-testnet.aiachain.org'],
+    },
+  },
+}
+
 // TODO: should support multiple chains and configured by the user
-export const currentChain = eduChain
+export const currentChain = aiaChain
 // TODO: for openbuild payment - currently only polygon is supported
-export const paymentChain = polygon
-export const currentChainOptions = openCampusTestOptions
+export const paymentChain = aiaChain
+export const currentChainOptions = aiaTestOptions
 // TODO: move to other file
 export const sdk = new SDK(currentChainOptions)
