@@ -30,12 +30,18 @@ export default function BaseLayout({ children, mode = 'default' }: IBaseLayout) 
       </div>
       <div className="flex flex-1 flex-col overflow-hidden">
         <Header />
-        <main className="flex flex-1 flex-col gap-4 overflow-auto scroll-smooth p-4 lg:gap-6 lg:p-6" id="scrollRef">
-          <div>
-            <div className="mx-auto max-w-7xl px-4 py-4 lg:px-12">{children}</div>
-            <div className="pointer-events-none fixed bottom-0 left-[220px] right-0 top-14 z-[-1] overflow-hidden md:left-[220px] lg:left-[280px] lg:top-[60px]">
-              <Meteors number={20} />
+        <main
+          className="relative flex flex-1 flex-col gap-4 overflow-auto scroll-smooth p-4 lg:gap-6 lg:p-6"
+          id="scrollRef"
+        >
+          <div className="pointer-events-none fixed bottom-0 left-[220px] right-0 top-14 z-[-1] overflow-hidden md:left-[220px] lg:left-[280px] lg:top-[60px]">
+            <Meteors number={20} />
+            <div className="absolute bottom-0 right-0">
+              <img src="/main-background.svg" alt="background" className="h-auto w-[456px] opacity-30" />
             </div>
+          </div>
+          <div className="relative z-10">
+            <div className="mx-auto max-w-7xl px-4 py-4 lg:px-12">{children}</div>
           </div>
         </main>
         <Toaster />
