@@ -11,7 +11,14 @@ import Footer from '@/components/footer'
 
 function StatsCard({ title, value, icon }: { title: string; value: number; icon: React.ReactNode }) {
   return (
-    <Card>
+    <Card
+      className="relative border-none"
+      style={{
+        backgroundImage: 'url(/card-container.svg)',
+        backgroundSize: '100% 100%',
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-sm font-medium">
           {icon}
@@ -27,11 +34,11 @@ function StatsCard({ title, value, icon }: { title: string; value: number; icon:
 
 function ProjectRecommendations({ projects }: { projects: Project[] }) {
   return (
-    <Card className="w-full bg-transparent">
+    <Card className="w-full bg-transparent bg-gradient-to-r from-white/10 to-transparent">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <LucideStar className="h-6 w-6" />
-          Recommended Projects
+          <span className="font-american-captain translate-y-[3px]">Recommended Projects</span>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -86,7 +93,7 @@ export default function Dashboard() {
   return (
     <div className="flex w-full flex-col gap-4 overflow-hidden">
       <div className="space-y-4">
-        <h2 className="text-3xl font-bold tracking-tight">Hi, Welcome to {BRAND_NAME} 👋</h2>
+        <h2 className="font-american-captain text-3xl font-bold tracking-tight">Hi, Welcome to {BRAND_NAME} 👋</h2>
         <div className="grid grid-cols-2 items-center justify-between gap-4 lg:grid-cols-4">
           <StatsCard title="Total Users" value={userCount} icon={<LucideUsers className="h-4 w-4" />} />
           <StatsCard title="Total Projects" value={projects.length} icon={<LucidePackage className="h-4 w-4" />} />

@@ -3,10 +3,22 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: Boogaloo-Regular;
-  src: url('/fonts/Boogaloo-Regular.ttf') format('ttf');
+  font-family: Inter;
+  src: url('/fonts/Inter/Inter-VariableFont_opsz.ttf') format('truetype');
   font-style: normal;
   font-weight: normal;
+}
+
+@font-face {
+  font-family: AmericanCaptain;
+  src: url('/fonts/american_captain/AmericanCaptain.ttf') format('truetype');
+  font-style: normal;
+  font-weight: normal;
+}
+
+.font-american-captain {
+  font-family: AmericanCaptain, sans-serif;
+  letter-spacing: 0.03em;
 }
 
 @layer base {
@@ -72,7 +84,7 @@
   }
 
   body {
-    @apply bg-background font-["Boogaloo-Regular"] text-foreground;
+    @apply bg-background font-['Inter'] text-foreground;
   }
 }
 
