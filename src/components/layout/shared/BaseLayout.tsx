@@ -13,12 +13,12 @@ interface IBaseLayout {
 export default function BaseLayout({ children, mode = 'default' }: IBaseLayout) {
   return (
     <div className="grid h-screen w-full overflow-hidden md:grid-cols-[180px_1fr] lg:grid-cols-[240px_1fr]">
-      <div className="hidden border-r bg-muted/40 md:block">
+      <div className="hidden border-r md:block">
         <div className="flex h-full max-h-screen flex-col gap-2">
           <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
             <Title />
           </div>
-          <div className="flex-1">
+          <div className="mt-6 flex-1">
             <Sidebar />
             {mode === 'tutorial' && (
               <section className="flex flex-col items-start px-4 py-4 text-sm font-medium lg:px-6">
@@ -31,7 +31,7 @@ export default function BaseLayout({ children, mode = 'default' }: IBaseLayout) 
       <div className="flex flex-1 flex-col overflow-hidden">
         <Header />
         <main
-          className="relative flex flex-1 flex-col gap-4 overflow-auto scroll-smooth p-4 lg:gap-6 lg:p-6"
+          className="relative flex flex-1 flex-col gap-4 overflow-auto scroll-smooth p-2 lg:gap-6 lg:p-5"
           id="scrollRef"
         >
           <div className="pointer-events-none fixed bottom-0 left-[220px] right-0 top-14 z-[-1] overflow-hidden md:left-[220px] lg:left-[280px] lg:top-[60px]">

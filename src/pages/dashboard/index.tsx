@@ -8,30 +8,35 @@ import { Button } from '@/components/ui/button'
 import { Link } from 'react-router-dom'
 import { BRAND_NAME } from '@/lib/config'
 import Footer from '@/components/footer'
+import { useAtom } from 'jotai'
+import { usernameAtom } from '@/store'
 
 function StatsCard({ title, value, icon }: { title: string; value: number; icon: React.ReactNode }) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-sm font-medium">
-          {icon}
-          {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-      </CardContent>
+    <Card className="relative bg-transparent">
+      <div className="absolute inset-0 bg-white/10 opacity-70" />
+      <div className="relative">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-sm font-medium">
+            {icon}
+            {title}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{value}</div>
+        </CardContent>
+      </div>
     </Card>
   )
 }
 
 function ProjectRecommendations({ projects }: { projects: Project[] }) {
   return (
-    <Card className="w-full bg-transparent">
+    <Card className="w-full bg-transparent bg-gradient-to-r from-white/10 to-transparent">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <LucideStar className="h-6 w-6" />
-          Recommended Projects
+          <span className="font-american-captain translate-y-[3px]">Recommended Projects</span>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -67,6 +72,7 @@ export default function Dashboard() {
   const [totalCount, setTotalCount] = useState<number>(0)
   const [projects, setProjects] = useState<Project[]>([])
   const [userCount, setUserCount] = useState<number>(0)
+  const [username] = useAtom(usernameAtom)
 
   useEffect(() => {
     fetchLeaderboard().then(({ data, totalCount }) => {
@@ -86,7 +92,9 @@ export default function Dashboard() {
   return (
     <div className="flex w-full flex-col gap-4 overflow-hidden">
       <div className="space-y-4">
-        <h2 className="text-3xl font-bold tracking-tight">Hi, Welcome to {BRAND_NAME} 👋</h2>
+        <h2 className="font-american-captain text-3xl font-bold tracking-tight">
+          Hi, Welcome {username ? `${username}` : `to ${BRAND_NAME}`} 👋
+        </h2>
         <div className="grid grid-cols-2 items-center justify-between gap-4 lg:grid-cols-4">
           <StatsCard title="Total Users" value={userCount} icon={<LucideUsers className="h-4 w-4" />} />
           <StatsCard title="Total Projects" value={projects.length} icon={<LucidePackage className="h-4 w-4" />} />

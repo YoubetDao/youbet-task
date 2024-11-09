@@ -18,6 +18,7 @@ import Sidebar from './Sidebar'
 export default function Header() {
   const navigate = useNavigate()
   const [token, setToken] = useAtom(tokenAtom)
+  const [username] = useAtom(usernameAtom)
 
   const handleLogout = () => {
     setToken(null)
@@ -31,7 +32,7 @@ export default function Header() {
   }
 
   return (
-    <header className="flex h-14 flex-shrink-0 items-center justify-between gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+    <header className="flex h-14 flex-shrink-0 items-center justify-between gap-4 border-b px-4 lg:h-[60px] lg:px-6">
       <Sidebar isMobile={true} />
       <div className={cn(buttonVariants({ variant: 'outline' }), 'ml-auto rounded-full border')}>
         <CustomConnectButton />
@@ -40,8 +41,9 @@ export default function Header() {
       {token ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="secondary" size="icon" className="rounded-full">
+            <Button variant="secondary" className="space-x-2 rounded-full">
               <User className="h-5 w-5" />
+              <span>{username}</span>
               <span className="sr-only">Toggle user menu</span>
             </Button>
           </DropdownMenuTrigger>

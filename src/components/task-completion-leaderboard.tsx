@@ -10,9 +10,9 @@ interface TaskCompletionLeaderboardProps {
 
 export function TaskCompletionLeaderboard({ leaderboard }: TaskCompletionLeaderboardProps) {
   return (
-    <Card className="w-full">
+    <Card className="w-full bg-transparent bg-gradient-to-r from-white/10 to-transparent">
       <CardHeader>
-        <CardTitle className="relative">
+        <CardTitle className="font-american-captain relative">
           <LucideCrown className="absolute -left-5 -top-5 h-6 w-6 -rotate-12" />
           Task Completion Leaderboard
         </CardTitle>
