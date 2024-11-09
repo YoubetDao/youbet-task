@@ -31,7 +31,7 @@ export default function Header() {
   }
 
   return (
-    <header className="flex h-14 flex-shrink-0 items-center justify-between gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+    <header className="flex h-14 flex-shrink-0 items-center justify-between gap-4 border-b px-4 lg:h-[60px] lg:px-6">
       <Sidebar isMobile={true} />
       <div className={cn(buttonVariants({ variant: 'outline' }), 'ml-auto rounded-full border')}>
         <CustomConnectButton />
