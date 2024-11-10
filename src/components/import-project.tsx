@@ -119,6 +119,7 @@ export default function ImportProject() {
   const { data: profile } = useQuery({
     queryKey: ['profile'],
     queryFn: getMyInfo,
+    enabled: !!open,
   })
   const { data: userOrOrgOptions, isLoading: isUserOrOrgOptionsLoading } = useQuery({
     queryKey: ['userOrOrgOptions'],
