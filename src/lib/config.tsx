@@ -44,7 +44,7 @@ export const SOCIAL_LINKS = [
   },
   {
     name: 'Website',
-    href: 'https://youbet-task.netlify.app/',
+    href: 'https://according.work/',
     icon: (props: React.SVGProps<SVGSVGElement>) => <LucideLaptop {...props} />,
   },
 ]
