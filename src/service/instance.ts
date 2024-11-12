@@ -22,6 +22,10 @@ instance.interceptors.request.use(
     config.headers['Content-Type'] = 'application/json'
     const namespace = import.meta.env.VITE_API_NAMESPACE
     config.params = { ...config.params, ...(namespace ? { namespace } : {}) }
+    if (config.method?.toLowerCase() !== 'get' && namespace && config.headers['Content-Type'] === 'application/json') {
+      const body = config.data || {}
+      config.data = typeof body === 'string' ? { ...JSON.parse(body), namespace } : { ...body, namespace }
+    }
     return config
   },
   (error) => Promise.reject(error),
