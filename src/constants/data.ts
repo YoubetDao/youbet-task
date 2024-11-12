@@ -1,7 +1,7 @@
 import { getAppearances } from '@/lib/appearances'
 import { NavItem, UserPermission } from '@/types'
 import { SdkCtorOptions, SDK } from 'youbet-sdk'
-import { polygon } from 'viem/chains'
+import { polygon, moonbaseAlpha, Chain } from 'viem/chains'
 
 export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
   const appearances = getAppearances()
@@ -121,6 +121,15 @@ export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
 export const DEFAULT_PAGINATION_LIMIT = 4
 
 // TODO: unify the options with viem chains
+const moonbaseAlphaOptions: SdkCtorOptions = {
+  networkOptions: {
+    rpcUrl: moonbaseAlpha.rpcUrls.default.http[0],
+    chainId: moonbaseAlpha.id,
+    contractAddress: '0x977BCA065Cb342c568A33EA0A12e9cB27645BD1d',
+  },
+  chainName: 'Moonbase Alpha',
+}
+
 const openCampusTestOptions: SdkCtorOptions = {
   networkOptions: {
     rpcUrl: 'https://open-campus-codex-sepolia.drpc.org',
@@ -146,10 +155,54 @@ const eduChain = {
   },
 }
 
+// define supported chains
+const SUPPORTED_CHAINS: Record<string, Chain> = {
+  educhain: eduChain,
+  moonbase: moonbaseAlpha,
+  polygon: polygon,
+}
+
+// TODO: move this chain options to a separated chain config file
+// define chain options
+const CHAIN_OPTIONS: Record<string, SdkCtorOptions> = {
+  educhain: openCampusTestOptions,
+  moonbase: moonbaseAlphaOptions,
+}
+
+const getCurrentChain = (): Chain => {
+  const chainName = import.meta.env.VITE_CURRENT_CHAIN || 'educhain'
+  const chain = SUPPORTED_CHAINS[chainName]
+  if (!chain) {
+    console.warn(`Chain ${chainName} not found, falling back to eduChain`)
+    return eduChain
+  }
+  return chain
+}
+
+const getPaymentChain = (): Chain => {
+  const chainName = import.meta.env.VITE_PAYMENT_CHAIN || 'polygon'
+  const chain = SUPPORTED_CHAINS[chainName]
+  if (!chain) {
+    console.warn(`Payment chain ${chainName} not found, falling back to polygon`)
+    return polygon
+  }
+  return chain
+}
+
+const getChainOptions = (): SdkCtorOptions => {
+  const chainName = import.meta.env.VITE_CURRENT_CHAIN || 'educhain'
+  const options = CHAIN_OPTIONS[chainName]
+  if (!options) {
+    console.warn(`Chain options for ${chainName} not found, falling back to openCampusTestOptions`)
+    return openCampusTestOptions
+  }
+  return options
+}
+
 // TODO: should support multiple chains and configured by the user
-export const currentChain = eduChain
+export const currentChain = getCurrentChain()
 // TODO: for openbuild payment - currently only polygon is supported
-export const paymentChain = polygon
-export const currentChainOptions = openCampusTestOptions
+export const paymentChain = getPaymentChain()
+export const currentChainOptions = getChainOptions()
 // TODO: move to other file
 export const sdk = new SDK(currentChainOptions)
