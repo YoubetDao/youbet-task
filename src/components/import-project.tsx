@@ -127,7 +127,7 @@ export default function ImportProject() {
       const data = await getUserOrgs()
       return [{ login: profile?.username, avatar_url: profile?.avatarUrl, id: 'current_user' }, ...data]
     },
-    enabled: !!open,
+    enabled: !!open && !!profile,
   })
 
   const { data: repos } = useQuery({
