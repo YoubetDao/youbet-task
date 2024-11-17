@@ -286,7 +286,9 @@ export default function TaskDetailPage() {
             <div className="flex w-full flex-row items-center justify-between">
               <Button variant="link" className="gap-3 text-blue-500">
                 <FilePenLine className="h-5 w-5" />
-                <a href={task.htmlUrl}>Edit it in Github</a>
+                <a href={task.htmlUrl} target="_blank" rel="noopener noreferrer">
+                  Edit it in Github
+                </a>
               </Button>
               <span className="text-l text-slate-500">Updated At: {task.updatedAt}</span>
             </div>

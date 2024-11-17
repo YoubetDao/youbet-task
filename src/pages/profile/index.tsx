@@ -137,7 +137,9 @@ export default function ProfilePage() {
 
                 <a
                   href={`https://opencampus-codex.blockscout.com/address/${linkedAddress}`}
+                  target="_blank"
                   className="text-gray-400 hover:text-gray-500"
+                  rel="noreferrer"
                 >
                   <Wallet size={24} />
                 </a>

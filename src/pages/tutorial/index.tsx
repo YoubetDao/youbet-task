@@ -88,6 +88,8 @@ const Tutorial = () => {
               <a
                 className="flex flex-row items-center justify-center gap-2"
                 href={`https://github.com/${owner}/${repo}/blob/master/src/${decodeURIComponent(path ?? '')}.md`}
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <Pen size={14} />
               </a>
