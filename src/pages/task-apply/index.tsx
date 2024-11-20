@@ -4,24 +4,11 @@ import { PopulatedTaskApply, IResultPaginationData } from '@/types'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { format } from 'date-fns'
-import { SkeletonCard } from '@/components/skeleton-card'
+import { LoadingCards } from '@/components/loading-cards'
 import { fetchTaskApplies, approveTaskApply, rejectTaskApply } from '@/service'
 import PaginationFast from '@/components/pagination-fast'
 import { SearchInput } from '@/components/search'
 import { useSearchParams } from 'react-router-dom'
-
-function LoadingPage(): React.ReactElement {
-  return (
-    <>
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-    </>
-  )
-}
 
 const TaskAppliesTable = () => {
   const [page, setPage] = useState(1)
@@ -129,7 +116,7 @@ const TaskAppliesTable = () => {
           </TableBody>
         </Table>
       ) : (
-        <LoadingPage />
+        <LoadingCards />
       )}
       <PaginationFast page={page} totalPages={totalPages} onPageChange={setPage} />
     </div>

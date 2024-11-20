@@ -8,24 +8,11 @@ import PaginationFast from '@/components/pagination-fast'
 import { Button } from '@/components/ui/button'
 import { PencilLine } from 'lucide-react'
 import { format } from 'date-fns'
-import { SkeletonCard } from '@/components/skeleton-card'
+import { LoadingCards } from '@/components/loading-cards'
 import { RewardDialogForm } from './reward-form'
 import { useAccount } from 'wagmi'
 import { useSearchParams } from 'react-router-dom'
 import { SearchInput } from '@/components/search'
-
-function LoadingPage(): React.ReactElement {
-  return (
-    <>
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-    </>
-  )
-}
 
 // TODO: reward feature
 function PullRequestsTable(): React.ReactElement {
@@ -144,7 +131,7 @@ function PullRequestsTable(): React.ReactElement {
           </TableBody>
         </Table>
       ) : (
-        <LoadingPage />
+        <LoadingCards />
       )}
 
       <PaginationFast page={page} totalPages={totalPages} onPageChange={setPage} />

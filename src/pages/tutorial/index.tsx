@@ -1,24 +1,13 @@
 import { useParams } from 'react-router-dom'
 import MdView from './md-view'
 import { useEffect, useState } from 'react'
-import { SkeletonCard } from '@/components/skeleton-card'
 import { getMdBookContent } from '@/service'
 import { useAtomValue } from 'jotai'
 import { tutorialToCAtom } from '@/store'
 import { Chapter } from '@/types'
 import { Button } from '@/components/ui/button'
 import { Link, Pen } from 'lucide-react'
-
-function Skeleton() {
-  return (
-    <>
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-    </>
-  )
-}
+import { LoadingCards } from '@/components/loading-cards'
 
 const findTitle = (tutorialToC: Chapter[] | null, path: string): string | null => {
   if (tutorialToC === null) {
@@ -94,7 +83,7 @@ const Tutorial = () => {
             </Button>
           </section>
         </header>
-        {loading ? <Skeleton /> : <MdView content={content} />}
+        {loading ? <LoadingCards /> : <MdView content={content} />}
       </article>
     </div>
   )

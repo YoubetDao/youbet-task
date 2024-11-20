@@ -9,20 +9,9 @@ import UtterancesComments from './utterances-comments'
 import { Task, TaskApply, User } from '@/types'
 import { useParams } from 'react-router-dom'
 import { applyTask, fetchTask as getTaskDetail, myAppliesForTask, withdrawApply } from '@/service'
-import { SkeletonCard } from '@/components/skeleton-card'
+import { LoadingCards } from '@/components/loading-cards'
 import ErrorPage from '../error'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-
-function Skeleton() {
-  return (
-    <>
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-    </>
-  )
-}
 
 type TaskDetailItem = {
   id: number
@@ -258,7 +247,7 @@ export default function TaskDetailPage() {
   const { MdRenderer } = useMd(task?.body || '')
 
   if (loading) {
-    return <Skeleton />
+    return <LoadingCards />
   }
 
   if (task == null) {

@@ -1,4 +1,4 @@
-import { LoadingCards } from '../skeleton-card'
+import { LoadingCards } from '../loading-cards'
 import { TaskCard } from './task-card'
 import { EmptyTasks } from './empty-tasks'
 import PaginationFast from '@/components/pagination-fast'
