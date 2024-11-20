@@ -3,7 +3,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { useState } from 'react'
 import { Project } from '@/types'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { SkeletonCard } from '@/components/skeleton-card'
+import { LoadingCards } from '@/components/loading-cards'
 import { sdk } from '@/constants/data'
 import { fetchTutorials, getTutorialToC } from '@/service'
 import { tutorialToCAtom } from '@/store'
@@ -11,20 +11,6 @@ import { useSetAtom } from 'jotai'
 import { useQuery } from '@tanstack/react-query'
 import PaginationFast from '@/components/pagination-fast'
 import { SearchInput } from '@/components/search'
-// import ImportTutorialDialog from '@/components/import-project'
-
-function SkeletonList() {
-  return (
-    <div className="flex w-full flex-col gap-4">
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-    </div>
-  )
-}
 
 // TODO: move color to some global config
 const DEFAULT_HARDNESS = {
@@ -230,7 +216,7 @@ export default function Tutorials() {
           </div>
         </div>
       ) : (
-        <SkeletonList />
+        <LoadingCards />
       )}
     </div>
   )

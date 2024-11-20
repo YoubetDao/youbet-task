@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { SkeletonCard } from '@/components/skeleton-card'
+import { LoadingCards } from '@/components/loading-cards'
 import { usernameAtom } from '@/store'
 import { useAtom } from 'jotai'
 import { Card } from '@/components/ui/card'
@@ -13,19 +13,6 @@ import { Button } from '@/components/ui/button'
 import { getLinkedWallet, getMyInfo } from '@/service'
 import { currentChain, sdk } from '@/constants/data'
 
-function SkeletonTasks() {
-  return (
-    <>
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-    </>
-  )
-}
-
 export default function ProfilePage() {
   const [linkedAddress, setLinkedAddress] = useState('')
   const [userPoints, setUserPoints] = useState('')
@@ -33,7 +20,6 @@ export default function ProfilePage() {
   const [claimedRewards, setClaimedRewards] = useState(0)
   const [loading, setLoading] = useState(true)
   const [username] = useAtom(usernameAtom)
-  // use state as empty Profile
   const [profile, setProfile] = useState<Profile>()
   const [claiming, setClaiming] = useState(false)
   const { toast } = useToast()
@@ -94,14 +80,12 @@ export default function ProfilePage() {
   }
 
   if (loading) {
-    return <SkeletonTasks />
+    return <LoadingCards />
   }
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col space-y-6 lg:flex-row lg:space-x-6 lg:space-y-0">
-      {/* 左侧布局 */}
       <div className="w-full space-y-6 lg:w-1/3">
-        {/* 个人信息 Card */}
         <Card className="rounded-lg shadow-lg">
           <div className="flex items-center space-x-6 p-4">
             <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-full">
@@ -194,15 +178,12 @@ export default function ProfilePage() {
         </Card>
       </div>
 
-      {/* 右侧布局 */}
       <div className="w-full space-y-6 lg:w-2/3">
-        {/* GitHub 贡献图 Card */}
         <Card className="rounded-lg p-4 shadow-lg">
           <h3 className="mb-2 text-lg font-semibold text-white">Contributions</h3>
           <GitHubCalendar username={profile?.username || ''} />
         </Card>
 
-        {/* 活动流 Card */}
         <Card className="rounded-lg p-4 shadow-lg">
           <h3 className="mb-2 text-lg font-semibold text-white">Recent Activities</h3>
           <ul className="space-y-4">
@@ -218,7 +199,6 @@ export default function ProfilePage() {
               <span className="text-gray-400">[Comment] Commented on Issue #7 in youbet-task</span>
               <span className="text-xs text-gray-500">6 hours ago</span>
             </li>
-            {/* 继续添加更多的活动 */}
           </ul>
         </Card>
       </div>

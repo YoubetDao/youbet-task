@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { SkeletonCard } from '@/components/skeleton-card'
+import { LoadingCards } from '@/components/loading-cards'
 import { Project, IResultPagination } from '@/types'
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
@@ -25,16 +25,6 @@ import { DEFAULT_PAGINATION_LIMIT } from '@/constants/data'
 import ImportProjectDialog from '@/components/import-project'
 import { getAppearances } from '@/lib/appearances'
 import { SearchInput } from '@/components/search'
-
-function SkeletonProjects({ count = 6 }: { count?: number }) {
-  return (
-    <div className="flex w-full flex-col gap-4">
-      {Array.from({ length: count }).map((_, index) => (
-        <SkeletonCard key={index} />
-      ))}
-    </div>
-  )
-}
 
 function renderTags(tags: string[]): React.ReactNode[] {
   return tags.map((tag) => {
@@ -112,7 +102,7 @@ interface ProjectListProps {
 }
 
 function ProjectList({ loading, loadingMore, data, appearances }: ProjectListProps) {
-  if (loading) return <SkeletonProjects />
+  if (loading) return <LoadingCards />
   if (!data) return null
 
   return (
@@ -125,7 +115,7 @@ function ProjectList({ loading, loadingMore, data, appearances }: ProjectListPro
         {data.list.map((item) => (
           <ProjectItem key={item._id} item={item} />
         ))}
-        {loadingMore && <SkeletonProjects count={2} />}
+        {loadingMore && <LoadingCards count={2} />}
       </div>
     </div>
   )
