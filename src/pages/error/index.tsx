@@ -26,7 +26,7 @@ export default function ErrorPage() {
                 </div>
                 <div className="flex-auto">
                   <h3 className="text-sm font-semibold leading-6 text-foreground">
-                    <a href={link.href}>
+                    <a href={link.href} target="_blank" rel="noopener noreferrer">
                       <span aria-hidden="true" className="absolute inset-0" />
                       {link.name}
                     </a>
