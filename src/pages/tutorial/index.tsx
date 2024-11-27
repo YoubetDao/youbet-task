@@ -65,23 +65,23 @@ const Tutorial = () => {
         <header className="mb-8 flex flex-row justify-between">
           <h1 className="max-w-[720px] flex-1 break-words text-start text-5xl font-bold">{title ?? 'Not Found'}</h1>
           <section className="flex h-12 flex-row gap-2">
-            <Button variant="outline" title="Source">
-              <a
-                className="flex flex-row items-center justify-center gap-2"
-                href={`https://github.com/${owner}/${repo}/blob/master/src/${decodeURIComponent(path ?? '')}.md`}
-              >
-                <Link size={14} />
-              </a>
+            <Button
+              variant="outline"
+              title="Source"
+              onClick={() =>
+                window.open(`https://github.com/${owner}/${repo}/blob/master/src/${decodeURIComponent(path ?? '')}.md`)
+              }
+            >
+              <Link size={14} />
             </Button>
-            <Button variant="outline" title="Edit">
-              <a
-                className="flex flex-row items-center justify-center gap-2"
-                href={`https://github.com/${owner}/${repo}/blob/master/src/${decodeURIComponent(path ?? '')}.md`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Pen size={14} />
-              </a>
+            <Button
+              variant="outline"
+              title="Edit"
+              onClick={() =>
+                window.open(`https://github.com/${owner}/${repo}/blob/master/src/${decodeURIComponent(path ?? '')}.md`)
+              }
+            >
+              <Pen size={14} />
             </Button>
           </section>
         </header>
