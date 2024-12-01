@@ -14,7 +14,6 @@ import { useAccount } from 'wagmi'
 import { useSearchParams } from 'react-router-dom'
 import { SearchInput } from '@/components/search'
 
-// TODO: reward feature
 function PullRequestsTable(): React.ReactElement {
   const [page, setPage] = useState(1)
   const [urlParam, setUrlParam] = useSearchParams('')

@@ -14,6 +14,24 @@ export interface IResultPaginationData<T> {
   pagination: IPagination
 }
 
+export interface Wallet {
+  address: string
+  chain: string
+}
+
+export interface Record {
+  _id: string
+  projectId: string
+  from: string
+  to: string
+  pullRequests: string[]
+  users: User[]
+  rewardGranted: boolean
+  createdAt: string
+  updatedAt: string
+  __v: number
+}
+
 export interface IResultPagination<T> {
   list: T[]
   pagination: IPagination
@@ -95,6 +113,9 @@ export interface User {
   login: string
   htmlUrl: string
   avatarUrl: string
+  wallet?: Wallet
+  rewards?: number
+  _id?: string
 }
 
 export interface FetchIssuesParams {
@@ -107,6 +128,14 @@ export interface FetchPullRequestParams extends PaginationParams {
   state?: string
   search?: string
   sort?: string
+}
+
+export interface FetchPullRequestAggregationsParams extends PaginationParams {
+  projectId: string
+}
+
+export interface FetchGrantAggregationRewardsParams {
+  id: string
 }
 
 export interface PullRequest {

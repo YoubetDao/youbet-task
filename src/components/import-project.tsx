@@ -121,6 +121,7 @@ export default function ImportProject() {
     queryFn: getMyInfo,
     enabled: !!open,
   })
+
   const { data: userOrOrgOptions, isLoading: isUserOrOrgOptionsLoading } = useQuery({
     queryKey: ['userOrOrgOptions'],
     queryFn: async () => {
