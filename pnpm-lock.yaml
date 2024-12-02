@@ -7,6 +7,9 @@ settings:
 importers:
   .:
     dependencies:
+      '@faker-js/faker':
+        specifier: ^9.2.0
+        version: 9.2.0
       '@hookform/resolvers':
         specifier: ^3.9.0
         version: 3.9.0(react-hook-form@7.52.1(react@18.3.1))
@@ -1523,6 +1526,11 @@ packages:
     resolution:
       { integrity: sha512-zQ0IqbdX8FZ9aw11vP+dZkKDkS+kgIvQPHnSAXzP9pLu+Rfu3D3XEeLbicvoXJTYnhZiPmsZUxgdzXwNKxRPbA== }
     engines: { node: '>=14' }
+
+  '@faker-js/faker@9.2.0':
+    resolution:
+      { integrity: sha512-ulqQu4KMr1/sTFIYvqSdegHT8NIkt66tFAkugGnHA+1WAfEn6hMzNR+svjXGFRVLnapxvej67Z/LwchFrnLBUg== }
+    engines: { node: '>=18.0.0', npm: '>=9.0.0' }
 
   '@floating-ui/core@1.6.5':
     resolution:
@@ -10330,6 +10338,8 @@ snapshots:
       '@ethereumjs/rlp': 4.0.1
       ethereum-cryptography: 2.2.1
       micro-ftch: 0.3.1
+
+  '@faker-js/faker@9.2.0': {}
 
   '@floating-ui/core@1.6.5':
     dependencies:

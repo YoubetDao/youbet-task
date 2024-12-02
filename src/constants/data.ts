@@ -102,6 +102,14 @@ export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
           hideInMenu: userPermission !== UserPermission.PullRequest && userPermission !== UserPermission.All,
         },
         {
+          title: 'Period',
+          href: '/admin/period',
+          icon: 'period',
+          component: 'periodAdmin',
+          layout: 'dashboard',
+          hideInMenu: userPermission !== UserPermission.PullRequest && userPermission !== UserPermission.All,
+        },
+        {
           title: 'Task Apply',
           href: '/admin/task-apply',
           icon: 'clipboardList',

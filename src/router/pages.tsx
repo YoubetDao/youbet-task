@@ -11,6 +11,7 @@ import TaskDetailPage from '@/pages/task-detail'
 import ErrorPage from '@/pages/error'
 import PullRequestAdmin from '@/pages/pull-request'
 import TaskApplyAdmin from '@/pages/task-apply'
+import PeriodAdmin from '@/pages/period'
 
 export const Pages = {
   dashboard: Dashboard,
@@ -26,4 +27,5 @@ export const Pages = {
   error: ErrorPage,
   pullRequestAdmin: PullRequestAdmin,
   taskApplyAdmin: TaskApplyAdmin,
+  periodAdmin: PeriodAdmin,
 }
