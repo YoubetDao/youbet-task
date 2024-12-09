@@ -95,6 +95,7 @@ export interface User {
   login: string
   htmlUrl: string
   avatarUrl: string
+  wallet: `0x${string}`
 }
 
 export interface FetchIssuesParams {
@@ -122,16 +123,8 @@ export interface PullRequest {
   mergedAt: string | null
   htmlUrl: string
   project: string
-  user: {
-    login: string
-    htmlUrl: string
-    avatarUrl: string
-  }
-  assignees: {
-    login: string
-    htmlUrl: string
-    avatarUrl: string
-  }[]
+  user: User
+  assignees: User[]
   labels: string[]
   namespace: string
   rewardGranted: boolean
