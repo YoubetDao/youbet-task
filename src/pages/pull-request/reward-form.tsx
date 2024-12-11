@@ -21,7 +21,7 @@ const formSchema = z.object({
   amount: z.string().regex(/^(0|[1-9]\d*)(\.\d+)?$/, {
     message: 'Amount must be a positive number',
   }),
-  address: z.string().regex(/^0x[a-fA-F0-9]{40}$/, { message: 'Invalid Ethereum address' }),
+  receiver: z.string().regex(/^0x[a-fA-F0-9]{40}$/, { message: 'Invalid Ethereum address' }),
   githubId: z.string().min(1, { message: 'GitHub ID is required' }),
   coin: z.string().min(1, { message: 'Coin is required' }),
 })
@@ -29,11 +29,12 @@ const formSchema = z.object({
 interface IRewardForm {
   trigger: React.ReactNode
   prGithubId: number
-  addressFrom: `0x${string}`
+  sender: `0x${string}`
+  receiver: `0x${string}`
   chain: Chain
 }
 
-export const RewardDialogForm = ({ trigger, prGithubId, addressFrom, chain }: IRewardForm) => {
+export const RewardDialogForm = ({ trigger, prGithubId, sender, receiver, chain }: IRewardForm) => {
   const queryClient = useQueryClient()
   const { toast } = useToast()
   const { sendTransactionAsync } = useSendTransaction()
@@ -47,6 +48,7 @@ export const RewardDialogForm = ({ trigger, prGithubId, addressFrom, chain }: IR
     resolver: zodResolver(formSchema),
     defaultValues: {
       coin: USDT_SYMBOL,
+      receiver,
     },
   })
 
@@ -65,7 +67,7 @@ export const RewardDialogForm = ({ trigger, prGithubId, addressFrom, chain }: IR
 
       if (values.coin !== USDT_SYMBOL) {
         transaction = await sendTransactionAsync({
-          to: values.address as `0x${string}`,
+          to: values.receiver as `0x${string}`,
           value: parseEther(values.amount),
         })
       } else {
@@ -73,7 +75,7 @@ export const RewardDialogForm = ({ trigger, prGithubId, addressFrom, chain }: IR
           abi: USDT_ABI,
           address: PAYMENT_USDT_ADDRESS, // USDT contract address on Current Payment Chain
           functionName: 'transfer',
-          args: [values.address, parseFloat(values.amount) * Math.pow(10, USDT_DECIMAL)],
+          args: [values.receiver, parseFloat(values.amount) * Math.pow(10, USDT_DECIMAL)],
         })
       }
 
@@ -86,10 +88,10 @@ export const RewardDialogForm = ({ trigger, prGithubId, addressFrom, chain }: IR
         transactionInfo: {
           amount: parseFloat(values.amount),
           decimals: chain.nativeCurrency.decimals,
-          from: addressFrom,
+          from: sender,
           network: chain.name,
           symbol: chain.nativeCurrency.symbol,
-          to: values.address,
+          to: values.receiver,
           transactionId: transaction,
         },
         type: 'Crypto',
@@ -156,6 +158,7 @@ export const RewardDialogForm = ({ trigger, prGithubId, addressFrom, chain }: IR
                         </FormItem>
                       )}
                     />
+
                     <FormField
                       control={form.control}
                       name="coin"
@@ -177,26 +180,7 @@ export const RewardDialogForm = ({ trigger, prGithubId, addressFrom, chain }: IR
                       )}
                     />
                   </section>
-                  <FormField
-                    control={form.control}
-                    name="address"
-                    render={({ field }) => (
-                      <FormItem>
-                        <section className="flex items-center">
-                          <FormLabel className="w-20 flex-shrink-0 text-white">Address</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Enter wallet address"
-                              autoComplete="off"
-                              {...field}
-                              value={field.value || ''}
-                            />
-                          </FormControl>
-                        </section>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+
                   <FormField
                     control={form.control}
                     name="githubId"
@@ -241,6 +225,22 @@ export const RewardDialogForm = ({ trigger, prGithubId, addressFrom, chain }: IR
                       </SelectContent>
                     </Select>
                   </FormDescription>
+
+                  <FormField
+                    control={form.control}
+                    name="receiver"
+                    render={({ field }) => (
+                      <FormItem>
+                        <section className="flex items-center">
+                          <FormLabel className="w-20 flex-shrink-0 text-white">Receiver</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter receiver address" autoComplete="off" {...field} disabled />
+                          </FormControl>
+                        </section>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
                 <DialogFooter className="flex flex-1 justify-end pt-4">
                   <Button variant="secondary" type="submit">

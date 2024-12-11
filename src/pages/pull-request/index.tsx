@@ -118,7 +118,8 @@ function PullRequestsTable(): React.ReactElement {
                           </Button>
                         }
                         prGithubId={pr.githubId}
-                        addressFrom={address}
+                        sender={address}
+                        receiver={pr.user.wallet}
                         chain={chain}
                       />
                     )
