@@ -15,6 +15,8 @@ export class Distributor {
     'function approve(address spender, uint256 amount) external returns (bool)',
     'function allowance(address owner, address spender) external view returns (uint256)',
     'function balanceOf(address account) external view returns (uint256)',
+    'function symbol() external view returns (string)',
+    'function decimals() external view returns (uint8)',
   ]
 
   constructor(distributorAddress: string) {
@@ -52,6 +54,11 @@ export class Distributor {
     return await tx.wait()
   }
 
+  async getTokenSymbolAndDecimals() {
+    const tokenContract = await this.getTokenContract()
+    return [await tokenContract.symbol(), await tokenContract.decimals()]
+  }
+
   async getAllowance(walletAddress: string) {
     const tokenContract = await this.getTokenContract()
     return await tokenContract.allowance(walletAddress, await this.getAddress())
@@ -81,7 +88,7 @@ export class Distributor {
   }
 }
 
-const distributorAddress = import.meta.env.VITE_DISTRIBUTOR_ADDRESS || '0x1a48F5d414DDC79a79f519A665e03692B2a2c450'
+const distributorAddress = import.meta.env.VITE_DISTRIBUTOR_ADDRESS || '0xBE639b42A3818875D59992d80F18280387cFB412'
 
 const distributor = new Distributor(distributorAddress)
 

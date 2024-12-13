@@ -3,7 +3,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from '@/components/ui/input'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { useConfig, useSwitchChain } from 'wagmi'
+import { useSwitchChain } from 'wagmi'
 import { Chain } from 'viem'
 import { useToast } from '@/components/ui/use-toast'
 import React, { useState } from 'react'
@@ -12,7 +12,6 @@ import { DialogContent, DialogFooter, DialogTitle, DialogTrigger } from '@/compo
 import { Dialog } from '@radix-ui/react-dialog'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
-import { USDT_SYMBOL } from '@/constants/contracts/usdt'
 import { paymentChain } from '@/constants/data'
 import { User } from '@/types'
 import { distributor } from '@/constants/distributor'
@@ -20,6 +19,8 @@ import { distributor } from '@/constants/distributor'
 import _ from 'lodash'
 import { ethers } from 'ethers'
 import { postGrantPeriodRewards } from '@/service'
+import { useDistributorToken } from '@/hooks/useDistributorToken'
+import { useQueryClient } from '@tanstack/react-query'
 
 function randomDistribute(amount: number, people: number): number[] {
   const points = _.sortBy(_.times(people - 1, () => Math.random()))
@@ -57,13 +58,14 @@ export const RewardDialogForm = ({ trigger, id, users, addressFrom, chain }: IRe
   const [loading, setLoading] = useState(false)
   const [isOpen, setOpen] = useState(false)
   const { switchChain } = useSwitchChain()
-  const { chains } = useConfig()
+  const chains = [paymentChain]
   const [amounts, setAmounts] = useState<number[]>(Array(users.length).fill(0.0))
-
+  const { symbol, decimals } = useDistributorToken()
+  const queryClient = useQueryClient()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      coin: USDT_SYMBOL,
+      coin: symbol,
     },
   })
 
@@ -80,7 +82,7 @@ export const RewardDialogForm = ({ trigger, id, users, addressFrom, chain }: IRe
     try {
       // TODO: some github name is login, some is username in backend
       const githubIds = users.map((user) => user.username || user.login)
-      const amountsInWei = amounts.map((amount) => BigInt(Math.floor(amount * 1e18)))
+      const amountsInWei = amounts.map((amount) => BigInt(Math.floor(amount * 10 ** Number(decimals))))
 
       const totalAmount = amountsInWei.reduce((a, b) => a + b, 0n)
       const currentAllowance = await distributor.getAllowance(addressFrom)
@@ -91,10 +93,19 @@ export const RewardDialogForm = ({ trigger, id, users, addressFrom, chain }: IRe
 
       await distributor.createRedPacket(id, githubIds, amountsInWei)
 
-      await postGrantPeriodRewards({ id })
+      await postGrantPeriodRewards({
+        id,
+        contributors: users.map((user) => ({
+          contributor: user._id,
+          amount: amounts[users.indexOf(user)],
+          symbol: symbol,
+          decimals: Number(decimals),
+        })),
+      })
 
       setOpen(false)
 
+      queryClient.invalidateQueries({ queryKey: ['periods'] })
       toast({
         variant: 'default',
         title: 'Success',
@@ -163,15 +174,14 @@ export const RewardDialogForm = ({ trigger, id, users, addressFrom, chain }: IRe
                       name="coin"
                       render={({ field }) => (
                         <FormItem>
-                          <Select onValueChange={field.onChange} value={field.value || USDT_SYMBOL}>
+                          <Select onValueChange={field.onChange} value={field.value || symbol}>
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select a verified email to display" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value={chain.nativeCurrency.symbol}>{chain.nativeCurrency.symbol}</SelectItem>
-                              <SelectItem value={USDT_SYMBOL}>{USDT_SYMBOL}</SelectItem>
+                              <SelectItem value={symbol}>{symbol}</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -201,7 +211,7 @@ export const RewardDialogForm = ({ trigger, id, users, addressFrom, chain }: IRe
                       defaultValue={`${chain.id}`}
                       onValueChange={(value) => {
                         switchChain({ chainId: Number(value) })
-                        form.setValue('coin', USDT_SYMBOL)
+                        form.setValue('coin', symbol)
                       }}
                     >
                       <SelectTrigger>
