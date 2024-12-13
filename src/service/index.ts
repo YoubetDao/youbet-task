@@ -14,23 +14,28 @@ import {
   PrRewardInfo,
   TaskState,
   UserInfo,
+  FetchPullRequestAggregationsParams,
+  FetchGrantAggregationRewardsParams,
+  Period,
 } from '@/types'
 import http from './instance'
 
 export async function getLoadMoreProjectList(params: {
   offset: number | undefined
   limit: number
-  filterTags: string[]
-  sort: string
-  search: string
+  filterTags?: string[]
+  sort?: string
+  search?: string
+  onlyPeriodicReward?: boolean
 }) {
   const res = await http.get<IResultPaginationData<Project>>(`/projects`, {
     params: {
-      tags: params.filterTags,
+      tags: params.filterTags ?? '',
       offset: params.offset,
       limit: params.limit,
-      sort: params.sort,
-      search: params.search,
+      sort: params.sort ?? '',
+      search: params.search ?? '',
+      onlyPeriodicReward: params.onlyPeriodicReward,
     },
   })
   return { list: res.data.data, pagination: res.data.pagination }
@@ -46,9 +51,9 @@ export async function fetchTask(githubId: string) {
   return response.data as Task
 }
 
-export async function fetchProjects() {
+export async function fetchProjects(): Promise<Project[]> {
   const response = await http.get('/projects?limit=1000')
-  return response.data.data as Project[]
+  return response.data.data
 }
 
 export async function fetchLeaderboard(): Promise<{ data: Profile[]; totalCount: number }> {
@@ -121,6 +126,16 @@ export async function getMdBookContent(owner: string, repo: string, path: string
 
 export async function fetchPullRequests(params: FetchPullRequestParams) {
   const response = await http.get<IResultPaginationData<PullRequest>>('/pull-requests', { params })
+  return response.data
+}
+
+export async function fetchPeriod(params: FetchPullRequestAggregationsParams) {
+  const response = await http.get<IResultPaginationData<Period>>('/periods', { params })
+  return response.data
+}
+
+export async function postGrantAggregationRewards(params: FetchGrantAggregationRewardsParams) {
+  const response = await http.post<string>(`/aggregations/${params.id}/grant-rewards`)
   return response.data
 }
 

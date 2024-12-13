@@ -1,7 +1,7 @@
 import { getAppearances } from '@/lib/appearances'
 import { NavItem, UserPermission } from '@/types'
 import { SdkCtorOptions, SDK } from 'youbet-sdk'
-import { polygon, moonbaseAlpha, Chain } from 'viem/chains'
+import { polygon, moonbaseAlpha, Chain, optimismSepolia, optimism } from 'viem/chains'
 
 export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
   const appearances = getAppearances()
@@ -44,6 +44,13 @@ export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
       href: '/mytasks',
       icon: 'listChecks',
       component: 'mytask',
+      layout: 'dashboard',
+    },
+    {
+      title: 'MyRewards',
+      href: '/myrewards',
+      icon: 'listChecks',
+      component: 'myrewards',
       layout: 'dashboard',
     },
     {
@@ -98,6 +105,14 @@ export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
           href: '/admin/pull-requests',
           icon: 'gitPullRequest',
           component: 'pullRequestAdmin',
+          layout: 'dashboard',
+          hideInMenu: userPermission !== UserPermission.PullRequest && userPermission !== UserPermission.All,
+        },
+        {
+          title: 'Period',
+          href: '/admin/period',
+          icon: 'period',
+          component: 'periodAdmin',
           layout: 'dashboard',
           hideInMenu: userPermission !== UserPermission.PullRequest && userPermission !== UserPermission.All,
         },
@@ -160,6 +175,8 @@ const SUPPORTED_CHAINS: Record<string, Chain> = {
   educhain: eduChain,
   moonbase: moonbaseAlpha,
   polygon: polygon,
+  opSepolia: optimismSepolia,
+  opMainnet: optimism,
 }
 
 // TODO: move this chain options to a separated chain config file
@@ -180,11 +197,11 @@ const getCurrentChain = (): Chain => {
 }
 
 const getPaymentChain = (): Chain => {
-  const chainName = import.meta.env.VITE_PAYMENT_CHAIN || 'polygon'
+  const chainName = import.meta.env.VITE_PAYMENT_CHAIN || 'opSepolia'
   const chain = SUPPORTED_CHAINS[chainName]
   if (!chain) {
-    console.warn(`Payment chain ${chainName} not found, falling back to polygon`)
-    return polygon
+    console.warn(`Payment chain ${chainName} not found, falling back to opSepolia`)
+    return optimismSepolia
   }
   return chain
 }
