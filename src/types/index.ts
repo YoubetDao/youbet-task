@@ -32,6 +32,35 @@ export interface Period {
   __v: number
 }
 
+export enum ReceiptStatus {
+  GRANTED = 'granted',
+  CLAIMED = 'claimed',
+}
+export interface Receipt {
+  _id: string
+  user: User
+  source: {
+    period?: Period
+  }
+  detail: {
+    amount: number
+    decimals: number
+    symbol: string
+  }
+  transactionInfo?: {
+    network: string
+    from: string
+    to: string
+    amount: number
+    decimals: number
+    symbol: string
+    transactionId: string
+  }
+  status: ReceiptStatus
+  createdAt: string
+  updatedAt: string
+}
+
 export interface IResultPagination<T> {
   list: T[]
   pagination: IPagination
@@ -116,7 +145,7 @@ export interface User {
   avatarUrl: string
   wallet: `0x${string}`
   rewards?: number
-  _id?: string
+  _id: string
 }
 
 export interface FetchIssuesParams {
@@ -131,12 +160,18 @@ export interface FetchPullRequestParams extends PaginationParams {
   sort?: string
 }
 
-export interface FetchPullRequestAggregationsParams extends PaginationParams {
+export interface FetchPeriodsParams extends PaginationParams {
   projectId: string
 }
 
-export interface FetchGrantAggregationRewardsParams {
+export interface GrantPeriodRewardsParams {
   id: string
+  contributors: Array<{
+    contributor: string
+    amount: number
+    symbol: string
+    decimals: number
+  }>
 }
 
 export interface PullRequest {

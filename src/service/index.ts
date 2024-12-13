@@ -14,9 +14,11 @@ import {
   PrRewardInfo,
   TaskState,
   UserInfo,
-  FetchPullRequestAggregationsParams,
-  FetchGrantAggregationRewardsParams,
+  FetchPeriodsParams,
+  GrantPeriodRewardsParams,
   Period,
+  Receipt,
+  PaginationParams,
 } from '@/types'
 import http from './instance'
 
@@ -129,13 +131,25 @@ export async function fetchPullRequests(params: FetchPullRequestParams) {
   return response.data
 }
 
-export async function fetchPeriod(params: FetchPullRequestAggregationsParams) {
+export async function fetchPeriod(params: FetchPeriodsParams) {
   const response = await http.get<IResultPaginationData<Period>>('/periods', { params })
   return response.data
 }
 
-export async function postGrantAggregationRewards(params: FetchGrantAggregationRewardsParams) {
-  const response = await http.post<string>(`/aggregations/${params.id}/grant-rewards`)
+export async function fetchReceipts(params: PaginationParams) {
+  const response = await http.get<IResultPaginationData<Receipt>>('/my-receipts', { params })
+  return response.data
+}
+
+export async function claimReceipt(id: string) {
+  const response = await http.post(`/receipt/${id}/claim`)
+  return response.data
+}
+
+export async function postGrantPeriodRewards(params: GrantPeriodRewardsParams) {
+  const response = await http.post(`/periods/${params.id}/grant-rewards`, {
+    contributors: params.contributors,
+  })
   return response.data
 }
 
@@ -198,5 +212,10 @@ export async function fetchMyTasks(params: { offset: number; limit: number; stat
 
 export async function postPrRewardInfo(params: PrRewardInfo) {
   const response = await http.post('/rewards', params)
+  return response.data
+}
+
+export async function getRewardSignature(uuid: string) {
+  const response = await http.get<{ signature: string }>(`/rewards/signature?uuid=${uuid}`)
   return response.data
 }

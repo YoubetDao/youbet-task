@@ -25,3 +25,14 @@ export const getRandomColor = (colors: string[]) => {
 export const capitalize = (str: string) => {
   return _.capitalize(str)
 }
+
+export const formatDate = (date?: string) => {
+  if (!date) return ''
+  return new Date(date).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  })
+}
