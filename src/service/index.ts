@@ -15,8 +15,8 @@ import {
   TaskState,
   UserInfo,
   FetchPullRequestAggregationsParams,
-  Record,
   FetchGrantAggregationRewardsParams,
+  Period,
 } from '@/types'
 import http from './instance'
 
@@ -130,7 +130,7 @@ export async function fetchPullRequests(params: FetchPullRequestParams) {
 }
 
 export async function fetchPeriod(params: FetchPullRequestAggregationsParams) {
-  const response = await http.get<IResultPaginationData<Record>>('/aggregations', { params })
+  const response = await http.get<IResultPaginationData<Period>>('/periods', { params })
   return response.data
 }
 

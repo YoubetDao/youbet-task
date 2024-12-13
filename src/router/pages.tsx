@@ -12,11 +12,13 @@ import ErrorPage from '@/pages/error'
 import PullRequestAdmin from '@/pages/pull-request'
 import TaskApplyAdmin from '@/pages/task-apply'
 import PeriodAdmin from '@/pages/period'
+import MyRewards from '@/pages/myrewards'
 
 export const Pages = {
   dashboard: Dashboard,
   task: TaskPage,
   mytask: MyTask,
+  myrewards: MyRewards,
   project: Project,
   login: Login,
   callback: Callback,

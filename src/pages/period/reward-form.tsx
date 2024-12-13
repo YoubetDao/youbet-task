@@ -10,7 +10,6 @@ import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { DialogContent, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Dialog } from '@radix-ui/react-dialog'
-import { postGrantAggregationRewards } from '@/service'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { USDT_SYMBOL } from '@/constants/contracts/usdt'
@@ -78,7 +77,8 @@ export const RewardDialogForm = ({ trigger, id, users, addressFrom, chain }: IRe
   const onSubmit = async () => {
     setLoading(true)
     try {
-      const githubIds = users.map((user) => user.login)
+      // TODO: some github name is login, some is username in backend
+      const githubIds = users.map((user) => user.username || user.login)
       const amountsInWei = amounts.map((amount) => BigInt(Math.floor(amount * 1e18)))
 
       const totalAmount = amountsInWei.reduce((a, b) => a + b, 0n)
@@ -90,7 +90,7 @@ export const RewardDialogForm = ({ trigger, id, users, addressFrom, chain }: IRe
 
       await distributor.createRedPacket(id, githubIds, amountsInWei)
 
-      await postGrantAggregationRewards({ id })
+      // await postGrantAggregationRewards({ id })
 
       setOpen(false)
 

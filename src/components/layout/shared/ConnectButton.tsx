@@ -18,6 +18,9 @@ export const CustomConnectButton = () => {
     if (currentPath.includes('admin')) {
       setIsAdmin(true)
       switchChain({ chainId: paymentChain.id })
+    } else if (currentPath.includes('myrewards')) {
+      switchChain({ chainId: paymentChain.id })
+      setIsAdmin(false)
     } else {
       switchChain({ chainId: currentChain.id })
       setIsAdmin(false)
@@ -64,13 +67,6 @@ export const CustomConnectButton = () => {
                 return (
                   <button onClick={openConnectModal} type="button">
                     Connect Wallet
-                  </button>
-                )
-              }
-              if (chain.id !== currentChain.id && !isAdmin) {
-                return (
-                  <button type="button" onClick={() => switchChain({ chainId: currentChain.id })}>
-                    Wrong network
                   </button>
                 )
               }

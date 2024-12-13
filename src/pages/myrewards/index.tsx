@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { fetchPeriod, getLoadMoreProjectList } from '@/service'
-import { IResultPagination, IResultPaginationData, Project, Period } from '@/types'
+import { IResultPagination, IResultPaginationData, Period, Project } from '@/types'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount } from 'wagmi'
@@ -10,11 +10,11 @@ import PaginationFast from '@/components/pagination-fast'
 import { useQuery } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { PencilLine } from 'lucide-react'
-import { RewardDialogForm } from './reward-form'
 import { Button } from '@/components/ui/button'
 import { distributor } from '@/constants/distributor'
-import { ethers } from 'ethers'
+import { toast } from '@/components/ui/use-toast'
+import { useAtom } from 'jotai'
+import { usernameAtom } from '@/store'
 
 interface ProjectListProps {
   loading: boolean
@@ -43,10 +43,11 @@ function ProjectList({ loading, loadingMore, data }: ProjectListProps) {
   )
 }
 
-function PeriodTable(): React.ReactElement {
+function RewardsTable(): React.ReactElement {
   const [page, setPage] = useState(1)
+  const [github] = useAtom(usernameAtom)
   const [urlParam] = useSearchParams('')
-  const [projectId, setProjectId] = useState<string | undefined>('66cd6e1bdcdcc63c6a64bec3')
+  const [projectId, setProjectId] = useState<string | undefined>(undefined)
   const [filterTags] = useState<string[]>([])
   const { address, chain } = useAccount()
   const pageSize = 10
@@ -91,21 +92,6 @@ function PeriodTable(): React.ReactElement {
 
   const totalPages = Math.ceil((periods?.pagination.totalCount || 0) / pageSize)
 
-  const [hasAllowance, setHasAllowance] = useState(false)
-  const MIN_ALLOWANCE = ethers.parseEther('2500')
-
-  const checkAllowance = useCallback(async () => {
-    if (address) {
-      const allowance = await distributor.getAllowance(address)
-      console.log('allowance', allowance)
-      setHasAllowance(allowance >= MIN_ALLOWANCE)
-    }
-  }, [address, MIN_ALLOWANCE])
-
-  useEffect(() => {
-    checkAllowance()
-  }, [checkAllowance])
-
   useEffect(() => {
     reload()
   }, [filterTags, reload, urlParam])
@@ -137,11 +123,11 @@ function PeriodTable(): React.ReactElement {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {periods.data.map((period) => {
+            {periods.data.map((periodPrs) => {
               return (
-                <TableRow key={period._id}>
+                <TableRow key={periodPrs._id}>
                   <TableCell className="font-medium">
-                    {new Date(period.from).toLocaleDateString('en-US', {
+                    {new Date(periodPrs.from).toLocaleDateString('en-US', {
                       month: 'long',
                       day: 'numeric',
                       year: 'numeric',
@@ -150,7 +136,7 @@ function PeriodTable(): React.ReactElement {
                     })}
                   </TableCell>
                   <TableCell>
-                    {new Date(period.to).toLocaleDateString('en-US', {
+                    {new Date(periodPrs.to).toLocaleDateString('en-US', {
                       month: 'long',
                       day: 'numeric',
                       year: 'numeric',
@@ -160,7 +146,7 @@ function PeriodTable(): React.ReactElement {
                   </TableCell>
                   <TableCell>
                     <div className="flex -space-x-3">
-                      {period.contributors.map((user) => {
+                      {periodPrs.contributors.map((user) => {
                         return (
                           <img
                             key={user._id}
@@ -172,36 +158,39 @@ function PeriodTable(): React.ReactElement {
                       })}
                     </div>
                   </TableCell>
-                  <TableCell>{period.pullRequests.length}</TableCell>
+                  <TableCell>{periodPrs.pullRequests.length}</TableCell>
                   <TableCell>
-                    {!period.rewardGranted ? (
+                    {!periodPrs.rewardGranted ? (
                       address &&
-                      chain &&
-                      (hasAllowance ? (
-                        <RewardDialogForm
-                          trigger={
-                            <Button variant="link" className="gap-2 p-0 text-blue-500">
-                              <PencilLine size={15} />
-                              Grant
-                            </Button>
-                          }
-                          id={period._id}
-                          users={period.contributors}
-                          addressFrom={address}
-                          chain={chain}
-                        />
-                      ) : (
+                      github &&
+                      chain && (
                         <Button
                           variant="link"
                           className="gap-2 p-0 text-blue-500"
                           onClick={async () => {
-                            await distributor.approveAllowance(ethers.parseEther('5000'))
-                            await checkAllowance()
+                            try {
+                              //  TODO: fetch signature from backend
+                              const signature =
+                                '0x931d5b9cbc5d00d5dd42352827fa5423ec932ef45eb3afad3f2f8173fabe588451e97cdd849f76d728047a48e4f0a1064287584f155569b2339bc9e16ce6acfb1c'
+
+                              await distributor.claimRedPacket(periodPrs._id, github, signature)
+
+                              toast({
+                                title: 'Success',
+                                description: 'Reward claimed successfully',
+                              })
+                            } catch (error) {
+                              toast({
+                                variant: 'destructive',
+                                title: 'Error',
+                                description: error instanceof Error ? error.message : 'Failed to claim reward',
+                              })
+                            }
                           }}
                         >
-                          Approve Contract
+                          Claim
                         </Button>
-                      ))
+                      )
                     ) : (
                       <p>Granted</p>
                     )}
@@ -220,6 +209,6 @@ function PeriodTable(): React.ReactElement {
   )
 }
 
-export default function PeriodAdmin() {
-  return <PeriodTable />
+export default function MyRewards() {
+  return <RewardsTable />
 }

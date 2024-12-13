@@ -19,13 +19,13 @@ export interface Wallet {
   chain: string
 }
 
-export interface Record {
+export interface Period {
   _id: string
   projectId: string
   from: string
   to: string
   pullRequests: string[]
-  users: User[]
+  contributors: User[]
   rewardGranted: boolean
   createdAt: string
   updatedAt: string
@@ -111,6 +111,7 @@ export enum UserPermission {
 
 export interface User {
   login: string
+  username?: string
   htmlUrl: string
   avatarUrl: string
   wallet: `0x${string}`
