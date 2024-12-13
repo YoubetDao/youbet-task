@@ -131,11 +131,11 @@ export interface FetchPullRequestParams extends PaginationParams {
   sort?: string
 }
 
-export interface FetchPullRequestAggregationsParams extends PaginationParams {
+export interface FetchPeriodsParams extends PaginationParams {
   projectId: string
 }
 
-export interface FetchGrantAggregationRewardsParams {
+export interface GrantPeriodRewardsParams {
   id: string
 }
 

@@ -19,6 +19,7 @@ import { distributor } from '@/constants/distributor'
 
 import _ from 'lodash'
 import { ethers } from 'ethers'
+import { postGrantPeriodRewards } from '@/service'
 
 function randomDistribute(amount: number, people: number): number[] {
   const points = _.sortBy(_.times(people - 1, () => Math.random()))
@@ -90,7 +91,7 @@ export const RewardDialogForm = ({ trigger, id, users, addressFrom, chain }: IRe
 
       await distributor.createRedPacket(id, githubIds, amountsInWei)
 
-      // await postGrantAggregationRewards({ id })
+      await postGrantPeriodRewards({ id })
 
       setOpen(false)
 

@@ -14,8 +14,8 @@ import {
   PrRewardInfo,
   TaskState,
   UserInfo,
-  FetchPullRequestAggregationsParams,
-  FetchGrantAggregationRewardsParams,
+  FetchPeriodsParams,
+  GrantPeriodRewardsParams,
   Period,
 } from '@/types'
 import http from './instance'
@@ -129,13 +129,13 @@ export async function fetchPullRequests(params: FetchPullRequestParams) {
   return response.data
 }
 
-export async function fetchPeriod(params: FetchPullRequestAggregationsParams) {
+export async function fetchPeriod(params: FetchPeriodsParams) {
   const response = await http.get<IResultPaginationData<Period>>('/periods', { params })
   return response.data
 }
 
-export async function postGrantAggregationRewards(params: FetchGrantAggregationRewardsParams) {
-  const response = await http.post<string>(`/aggregations/${params.id}/grant-rewards`)
+export async function postGrantPeriodRewards(params: GrantPeriodRewardsParams) {
+  const response = await http.post<string>(`/periods/${params.id}/grant-rewards`)
   return response.data
 }
 

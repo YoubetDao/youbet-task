@@ -3,9 +3,9 @@ import { fetchPeriod, getLoadMoreProjectList } from '@/service'
 import { IResultPagination, IResultPaginationData, Project, Period } from '@/types'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { LoadingCards } from '@/components/loading-cards'
-import { useAccount } from 'wagmi'
+import { useAccount, useSwitchChain } from 'wagmi'
 import { useInfiniteScroll } from 'ahooks'
-import { DEFAULT_PAGINATION_LIMIT } from '@/constants/data'
+import { DEFAULT_PAGINATION_LIMIT, paymentChain } from '@/constants/data'
 import PaginationFast from '@/components/pagination-fast'
 import { useQuery } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
@@ -45,6 +45,7 @@ function ProjectList({ loading, loadingMore, data }: ProjectListProps) {
 
 function PeriodTable(): React.ReactElement {
   const [page, setPage] = useState(1)
+  const { switchChain } = useSwitchChain()
   const [urlParam] = useSearchParams('')
   const [projectId, setProjectId] = useState<string | undefined>('66cd6e1bdcdcc63c6a64bec3')
   const [filterTags] = useState<string[]>([])
@@ -88,6 +89,10 @@ function PeriodTable(): React.ReactElement {
       })
     },
   })
+
+  useEffect(() => {
+    switchChain({ chainId: paymentChain.id })
+  }, [switchChain])
 
   const totalPages = Math.ceil((periods?.pagination.totalCount || 0) / pageSize)
 
@@ -195,6 +200,7 @@ function PeriodTable(): React.ReactElement {
                           variant="link"
                           className="gap-2 p-0 text-blue-500"
                           onClick={async () => {
+                            await switchChain({ chainId: paymentChain.id })
                             await distributor.approveAllowance(ethers.parseEther('5000'))
                             await checkAllowance()
                           }}
