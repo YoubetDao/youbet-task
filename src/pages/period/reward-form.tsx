@@ -96,7 +96,7 @@ export const RewardDialogForm = ({ trigger, id, users, addressFrom, chain }: IRe
       await postGrantPeriodRewards({
         id,
         contributors: users.map((user) => ({
-          contributor: user._id,
+          contributor: user.login,
           amount: amounts[users.indexOf(user)],
           symbol: symbol,
           decimals: Number(decimals),
