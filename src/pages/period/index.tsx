@@ -47,7 +47,7 @@ function PeriodTable(): React.ReactElement {
   const [page, setPage] = useState(1)
   const { switchChain } = useSwitchChain()
   const [urlParam] = useSearchParams('')
-  const [projectId, setProjectId] = useState<string | undefined>('66cd6e1bdcdcc63c6a64bec3')
+  const [projectId, setProjectId] = useState<string | undefined>('')
   const [filterTags] = useState<string[]>([])
   const { address, chain } = useAccount()
   const pageSize = 10

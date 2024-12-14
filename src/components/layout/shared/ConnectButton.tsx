@@ -29,7 +29,7 @@ export const CustomConnectButton = () => {
 
   useEffect(() => {
     const checkAndLinkWallet = async () => {
-      if (!github) return
+      if (!github || isAdmin) return
       const linkedAddress = await getLinkedWallet(github)
       if (linkedAddress == '0x0000000000000000000000000000000000000000') {
         if (!address) return
