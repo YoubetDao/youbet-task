@@ -1,7 +1,7 @@
 import { getAppearances } from '@/lib/appearances'
 import { NavItem, UserPermission } from '@/types'
 import { SdkCtorOptions, SDK } from 'youbet-sdk'
-import { polygon, moonbaseAlpha, Chain, optimismSepolia, optimism } from 'viem/chains'
+import { polygon, moonbaseAlpha, Chain, optimismSepolia, optimism, mantleSepoliaTestnet } from 'viem/chains'
 
 export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
   const appearances = getAppearances()
@@ -154,6 +154,15 @@ const openCampusTestOptions: SdkCtorOptions = {
   chainName: 'EduChain-Testnet',
 }
 
+const mantleSepoliaOptions: SdkCtorOptions = {
+  networkOptions: {
+    rpcUrl: 'https://rpc.sepolia.mantle.xyz',
+    chainId: 5003,
+    contractAddress: '0x0C60F52ADe19c488485f1CA41669e057Aba762c3',
+  },
+  chainName: 'Mantle Sepolia',
+}
+
 const eduChain = {
   id: 656476,
   name: 'EduChain',
@@ -177,6 +186,7 @@ const SUPPORTED_CHAINS: Record<string, Chain> = {
   polygon: polygon,
   opSepolia: optimismSepolia,
   opMainnet: optimism,
+  mantleSepolia: mantleSepoliaTestnet,
 }
 
 // TODO: move this chain options to a separated chain config file
@@ -184,6 +194,7 @@ const SUPPORTED_CHAINS: Record<string, Chain> = {
 const CHAIN_OPTIONS: Record<string, SdkCtorOptions> = {
   educhain: openCampusTestOptions,
   moonbase: moonbaseAlphaOptions,
+  mantleSepolia: mantleSepoliaOptions,
 }
 
 const getCurrentChain = (): Chain => {
