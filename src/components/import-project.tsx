@@ -131,7 +131,7 @@ export default function ImportProject() {
     enabled: !!open && !!profile,
   })
 
-  const { data: repos } = useQuery({
+  const { data: repos = [], isLoading: isReposLoading } = useQuery({
     queryKey: ['repos'],
     queryFn: () => getRepos(form.watch('org')),
     enabled: !!open && !!form.watch('org'),
@@ -148,6 +148,7 @@ export default function ImportProject() {
     await importTutorial(values)
     handleOpenChange(false)
   }
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
@@ -195,7 +196,7 @@ export default function ImportProject() {
               )}
             />
             {/* Select Repos */}
-            {repos && (
+            {form.watch('org') && (
               <FormField
                 control={form.control}
                 name="project"
@@ -214,7 +215,7 @@ export default function ImportProject() {
                             label: item.name,
                             key: item.full_name,
                           }))}
-                        isLoading={isUserOrOrgOptionsLoading}
+                        isLoading={isUserOrOrgOptionsLoading || isReposLoading}
                       />
                     </FormControl>
                     <FormMessage />
