@@ -9,7 +9,7 @@ export const getRedirectUri = () => {
 }
 
 export const githubOAuthUri = () => {
-  return `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${getRedirectUri()}&response_type=code&scope=user:email,repo`
+  return `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${getRedirectUri()}&response_type=code&scope=user:email,public_repo,read:org`
 }
 
 export const githubOAuthContentUri = () => {

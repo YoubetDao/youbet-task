@@ -186,7 +186,7 @@ export default function ImportProject() {
                         </SelectItem>
                       ))}
                       <Button onClick={() => (window.location.href = githubOAuthContentUri())} className="mt-2 w-full">
-                        <span>Add Another Organization</span>
+                        <span>Add Another Organization or Private Repository</span>
                       </Button>
                     </SelectContent>
                   </Select>
