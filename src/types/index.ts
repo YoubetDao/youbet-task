@@ -143,8 +143,8 @@ export interface User {
   username?: string
   htmlUrl: string
   avatarUrl: string
-  wallet: `0x${string}`
   rewards?: number
+  ethMainWallet: `0x${string}`
   _id: string
 }
 
