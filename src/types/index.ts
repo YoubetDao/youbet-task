@@ -9,6 +9,7 @@ export interface IPagination {
   hasNextPage: boolean
   hasPrevPage: boolean
 }
+
 export interface IResultPaginationData<T> {
   data: T[]
   pagination: IPagination
@@ -17,6 +18,19 @@ export interface IResultPaginationData<T> {
 export interface Wallet {
   address: string
   chain: string
+}
+
+export interface ReceiptDetail {
+  amount: number
+  decimals: number
+  symbol: string
+}
+
+export interface PeriodReceipt {
+  _id: string
+  user: string
+  detail: ReceiptDetail
+  status: ReceiptStatus
 }
 
 export interface Period {
@@ -36,17 +50,14 @@ export enum ReceiptStatus {
   GRANTED = 'granted',
   CLAIMED = 'claimed',
 }
+
 export interface Receipt {
   _id: string
   user: User
   source: {
     period?: Period
   }
-  detail: {
-    amount: number
-    decimals: number
-    symbol: string
-  }
+  detail: ReceiptDetail
   transactionInfo?: {
     network: string
     from: string
