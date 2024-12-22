@@ -19,6 +19,7 @@ import {
   Period,
   Receipt,
   PaginationParams,
+  PeriodReceipt,
 } from '@/types'
 import http from './instance'
 
@@ -131,8 +132,15 @@ export async function fetchPullRequests(params: FetchPullRequestParams) {
   return response.data
 }
 
-export async function fetchPeriod(params: FetchPeriodsParams) {
+export async function fetchPeriods(params: FetchPeriodsParams) {
   const response = await http.get<IResultPaginationData<Period>>('/periods', { params })
+  return response.data
+}
+
+export async function fetchReceiptsByPeriod(id: string) {
+  const response = await http.get<IResultPaginationData<PeriodReceipt>>(`/receipts`, {
+    params: { periodId: id },
+  })
   return response.data
 }
 

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { fetchPeriod, getLoadMoreProjectList } from '@/service'
-import { IResultPagination, IResultPaginationData, Project, Period } from '@/types'
+import { fetchPeriods, getLoadMoreProjectList, fetchReceiptsByPeriod } from '@/service'
+import { IResultPagination, IResultPaginationData, Project, Period, PeriodReceipt, ReceiptStatus } from '@/types'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount, useSwitchChain } from 'wagmi'
@@ -10,11 +10,12 @@ import PaginationFast from '@/components/pagination-fast'
 import { useQuery } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { PencilLine } from 'lucide-react'
+import { PencilLine, Info } from 'lucide-react'
 import { RewardDialogForm } from './reward-form'
 import { Button } from '@/components/ui/button'
 import { distributor } from '@/constants/distributor'
 import { ethers } from 'ethers'
+import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
 
 interface ProjectListProps {
   loading: boolean
@@ -51,6 +52,8 @@ function PeriodTable(): React.ReactElement {
   const [filterTags] = useState<string[]>([])
   const { address, chain } = useAccount()
   const pageSize = 10
+  const [isDetailOpen, setIsDetailOpen] = useState(false)
+  const [selectedPeriodId, setSelectedPeriodId] = useState<string | null>(null)
 
   const {
     data: projects,
@@ -82,13 +85,30 @@ function PeriodTable(): React.ReactElement {
   const { data: periods, isLoading: isPullRequestsLoading } = useQuery<IResultPaginationData<Period> | undefined>({
     queryKey: ['periods', projectId ?? ''],
     queryFn: () => {
-      return fetchPeriod({
+      return fetchPeriods({
         offset: (page - 1) * pageSize,
         limit: pageSize,
         projectId: projectId ?? '',
       })
     },
   })
+
+  const [receiptPage, setReceiptPage] = useState(1)
+  const receiptPageSize = 10
+  const { data: periodReceipts, isLoading: isDetailLoading } = useQuery<
+    IResultPaginationData<PeriodReceipt> | undefined
+  >({
+    queryKey: ['periodReceipts', selectedPeriodId],
+    queryFn: () => {
+      return fetchReceiptsByPeriod(selectedPeriodId ?? '')
+    },
+    enabled: !!selectedPeriodId,
+    onError: (error) => {
+      console.error('Error fetching period details:', error)
+    },
+  })
+
+  const totalReceiptsPage = Math.ceil((periodReceipts?.pagination.totalCount || 0) / receiptPageSize)
 
   useEffect(() => {
     switchChain({ chainId: paymentChain.id })
@@ -102,7 +122,6 @@ function PeriodTable(): React.ReactElement {
   const checkAllowance = useCallback(async () => {
     if (address) {
       const allowance = await distributor.getAllowance(address)
-      console.log('allowance', allowance)
       setHasAllowance(allowance >= MIN_ALLOWANCE)
     }
   }, [address, MIN_ALLOWANCE])
@@ -114,6 +133,11 @@ function PeriodTable(): React.ReactElement {
   useEffect(() => {
     reload()
   }, [filterTags, reload, urlParam])
+
+  const handleDetailClick = (periodId: string) => {
+    setSelectedPeriodId(periodId)
+    setIsDetailOpen(true)
+  }
 
   return (
     <div className="space-y-4">
@@ -139,6 +163,7 @@ function PeriodTable(): React.ReactElement {
               <TableHead className="text-gray-400">Users</TableHead>
               <TableHead className="text-gray-400">Pr count</TableHead>
               <TableHead className="text-gray-400">Reward</TableHead>
+              <TableHead className="text-gray-400">Detail</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -212,6 +237,16 @@ function PeriodTable(): React.ReactElement {
                       <p>Granted</p>
                     )}
                   </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="link"
+                      className="gap-2 p-0 text-blue-500"
+                      onClick={() => handleDetailClick(period._id)}
+                    >
+                      <Info size={15} />
+                      Detail
+                    </Button>
+                  </TableCell>
                 </TableRow>
               )
             })}
@@ -222,6 +257,56 @@ function PeriodTable(): React.ReactElement {
       )}
 
       <PaginationFast page={page} totalPages={totalPages} onPageChange={setPage} />
+      <Drawer open={isDetailOpen} onOpenChange={setIsDetailOpen}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>Period Details</DrawerTitle>
+          </DrawerHeader>
+          <div className="p-4">
+            {isDetailLoading ? (
+              <div className="flex h-32 items-center justify-center">
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"></div>
+              </div>
+            ) : periodReceipts ? (
+              <div className="space-y-4">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>User</TableHead>
+                      <TableHead>Amount</TableHead>
+                      <TableHead>Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {periodReceipts.data.map((periodReceipt) => {
+                      console.log('periodReceipt', periodReceipt)
+                      return (
+                        <TableRow key={periodReceipt._id}>
+                          <TableCell className="font-medium">{periodReceipt.user}</TableCell>
+                          <TableCell>
+                            {periodReceipt.status == ReceiptStatus.CLAIMED
+                              ? `${periodReceipt.detail.amount} ${periodReceipt.detail.symbol}`
+                              : '***'}
+                          </TableCell>
+                          <TableCell>{periodReceipt.status}</TableCell>
+                        </TableRow>
+                      )
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            ) : (
+              <p className="text-center text-gray-500">No details available</p>
+            )}
+            <PaginationFast page={receiptPage} totalPages={totalReceiptsPage} onPageChange={setReceiptPage} />
+          </div>
+          <DrawerFooter>
+            <DrawerClose asChild>
+              <Button variant="outline">Close</Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </div>
   )
 }
