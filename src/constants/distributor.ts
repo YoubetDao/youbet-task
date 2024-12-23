@@ -44,7 +44,7 @@ export class Distributor {
   }
 
   async getTokenAddress() {
-    const distributorContract = await this.getDistributorContract()
+    const distributorContract = await this.getReadOnlyDistributorContract()
     return await distributorContract.token()
   }
 
@@ -55,7 +55,7 @@ export class Distributor {
   }
 
   async getTokenSymbolAndDecimals() {
-    const tokenContract = await this.getTokenContract()
+    const tokenContract = await this.getReadOnlyTokenContract()
     return [await tokenContract.symbol(), await tokenContract.decimals()]
   }
 
@@ -85,6 +85,22 @@ export class Distributor {
     const contract = await this.getDistributorContract()
     const tx = await contract.refundRedPacket(uuid)
     return await tx.wait()
+  }
+
+  private async getReadOnlyProvider() {
+    return new ethers.JsonRpcProvider(import.meta.env.VITE_DISTRIBUTOR_RPC_URL || 'https://sepolia.optimism.io')
+  }
+
+  private async getReadOnlyDistributorContract() {
+    const provider = await this.getReadOnlyProvider()
+    return new ethers.Contract(this.distributorAddress, Distributor.DISTRIBUTOR_ABI, provider)
+  }
+
+  private async getReadOnlyTokenContract() {
+    const distributorContract = await this.getReadOnlyDistributorContract()
+    const tokenAddress = await distributorContract.token()
+    const provider = await this.getReadOnlyProvider()
+    return new ethers.Contract(tokenAddress, Distributor.TOKEN_ABI, provider)
   }
 }
 

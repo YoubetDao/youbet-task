@@ -4,14 +4,18 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
-import { CircleDollarSign, FilePenLine, Loader2 } from 'lucide-react'
+import { CircleDollarSign, FilePenLine, Loader2, PencilLine } from 'lucide-react'
 import UtterancesComments from './utterances-comments'
 import { Task, TaskApply, User } from '@/types'
 import { useParams } from 'react-router-dom'
-import { applyTask, fetchTask as getTaskDetail, myAppliesForTask, withdrawApply } from '@/service'
+import { applyTask, fetchTask as getTaskDetail, myAppliesForTask, withdrawApply, updateTaskInfo } from '@/service'
 import { LoadingCards } from '@/components/loading-cards'
 import ErrorPage from '../error'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Input } from '@/components/ui/input'
+import { useState, useEffect } from 'react'
+import { distributor } from '@/constants/distributor'
+import { USDT_DECIMAL, USDT_SYMBOL } from '@/constants/contracts/usdt'
 
 type TaskDetailItem = {
   id: number
@@ -102,6 +106,52 @@ function QuestLog() {
     mutationFn: withdrawApply,
   })
   const isWithdrawing = _isWithdrawing || isMyAppliesLoading
+  const [isEditing, setIsEditing] = useState(false)
+  const [rewardAmount, setRewardAmount] = useState<string>('')
+  const [tokenInfo, setTokenInfo] = useState<{
+    symbol: string
+    decimals: number
+    tokenAddress: string
+  }>()
+
+  useEffect(() => {
+    const getTokenInfo = async () => {
+      const [symbol, decimals] = await distributor.getTokenSymbolAndDecimals()
+      const tokenAddress = await distributor.getTokenAddress()
+      setTokenInfo({
+        symbol,
+        decimals: Number(decimals),
+        tokenAddress,
+      })
+      console.log('tokenInfo', symbol, decimals, tokenAddress)
+    }
+    getTokenInfo()
+  }, [])
+
+  const formatAmount = (amount: number | undefined, decimals: number) => {
+    if (amount === undefined) return 0
+    return amount / Math.pow(10, decimals)
+  }
+
+  const parseAmount = (amount: string, decimals: number) => {
+    return Math.floor(Number(amount) * Math.pow(10, decimals))
+  }
+
+  const { mutateAsync: updateReward, isLoading } = useMutation({
+    mutationFn: (displayAmount: number) =>
+      updateTaskInfo(githubId, {
+        reward: {
+          amount: parseAmount(displayAmount.toString(), tokenInfo?.decimals || USDT_DECIMAL),
+          decimals: tokenInfo?.decimals || USDT_DECIMAL,
+          symbol: tokenInfo?.symbol || USDT_SYMBOL,
+          tokenAddress: tokenInfo?.tokenAddress || '0xc2132d05d31c914a87c6611c10748aeb04b58e8f',
+        },
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['task', githubId] })
+      setIsEditing(false)
+    },
+  })
 
   const handleClaim = async () => {
     try {
@@ -180,9 +230,66 @@ function QuestLog() {
           </div>
           <div className="flex flex-row items-center justify-start pt-2">
             <Label className="w-40">Rewards</Label>
-            <span className="flex flex-row items-center gap-1">
-              <CircleDollarSign /> {10}
-            </span>
+            <div className="flex items-center gap-2">
+              {isEditing ? (
+                <>
+                  <Input
+                    value={rewardAmount}
+                    onChange={(e) => {
+                      const value = e.target.value
+                      if (value === '' || /^\d*\.?\d*$/.test(value)) {
+                        setRewardAmount(value)
+                      }
+                    }}
+                    className="h-7 w-20"
+                    autoFocus
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        updateReward(Number(rewardAmount))
+                      } else if (e.key === 'Escape') {
+                        setIsEditing(false)
+                      }
+                    }}
+                  />
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 px-2 hover:bg-green-500/10"
+                    onClick={() => updateReward(Number(rewardAmount))}
+                    disabled={isLoading}
+                  >
+                    Save
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 px-2 hover:bg-red-500/10"
+                    onClick={() => setIsEditing(false)}
+                    disabled={isLoading}
+                  >
+                    Cancel
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <span className="flex flex-row items-center gap-1">
+                    <CircleDollarSign />
+                    {formatAmount(task.reward?.amount, task.reward?.decimals || USDT_DECIMAL)}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6"
+                    onClick={() => {
+                      setRewardAmount(formatAmount(task.reward?.amount, tokenInfo?.decimals || USDT_DECIMAL).toString())
+                      setIsEditing(true)
+                    }}
+                  >
+                    <PencilLine className="h-4 w-4" />
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
           <div className="flex flex-row items-center justify-start pt-2">
             <Label className="w-40">Created At</Label>
@@ -191,17 +298,6 @@ function QuestLog() {
           <div className="flex flex-row items-center justify-start pt-2">
             <Label className="w-40">Level</Label>
             {renderLevel('Easy')}
-            {/* <Select>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder={taskDetailItem.difficulty} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="easy">Easy</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="hard">Hard</SelectItem>
-                <SelectItem value="legendary">Legendary</SelectItem>
-              </SelectContent>
-            </Select> */}
           </div>
           <div className="flex flex-row items-center justify-start pt-2">
             <Label className="w-40">Priority</Label>

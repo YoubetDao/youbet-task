@@ -248,6 +248,12 @@ export interface Task {
   user?: User
   closedAt?: string
   rewardGranted?: boolean
+  reward?: {
+    amount: number
+    decimals: number
+    symbol: string
+    tokenAddress: string
+  }
 }
 
 export interface Profile {

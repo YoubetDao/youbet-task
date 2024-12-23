@@ -227,3 +227,7 @@ export async function getRewardSignature(uuid: string) {
   const response = await http.get<{ signature: string }>(`/rewards/signature?uuid=${uuid}`)
   return response.data
 }
+
+export const updateTaskInfo = async (taskId: string, data: { reward: any }) => {
+  return await http.put(`/task/${taskId}/info`, data)
+}
