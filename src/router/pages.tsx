@@ -13,6 +13,7 @@ import PullRequestAdmin from '@/pages/pull-request'
 import TaskApplyAdmin from '@/pages/task-apply'
 import PeriodAdmin from '@/pages/period'
 import MyRewards from '@/pages/myrewards'
+import CompletedTaskAdmin from '@/pages/admin/completedTask'
 
 export const Pages = {
   dashboard: Dashboard,
@@ -29,5 +30,6 @@ export const Pages = {
   error: ErrorPage,
   pullRequestAdmin: PullRequestAdmin,
   taskApplyAdmin: TaskApplyAdmin,
+  completedTaskAdmin: CompletedTaskAdmin,
   periodAdmin: PeriodAdmin,
 }

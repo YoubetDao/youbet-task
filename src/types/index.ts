@@ -246,6 +246,8 @@ export interface Task {
   assignees: User[]
   _id: string
   user?: User
+  closedAt?: string
+  rewardGranted?: boolean
 }
 
 export interface Profile {

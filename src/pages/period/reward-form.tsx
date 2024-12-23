@@ -51,9 +51,16 @@ interface IRewardForm {
   addressFrom: `0x${string}`
   users: User[]
   chain: Chain
+  onRewardDistributed?: (data: {
+    id: string
+    amounts: number[]
+    users: User[]
+    symbol: string
+    decimals: number
+  }) => Promise<void>
 }
 
-export const RewardDialogForm = ({ trigger, id, users, addressFrom, chain }: IRewardForm) => {
+export const RewardDialogForm = ({ trigger, id, users, addressFrom, chain, onRewardDistributed }: IRewardForm) => {
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
   const [isOpen, setOpen] = useState(false)
@@ -93,15 +100,25 @@ export const RewardDialogForm = ({ trigger, id, users, addressFrom, chain }: IRe
 
       await distributor.createRedPacket(id, githubIds, amountsInWei)
 
-      await postGrantPeriodRewards({
-        id,
-        contributors: users.map((user) => ({
-          contributor: user.login,
-          amount: amounts[users.indexOf(user)],
+      if (onRewardDistributed) {
+        await onRewardDistributed({
+          id,
+          amounts: amounts,
+          users: users,
           symbol: symbol,
           decimals: Number(decimals),
-        })),
-      })
+        })
+      } else {
+        await postGrantPeriodRewards({
+          id,
+          contributors: users.map((user) => ({
+            contributor: user.login,
+            amount: amounts[users.indexOf(user)],
+            symbol: symbol,
+            decimals: Number(decimals),
+          })),
+        })
+      }
 
       setOpen(false)
 

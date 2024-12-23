@@ -124,6 +124,14 @@ export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
           layout: 'dashboard',
           hideInMenu: userPermission !== UserPermission.TaskApplies && userPermission !== UserPermission.All,
         },
+        {
+          title: 'Completed Task',
+          href: '/admin/completed-task',
+          icon: 'listChecks',
+          component: 'completedTaskAdmin',
+          layout: 'dashboard',
+          hideInMenu: userPermission !== UserPermission.TaskApplies && userPermission !== UserPermission.All,
+        },
       ],
     },
   ]

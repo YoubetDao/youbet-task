@@ -28,7 +28,7 @@ export default function App() {
     <Provider store={store}>
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
-          <RainbowKitProvider initialChain={currentChain}>
+          <RainbowKitProvider>
             <RouterProvider router={createRouter()} />
             <ReactQueryDevtools />
           </RainbowKitProvider>
