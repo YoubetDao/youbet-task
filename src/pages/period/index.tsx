@@ -14,7 +14,6 @@ import { PencilLine, Info } from 'lucide-react'
 import { RewardDialogForm } from './reward-form'
 import { Button } from '@/components/ui/button'
 import { distributor } from '@/constants/distributor'
-import { ethers } from 'ethers'
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
 
 interface ProjectListProps {
@@ -117,7 +116,18 @@ function PeriodTable(): React.ReactElement {
   const totalPages = Math.ceil((periods?.pagination.totalCount || 0) / pageSize)
 
   const [hasAllowance, setHasAllowance] = useState(false)
-  const MIN_ALLOWANCE = ethers.parseEther('2500')
+  const [tokenDecimals, setTokenDecimals] = useState<bigint>(BigInt(18))
+
+  const getTokenInfo = useCallback(async () => {
+    const [, decimals] = await distributor.getTokenSymbolAndDecimals()
+    setTokenDecimals(decimals)
+  }, [])
+
+  useEffect(() => {
+    getTokenInfo()
+  }, [getTokenInfo])
+
+  const MIN_ALLOWANCE = BigInt(50) * BigInt(10) ** tokenDecimals
 
   const checkAllowance = useCallback(async () => {
     if (address) {
@@ -226,7 +236,7 @@ function PeriodTable(): React.ReactElement {
                           className="gap-2 p-0 text-blue-500"
                           onClick={async () => {
                             await switchChain({ chainId: paymentChain.id })
-                            await distributor.approveAllowance(ethers.parseEther('5000'))
+                            await distributor.approveAllowance(MIN_ALLOWANCE * BigInt(10))
                             await checkAllowance()
                           }}
                         >
