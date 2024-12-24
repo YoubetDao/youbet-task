@@ -56,6 +56,7 @@ export interface Receipt {
   user: User
   source: {
     period?: Period
+    task?: Task
   }
   detail: ReceiptDetail
   transactionInfo?: {
@@ -175,8 +176,21 @@ export interface FetchPeriodsParams extends PaginationParams {
   projectId: string
 }
 
+export interface FetchReceiptsParams extends PaginationParams {
+  type?: 'period' | 'task'
+}
+
 export interface GrantPeriodRewardsParams {
   id: string
+  contributors: Array<{
+    contributor: string
+    amount: number
+    symbol: string
+    decimals: number
+  }>
+}
+
+export interface TaskRewardParams {
   contributors: Array<{
     contributor: string
     amount: number

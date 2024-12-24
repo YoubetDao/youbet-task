@@ -18,8 +18,9 @@ import {
   GrantPeriodRewardsParams,
   Period,
   Receipt,
-  PaginationParams,
   PeriodReceipt,
+  TaskRewardParams,
+  FetchReceiptsParams,
 } from '@/types'
 import http from './instance'
 
@@ -144,7 +145,7 @@ export async function fetchReceiptsByPeriod(id: string) {
   return response.data
 }
 
-export async function fetchReceipts(params: PaginationParams) {
+export async function fetchReceipts(params: FetchReceiptsParams) {
   const response = await http.get<IResultPaginationData<Receipt>>('/my-receipts', { params })
   return response.data
 }
@@ -156,6 +157,13 @@ export async function claimReceipt(id: string) {
 
 export async function postGrantPeriodRewards(params: GrantPeriodRewardsParams) {
   const response = await http.post(`/periods/${params.id}/grant-rewards`, {
+    contributors: params.contributors,
+  })
+  return response.data
+}
+
+export async function grantTaskRewards(taskId: string, params: TaskRewardParams) {
+  const response = await http.post(`/tasks/${taskId}/grant-rewards`, {
     contributors: params.contributors,
   })
   return response.data

@@ -12,8 +12,9 @@ import { toast } from '@/components/ui/use-toast'
 import { useAtom } from 'jotai'
 import { usernameAtom } from '@/store'
 import { formatDate } from '@/lib/utils'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-function RewardsTable(): React.ReactElement {
+function RewardsTable({ type }: { type: 'period' | 'task' }): React.ReactElement {
   const [page, setPage] = useState(1)
   const [github] = useAtom(usernameAtom)
   const { address, chain } = useAccount()
@@ -21,11 +22,12 @@ function RewardsTable(): React.ReactElement {
   const queryClient = useQueryClient()
 
   const { data: periods, isLoading: isPullRequestsLoading } = useQuery<IResultPaginationData<Receipt> | undefined>({
-    queryKey: ['receipts'],
+    queryKey: ['receipts', type],
     queryFn: () => {
       return fetchReceipts({
         offset: (page - 1) * pageSize,
         limit: pageSize,
+        type,
       })
     },
   })
@@ -38,7 +40,11 @@ function RewardsTable(): React.ReactElement {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-gray-400">Period</TableHead>
+              {type === 'period' ? (
+                <TableHead className="text-gray-400">Period</TableHead>
+              ) : (
+                <TableHead className="text-gray-400">Task</TableHead>
+              )}
               <TableHead className="text-gray-400">Amount</TableHead>
               <TableHead className="text-gray-400">Reward</TableHead>
             </TableRow>
@@ -48,54 +54,64 @@ function RewardsTable(): React.ReactElement {
               return (
                 <TableRow key={receipts._id}>
                   <TableCell>
-                    {formatDate(receipts.source.period?.from)} - {formatDate(receipts.source.period?.to)}
+                    {type === 'period' ? (
+                      <>
+                        {formatDate(receipts.source.period?.from)} - {formatDate(receipts.source.period?.to)}
+                      </>
+                    ) : (
+                      <div className="space-y-1">
+                        <div>{receipts.source.task?.title}</div>
+                        <a
+                          href={receipts.source.task?.htmlUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-gray-500 hover:text-blue-500"
+                        >
+                          {receipts.source.task?._id}
+                        </a>
+                      </div>
+                    )}
                   </TableCell>
                   <TableCell>
-                    {receipts.status == ReceiptStatus.CLAIMED
+                    {receipts.status == ReceiptStatus.CLAIMED || type !== 'period'
                       ? `${receipts.detail.amount} ${receipts.detail.symbol}`
                       : '***'}
                   </TableCell>
                   <TableCell>
-                    {receipts.source.period ? (
-                      receipts.status === ReceiptStatus.GRANTED ? (
-                        address && github && chain ? (
-                          <Button
-                            variant="link"
-                            className="gap-2 p-0 text-blue-500"
-                            onClick={async () => {
-                              if (!receipts.source.period) return
-                              try {
-                                const signature = await getRewardSignature(receipts.source.period._id)
-                                await distributor.claimRedPacket(
-                                  receipts.source.period._id,
-                                  github,
-                                  signature.signature,
-                                )
-                                await claimReceipt(receipts._id)
-                                queryClient.invalidateQueries({ queryKey: ['receipts'] })
-                                toast({
-                                  title: 'Success',
-                                  description: 'Reward claimed successfully',
-                                })
-                              } catch (error) {
-                                toast({
-                                  variant: 'destructive',
-                                  title: 'Error',
-                                  description: error instanceof Error ? error.message : 'Failed to claim reward',
-                                })
-                              }
-                            }}
-                          >
-                            Claim
-                          </Button>
-                        ) : (
-                          <p>Please connect wallet</p>
-                        )
+                    {receipts.status === ReceiptStatus.GRANTED ? (
+                      address && github && chain ? (
+                        <Button
+                          variant="link"
+                          className="gap-2 p-0 text-blue-500"
+                          onClick={async () => {
+                            if (!receipts.source.period && !receipts.source.task) return
+                            const sourceId = receipts.source.period?._id || receipts.source.task?._id
+                            if (!sourceId) return
+                            try {
+                              const signature = await getRewardSignature(sourceId)
+                              await distributor.claimRedPacket(sourceId, github, signature.signature)
+                              await claimReceipt(receipts._id)
+                              queryClient.invalidateQueries({ queryKey: ['receipts'] })
+                              toast({
+                                title: 'Success',
+                                description: 'Reward claimed successfully',
+                              })
+                            } catch (error) {
+                              toast({
+                                variant: 'destructive',
+                                title: 'Error',
+                                description: error instanceof Error ? error.message : 'Failed to claim reward',
+                              })
+                            }
+                          }}
+                        >
+                          Claim
+                        </Button>
                       ) : (
-                        <p>Claimed</p>
+                        <p>Please connect wallet</p>
                       )
                     ) : (
-                      <p>Not Supported</p>
+                      <p>Claimed</p>
                     )}
                   </TableCell>
                 </TableRow>
@@ -113,5 +129,17 @@ function RewardsTable(): React.ReactElement {
 }
 
 export default function MyRewards() {
-  return <RewardsTable />
+  const [type, setType] = useState<'period' | 'task'>('period')
+
+  return (
+    <div className="space-y-4">
+      <Tabs defaultValue="period" onValueChange={(value) => setType(value as 'period' | 'task')}>
+        <TabsList>
+          <TabsTrigger value="period">Period Rewards</TabsTrigger>
+          <TabsTrigger value="task">Task Rewards</TabsTrigger>
+        </TabsList>
+      </Tabs>
+      <RewardsTable type={type} />
+    </div>
+  )
 }

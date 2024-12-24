@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { fetchTasks, getLoadMoreProjectList } from '@/service'
+import { fetchTasks, getLoadMoreProjectList, grantTaskRewards } from '@/service'
 import { IResultPagination, IResultPaginationData, Project, Task } from '@/types'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { LoadingCards } from '@/components/loading-cards'
@@ -196,7 +196,14 @@ function CompletedTaskTable(): React.ReactElement {
                         addressFrom={address}
                         chain={chain}
                         onRewardDistributed={async (data) => {
-                          console.log('data', data)
+                          await grantTaskRewards(task._id, {
+                            contributors: data.users.map((user) => ({
+                              contributor: user.login,
+                              amount: data.amounts[data.users.indexOf(user)],
+                              symbol: data.symbol,
+                              decimals: data.decimals,
+                            })),
+                          })
                         }}
                       />
                     ) : (
