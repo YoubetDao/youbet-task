@@ -17,7 +17,6 @@ import { User } from '@/types'
 import { distributor } from '@/constants/distributor'
 
 import _ from 'lodash'
-import { ethers } from 'ethers'
 import { postGrantPeriodRewards } from '@/service'
 import { useDistributorToken } from '@/hooks/useDistributorToken'
 import { useQueryClient } from '@tanstack/react-query'
@@ -58,9 +57,18 @@ interface IRewardForm {
     symbol: string
     decimals: number
   }) => Promise<void>
+  defaultAmount?: number
 }
 
-export const RewardDialogForm = ({ trigger, id, users, addressFrom, chain, onRewardDistributed }: IRewardForm) => {
+export const RewardDialogForm = ({
+  trigger,
+  id,
+  users,
+  addressFrom,
+  chain,
+  onRewardDistributed,
+  defaultAmount,
+}: IRewardForm) => {
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
   const [isOpen, setOpen] = useState(false)
@@ -73,8 +81,15 @@ export const RewardDialogForm = ({ trigger, id, users, addressFrom, chain, onRew
     resolver: zodResolver(formSchema),
     defaultValues: {
       coin: symbol,
+      amount: defaultAmount ? defaultAmount?.toString() : '',
     },
   })
+
+  React.useEffect(() => {
+    if (defaultAmount) {
+      setAmounts(randomDistribute(defaultAmount, users.length))
+    }
+  }, [defaultAmount, users.length])
 
   const onOpenChange = async (isOpen: boolean) => {
     if (!isOpen) {
@@ -93,9 +108,10 @@ export const RewardDialogForm = ({ trigger, id, users, addressFrom, chain, onRew
 
       const totalAmount = amountsInWei.reduce((a, b) => a + b, 0n)
       const currentAllowance = await distributor.getAllowance(addressFrom)
-
+      const [symbol, tokenDecimals] = await distributor.getTokenSymbolAndDecimals()
+      const MIN_ALLOWANCE = BigInt(50) * BigInt(10) ** tokenDecimals
       if (currentAllowance < totalAmount) {
-        await distributor.approveAllowance(ethers.parseEther('5000'))
+        await distributor.approveAllowance(MIN_ALLOWANCE * BigInt(10))
       }
 
       await distributor.createRedPacket(id, githubIds, amountsInWei)
@@ -123,6 +139,7 @@ export const RewardDialogForm = ({ trigger, id, users, addressFrom, chain, onRew
       setOpen(false)
 
       queryClient.invalidateQueries({ queryKey: ['periods'] })
+      queryClient.invalidateQueries({ queryKey: ['tasks'] })
       toast({
         variant: 'default',
         title: 'Success',

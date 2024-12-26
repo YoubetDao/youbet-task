@@ -205,6 +205,7 @@ function CompletedTaskTable(): React.ReactElement {
                             })),
                           })
                         }}
+                        defaultAmount={Number(task.reward?.amount) / 10 ** Number(task.reward?.decimals)}
                       />
                     ) : (
                       <Button
