@@ -13,5 +13,5 @@ export const githubOAuthUri = () => {
 }
 
 export const githubOAuthContentUri = () => {
-  return `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${getRedirectUri()}&response_type=code&scope=user:email,repo&prompt=consent`
+  return `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${getRedirectUri()}&response_type=code&scope=user:email,public_repo,read:org,admin:repo_hook&prompt=consent`
 }
