@@ -112,6 +112,7 @@ web_modules/
 # .env
 .env.development.local
 .env.development.localserver
+.env.hackathon
 .env.test.local
 .env.production.local
 .env.local

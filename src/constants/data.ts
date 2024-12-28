@@ -171,6 +171,15 @@ const mantleSepoliaOptions: SdkCtorOptions = {
   chainName: 'Mantle Sepolia',
 }
 
+export const neoTestOptions: SdkCtorOptions = {
+  networkOptions: {
+    rpcUrl: 'https://neoxt4seed1.ngd.network',
+    chainId: 12227332,
+    contractAddress: '0x98D8D5e44eC86b1F20Bab29955498562B949EC3e',
+  },
+  chainName: 'NeoX T4',
+}
+
 const eduChain = {
   id: 656476,
   name: 'EduChain',
@@ -187,6 +196,21 @@ const eduChain = {
   },
 }
 
+const neoTest = {
+  id: 12227332,
+  name: 'NeoX T4',
+  nativeCurrency: {
+    name: 'GAS',
+    symbol: 'GAS',
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://neoxt4seed1.ngd.network'],
+    },
+  },
+}
+
 // define supported chains
 const SUPPORTED_CHAINS: Record<string, Chain> = {
   educhain: eduChain,
@@ -195,6 +219,7 @@ const SUPPORTED_CHAINS: Record<string, Chain> = {
   opSepolia: optimismSepolia,
   opMainnet: optimism,
   mantleSepolia: mantleSepoliaTestnet,
+  neoTest: neoTest,
 }
 
 // TODO: move this chain options to a separated chain config file
@@ -203,6 +228,7 @@ const CHAIN_OPTIONS: Record<string, SdkCtorOptions> = {
   educhain: openCampusTestOptions,
   moonbase: moonbaseAlphaOptions,
   mantleSepolia: mantleSepoliaOptions,
+  neoTest: neoTestOptions,
 }
 
 const getCurrentChain = (): Chain => {
