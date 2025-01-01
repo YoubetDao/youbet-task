@@ -1,5 +1,7 @@
 import markdownIt from 'markdown-it'
 import markdownItAnchor from 'markdown-it-anchor'
+import markdownItKatex from '@vscode/markdown-it-katex'
+
 export class MarkdownProcessor {
   private contentHtml: string
   private toc: { id: string; title: string; slug: string }[] = []
@@ -22,6 +24,7 @@ export class MarkdownProcessor {
         this.toc.push({ id, title, slug })
       },
     })
+    md.use(markdownItKatex)
     // TODO: add code pre color
 
     this.contentHtml = md.render(content)
