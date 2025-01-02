@@ -4,9 +4,10 @@ import { useParams } from 'react-router-dom'
 import { useAtomValue } from 'jotai'
 import { tutorialToCAtom } from '@/store'
 
-export const TutorialToC = ({ depth = 0 }: { depth?: number }) => {
+export const TutorialToC = ({ depth = 0, chapters }: { depth?: number; chapters?: Chapter[] }) => {
   const { path } = useParams()
-  const tutorialToC = useAtomValue(tutorialToCAtom)
+  const rootToC = useAtomValue(tutorialToCAtom)
+  const tutorialToC = chapters || rootToC
 
   const renderTitle = (chapter: Chapter, depth: number) => {
     const isActive = path === chapter.path.match(/^(.*?).md$/)?.[1]
@@ -39,7 +40,9 @@ export const TutorialToC = ({ depth = 0 }: { depth?: number }) => {
         tutorialToC.map((chapter) => (
           <Fragment key={chapter.path}>
             {renderTitle(chapter, depth)}
-            {chapter.children && chapter.children.length > 0 && <TutorialToC depth={depth + 1} />}
+            {chapter.children && chapter.children.length > 0 && (
+              <TutorialToC depth={depth + 1} chapters={chapter.children} />
+            )}
           </Fragment>
         ))}
     </ul>
