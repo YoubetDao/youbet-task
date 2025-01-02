@@ -87,7 +87,10 @@ export const useMd = (content: string, toc?: boolean) => {
   if (toc) {
     return {
       MdRenderer: (props: React.HTMLProps<HTMLElement>) => (
-        <MdRenderer {...props} content={mdProcessor.getContentHtml()} ref={contentRef} />
+        <div>
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css" />
+          <MdRenderer {...props} content={mdProcessor.getContentHtml()} ref={contentRef} />
+        </div>
       ),
       ToCSidebar: (props: React.HTMLProps<HTMLElement>) => (
         <ToCSidebar {...props} toc={mdProcessor.getToCData()} activeId={activeId} />
