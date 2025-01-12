@@ -180,6 +180,15 @@ export const neoTestOptions: SdkCtorOptions = {
   chainName: 'NeoX T4',
 }
 
+export const monadDevOptions: SdkCtorOptions = {
+  networkOptions: {
+    rpcUrl: 'https://rpc-devnet.monadinfra.com/rpc/3fe540e310bbb6ef0b9f16cd23073b0a',
+    chainId: 20143,
+    contractAddress: '0x009B2B2509d08f4Ed860b2f528ef2166bBE33D00',
+  },
+  chainName: 'Monad Devnet',
+}
+
 const eduChain = {
   id: 656476,
   name: 'EduChain',
@@ -211,6 +220,21 @@ const neoTest = {
   },
 }
 
+const monadDevnet = {
+  id: 20143,
+  name: 'Monad Devnet',
+  nativeCurrency: {
+    name: 'DMON',
+    symbol: 'DMON',
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc-devnet.monadinfra.com/rpc/3fe540e310bbb6ef0b9f16cd23073b0a'],
+    },
+  },
+}
+
 // define supported chains
 const SUPPORTED_CHAINS: Record<string, Chain> = {
   educhain: eduChain,
@@ -220,6 +244,7 @@ const SUPPORTED_CHAINS: Record<string, Chain> = {
   opMainnet: optimism,
   mantleSepolia: mantleSepoliaTestnet,
   neoTest: neoTest,
+  monadDevnet: monadDevnet,
 }
 
 // TODO: move this chain options to a separated chain config file
@@ -229,6 +254,7 @@ const CHAIN_OPTIONS: Record<string, SdkCtorOptions> = {
   moonbase: moonbaseAlphaOptions,
   mantleSepolia: mantleSepoliaOptions,
   neoTest: neoTestOptions,
+  monadDevnet: monadDevOptions,
 }
 
 const getCurrentChain = (): Chain => {
