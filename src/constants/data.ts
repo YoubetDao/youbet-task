@@ -153,11 +153,11 @@ const moonbaseAlphaOptions: SdkCtorOptions = {
   chainName: 'Moonbase Alpha',
 }
 
-const openCampusTestOptions: SdkCtorOptions = {
+const eduChainOptions: SdkCtorOptions = {
   networkOptions: {
-    rpcUrl: 'https://open-campus-codex-sepolia.drpc.org',
-    chainId: 656476,
-    contractAddress: '0xd8dcbd828a40f6590a5bee5095c38994dab3bdee',
+    rpcUrl: 'https://rpc.edu-chain.raas.gelato.cloud',
+    chainId: 41923,
+    contractAddress: '0xc81b9A16f093aA7A266ADa39D81EBdE1A5C8a2FA',
   },
   chainName: 'EduChain-Testnet',
 }
@@ -190,8 +190,8 @@ export const monadDevOptions: SdkCtorOptions = {
 }
 
 const eduChain = {
-  id: 656476,
-  name: 'EduChain',
+  id: 41923,
+  name: 'Edu Chain',
   nativeCurrency: {
     name: 'EDU',
     symbol: 'EDU',
@@ -199,8 +199,7 @@ const eduChain = {
   },
   rpcUrls: {
     default: {
-      http: ['https://open-campus-codex-sepolia.drpc.org'],
-      webSocket: ['wss://open-campus-codex-sepolia.drpc.org'],
+      http: ['https://rpc.edu-chain.raas.gelato.cloud'],
     },
   },
 }
@@ -250,7 +249,7 @@ const SUPPORTED_CHAINS: Record<string, Chain> = {
 // TODO: move this chain options to a separated chain config file
 // define chain options
 const CHAIN_OPTIONS: Record<string, SdkCtorOptions> = {
-  educhain: openCampusTestOptions,
+  educhain: eduChainOptions,
   moonbase: moonbaseAlphaOptions,
   mantleSepolia: mantleSepoliaOptions,
   neoTest: neoTestOptions,
@@ -281,8 +280,8 @@ const getChainOptions = (): SdkCtorOptions => {
   const chainName = import.meta.env.VITE_CURRENT_CHAIN || 'educhain'
   const options = CHAIN_OPTIONS[chainName]
   if (!options) {
-    console.warn(`Chain options for ${chainName} not found, falling back to openCampusTestOptions`)
-    return openCampusTestOptions
+    console.warn(`Chain options for ${chainName} not found, falling back to eduChainOptions`)
+    return eduChainOptions
   }
   return options
 }
