@@ -1,8 +1,9 @@
 export const BRAND_NAME = import.meta.env.VITE_BRAND_NAME || 'According Work'
 export const COMPANY_NAME = import.meta.env.VITE_COMPANY_NAME || 'YouBet'
 export const BRAND_LOGO = import.meta.env.VITE_BRAND_LOGO || '/logo.svg'
+export const X_HANDLE = import.meta.env.VITE_X_HANDLE || 'youbetdao'
 
-import { LucidePackage, LucideBookOpen, LucideLaptop } from 'lucide-react'
+import { LucidePackage, LucideBookOpen } from 'lucide-react'
 
 export const FOOTER_LINKS = [
   {
@@ -22,10 +23,27 @@ export const FOOTER_LINKS = [
 export const SOCIAL_LINKS = [
   {
     name: 'X',
-    href: 'https://x.com/youbetdao',
+    href: `https://x.com/${X_HANDLE}`,
     icon: (props: React.SVGProps<SVGSVGElement>) => (
       <svg fill="currentColor" viewBox="0 0 24 24" {...props}>
         <path d="M13.6823 10.6218L20.2391 3H18.6854L12.9921 9.61788L8.44486 3H3.2002L10.0765 13.0074L3.2002 21H4.75404L10.7663 14.0113L15.5685 21H20.8131L13.6819 10.6218H13.6823ZM11.5541 13.0956L10.8574 12.0991L5.31391 4.16971H7.70053L12.1742 10.5689L12.8709 11.5655L18.6861 19.8835H16.2995L11.5541 13.096V13.0956Z" />
+      </svg>
+    ),
+  },
+  {
+    name: 'Telegram',
+    href: 'https://t.me/+_a-io1KqMIc5ZjQ9',
+    icon: (props: React.SVGProps<SVGSVGElement>) => (
+      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" {...props}>
+        <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+        <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
+        <g id="SVGRepo_iconCarrier">
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M23.1117 4.49449C23.4296 2.94472 21.9074 1.65683 20.4317 2.227L2.3425 9.21601C0.694517 9.85273 0.621087 12.1572 2.22518 12.8975L6.1645 14.7157L8.03849 21.2746C8.13583 21.6153 8.40618 21.8791 8.74917 21.968C9.09216 22.0568 9.45658 21.9576 9.70712 21.707L12.5938 18.8203L16.6375 21.8531C17.8113 22.7334 19.5019 22.0922 19.7967 20.6549L23.1117 4.49449ZM3.0633 11.0816L21.1525 4.0926L17.8375 20.2531L13.1 16.6999C12.7019 16.4013 12.1448 16.4409 11.7929 16.7928L10.5565 18.0292L10.928 15.9861L18.2071 8.70703C18.5614 8.35278 18.5988 7.79106 18.2947 7.39293C17.9906 6.99479 17.4389 6.88312 17.0039 7.13168L6.95124 12.876L3.0633 11.0816ZM8.17695 14.4791L8.78333 16.6015L9.01614 15.321C9.05253 15.1209 9.14908 14.9366 9.29291 14.7928L11.5128 12.573L8.17695 14.4791Z"
+          ></path>
+        </g>
       </svg>
     ),
   },
@@ -45,6 +63,15 @@ export const SOCIAL_LINKS = [
   {
     name: 'Website',
     href: 'https://according.work/',
-    icon: (props: React.SVGProps<SVGSVGElement>) => <LucideLaptop {...props} />,
+    icon: (props: React.SVGProps<SVGSVGElement>) => (
+      <svg width="66" height="68" viewBox="0 0 66 68" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+        <path
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d="M1.82276 31.2822C-0.0204929 33.2172 0.053882 36.2801 1.98888 38.1233L6.4815 42.4029C7.01731 40.3874 8.61286 38.722 10.7828 38.1996C11.3285 38.0683 11.8747 38.0178 12.4089 38.0406L18.8543 21.2547C18.0313 20.4441 17.4175 19.4008 17.1272 18.195C16.8838 17.1839 16.895 16.1711 17.1196 15.224L1.82276 31.2822ZM22.7296 23.071C23.4217 23.1387 24.1368 23.0938 24.8511 22.9219C25.4951 22.7668 26.0928 22.5195 26.6335 22.1972L42.3586 37.8108C42.3203 38.197 42.345 38.5962 42.441 38.9948C42.9008 40.9049 44.8219 42.0806 46.732 41.6208C47.6995 41.3879 48.4786 40.7801 48.9522 39.9887L64.4361 36.2616C64.845 36.8154 65.3381 37.2952 65.892 37.6868L38.6108 66.326C36.7676 68.2609 33.7047 68.3353 31.7697 66.4921L13.9327 49.5008C16.8447 48.5796 18.5888 45.5477 17.863 42.5326C17.6016 41.4463 17.0537 40.504 16.3188 39.7665L22.7296 23.071ZM63.1922 32.1703C63.2631 30.5843 63.9254 29.0967 65.009 27.9851L37.0326 1.33527C35.0976 -0.507983 32.0348 -0.433608 30.1915 1.50139L21.5775 10.5442C21.6687 10.5179 21.7609 10.4936 21.8541 10.4711C25.2922 9.64354 28.7503 11.7598 29.5779 15.198C29.8848 16.4729 29.7869 17.7505 29.3669 18.8957L45.2488 34.6649C46.4678 34.437 47.6724 34.8642 48.4791 35.7119L63.1922 32.1703Z"
+          fill="currentColor"
+        />
+      </svg>
+    ),
   },
 ]

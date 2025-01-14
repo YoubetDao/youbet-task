@@ -7,7 +7,6 @@ import { LucideUsers, LucidePackage, LucideListChecks, LucideCircleCheck, Lucide
 import { Button } from '@/components/ui/button'
 import { Link } from 'react-router-dom'
 import { BRAND_NAME } from '@/lib/config'
-import Footer from '@/components/footer'
 import { useAtom } from 'jotai'
 import { usernameAtom } from '@/store'
 
@@ -111,7 +110,6 @@ export default function Dashboard() {
           <ProjectRecommendations projects={projects.slice(0, 5)} />
         </div>
       </div>
-      <Footer />
     </div>
   )
 }

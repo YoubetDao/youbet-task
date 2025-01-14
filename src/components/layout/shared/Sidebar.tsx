@@ -8,7 +8,7 @@ import { userPermissionAtom } from '@/store'
 import { useAtom } from 'jotai'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
-import { BRAND_NAME, BRAND_LOGO } from '@/lib/config'
+import { BRAND_NAME, BRAND_LOGO, SOCIAL_LINKS } from '@/lib/config'
 
 interface ISidebarProps {
   isMobile?: boolean
@@ -78,14 +78,44 @@ export default function Sidebar({ isMobile }: ISidebarProps) {
             {BRAND_NAME}
           </SheetTitle>
           <nav className="mt-4 grid gap-2 text-lg font-medium">{navItems.map((item) => renderMenuItem(item))}</nav>
+          <div className="absolute bottom-4 left-0 right-0 px-2 lg:px-4">
+            <div className="flex gap-4">
+              {SOCIAL_LINKS.map((item, itemIdx) => (
+                <a
+                  key={itemIdx}
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <item.icon className="h-5 w-5" />
+                </a>
+              ))}
+            </div>
+          </div>
         </SheetContent>
       </Sheet>
     )
   }
 
   return (
-    <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-      {navItems.map((item) => renderMenuItem(item))}
+    <nav className="relative grid h-full items-start px-2 text-sm font-medium lg:px-4">
+      <div>{navItems.map((item) => renderMenuItem(item))}</div>
+      <div className="absolute bottom-4 left-0 right-0 px-2 lg:px-4">
+        <div className="flex gap-4">
+          {SOCIAL_LINKS.map((item, itemIdx) => (
+            <a
+              key={itemIdx}
+              href={item.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <item.icon className="h-5 w-5" />
+            </a>
+          ))}
+        </div>
+      </div>
     </nav>
   )
 }
