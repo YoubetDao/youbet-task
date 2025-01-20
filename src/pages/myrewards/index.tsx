@@ -9,14 +9,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Button } from '@/components/ui/button'
 import { distributor } from '@/constants/distributor'
 import { toast } from '@/components/ui/use-toast'
-import { useAtom } from 'jotai'
-import { usernameAtom } from '@/store'
+import { useUsername } from '@/store'
 import { formatDate } from '@/lib/utils'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 function RewardsTable({ type }: { type: 'period' | 'task' }): React.ReactElement {
   const [page, setPage] = useState(1)
-  const [github] = useAtom(usernameAtom)
+  const [github] = useUsername()
   const { address, chain } = useAccount()
   const pageSize = 10
   const queryClient = useQueryClient()

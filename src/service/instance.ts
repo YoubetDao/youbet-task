@@ -1,6 +1,6 @@
 import axios from 'axios'
 import qs from 'qs'
-import { store, tokenAtom, usernameAtom } from '@/store'
+import { getToken, updateToken, updateUsername } from '@/store'
 import { toast } from '@/components/ui/use-toast'
 
 const instance = axios.create({
@@ -12,7 +12,7 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   (config) => {
-    const token = store.get(tokenAtom)
+    const token = getToken()
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
@@ -44,8 +44,8 @@ instance.interceptors.response.use(
     if (error.response) {
       const status = error.response.status
       if (status === 401) {
-        store.set(tokenAtom, null)
-        store.set(usernameAtom, null)
+        updateToken(null)
+        updateUsername(null)
         const pathname = window.location.pathname
         window.location.href = `/login?redirect_uri=${encodeURIComponent(pathname)}`
       } else if (status === 403) {

@@ -1,12 +1,11 @@
 import { Fragment } from 'react'
 import { Chapter } from '@/types'
 import { useParams } from 'react-router-dom'
-import { useAtomValue } from 'jotai'
-import { tutorialToCAtom } from '@/store'
+import { useTutorialToC } from '@/store'
 
 export const TutorialToC = ({ depth = 0, chapters }: { depth?: number; chapters?: Chapter[] }) => {
   const { path } = useParams()
-  const rootToC = useAtomValue(tutorialToCAtom)
+  const [rootToC] = useTutorialToC()
   const tutorialToC = chapters || rootToC
 
   const renderTitle = (chapter: Chapter, depth: number) => {

@@ -1,13 +1,12 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { usernameAtom } from '@/store'
-import { useAtom } from 'jotai'
+import { useUsername } from '@/store'
 import { useAccount, useSwitchChain } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { getLinkedWallet, linkWallet } from '@/service'
 import { currentChain, paymentChain } from '@/constants/data'
 
 export const CustomConnectButton = () => {
-  const [github] = useAtom(usernameAtom)
+  const [github] = useUsername()
   const { address } = useAccount()
   const { switchChain } = useSwitchChain()
   const [isAdmin, setIsAdmin] = useState(false)

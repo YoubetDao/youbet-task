@@ -4,11 +4,10 @@ import { Icons } from '@/components/icons'
 import { cn } from '@/lib/utils'
 import { ChevronDown, ChevronRight, Menu } from 'lucide-react'
 import useLocalStorageState from '@/hooks/use-localstorage-state'
-import { userPermissionAtom } from '@/store'
-import { useAtom } from 'jotai'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
 import { BRAND_NAME, BRAND_LOGO, SOCIAL_LINKS } from '@/lib/config'
+import { useUserPermission } from '@/store'
 
 interface ISidebarProps {
   isMobile?: boolean
@@ -17,7 +16,7 @@ interface ISidebarProps {
 export default function Sidebar({ isMobile }: ISidebarProps) {
   const location = useLocation()
   const [expandedItems, setExpandedItems] = useLocalStorageState<string[]>('sidebarExpandedItems', [])
-  const [userPermission] = useAtom(userPermissionAtom)
+  const [userPermission] = useUserPermission()
   const navItems = getNavItems(userPermission ?? undefined)
 
   const toggleExpand = (title: string) => {

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { LoadingCards } from '@/components/loading-cards'
-import { usernameAtom } from '@/store'
-import { useAtom } from 'jotai'
+import { useUsername } from '@/store'
 import { Card } from '@/components/ui/card'
 import GitHubCalendar from 'react-github-calendar'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -19,7 +18,7 @@ export default function ProfilePage() {
   const [totalRewards, setTotalRewards] = useState(0)
   const [claimedRewards, setClaimedRewards] = useState(0)
   const [loading, setLoading] = useState(true)
-  const [username] = useAtom(usernameAtom)
+  const [username] = useUsername()
   const [profile, setProfile] = useState<Profile>()
   const [claiming, setClaiming] = useState(false)
   const { toast } = useToast()
