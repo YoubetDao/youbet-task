@@ -2,12 +2,15 @@ import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { fetchUserInfo } from '@/service'
 import Loading from '@/components/loading'
-import { userPermissionAtom, store, tokenAtom, usernameAtom } from '@/store'
+import { useToken, useUsername, useUserPermission } from '@/store'
 import { UserPermission } from '@/types'
 
 const Callback = () => {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
+  const [, setToken] = useToken()
+  const [, setUsername] = useUsername()
+  const [, setUserPermission] = useUserPermission()
 
   useEffect(() => {
     const code = searchParams.get('code')
@@ -15,18 +18,20 @@ const Callback = () => {
 
     const handleFetchUserInfo = async (code: string) => {
       const userInfo = await fetchUserInfo(code)
-      store.set(tokenAtom, userInfo.jwt)
-      store.set(usernameAtom, userInfo.username)
+      setToken(userInfo.jwt)
+      setUsername(userInfo.username)
 
-      if (userInfo.adminNamespaces.length > 0 && userInfo.adminProjects.length > 0) {
-        store.set(userPermissionAtom, UserPermission.All)
-      } else if (userInfo.adminNamespaces.length > 0) {
-        store.set(userPermissionAtom, UserPermission.PullRequest)
-      } else if (userInfo.adminProjects.length > 0) {
-        store.set(userPermissionAtom, UserPermission.TaskApplies)
-      } else {
-        store.set(userPermissionAtom, null)
+      const getPermission = () => {
+        const hasNamespaces = userInfo.adminNamespaces.length > 0
+        const hasProjects = userInfo.adminProjects.length > 0
+
+        if (hasNamespaces && hasProjects) return UserPermission.All
+        if (hasNamespaces) return UserPermission.PullRequest
+        if (hasProjects) return UserPermission.TaskApplies
+        return null
       }
+
+      setUserPermission(getPermission())
 
       navigate(redirectUri || '/')
     }

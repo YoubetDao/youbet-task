@@ -11,19 +11,18 @@ import {
 import { useNavigate } from 'react-router-dom'
 import { CustomConnectButton } from './ConnectButton'
 import { cn } from '@/lib/utils'
-import { userPermissionAtom, store, tokenAtom, usernameAtom } from '@/store'
-import { useAtom } from 'jotai'
+import { useToken, useUsername, useUserPermission } from '@/store'
 import Sidebar from './Sidebar'
 
 export default function Header() {
   const navigate = useNavigate()
-  const [token, setToken] = useAtom(tokenAtom)
-  const [username] = useAtom(usernameAtom)
-
+  const [token, setToken] = useToken()
+  const [username, setUsername] = useUsername()
+  const [, setUserPermission] = useUserPermission()
   const handleLogout = () => {
     setToken(null)
-    store.set(usernameAtom, null)
-    store.set(userPermissionAtom, null)
+    setUsername(null)
+    setUserPermission(null)
     navigate('/login')
   }
 

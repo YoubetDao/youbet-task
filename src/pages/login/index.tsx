@@ -3,13 +3,12 @@ import UserAuthForm from '@/components/forms/user-auth-form'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useEffect } from 'react'
-import { tokenAtom } from '@/store'
-import { useAtom } from 'jotai'
 import { BRAND_LOGO, BRAND_NAME } from '@/lib/config'
+import { useToken } from '@/store'
 
 export default function Login() {
   const navigate = useNavigate()
-  const [token] = useAtom(tokenAtom)
+  const [token] = useToken()
 
   useEffect(() => {
     if (token) {

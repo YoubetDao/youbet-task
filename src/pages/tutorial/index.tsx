@@ -2,8 +2,7 @@ import { useParams } from 'react-router-dom'
 import MdView from './md-view'
 import { useEffect, useState } from 'react'
 import { getMdBookContent } from '@/service'
-import { useAtomValue } from 'jotai'
-import { tutorialToCAtom } from '@/store'
+import { useTutorialToC } from '@/store'
 import { Chapter } from '@/types'
 import { Button } from '@/components/ui/button'
 import { Link, Pen } from 'lucide-react'
@@ -30,7 +29,7 @@ const findTitle = (tutorialToC: Chapter[] | null, path: string): string | null =
 
 const Tutorial = () => {
   const { path, owner, repo } = useParams()
-  const tutorialToC = useAtomValue(tutorialToCAtom)
+  const [tutorialToC] = useTutorialToC()
   let title: string | null
   if (path) {
     title = findTitle(tutorialToC, path)

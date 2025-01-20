@@ -1,7 +1,8 @@
 import { getAppearances } from '@/lib/appearances'
-import { NavItem, UserPermission } from '@/types'
+import { NavItem } from '@/types'
 import { SdkCtorOptions, SDK } from 'youbet-sdk'
 import { polygon, moonbaseAlpha, Chain, optimismSepolia, optimism, mantleSepoliaTestnet } from 'viem/chains'
+import { UserPermission } from '@/store'
 
 export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
   const appearances = getAppearances()
