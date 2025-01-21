@@ -1,11 +1,11 @@
 import { Link, useNavigate } from 'react-router-dom'
-import UserAuthForm from '@/components/forms/user-auth-form'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useEffect } from 'react'
 import { tokenAtom } from '@/store'
 import { useAtom } from 'jotai'
 import { BRAND_LOGO, BRAND_NAME } from '@/lib/config'
+import UserAuthForm from './forms/user-auth-form'
 
 export default function Login() {
   const navigate = useNavigate()
