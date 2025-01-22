@@ -24,7 +24,7 @@ import { getLoadMoreProjectList } from '@/service'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constants/data'
 import ImportProjectDialog from '@/components/import-project'
 import { getAppearances } from '@/lib/appearances'
-import { SearchInput } from '@/components/search'
+import { SearchInput } from '@/components/common'
 
 function renderTags(tags: string[]): React.ReactNode[] {
   return tags.map((tag) => {

@@ -1,10 +1,10 @@
 import { z } from 'zod'
-import { Input } from '../ui/input'
+import { Input } from '../../ui/input'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Form, FormControl, FormField, FormItem } from '../ui/form'
+import { Form, FormControl, FormField, FormItem } from '../../ui/form'
 import { LucideSearch } from 'lucide-react'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select'
 
 const sortValueToSortUrl = (sort: string) => {
   switch (sort) {

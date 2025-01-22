@@ -12,7 +12,7 @@ import { LoadingCards } from '@/components/loading-cards'
 import { RewardDialogForm } from './reward-form'
 import { useAccount } from 'wagmi'
 import { useSearchParams } from 'react-router-dom'
-import { SearchInput } from '@/components/search'
+import { SearchInput } from '@/components/common'
 
 function PullRequestsTable(): React.ReactElement {
   const [page, setPage] = useState(1)

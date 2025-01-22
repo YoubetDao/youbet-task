@@ -7,7 +7,7 @@ import { format } from 'date-fns'
 import { LoadingCards } from '@/components/loading-cards'
 import { fetchTaskApplies, approveTaskApply, rejectTaskApply } from '@/service'
 import PaginationFast from '@/components/pagination-fast'
-import { SearchInput } from '@/components/search'
+import { SearchInput } from '@/components/common'
 import { useSearchParams } from 'react-router-dom'
 
 const TaskAppliesTable = () => {

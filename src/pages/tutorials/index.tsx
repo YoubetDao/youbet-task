@@ -10,7 +10,7 @@ import { tutorialToCAtom } from '@/store'
 import { useSetAtom } from 'jotai'
 import { useQuery } from '@tanstack/react-query'
 import PaginationFast from '@/components/pagination-fast'
-import { SearchInput } from '@/components/search'
+import { SearchInput } from '@/components/common'
 
 // TODO: move color to some global config
 const DEFAULT_HARDNESS = {
