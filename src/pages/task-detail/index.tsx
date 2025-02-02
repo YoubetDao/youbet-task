@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input'
 import { useState, useEffect } from 'react'
 import { distributor } from '@/constants/distributor'
 import { USDT_DECIMAL, USDT_SYMBOL } from '@/constants/contracts/usdt'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 type TaskDetailItem = {
   id: number
@@ -93,7 +94,7 @@ const renderPriority = (priority: TaskDetailItem['priority']) => {
   }
 }
 
-function QuestLog() {
+function QuestLog({ createUser }: { createUser: string }) {
   const { githubId = '' } = useParams()
   const { data: task } = useTask(githubId)
   const { data: myApplies = [], isLoading: isMyAppliesLoading } = useMyApplies(githubId)
@@ -174,13 +175,25 @@ function QuestLog() {
     }
   }
 
+  const handleShare = () => {
+    const url = encodeURIComponent(window.location.href) // 获取当前网页URL并编码
+    const text = encodeURIComponent(
+      rewardAmount
+        ? `${createUser} shared an issue via According.work!\nSolve this issue and earn ${rewardAmount} $ !\nJoin us, create value with your code, and get rewarded!\n`
+        : `${createUser} shared an issue via According.work!\nSolve this issue and earn EDU Yuzu Points!\nJoin us, create value with your code, and get rewarded!\n`,
+    ) // 自定义分享文本
+    const twitterShareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${url}`
+
+    window.open(twitterShareUrl, '_blank') // 在新窗口中打开分享链接
+  }
+
   if (task == null) {
     return null
   }
 
   return (
     <div className="flex flex-shrink-0 basis-96 flex-col">
-      <div className="mt-2 items-center">
+      <div className="mt-2 flex items-center gap-2">
         {task.state === 'closed' ? (
           <Button disabled className="border border-muted text-white hover:border-opacity-80 hover:bg-white/10">
             Closed
@@ -210,6 +223,25 @@ function QuestLog() {
             {isWithdrawing && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
           </Button>
         )}
+        {/* <Badge variant="default" className="bg-green-500" onClick={handleShare}>
+          Share
+        </Badge> */}
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                onClick={handleShare}
+                variant="emphasis"
+                className="bg-gray-8/50 text-l border border-muted bg-green-500 hover:border-opacity-80 hover:bg-primary/80"
+              >
+                Share
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <div>Sharing on X</div>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
       <Card className="sticky left-0 top-0 mt-4 bg-transparent">
         <CardHeader className="flex flex-row items-center justify-between border-b border-muted py-4">
@@ -350,6 +382,8 @@ export default function TaskDetailPage() {
     return <ErrorPage />
   }
 
+  console.log('task >>>', task)
+
   return (
     <div className="mt-5 flex w-full flex-col-reverse gap-5 xl:flex-row">
       <article className="flex w-full flex-col gap-5">
@@ -385,7 +419,7 @@ export default function TaskDetailPage() {
         </div>
       </article>
 
-      <QuestLog />
+      <QuestLog createUser={task.user?.login || ''} />
     </div>
   )
 }
