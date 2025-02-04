@@ -6,8 +6,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { LoadingCards } from '@/components/loading-cards'
 import { sdk } from '@/constants/data'
 import { fetchTutorials, getTutorialToC } from '@/service'
-import { tutorialToCAtom } from '@/store'
-import { useSetAtom } from 'jotai'
+import { useTutorialToC } from '@/store'
 import { useQuery } from '@tanstack/react-query'
 import PaginationFast from '@/components/pagination-fast'
 import { SearchInput } from '@/components/search'
@@ -30,7 +29,7 @@ const DEFAULT_HARDNESS = {
 
 function TutorialItem({ item }: { item: Project }) {
   const navigate = useNavigate()
-  const setTutorialToC = useSetAtom(tutorialToCAtom)
+  const [, setTutorialToC] = useTutorialToC()
 
   const handleNavigation = async () => {
     const data = await getTutorialToC(item.owner.login, item.name)

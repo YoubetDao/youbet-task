@@ -7,8 +7,7 @@ import { LucideUsers, LucidePackage, LucideListChecks, LucideCircleCheck, Lucide
 import { Button } from '@/components/ui/button'
 import { Link } from 'react-router-dom'
 import { BRAND_NAME } from '@/lib/config'
-import { useAtom } from 'jotai'
-import { usernameAtom } from '@/store'
+import { useUsername } from '@/store'
 
 function StatsCard({ title, value, icon }: { title: string; value: number; icon: React.ReactNode }) {
   return (
@@ -71,7 +70,7 @@ export default function Dashboard() {
   const [totalCount, setTotalCount] = useState<number>(0)
   const [projects, setProjects] = useState<Project[]>([])
   const [userCount, setUserCount] = useState<number>(0)
-  const [username] = useAtom(usernameAtom)
+  const [username] = useUsername()
 
   useEffect(() => {
     fetchLeaderboard().then(({ data, totalCount }) => {
