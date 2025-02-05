@@ -40,10 +40,14 @@ export default function ProfilePage() {
         setLinkedAddress(linkedAddress)
 
         if (linkedAddress !== '0x0000000000000000000000000000000000000000') {
-          const points = await sdk.client.getUserPoints(linkedAddress)
-          const totalRewards = await sdk.client.getTotalRewards(linkedAddress)
-          const claimedRewards = await sdk.client.getClaimedRewards(linkedAddress)
-
+          // const points = await sdk.client.getUserPoints(linkedAddress)
+          // const totalRewards = await sdk.client.getTotalRewards(linkedAddress)
+          // const claimedRewards = await sdk.client.getClaimedRewards(linkedAddress)
+          const [points, totalRewards, claimedRewards] = await Promise.all([
+            sdk.client.getUserPoints(linkedAddress),
+            sdk.client.getTotalRewards(linkedAddress),
+            sdk.client.getClaimedRewards(linkedAddress),
+          ])
           setTotalRewards(Number(totalRewards) / 10 ** 18)
           setUserPoints(points.toString())
           setClaimedRewards(Number(claimedRewards) / 10 ** 18)
