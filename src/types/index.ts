@@ -144,6 +144,15 @@ export interface Project {
   contributors: number
 }
 
+export interface PeriodReport {
+  _id: string
+  from: string
+  to: string
+  issueCount: number
+  title: string
+  summary: string
+}
+
 export enum UserPermission {
   All = 'all',
   PullRequest = 'pull-request',

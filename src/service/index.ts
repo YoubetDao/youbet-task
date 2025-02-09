@@ -21,6 +21,7 @@ import {
   PeriodReceipt,
   TaskRewardParams,
   FetchReceiptsParams,
+  PeriodReport,
 } from '@/types'
 import http from './instance'
 
@@ -238,4 +239,9 @@ export async function getRewardSignature(uuid: string) {
 
 export const updateTaskInfo = async (taskId: string, data: { reward: any }) => {
   return await http.put(`/task/${taskId}/info`, data)
+}
+
+export async function fetchProjectReports(projectId: string) {
+  const response = await http.get<PeriodReport[]>(`/projects/${projectId}/reports`)
+  return Array.isArray(response.data) ? response.data : []
 }

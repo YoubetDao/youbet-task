@@ -1,5 +1,4 @@
 import Dashboard from '@/pages/dashboard'
-import TaskPage from '@/pages/task'
 import Project from '@/pages/project'
 import Login from '@/pages/login'
 import Callback from '@/pages/callback'
@@ -14,10 +13,10 @@ import TaskApplyAdmin from '@/pages/task-apply'
 import PeriodAdmin from '@/pages/period'
 import MyRewards from '@/pages/myrewards'
 import CompletedTaskAdmin from '@/pages/admin/completedTask'
+import ProjectDetailPage from '@/pages/projectdetail'
 
 export const Pages = {
   dashboard: Dashboard,
-  task: TaskPage,
   mytask: MyTask,
   myrewards: MyRewards,
   project: Project,
@@ -32,4 +31,5 @@ export const Pages = {
   taskApplyAdmin: TaskApplyAdmin,
   completedTaskAdmin: CompletedTaskAdmin,
   periodAdmin: PeriodAdmin,
+  projectDetail: ProjectDetailPage,
 }

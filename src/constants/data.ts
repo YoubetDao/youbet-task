@@ -22,9 +22,9 @@ export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
       layout: 'dashboard',
       children: [
         {
-          title: 'Tasks',
-          href: '/projects/:project/tasks',
-          component: 'task',
+          title: 'Project Detail',
+          href: '/projects/:project',
+          component: 'projectDetail',
           layout: 'dashboard',
           hideInMenu: true,
         },
