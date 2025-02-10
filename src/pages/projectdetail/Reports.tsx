@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
-import { Info, Share2 } from 'lucide-react'
+import { Info } from 'lucide-react'
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
 import { LoadingCards } from '@/components/loading-cards'
 import { cn } from '@/lib/utils'
@@ -10,6 +10,7 @@ import ReactMarkdown from 'react-markdown'
 import { PeriodReport } from '@/types'
 import { fetchProjectReports } from '@/service'
 import { useSearchParams } from 'react-router-dom'
+import { ShareButton } from '@/components/share-button'
 
 interface ReportsProps {
   project: string
@@ -128,15 +129,7 @@ export default function Reports({ project }: ReportsProps) {
                   Close
                 </Button>
               </DrawerClose>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 w-8 p-0 hover:bg-gray-800"
-                onClick={handleShare}
-                title="Share on X (Twitter)"
-              >
-                <Share2 />
-              </Button>
+              <ShareButton variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-800" onClick={handleShare} />
             </div>
           </DrawerFooter>
         </DrawerContent>
