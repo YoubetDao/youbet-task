@@ -15,8 +15,3 @@ headers = { X-From = "Netlify" }
 from = "/*"
 to = "/index.html"
 status = 200
-
-[Settings]
-# Disable deploy previews
-[Settings.Deploy_Preview]
-  enable = false
