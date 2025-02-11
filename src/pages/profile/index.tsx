@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { LoadingCards } from '@/components/loading-cards'
-import { useUsername } from '@/store'
+import { useUsername, walletAtom } from '@/store'
 import { Card } from '@/components/ui/card'
 import GitHubCalendar from 'react-github-calendar'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -9,11 +9,12 @@ import { useToast } from '@/components/ui/use-toast'
 
 import { Profile } from '@/types'
 import { Button } from '@/components/ui/button'
-import { getLinkedWallet, getMyInfo } from '@/service'
+import { getMyInfo } from '@/service'
 import { currentChain, sdk } from '@/constants/data'
+import { useAtom } from 'jotai'
+import { useAsyncEffect } from 'ahooks'
 
 export default function ProfilePage() {
-  const [linkedAddress, setLinkedAddress] = useState('')
   const [userPoints, setUserPoints] = useState('')
   const [totalRewards, setTotalRewards] = useState(0)
   const [claimedRewards, setClaimedRewards] = useState(0)
@@ -23,6 +24,9 @@ export default function ProfilePage() {
   const [claiming, setClaiming] = useState(false)
   const { toast } = useToast()
 
+  const [walletState] = useAtom(walletAtom)
+  const linkedAddress = walletState.linkedAddress
+
   const fetchRewards = async () => {
     const totalRewards = await sdk.client.getTotalRewards(linkedAddress)
     setTotalRewards(Number(totalRewards) / 10 ** 18)
@@ -31,38 +35,26 @@ export default function ProfilePage() {
     setClaimedRewards(Number(claimedRewards) / 10 ** 18)
   }
 
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        if (!username) return
-
-        const linkedAddress = await getLinkedWallet(username)
-        setLinkedAddress(linkedAddress)
-
-        if (linkedAddress !== '0x0000000000000000000000000000000000000000') {
-          // const points = await sdk.client.getUserPoints(linkedAddress)
-          // const totalRewards = await sdk.client.getTotalRewards(linkedAddress)
-          // const claimedRewards = await sdk.client.getClaimedRewards(linkedAddress)
-          const [points, totalRewards, claimedRewards] = await Promise.all([
-            sdk.client.getUserPoints(linkedAddress),
-            sdk.client.getTotalRewards(linkedAddress),
-            sdk.client.getClaimedRewards(linkedAddress),
-          ])
-          setTotalRewards(Number(totalRewards) / 10 ** 18)
-          setUserPoints(points.toString())
-          setClaimedRewards(Number(claimedRewards) / 10 ** 18)
-        }
-
-        const myinfo = await getMyInfo()
+  useAsyncEffect(async () => {
+    try {
+      if (!username) return
+      if (linkedAddress !== '0x0000000000000000000000000000000000000000') {
+        const [points, totalRewards, claimedRewards, myinfo] = await Promise.all([
+          sdk.client.getUserPoints(linkedAddress),
+          sdk.client.getTotalRewards(linkedAddress),
+          sdk.client.getClaimedRewards(linkedAddress),
+          getMyInfo(),
+        ])
+        setTotalRewards(Number(totalRewards) / 10 ** 18)
+        setUserPoints(points.toString())
+        setClaimedRewards(Number(claimedRewards) / 10 ** 18)
         setProfile(myinfo)
-      } catch (error) {
-        console.error('Error fetching user profile:', error)
-      } finally {
-        setLoading(false)
       }
+    } catch (error) {
+      console.error('Error fetching user profile:', error)
+    } finally {
+      setLoading(false)
     }
-
-    fetchUserProfile()
   }, [username])
 
   const handleClaim = async () => {

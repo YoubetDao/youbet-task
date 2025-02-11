@@ -4,6 +4,7 @@ import Header from './Header'
 import Sidebar from './Sidebar'
 import Title from './Title'
 import { TutorialToC } from '../tutorial/tutorial-toc'
+import { useInitState } from '../hooks/useInitState'
 
 interface IBaseLayout {
   children: React.ReactNode
@@ -11,6 +12,8 @@ interface IBaseLayout {
 }
 
 export default function BaseLayout({ children, mode = 'default' }: IBaseLayout) {
+  useInitState()
+
   return (
     <div className="grid h-screen w-full overflow-hidden md:grid-cols-[180px_1fr] lg:grid-cols-[240px_1fr]">
       <div className="hidden border-r md:block">
