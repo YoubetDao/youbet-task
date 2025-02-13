@@ -40,7 +40,7 @@ function ProjectRecommendations({ projects }: { projects: Project[] }) {
       <CardContent>
         <div className="space-y-4">
           {projects.map((project, index) => (
-            <Link key={index} to={`/projects/${project.name}/tasks`}>
+            <Link key={index} to={project.htmlUrl}>
               <div className="mb-4 border-b pb-4">
                 <Button
                   asChild
