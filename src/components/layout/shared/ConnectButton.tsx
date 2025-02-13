@@ -1,15 +1,18 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { useUsername } from '@/store'
+import { useUsername, walletAtom } from '@/store'
 import { useAccount, useSwitchChain } from 'wagmi'
 import { useEffect, useState } from 'react'
-import { getLinkedWallet, linkWallet } from '@/service'
-import { currentChain, paymentChain } from '@/constants/data'
+import { linkWallet } from '@/service'
+import { currentChain, paymentChain, ZERO_ADDRESS } from '@/constants/data'
+import { useAtom } from 'jotai'
+import { useAsyncEffect } from 'ahooks'
 
 export const CustomConnectButton = () => {
   const [github] = useUsername()
   const { address } = useAccount()
   const { switchChain } = useSwitchChain()
   const [isAdmin, setIsAdmin] = useState(false)
+  const [walletState] = useAtom(walletAtom)
 
   useEffect(() => {
     const currentPath = window.location.pathname
@@ -26,20 +29,17 @@ export const CustomConnectButton = () => {
     }
   }, [switchChain])
 
-  useEffect(() => {
-    const checkAndLinkWallet = async () => {
-      if (!github || isAdmin) return
-      const linkedAddress = await getLinkedWallet(github)
-      if (linkedAddress == '0x0000000000000000000000000000000000000000') {
-        if (!address) return
-        await linkWallet({
-          github,
-          address,
-        })
-      }
+  useAsyncEffect(async () => {
+    const linkedAddress = walletState.linkedAddress
+    if (!github || isAdmin || linkedAddress === '') return
+    if (linkedAddress == ZERO_ADDRESS) {
+      if (!address) return
+      await linkWallet({
+        github,
+        address,
+      })
     }
-    checkAndLinkWallet()
-  }, [address, github])
+  }, [address, github, walletState.linkedAddress])
 
   return (
     <ConnectButton.Custom>
