@@ -3,7 +3,7 @@ import { useUsername, walletAtom } from '@/store'
 import { useAccount, useSwitchChain } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { linkWallet } from '@/service'
-import { currentChain, paymentChain } from '@/constants/data'
+import { currentChain, paymentChain, ZERO_ADDRESS } from '@/constants/data'
 import { useAtom } from 'jotai'
 import { useAsyncEffect } from 'ahooks'
 
@@ -32,7 +32,7 @@ export const CustomConnectButton = () => {
   useAsyncEffect(async () => {
     const linkedAddress = walletState.linkedAddress
     if (!github || isAdmin || linkedAddress === '') return
-    if (linkedAddress == '0x0000000000000000000000000000000000000000') {
+    if (linkedAddress == ZERO_ADDRESS) {
       if (!address) return
       await linkWallet({
         github,
