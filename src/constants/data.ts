@@ -320,3 +320,5 @@ export const paymentChain = getPaymentChain()
 export const currentChainOptions = getChainOptions()
 // TODO: move to other file
 export const sdk = new SDK(currentChainOptions)
+
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'

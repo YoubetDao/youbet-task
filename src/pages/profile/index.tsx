@@ -10,7 +10,7 @@ import { useToast } from '@/components/ui/use-toast'
 import { Profile } from '@/types'
 import { Button } from '@/components/ui/button'
 import { getMyInfo } from '@/service'
-import { currentChain, sdk } from '@/constants/data'
+import { currentChain, sdk, ZERO_ADDRESS } from '@/constants/data'
 import { useAtom } from 'jotai'
 import { useAsyncEffect } from 'ahooks'
 
@@ -38,7 +38,7 @@ export default function ProfilePage() {
   useAsyncEffect(async () => {
     try {
       if (!username) return
-      if (linkedAddress !== '0x0000000000000000000000000000000000000000') {
+      if (linkedAddress !== ZERO_ADDRESS) {
         const [points, totalRewards, claimedRewards, myinfo] = await Promise.all([
           sdk.client.getUserPoints(linkedAddress),
           sdk.client.getTotalRewards(linkedAddress),
