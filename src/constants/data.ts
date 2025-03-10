@@ -163,6 +163,15 @@ const eduChainOptions: SdkCtorOptions = {
   chainName: 'EduChain-Testnet',
 }
 
+const eduSepoliaChainOptions: SdkCtorOptions = {
+  networkOptions: {
+    rpcUrl: 'https://open-campus-codex-sepolia.drpc.org',
+    chainId: 656476,
+    contractAddress: '0xd8dcbd828a40f6590a5bee5095c38994dab3bdee',
+  },
+  chainName: 'EduChain-Testnet',
+}
+
 const mantleSepoliaOptions: SdkCtorOptions = {
   networkOptions: {
     rpcUrl: 'https://rpc.sepolia.mantle.xyz',
@@ -205,6 +214,21 @@ const eduChain = {
   },
 }
 
+const eduSepoliaChain = {
+  id: 656476,
+  name: 'EduChain-Testnet',
+  nativeCurrency: {
+    name: 'EDU',
+    symbol: 'EDU',
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://open-campus-codex-sepolia.drpc.org'],
+    },
+  },
+}
+
 const neoTest = {
   id: 12227332,
   name: 'NeoX T4',
@@ -238,6 +262,7 @@ const monadDevnet = {
 // define supported chains
 const SUPPORTED_CHAINS: Record<string, Chain> = {
   educhain: eduChain,
+  educhainSepolia: eduSepoliaChain,
   moonbase: moonbaseAlpha,
   polygon: polygon,
   opSepolia: optimismSepolia,
@@ -251,6 +276,7 @@ const SUPPORTED_CHAINS: Record<string, Chain> = {
 // define chain options
 const CHAIN_OPTIONS: Record<string, SdkCtorOptions> = {
   educhain: eduChainOptions,
+  educhainSepolia: eduSepoliaChainOptions,
   moonbase: moonbaseAlphaOptions,
   mantleSepolia: mantleSepoliaOptions,
   neoTest: neoTestOptions,
