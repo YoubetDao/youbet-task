@@ -183,6 +183,7 @@ export interface FetchPullRequestParams extends PaginationParams {
 
 export interface FetchPeriodsParams extends PaginationParams {
   projectId: string
+  sortDirection?: 'asc' | 'desc'
 }
 
 export interface FetchReceiptsParams extends PaginationParams {
