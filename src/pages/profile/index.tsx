@@ -38,7 +38,7 @@ export default function ProfilePage() {
   useAsyncEffect(async () => {
     try {
       if (!username) return
-      if (linkedAddress !== ZERO_ADDRESS) {
+      if (linkedAddress !== ZERO_ADDRESS && linkedAddress !== '') {
         const [points, totalRewards, claimedRewards, myinfo] = await Promise.all([
           sdk.client.getUserPoints(linkedAddress),
           sdk.client.getTotalRewards(linkedAddress),
