@@ -79,7 +79,7 @@ function CompletedTaskTable(): React.ReactElement {
   )
 
   const { data: tasks, isLoading: isTasksLoading } = useQuery<IResultPaginationData<Task> | undefined>({
-    queryKey: ['tasks', projectId ?? ''],
+    queryKey: ['tasks', page, pageSize, projectId ?? ''],
     queryFn: () => {
       return fetchTasks({
         offset: (page - 1) * pageSize,

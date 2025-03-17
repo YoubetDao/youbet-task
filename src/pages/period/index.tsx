@@ -82,7 +82,7 @@ function PeriodTable(): React.ReactElement {
   )
 
   const { data: periods, isLoading: isPullRequestsLoading } = useQuery<IResultPaginationData<Period> | undefined>({
-    queryKey: ['periods', projectId ?? ''],
+    queryKey: ['periods', page, pageSize, projectId ?? ''],
     queryFn: () => {
       return fetchPeriods({
         offset: (page - 1) * pageSize,
