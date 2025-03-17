@@ -3,8 +3,8 @@
 ## Run
 
 ```sh
-yarn
-yarn dev
+pnpm install
+pnpm run dev
 ```
 
 We prefer `Yarn` as package manager, If you want to use `pnpm` or `npm`, feel free to use
