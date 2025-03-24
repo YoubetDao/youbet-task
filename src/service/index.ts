@@ -207,7 +207,7 @@ export async function fetchPeriods(params: FetchPeriodsParams) {
 }
 
 export async function postGrantPeriodRewards(params: GrantPeriodRewardsParams) {
-  const response = await http.post(`/periods/${params.id}/rewards`, {
+  const response = await http.post(`/periods/${params.id}/grant-rewards`, {
     contributors: params.contributors,
   })
   return response.data

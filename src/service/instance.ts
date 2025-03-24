@@ -55,7 +55,22 @@ instance.interceptors.response.use(
           title: 'Forbidden',
           description: 'Permission denied. Please contact admin.',
         })
-      } else if (status >= 400 && status <= 599) {
+      } else if (status === 404) {
+        toast({
+          variant: 'destructive',
+          title: 'Not Found',
+          description:
+            typeof error.response.data.message === 'string'
+              ? error.response.data.message
+              : JSON.stringify(error.response.data.message),
+        })
+      } else if (status >= 400 && status < 500) {
+        toast({
+          variant: 'destructive',
+          title: 'Bad Request',
+          description: 'The request was invalid.',
+        })
+      } else if (status >= 500 && status <= 599) {
         toast({
           variant: 'destructive',
           title: 'Internal Server Error:',
