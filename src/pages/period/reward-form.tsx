@@ -150,7 +150,7 @@ export const RewardDialogForm = ({
         toast({
           variant: 'destructive',
           title: 'Error',
-          description: error.name,
+          description: error.message,
         })
       } else {
         toast({
