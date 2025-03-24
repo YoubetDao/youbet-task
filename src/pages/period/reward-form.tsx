@@ -150,7 +150,11 @@ export const RewardDialogForm = ({
         toast({
           variant: 'destructive',
           title: 'Error',
-          description: error.message,
+          description: (
+            <div className="max-h-60 overflow-y-auto whitespace-pre-wrap break-all">
+              {error.message || JSON.stringify(error)}
+            </div>
+          ),
         })
       } else {
         toast({
