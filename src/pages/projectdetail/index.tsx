@@ -14,29 +14,28 @@ import Reports from './Reports'
 
 export default function ProjectDetailPage() {
   const { project } = useParams<{ project: string }>()
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [activeTab, setActiveTab] = useState<string>('tasks')
 
   // TODO: should controlled by tab parameter?
   // 根据 URL 参数设置初始标签页
   useEffect(() => {
-    const reportId = searchParams.get('report')
-    if (reportId) {
-      setActiveTab('reports')
+    const activeTabParam = searchParams.get('activeTab')
+    if (activeTabParam) {
+      setActiveTab(activeTabParam)
     }
   }, [searchParams])
 
   const handleTabChange = (value: string) => {
     setActiveTab(value)
-    // 如果切换到 tasks tab，清除 report 参数
-    if (value === 'tasks') {
-      searchParams.delete('report')
-      window.history.replaceState(
-        {},
-        '',
-        `${window.location.pathname}${searchParams.toString() ? '?' + searchParams.toString() : ''}`,
-      )
-    }
+
+    setSearchParams((prev) => {
+      // create new URLSearchParams object
+      const newParams = new URLSearchParams(prev)
+      // set activeTab parameter
+      newParams.set('activeTab', value)
+      return newParams
+    })
   }
 
   return (
@@ -50,7 +49,7 @@ export default function ProjectDetailPage() {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage>{project}</BreadcrumbPage>
+            <BreadcrumbPage>{searchParams.get('projectName')}</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
