@@ -6,7 +6,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { capitalize } from 'lodash'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { fetchMyTasks, fetchTasks } from '@/service'
+import { taskApi } from '@/service'
 import { TaskState } from '@/types'
 
 // TODO: should separate this in another way since project task and my task have different filter
@@ -28,21 +28,29 @@ export const TaskCatalog = ({ project }: ITaskCatalog) => {
   if (!project) {
     queryKey = ['my-tasks', page, selectedCategory]
     queryFn = () =>
-      fetchMyTasks({
-        offset: (page - 1) * pageSize,
-        limit: pageSize,
-        states: selectedCategory !== 'all' ? [selectedCategory as TaskState] : [],
-      })
+      taskApi
+        .taskControllerGetTasks(
+          project || '',
+          '',
+          selectedCategory !== 'all' ? [selectedCategory as TaskState].join(',') : [].join(','),
+          '',
+          (page - 1) * pageSize,
+          pageSize,
+        )
+        .then((res) => res.data)
   } else {
     queryKey = ['tasks', project, page, pageSize, selectedCategory, selectedAssignment]
     queryFn = () =>
-      fetchTasks({
-        project: project || '',
-        offset: (page - 1) * pageSize,
-        limit: pageSize,
-        states: selectedCategory !== 'all' ? [selectedCategory as TaskState] : [],
-        assignmentStatus: selectedAssignment !== 'all' ? selectedAssignment : undefined,
-      })
+      taskApi
+        .taskControllerGetTasks(
+          project || '',
+          '',
+          selectedCategory !== 'all' ? [selectedCategory as TaskState].join(',') : [].join(','),
+          selectedAssignment !== 'all' ? selectedAssignment : '',
+          (page - 1) * pageSize,
+          pageSize,
+        )
+        .then((res) => res.data)
   }
 
   const { data, isLoading: loading } = useQuery({
@@ -51,7 +59,7 @@ export const TaskCatalog = ({ project }: ITaskCatalog) => {
   })
 
   const tasks = data?.data || []
-  const totalPages = Math.ceil((data?.pagination.totalCount || 0) / pageSize)
+  const totalPages = Math.ceil((data?.pagination?.totalCount || 0) / pageSize)
 
   const handleCategoryChange = (value: string) => {
     setSelectedCategory(value)

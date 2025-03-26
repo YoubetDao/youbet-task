@@ -1,4 +1,3 @@
-import { Task } from '@/types'
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { formatDistanceToNow } from 'date-fns'
 import { Clock } from 'lucide-react'
@@ -6,6 +5,7 @@ import { Link } from 'react-router-dom'
 import { Badge } from '@/components/ui/badge'
 import { MarkdownProcessor } from '@/lib/md-processor'
 import { Card, CardDescription, CardFooter, CardTitle } from '../ui/card'
+import { Task } from '@/openapi/client/models/task'
 
 interface ITaskItemProps {
   item: Task
@@ -62,7 +62,7 @@ export const TaskCard = ({ item }: ITaskItemProps) => {
         <CardFooter className="flex h-6 w-full items-center justify-between p-0 pt-2">
           <figure className="flex flex-row items-center justify-between gap-4">
             <Avatar className="h-4 w-4">
-              <AvatarImage src={item.assignees[0]?.avatarUrl || item.user?.avatarUrl} />
+              <AvatarImage src={item.assignee?.avatarUrl || item.user?.avatarUrl} />
             </Avatar>
             <time className="flex flex-row items-center gap-2 text-xs">
               <Clock className="h-4 w-4" />
