@@ -4,6 +4,7 @@ import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useEffect } from 'react'
 import { BRAND_LOGO, BRAND_NAME } from '@/lib/config'
+import { getSafeHrefByTitle } from '@/constants/data'
 import { useToken } from '@/store'
 
 export default function Login() {
@@ -12,7 +13,7 @@ export default function Login() {
 
   useEffect(() => {
     if (token) {
-      navigate('/', { replace: true })
+      navigate(getSafeHrefByTitle('Dashboard'), { replace: true })
     }
   }, [token, navigate])
 

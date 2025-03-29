@@ -9,8 +9,16 @@ export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
 
   const navItems: NavItem[] = [
     {
-      title: 'Dashboard',
+      title: 'Landing',
       href: '/',
+      icon: 'home',
+      component: 'landing',
+      layout: 'landing',
+      hideInMenu: true,
+    },
+    {
+      title: 'Dashboard',
+      href: '/dashboard',
       icon: 'home',
       component: 'dashboard',
       layout: 'dashboard',
@@ -140,6 +148,11 @@ export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
   const filteredNavItems = navItems.filter((item) => !item.disabled)
 
   return filteredNavItems
+}
+
+export const getSafeHrefByTitle = (title: string): string => {
+  const item = getNavItems().find((item) => item.title === title)
+  return item?.href as string
 }
 
 export const DEFAULT_PAGINATION_LIMIT = 4
