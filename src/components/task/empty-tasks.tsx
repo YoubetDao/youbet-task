@@ -1,7 +1,7 @@
 export function EmptyTasks() {
   return (
     <div className="mx-auto flex max-w-7xl flex-col items-center justify-center text-center">
-      <svg
+      {/* <svg
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -15,7 +15,7 @@ export function EmptyTasks() {
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-      </svg>
+      </svg> */}
       <h3 className="mt-2 text-sm font-semibold text-foreground">No tasks</h3>
       <p className="mt-1 text-sm text-foreground">Get started by creating a new task.</p>
     </div>
