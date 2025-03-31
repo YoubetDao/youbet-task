@@ -172,6 +172,15 @@ const eduSepoliaChainOptions: SdkCtorOptions = {
   chainName: 'EduChain-Testnet',
 }
 
+const opSepoliaOptions: SdkCtorOptions = {
+  networkOptions: {
+    rpcUrl: 'https://sepolia.optimism.io',
+    chainId: 11155420,
+    contractAddress: '0x411d99703453e5A49a2E57d5b7B97Dc1f8E3715b',
+  },
+  chainName: 'Optimism Sepolia',
+}
+
 const mantleSepoliaOptions: SdkCtorOptions = {
   networkOptions: {
     rpcUrl: 'https://rpc.sepolia.mantle.xyz',
@@ -281,6 +290,7 @@ const CHAIN_OPTIONS: Record<string, SdkCtorOptions> = {
   mantleSepolia: mantleSepoliaOptions,
   neoTest: neoTestOptions,
   monadDevnet: monadDevOptions,
+  opSepolia: opSepoliaOptions,
 }
 
 const getCurrentChain = (): Chain => {
