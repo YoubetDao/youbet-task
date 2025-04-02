@@ -1,0 +1,150 @@
+name: Sync Dev Branch
+
+on:
+  push:
+    branches:
+      - main
+  # Adding workflow_dispatch to allow manual testing
+  workflow_dispatch:
+
+jobs:
+  sync-dev:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Update dev branch
+        id: sync
+        continue-on-error: true
+        run: |
+          git checkout dev
+          git merge main
+          git push origin dev
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Send Feishu notification on success
+        if: steps.sync.outcome == 'success'
+        uses: foxundermoon/feishu-action@v2
+        with:
+          url: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          sign: ${{ secrets.FEISHU_SIGN_KEY }}
+          msg_type: interactive
+          content: |
+            {
+              "config": {
+                "wide_screen_mode": true
+              },
+              "elements": [
+                {
+                  "tag": "div",
+                  "text": {
+                    "content": "[GitHub] [Branch Sync] [YouBet]\n\n✅ **Branch Sync Successful**\n\n**Repository:** ${{ github.repository }}\n**Workflow:** ${{ github.workflow }}\n**Triggered by:** ${{ github.actor }}\n**Event:** ${{ github.event_name }}\n\n[View Action Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})",
+                    "tag": "lark_md"
+                  }
+                }
+              ],
+              "header": {
+                "template": "green",
+                "title": {
+                  "content": "✅ Branch Sync Completed",
+                  "tag": "plain_text"
+                }
+              }
+            }
+
+      - name: Send Feishu notification on failure
+        if: steps.sync.outcome == 'failure'
+        uses: foxundermoon/feishu-action@v2
+        with:
+          url: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          sign: ${{ secrets.FEISHU_SIGN_KEY }}
+          msg_type: interactive
+          content: |
+            {
+              "config": {
+                "wide_screen_mode": true
+              },
+              "elements": [
+                {
+                  "tag": "div",
+                  "text": {
+                    "content": "[GitHub] [Branch Sync] [YouBet]\n\n❌ **Branch Sync Failed**\n\n**Repository:** ${{ github.repository }}\n**Workflow:** ${{ github.workflow }}\n**Triggered by:** ${{ github.actor }}\n**Event:** ${{ github.event_name }}\n\n[View Action Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})",
+                    "tag": "lark_md"
+                  }
+                }
+              ],
+              "header": {
+                "template": "red",
+                "title": {
+                  "content": "🚨 Branch Sync Failed",
+                  "tag": "plain_text"
+                }
+              }
+            }
+
+  # Adding a test job that you can run manually
+  test-notification:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test without sign key
+        uses: foxundermoon/feishu-action@v2
+        continue-on-error: true
+        with:
+          url: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          msg_type: interactive
+          content: |
+            {
+              "config": {
+                "wide_screen_mode": true
+              },
+              "elements": [
+                {
+                  "tag": "div",
+                  "text": {
+                    "content": "[GitHub] [Branch Sync] [YouBet]\n\n⚠️ **Security Test - No Sign Key**\n\nThis message should fail if signing is properly configured.\n\n**Repository:** ${{ github.repository }}\n**Triggered by:** ${{ github.actor }}",
+                    "tag": "lark_md"
+                  }
+                }
+              ],
+              "header": {
+                "template": "orange",
+                "title": {
+                  "content": "🔒 Security Test (No Sign)",
+                  "tag": "plain_text"
+                }
+              }
+            }
+
+      - name: Test with sign key
+        uses: foxundermoon/feishu-action@v2
+        with:
+          url: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          sign: ${{ secrets.FEISHU_SIGN_KEY }}
+          msg_type: interactive
+          content: |
+            {
+              "config": {
+                "wide_screen_mode": true
+              },
+              "elements": [
+                {
+                  "tag": "div",
+                  "text": {
+                    "content": "[GitHub] [Branch Sync] [YouBet]\n\n✅ **Security Test - With Sign Key**\n\nThis message should succeed if signing is properly configured.\n\n**Repository:** ${{ github.repository }}\n**Triggered by:** ${{ github.actor }}",
+                    "tag": "lark_md"
+                  }
+                }
+              ],
+              "header": {
+                "template": "green",
+                "title": {
+                  "content": "🔒 Security Test (With Sign)",
+                  "tag": "plain_text"
+                }
+              }
+            }
