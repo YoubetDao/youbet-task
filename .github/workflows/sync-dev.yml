@@ -9,6 +9,9 @@ on:
     types:
       - closed
 
+  # 添加手动触发事件
+  workflow_dispatch:
+
 jobs:
   sync-dev:
     runs-on: ubuntu-latest
@@ -19,6 +22,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      # 可选的失败测试步骤
+      - name: Simulate failure (manual trigger)
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          echo "Simulating failure..."
+          exit 1
 
       - name: Update dev branch
         id: sync
@@ -68,7 +78,7 @@ jobs:
             "card": {
               "config": { "wide_screen_mode": true },
               "header": {
-                "title": { "tag": "plain_text", "content": "🚨 Dev Branch Sync Failed" },                       
+                "title": { "tag": "plain_text", "content": "🚨 Dev Branch Sync Failed" },
                 "template": "red"
               },
               "elements": [
@@ -76,7 +86,7 @@ jobs:
                   "tag": "div",
                   "text": {
                     "tag": "lark_md",
-                      "content": "❌ **Dev Branch Sync Failed**\n\n**Repository:** ${{ github.repository }}\n**Workflow:** ${{ github.workflow }}\n**Triggered by:** ${{ github.actor }}\n**Event:** ${{ github.event_name }}\n\n[View Action Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})",
+                    "content": "❌ **Dev Branch Sync Failed**\n\n**Repository:** ${{ github.repository }}\n**Workflow:** ${{ github.workflow }}\n**Triggered by:** ${{ github.actor }}\n**Event:** ${{ github.event_name }}\n\n[View Action Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
                   }
                 }
               ]
