@@ -13,16 +13,19 @@ import { CustomConnectButton } from './ConnectButton'
 import { cn } from '@/lib/utils'
 import { useToken, useUsername, useUserPermission } from '@/store'
 import Sidebar from './Sidebar'
+import { useDisconnect } from 'wagmi'
 
 export default function Header() {
   const navigate = useNavigate()
   const [token, setToken] = useToken()
   const [username, setUsername] = useUsername()
   const [, setUserPermission] = useUserPermission()
+  const { disconnect } = useDisconnect()
   const handleLogout = () => {
     setToken(null)
     setUsername(null)
     setUserPermission(null)
+    disconnect()
     navigate('/login')
   }
 
