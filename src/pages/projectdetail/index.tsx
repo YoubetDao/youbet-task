@@ -14,28 +14,29 @@ import Reports from './Reports'
 
 export default function ProjectDetailPage() {
   const { project } = useParams<{ project: string }>()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
   const [activeTab, setActiveTab] = useState<string>('tasks')
 
   // TODO: should controlled by tab parameter?
   // 根据 URL 参数设置初始标签页
   useEffect(() => {
-    const activeTabParam = searchParams.get('activeTab')
-    if (activeTabParam) {
-      setActiveTab(activeTabParam)
+    const reportId = searchParams.get('report')
+    if (reportId) {
+      setActiveTab('reports')
     }
   }, [searchParams])
 
   const handleTabChange = (value: string) => {
     setActiveTab(value)
 
-    setSearchParams((prev) => {
-      // create new URLSearchParams object
-      const newParams = new URLSearchParams(prev)
-      // set activeTab parameter
-      newParams.set('activeTab', value)
-      return newParams
-    })
+    if (value === 'tasks') {
+      searchParams.delete('report')
+      window.history.replaceState(
+        {},
+        '',
+        `${window.location.pathname}${searchParams.toString() ? '?' + searchParams.toString() : ''}`,
+      )
+    }
   }
 
   return (
