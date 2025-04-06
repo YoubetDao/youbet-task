@@ -36,26 +36,29 @@ export default function ProfilePage() {
   }
 
   useAsyncEffect(async () => {
+    if (!username) return
+
     try {
-      if (!username) return
-      if (linkedAddress !== ZERO_ADDRESS && linkedAddress !== '') {
-        const [points, totalRewards, claimedRewards, myinfo] = await Promise.all([
+      const profileData = await getMyInfo()
+      setProfile(profileData)
+
+      if (linkedAddress && linkedAddress !== ZERO_ADDRESS) {
+        const [points, totalRewardsData, claimedRewardsData] = await Promise.all([
           sdk.client.getUserPoints(linkedAddress),
           sdk.client.getTotalRewards(linkedAddress),
           sdk.client.getClaimedRewards(linkedAddress),
-          getMyInfo(),
-        ])
-        setTotalRewards(Number(totalRewards) / 10 ** 18)
+        ]);
+
         setUserPoints(points.toString())
-        setClaimedRewards(Number(claimedRewards) / 10 ** 18)
-        setProfile(myinfo)
+        setTotalRewards(Number(totalRewardsData) / 10 ** 18)
+        setClaimedRewards(Number(claimedRewardsData) / 10 ** 18)
       }
     } catch (error) {
       console.error('Error fetching user profile:', error)
     } finally {
       setLoading(false)
     }
-  }, [username])
+  }, [username, linkedAddress])
 
   const handleClaim = async () => {
     setClaiming(true)
