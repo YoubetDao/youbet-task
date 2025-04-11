@@ -28,7 +28,7 @@ export default function ProjectDetailPage() {
 
   const handleTabChange = (value: string) => {
     setActiveTab(value)
-    // 如果切换到 tasks tab，清除 report 参数
+
     if (value === 'tasks') {
       searchParams.delete('report')
       window.history.replaceState(
@@ -50,7 +50,7 @@ export default function ProjectDetailPage() {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage>{project}</BreadcrumbPage>
+            <BreadcrumbPage>{searchParams.get('projectName')}</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
