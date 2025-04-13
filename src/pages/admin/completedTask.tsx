@@ -195,6 +195,7 @@ function CompletedTaskTable(): React.ReactElement {
                         users={task.assignee ? [task.assignee] : []}
                         addressFrom={address}
                         chain={chain}
+                        rewardType="task"
                         onRewardDistributed={async (data) => {
                           await grantTaskRewards(task._id, {
                             contributors: data.users.map((user) => ({

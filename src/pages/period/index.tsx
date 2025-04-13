@@ -229,6 +229,7 @@ function PeriodTable(): React.ReactElement {
                           users={period.contributors}
                           addressFrom={address}
                           chain={chain}
+                          rewardType="period"
                         />
                       ) : (
                         <Button

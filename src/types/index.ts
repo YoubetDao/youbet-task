@@ -47,8 +47,8 @@ export interface Period {
 }
 
 export enum ReceiptStatus {
-  GRANTED = 'granted',
   CLAIMED = 'claimed',
+  PENDING = 'pending',
 }
 
 export interface Receipt {
@@ -192,6 +192,7 @@ export interface FetchReceiptsParams extends PaginationParams {
 
 export interface GrantPeriodRewardsParams {
   id: string
+  rewardType: 'period' | 'task'
   contributors: Array<{
     contributor: string
     amount: number
