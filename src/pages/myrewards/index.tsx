@@ -77,14 +77,16 @@ function RewardsTable({ type }: { type: 'period' | 'task' }): React.ReactElement
                       : '***'}
                   </TableCell>
                   <TableCell>
-                    {receipts.status === ReceiptStatus.GRANTED ? (
+                    {receipts.status === ReceiptStatus.PENDING ? (
                       address && github && chain ? (
                         <Button
                           variant="link"
                           className="gap-2 p-0 text-blue-500"
                           onClick={async () => {
                             if (!receipts.source.period && !receipts.source.task) return
-                            const sourceId = receipts.source.period?._id || receipts.source.task?._id
+                            const sourceId = `${receipts.source.period ? 'period' : 'task'}-${
+                              receipts.source.period?._id || receipts.source.task?._id
+                            }`
                             if (!sourceId) return
                             try {
                               const signature = await getRewardSignature(sourceId)

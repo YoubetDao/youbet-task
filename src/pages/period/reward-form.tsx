@@ -50,6 +50,7 @@ interface IRewardForm {
   addressFrom: `0x${string}`
   users: User[]
   chain: Chain
+  rewardType: 'period' | 'task'
   onRewardDistributed?: (data: {
     id: string
     amounts: number[]
@@ -66,6 +67,7 @@ export const RewardDialogForm = ({
   users,
   addressFrom,
   chain,
+  rewardType,
   onRewardDistributed,
   defaultAmount,
 }: IRewardForm) => {
@@ -114,7 +116,8 @@ export const RewardDialogForm = ({
         await distributor.approveAllowance(MIN_ALLOWANCE * BigInt(10))
       }
 
-      await distributor.createRedPacket(id, githubIds, amountsInWei)
+      const key = `${rewardType}-${id}`
+      await distributor.createRedPacket(key, githubIds, amountsInWei)
 
       if (onRewardDistributed) {
         await onRewardDistributed({
@@ -127,6 +130,7 @@ export const RewardDialogForm = ({
       } else {
         await postGrantPeriodRewards({
           id,
+          rewardType,
           contributors: users.map((user) => ({
             contributor: user.login,
             amount: amounts[users.indexOf(user)],
@@ -138,8 +142,7 @@ export const RewardDialogForm = ({
 
       setOpen(false)
 
-      queryClient.invalidateQueries({ queryKey: ['periods'] })
-      queryClient.invalidateQueries({ queryKey: ['tasks'] })
+      queryClient.invalidateQueries({ queryKey: [rewardType === 'period' ? 'periods' : 'tasks'] })
       toast({
         variant: 'default',
         title: 'Success',
