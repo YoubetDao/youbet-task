@@ -84,6 +84,22 @@ export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
       component: 'profile',
       description: 'My Profile.',
       layout: 'dashboard',
+      children: [
+        {
+          title: 'Profile V1',
+          icon: 'profile',
+          href: '/profile',
+          component: 'profile',
+          layout: 'dashboard',
+        },
+        {
+          title: 'Profile V2',
+          icon: 'profileV2',
+          href: '/profile/v2',
+          component: 'profileV2',
+          layout: 'dashboard',
+        },
+      ],
     },
     {
       title: 'TaskDetail',

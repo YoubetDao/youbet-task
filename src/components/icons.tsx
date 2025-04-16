@@ -15,6 +15,7 @@ import {
   GitPullRequest,
   ClipboardList,
   CalendarRange,
+  Users2,
 } from 'lucide-react'
 
 export const Icons = {
@@ -27,6 +28,7 @@ export const Icons = {
   users: Users,
   listChecks: ListChecks,
   profile: UserCircle2,
+  profileV2: Users2,
   tutorial: BookOpen,
   school: LucideSchool,
   settings: Settings,

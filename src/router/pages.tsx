@@ -14,6 +14,7 @@ import PeriodAdmin from '@/pages/period'
 import MyRewards from '@/pages/myrewards'
 import CompletedTaskAdmin from '@/pages/admin/completedTask'
 import ProjectDetailPage from '@/pages/projectdetail'
+import ProfilePageV2 from '@/pages/profile/indexV2'
 
 export const Pages = {
   dashboard: Dashboard,
@@ -23,6 +24,7 @@ export const Pages = {
   login: Login,
   callback: Callback,
   profile: ProfilePage,
+  profileV2: ProfilePageV2,
   tutorial: Tutorial,
   tutorials: Tutorials,
   taskDetail: TaskDetailPage,
@@ -32,4 +34,4 @@ export const Pages = {
   completedTaskAdmin: CompletedTaskAdmin,
   periodAdmin: PeriodAdmin,
   projectDetail: ProjectDetailPage,
-}
+} as const
