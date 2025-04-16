@@ -14,6 +14,7 @@ import { getMyInfo } from '@/service'
 import { useAtom } from 'jotai'
 import { useAsyncEffect } from 'ahooks'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
+import { useSearchParams } from 'react-router-dom'
 
 // 添加类型定义
 interface MainSkill {
@@ -273,6 +274,8 @@ export default function ProfilePageV2() {
   const [showOCID, setShowOCID] = useState(true)
   const [showOpenBuildID, setShowOpenBuildID] = useState(true)
   const [activeTab, setActiveTab] = useState('overview')
+  const [searchParams] = useSearchParams()
+  const searchUser = searchParams.get('searchUser')
   const [currentPage, setCurrentPage] = useState(0)
   const itemsPerPage = 8
   const totalPages = Math.ceil(languageData.length / itemsPerPage)
@@ -332,13 +335,13 @@ export default function ProfilePageV2() {
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex flex-col gap-6 lg:flex-row">
             <Avatar className="h-24 w-24 lg:h-32 lg:w-32">
-              <AvatarImage src={profile?.avatarUrl} alt={profile?.displayName} />
-              <AvatarFallback>{profile?.displayName?.charAt(0)}</AvatarFallback>
+              <AvatarImage src={searchUser ? undefined : profile?.avatarUrl} alt={searchUser || profile?.displayName} />
+              <AvatarFallback>{searchUser || profile?.displayName?.charAt(0)}</AvatarFallback>
             </Avatar>
 
             <div className="space-y-4">
               <div>
-                <h1 className="text-2xl font-bold text-white">{profile?.displayName}</h1>
+                <h1 className="text-2xl font-bold text-white">{searchUser || profile?.displayName}</h1>
                 <p className="text-gray-400">Remote Developer</p>
               </div>
 
