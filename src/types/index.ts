@@ -293,6 +293,8 @@ export interface Profile {
   twitterUsername?: string
   completedTasks?: number
   githubAccessToken?: string
+  login?: string
+  score?: number
   adminNamespaces: string[]
   adminProjects?: string[]
 }

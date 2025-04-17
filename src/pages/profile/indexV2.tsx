@@ -317,8 +317,7 @@ export default function ProfilePageV2() {
 
           <div className="text-right">
             <div className="mb-4">
-              <span className="text-5xl font-bold text-purple-400">4.8</span>
-              <p className="text-sm text-purple-400">Above 4% of people</p>
+              <span className="text-5xl font-bold text-purple-400"> {profile?.score || 0}</span>
             </div>
             <Button variant="outline" onClick={() => setShowIdentitySettings(true)}>
               Edit Profile
@@ -428,7 +427,7 @@ export default function ProfilePageV2() {
           <Card className="p-6">
             <h2 className="mb-4 text-xl font-bold text-white">Contributions</h2>
             <div className="w-full overflow-x-auto">
-              {profile?.username && <GitHubCalendar username={currentUser || ''} colorScheme="dark" fontSize={12} />}
+              {profile?.login && <GitHubCalendar username={profile.login || ''} colorScheme="dark" fontSize={12} />}
             </div>
             <p className="mt-4 text-gray-400">40 contributions in the last year</p>
           </Card>
