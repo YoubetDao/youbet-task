@@ -10,7 +10,6 @@ import { Github, Link, Mail } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 import { Profile } from '@/types'
 import { Button } from '@/components/ui/button'
-import { getMyInfo } from '@/service'
 import { useAtom } from 'jotai'
 import { useAsyncEffect } from 'ahooks'
 import { useSearchParams } from 'react-router-dom'
@@ -18,6 +17,7 @@ import { LanguageTab } from './components/LanguageTab'
 import { ContributedTo } from './components/ContributedTo'
 import { Skillsets } from './components/Skillsets'
 import { Achievements } from './components/Achievements'
+import { userApi } from '@/service/openApi'
 
 // 添加类型定义
 interface MainSkill {
@@ -231,8 +231,8 @@ export default function ProfilePageV2() {
   useAsyncEffect(async () => {
     if (!currentUser) return
     try {
-      const profileData = await getMyInfo()
-      setProfile(profileData)
+      const { data } = (await userApi.userControllerGetProfileOverview(currentUser)) as any
+      setProfile(data.data)
     } catch (error) {
       console.error('Error fetching profile:', error)
     } finally {
@@ -266,6 +266,8 @@ export default function ProfilePageV2() {
     setShowOpenBuildID(false)
   }
 
+  console.log('profile', profile)
+
   return (
     <div className="mx-auto max-w-7xl space-y-6">
       {/* 主卡片 - 个人信息 */}
@@ -273,10 +275,7 @@ export default function ProfilePageV2() {
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex flex-col gap-6 lg:flex-row">
             <Avatar className="h-24 w-24 lg:h-32 lg:w-32">
-              <AvatarImage
-                src={searchUser ? undefined : profile?.avatarUrl}
-                alt={currentUser || profile?.displayName}
-              />
+              <AvatarImage src={profile?.avatarUrl} alt={currentUser || profile?.displayName} />
               <AvatarFallback>{currentUser || profile?.displayName?.charAt(0)}</AvatarFallback>
             </Avatar>
 
@@ -295,10 +294,12 @@ export default function ProfilePageV2() {
                   <Link className="mr-2 h-4 w-4" />
                   <span>stats/{currentUser}</span>
                 </a>
-                <div className="flex items-center text-gray-400">
-                  <Mail className="mr-2 h-4 w-4" />
-                  <span>{profile?.email}</span>
-                </div>
+                {profile?.email && (
+                  <div className="flex items-center text-gray-400">
+                    <Mail className="mr-2 h-4 w-4" />
+                    <span>{profile?.email}</span>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-6">
