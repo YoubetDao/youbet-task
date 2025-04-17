@@ -1,7 +1,15 @@
 import { getAppearances } from '@/lib/appearances'
 import { NavItem } from '@/types'
 import { SdkCtorOptions, SDK } from 'youbet-sdk'
-import { polygon, moonbaseAlpha, Chain, optimismSepolia, optimism, mantleSepoliaTestnet } from 'viem/chains'
+import {
+  polygon,
+  moonbaseAlpha,
+  Chain,
+  optimismSepolia,
+  optimism,
+  mantleSepoliaTestnet,
+  baseSepolia,
+} from 'viem/chains'
 import { UserPermission } from '@/store'
 
 export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
@@ -208,6 +216,15 @@ export const monadDevOptions: SdkCtorOptions = {
   chainName: 'Monad Devnet',
 }
 
+export const baseSepoliaOptions: SdkCtorOptions = {
+  networkOptions: {
+    rpcUrl: 'https://sepolia.base.org',
+    chainId: 84532,
+    contractAddress: '0x009B2B2509d08f4Ed860b2f528ef2166bBE33D00',
+  },
+  chainName: 'Base Sepolia',
+}
+
 const eduChain = {
   id: 41923,
   name: 'Edu Chain',
@@ -279,6 +296,7 @@ const SUPPORTED_CHAINS: Record<string, Chain> = {
   mantleSepolia: mantleSepoliaTestnet,
   neoTest: neoTest,
   monadDevnet: monadDevnet,
+  baseSepolia: baseSepolia,
 }
 
 // TODO: move this chain options to a separated chain config file
@@ -291,6 +309,7 @@ const CHAIN_OPTIONS: Record<string, SdkCtorOptions> = {
   neoTest: neoTestOptions,
   monadDevnet: monadDevOptions,
   opSepolia: opSepoliaOptions,
+  baseSepolia: baseSepoliaOptions,
 }
 
 const getCurrentChain = (): Chain => {

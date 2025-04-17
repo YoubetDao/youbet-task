@@ -47,7 +47,7 @@ export default function ProfilePage() {
           sdk.client.getUserPoints(linkedAddress),
           sdk.client.getTotalRewards(linkedAddress),
           sdk.client.getClaimedRewards(linkedAddress),
-        ]);
+        ])
 
         setUserPoints(points.toString())
         setTotalRewards(Number(totalRewardsData) / 10 ** 18)
