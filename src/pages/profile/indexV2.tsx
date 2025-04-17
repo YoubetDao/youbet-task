@@ -13,10 +13,10 @@ import { Button } from '@/components/ui/button'
 import { getMyInfo } from '@/service'
 import { useAtom } from 'jotai'
 import { useAsyncEffect } from 'ahooks'
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import { useSearchParams } from 'react-router-dom'
 import { LanguageTab } from './components/LanguageTab'
 import { ContributedTo } from './components/ContributedTo'
+import { Skillsets } from './components/Skillsets'
 
 // 添加类型定义
 interface MainSkill {
@@ -502,173 +502,9 @@ export default function ProfilePageV2() {
         </>
       )}
 
-      {activeTab === 'languages' && (
-        <LanguageTab userName={currentUser || ''} />
-        // <Card className="p-6">
-        //   <div className="flex items-center justify-between">
-        //     <h2 className="text-xl font-bold text-white">Programming Languages</h2>
-        //     <p className="text-sm text-gray-400">Last updated: April 15, 2024</p>
-        //   </div>
-        //   <p className="mt-2 text-sm text-gray-400">
-        //     The skills chart displays the distribution of programming languages across repositories.
-        //   </p>
+      {activeTab === 'languages' && <LanguageTab userName={currentUser || ''} />}
 
-        //   <div className="mt-8">
-        //     <div className="h-[400px]">
-        //       <ResponsiveContainer width="100%" height="100%">
-        //         <PieChart>
-        //           <Pie
-        //             data={languageData}
-        //             cx="50%"
-        //             cy="50%"
-        //             innerRadius="60%"
-        //             outerRadius="80%"
-        //             paddingAngle={2}
-        //             dataKey="value"
-        //             startAngle={90}
-        //             endAngle={450}
-        //           >
-        //             {languageData.map((entry, index) => (
-        //               <Cell
-        //                 key={`cell-${index}`}
-        //                 fill={entry.color}
-        //                 // 添加3D效果
-        //                 style={{
-        //                   filter: 'drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.5))',
-        //                   transform: `translateZ(${index * 2}px)`,
-        //                 }}
-        //               />
-        //             ))}
-        //           </Pie>
-        //           <Tooltip content={<SkillTooltip />} />
-        //         </PieChart>
-        //       </ResponsiveContainer>
-        //     </div>
-
-        //     {/* 语言列表和翻页 */}
-        //     <div className="mt-8">
-        //       <div className="grid grid-cols-4 gap-4">
-        //         {languageData.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage).map((lang) => (
-        //           <div key={lang.name} className="flex items-center gap-3">
-        //             <div
-        //               className="h-3 w-3 rounded-full shadow-lg"
-        //               style={{
-        //                 backgroundColor: lang.color,
-        //                 boxShadow: `0 2px 4px ${lang.color}40`,
-        //               }}
-        //             />
-        //             <span className="text-white">{lang.name}</span>
-        //             <span className="text-gray-400">{lang.value}%</span>
-        //           </div>
-        //         ))}
-        //       </div>
-
-        //       {totalPages > 1 && (
-        //         <div className="mt-4 flex items-center justify-center gap-2">
-        //           <Button
-        //             variant="outline"
-        //             size="sm"
-        //             onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
-        //             disabled={currentPage === 0}
-        //           >
-        //             Previous
-        //           </Button>
-        //           <span className="text-sm text-gray-400">
-        //             Page {currentPage + 1} of {totalPages}
-        //           </span>
-        //           <Button
-        //             variant="outline"
-        //             size="sm"
-        //             onClick={() => setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))}
-        //             disabled={currentPage === totalPages - 1}
-        //           >
-        //             Next
-        //           </Button>
-        //         </div>
-        //       )}
-        //     </div>
-        //   </div>
-        // </Card>
-      )}
-
-      {activeTab === 'skillsets' && (
-        <Card className="p-6">
-          <h2 className="text-xl font-bold text-white">Technical Skills</h2>
-          <p className="mt-2 text-sm text-gray-400">
-            The skills chart displays the technologies and skills detected when we scan the user&apos;s repositories.
-          </p>
-
-          <div className="mt-8">
-            <div className="h-[600px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  {/* 主要技能环 */}
-                  <Pie
-                    data={skillsData.mainSkills}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius="40%"
-                    outerRadius="60%"
-                    paddingAngle={0}
-                    dataKey="value"
-                    label={({ cx, cy, midAngle, innerRadius, outerRadius, value, name }) => {
-                      const RADIAN = Math.PI / 180
-                      const radius = innerRadius + (outerRadius - innerRadius) * 1.2
-                      const x = cx + radius * Math.cos(-midAngle * RADIAN)
-                      const y = cy + radius * Math.sin(-midAngle * RADIAN)
-                      return (
-                        <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
-                          {name}
-                        </text>
-                      )
-                    }}
-                  >
-                    {skillsData.mainSkills.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} fillOpacity={0.8} />
-                    ))}
-                  </Pie>
-                  <Tooltip content={<SkillTooltip />} />
-
-                  {/* 子技能环 */}
-                  <Pie
-                    data={skillsData.subSkills}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius="65%"
-                    outerRadius="85%"
-                    paddingAngle={0.5}
-                    dataKey="value"
-                    label={({ cx, cy, midAngle, innerRadius, outerRadius, value, name }) => {
-                      const RADIAN = Math.PI / 180
-                      const radius = outerRadius * 1.1
-                      const x = cx + radius * Math.cos(-midAngle * RADIAN)
-                      const y = cy + radius * Math.sin(-midAngle * RADIAN)
-                      return (
-                        <text
-                          x={x}
-                          y={y}
-                          fill="white"
-                          fontSize="12"
-                          textAnchor={x > cx ? 'start' : 'end'}
-                          dominantBaseline="central"
-                        >
-                          {name}
-                        </text>
-                      )
-                    }}
-                  >
-                    {skillsData.subSkills.map((entry, index) => {
-                      const parentSkill = skillsData.mainSkills.find((skill) => skill.name === entry.parent)
-                      return <Cell key={`subcell-${index}`} fill={parentSkill?.color} fillOpacity={0.6} />
-                    })}
-                  </Pie>
-                  <Tooltip content={<SkillTooltip />} />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </Card>
-      )}
+      {activeTab === 'skillsets' && <Skillsets userName={currentUser || ''} />}
 
       {activeTab === 'achievements' && (
         <Card className="p-6">
