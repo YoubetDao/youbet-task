@@ -3,12 +3,50 @@ import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 import { SkillTooltip } from '../indexV2'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { useMount } from 'ahooks'
+import { userApi } from '@/service/openApi'
+import { forIn } from 'lodash'
 
-export const LanguageTab = () => {
-  const [languageData, setLanguageData] = useState<any[]>([])
+interface Props {
+  userName: string
+}
+
+const randomColor = () => {
+  // H: 0-360, S: 60-100%, L: 40-70% 保证颜色鲜艳且不太浅
+  const h = Math.floor(Math.random() * 360)
+  const s = Math.floor(Math.random() * 40) + 60
+  const l = Math.floor(Math.random() * 30) + 40
+  return `hsl(${h}, ${s}%, ${l}%)`
+}
+
+interface LanguageType {
+  name: string
+  value: number
+  color: string
+}
+
+export const LanguageTab = ({ userName }: Props) => {
+  const [languageData, setLanguageData] = useState<LanguageType[]>([])
   const [currentPage, setCurrentPage] = useState(0)
   const itemsPerPage = 10
   const totalPages = Math.ceil(languageData.length / itemsPerPage)
+
+  useMount(async () => {
+    const { data } = (await userApi.userControllerGetProfileLanguages(userName)) as any
+
+    const languages: LanguageType[] = []
+
+    forIn(data.languages, (value, key) => {
+      languages.push({
+        name: key,
+        value,
+        color: randomColor(),
+      })
+    })
+
+    setLanguageData(languages)
+  })
+
   return (
     <Card className="p-6">
       <div className="flex items-center justify-between">
