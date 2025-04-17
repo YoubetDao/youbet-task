@@ -16,6 +16,7 @@ import { useAsyncEffect } from 'ahooks'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import { useSearchParams } from 'react-router-dom'
 import { LanguageTab } from './components/LanguageTab'
+import { ContributedTo } from './components/ContributedTo'
 
 // 添加类型定义
 interface MainSkill {
@@ -496,25 +497,8 @@ export default function ProfilePageV2() {
             </div>
             <p className="mt-4 text-gray-400">40 contributions in the last year</p>
           </Card>
-
-          {/* 最近活动 */}
-          <Card className="p-6">
-            <h2 className="mb-4 text-xl font-bold text-white">Recent Activities</h2>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-400">[PR] Merged PR #42 in youbet-task</span>
-                <span className="text-sm text-gray-500">2 hours ago</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-400">[Issue] Opened Issue #7 in youbet-task</span>
-                <span className="text-sm text-gray-500">4 hours ago</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-400">[Comment] Commented on Issue #7 in youbet-task</span>
-                <span className="text-sm text-gray-500">6 hours ago</span>
-              </div>
-            </div>
-          </Card>
+          {/* Contributed To */}
+          <ContributedTo userName={currentUser || ''} />
         </>
       )}
 
