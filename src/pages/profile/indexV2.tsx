@@ -15,6 +15,8 @@ import { useAtom } from 'jotai'
 import { useAsyncEffect } from 'ahooks'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import { useSearchParams } from 'react-router-dom'
+import { LanguageTab } from './components/LanguageTab'
+import { ContributedTo } from './components/ContributedTo'
 
 // 添加类型定义
 interface MainSkill {
@@ -123,7 +125,7 @@ const isSubSkill = (data: MainSkill | SubSkill): data is SubSkill => {
   return 'parent' in data
 }
 
-const SkillTooltip = ({ active, payload }: TooltipProps) => {
+export const SkillTooltip = ({ active, payload }: TooltipProps) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload
     return (
@@ -283,6 +285,8 @@ export default function ProfilePageV2() {
   const achievementsPerPage = 6
   const totalAchievementPages = Math.ceil(achievementsData.length / achievementsPerPage)
 
+  const currentUser = searchUser || username
+
   const tabs = [
     { id: 'overview', label: 'Overview' },
     { id: 'languages', label: 'Languages' },
@@ -291,7 +295,7 @@ export default function ProfilePageV2() {
   ]
 
   useAsyncEffect(async () => {
-    if (!username) return
+    if (!currentUser) return
     try {
       const profileData = await getMyInfo()
       setProfile(profileData)
@@ -300,7 +304,7 @@ export default function ProfilePageV2() {
     } finally {
       setLoading(false)
     }
-  }, [username])
+  }, [currentUser])
 
   if (loading) return <LoadingCards />
 
@@ -335,24 +339,27 @@ export default function ProfilePageV2() {
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex flex-col gap-6 lg:flex-row">
             <Avatar className="h-24 w-24 lg:h-32 lg:w-32">
-              <AvatarImage src={searchUser ? undefined : profile?.avatarUrl} alt={searchUser || profile?.displayName} />
-              <AvatarFallback>{searchUser || profile?.displayName?.charAt(0)}</AvatarFallback>
+              <AvatarImage
+                src={searchUser ? undefined : profile?.avatarUrl}
+                alt={currentUser || profile?.displayName}
+              />
+              <AvatarFallback>{currentUser || profile?.displayName?.charAt(0)}</AvatarFallback>
             </Avatar>
 
             <div className="space-y-4">
               <div>
-                <h1 className="text-2xl font-bold text-white">{searchUser || profile?.displayName}</h1>
+                <h1 className="text-2xl font-bold text-white">{currentUser || profile?.displayName}</h1>{' '}
                 <p className="text-gray-400">Remote Developer</p>
               </div>
 
               <div className="flex flex-wrap gap-4">
-                <a href={`github/${profile?.username}`} className="flex items-center text-gray-400 hover:text-white">
+                <a href={`github/${currentUser}`} className="flex items-center text-gray-400 hover:text-white">
                   <Github className="mr-2 h-4 w-4" />
-                  <span>github/{profile?.username}</span>
+                  <span>github/{currentUser}</span>
                 </a>
-                <a href={`stats/${profile?.username}`} className="flex items-center text-gray-400 hover:text-white">
+                <a href={`stats/${currentUser}`} className="flex items-center text-gray-400 hover:text-white">
                   <Link className="mr-2 h-4 w-4" />
-                  <span>stats/{profile?.username}</span>
+                  <span>stats/{currentUser}</span>
                 </a>
                 <div className="flex items-center text-gray-400">
                   <Mail className="mr-2 h-4 w-4" />
@@ -486,118 +493,102 @@ export default function ProfilePageV2() {
           <Card className="p-6">
             <h2 className="mb-4 text-xl font-bold text-white">Contributions</h2>
             <div className="w-full overflow-x-auto">
-              {profile?.username && <GitHubCalendar username={profile.username} colorScheme="dark" fontSize={12} />}
+              {profile?.username && <GitHubCalendar username={currentUser || ''} colorScheme="dark" fontSize={12} />}
             </div>
             <p className="mt-4 text-gray-400">40 contributions in the last year</p>
           </Card>
-
-          {/* 最近活动 */}
-          <Card className="p-6">
-            <h2 className="mb-4 text-xl font-bold text-white">Recent Activities</h2>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-400">[PR] Merged PR #42 in youbet-task</span>
-                <span className="text-sm text-gray-500">2 hours ago</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-400">[Issue] Opened Issue #7 in youbet-task</span>
-                <span className="text-sm text-gray-500">4 hours ago</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-400">[Comment] Commented on Issue #7 in youbet-task</span>
-                <span className="text-sm text-gray-500">6 hours ago</span>
-              </div>
-            </div>
-          </Card>
+          {/* Contributed To */}
+          <ContributedTo userName={currentUser || ''} />
         </>
       )}
 
       {activeTab === 'languages' && (
-        <Card className="p-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-white">Programming Languages</h2>
-            <p className="text-sm text-gray-400">Last updated: April 15, 2024</p>
-          </div>
-          <p className="mt-2 text-sm text-gray-400">
-            The skills chart displays the distribution of programming languages across repositories.
-          </p>
+        <LanguageTab userName={currentUser || ''} />
+        // <Card className="p-6">
+        //   <div className="flex items-center justify-between">
+        //     <h2 className="text-xl font-bold text-white">Programming Languages</h2>
+        //     <p className="text-sm text-gray-400">Last updated: April 15, 2024</p>
+        //   </div>
+        //   <p className="mt-2 text-sm text-gray-400">
+        //     The skills chart displays the distribution of programming languages across repositories.
+        //   </p>
 
-          <div className="mt-8">
-            <div className="h-[400px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={languageData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius="60%"
-                    outerRadius="80%"
-                    paddingAngle={2}
-                    dataKey="value"
-                    startAngle={90}
-                    endAngle={450}
-                  >
-                    {languageData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={entry.color}
-                        // 添加3D效果
-                        style={{
-                          filter: 'drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.5))',
-                          transform: `translateZ(${index * 2}px)`,
-                        }}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip content={<SkillTooltip />} />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
+        //   <div className="mt-8">
+        //     <div className="h-[400px]">
+        //       <ResponsiveContainer width="100%" height="100%">
+        //         <PieChart>
+        //           <Pie
+        //             data={languageData}
+        //             cx="50%"
+        //             cy="50%"
+        //             innerRadius="60%"
+        //             outerRadius="80%"
+        //             paddingAngle={2}
+        //             dataKey="value"
+        //             startAngle={90}
+        //             endAngle={450}
+        //           >
+        //             {languageData.map((entry, index) => (
+        //               <Cell
+        //                 key={`cell-${index}`}
+        //                 fill={entry.color}
+        //                 // 添加3D效果
+        //                 style={{
+        //                   filter: 'drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.5))',
+        //                   transform: `translateZ(${index * 2}px)`,
+        //                 }}
+        //               />
+        //             ))}
+        //           </Pie>
+        //           <Tooltip content={<SkillTooltip />} />
+        //         </PieChart>
+        //       </ResponsiveContainer>
+        //     </div>
 
-            {/* 语言列表和翻页 */}
-            <div className="mt-8">
-              <div className="grid grid-cols-4 gap-4">
-                {languageData.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage).map((lang) => (
-                  <div key={lang.name} className="flex items-center gap-3">
-                    <div
-                      className="h-3 w-3 rounded-full shadow-lg"
-                      style={{
-                        backgroundColor: lang.color,
-                        boxShadow: `0 2px 4px ${lang.color}40`,
-                      }}
-                    />
-                    <span className="text-white">{lang.name}</span>
-                    <span className="text-gray-400">{lang.value}%</span>
-                  </div>
-                ))}
-              </div>
+        //     {/* 语言列表和翻页 */}
+        //     <div className="mt-8">
+        //       <div className="grid grid-cols-4 gap-4">
+        //         {languageData.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage).map((lang) => (
+        //           <div key={lang.name} className="flex items-center gap-3">
+        //             <div
+        //               className="h-3 w-3 rounded-full shadow-lg"
+        //               style={{
+        //                 backgroundColor: lang.color,
+        //                 boxShadow: `0 2px 4px ${lang.color}40`,
+        //               }}
+        //             />
+        //             <span className="text-white">{lang.name}</span>
+        //             <span className="text-gray-400">{lang.value}%</span>
+        //           </div>
+        //         ))}
+        //       </div>
 
-              {totalPages > 1 && (
-                <div className="mt-4 flex items-center justify-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
-                    disabled={currentPage === 0}
-                  >
-                    Previous
-                  </Button>
-                  <span className="text-sm text-gray-400">
-                    Page {currentPage + 1} of {totalPages}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))}
-                    disabled={currentPage === totalPages - 1}
-                  >
-                    Next
-                  </Button>
-                </div>
-              )}
-            </div>
-          </div>
-        </Card>
+        //       {totalPages > 1 && (
+        //         <div className="mt-4 flex items-center justify-center gap-2">
+        //           <Button
+        //             variant="outline"
+        //             size="sm"
+        //             onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
+        //             disabled={currentPage === 0}
+        //           >
+        //             Previous
+        //           </Button>
+        //           <span className="text-sm text-gray-400">
+        //             Page {currentPage + 1} of {totalPages}
+        //           </span>
+        //           <Button
+        //             variant="outline"
+        //             size="sm"
+        //             onClick={() => setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))}
+        //             disabled={currentPage === totalPages - 1}
+        //           >
+        //             Next
+        //           </Button>
+        //         </div>
+        //       )}
+        //     </div>
+        //   </div>
+        // </Card>
       )}
 
       {activeTab === 'skillsets' && (
