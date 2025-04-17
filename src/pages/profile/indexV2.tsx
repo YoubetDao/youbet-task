@@ -123,7 +123,7 @@ const isSubSkill = (data: MainSkill | SubSkill): data is SubSkill => {
   return 'parent' in data
 }
 
-const SkillTooltip = ({ active, payload }: TooltipProps) => {
+export const SkillTooltip = ({ active, payload }: TooltipProps) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload
     return (
