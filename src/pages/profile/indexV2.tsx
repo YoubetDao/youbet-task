@@ -284,6 +284,8 @@ export default function ProfilePageV2() {
   const achievementsPerPage = 6
   const totalAchievementPages = Math.ceil(achievementsData.length / achievementsPerPage)
 
+  const currentUser = searchUser || username
+
   const tabs = [
     { id: 'overview', label: 'Overview' },
     { id: 'languages', label: 'Languages' },
@@ -292,7 +294,7 @@ export default function ProfilePageV2() {
   ]
 
   useAsyncEffect(async () => {
-    if (!username) return
+    if (!currentUser) return
     try {
       const profileData = await getMyInfo()
       setProfile(profileData)
@@ -301,7 +303,7 @@ export default function ProfilePageV2() {
     } finally {
       setLoading(false)
     }
-  }, [username])
+  }, [currentUser])
 
   if (loading) return <LoadingCards />
 
@@ -336,24 +338,27 @@ export default function ProfilePageV2() {
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex flex-col gap-6 lg:flex-row">
             <Avatar className="h-24 w-24 lg:h-32 lg:w-32">
-              <AvatarImage src={searchUser ? undefined : profile?.avatarUrl} alt={searchUser || profile?.displayName} />
-              <AvatarFallback>{searchUser || profile?.displayName?.charAt(0)}</AvatarFallback>
+              <AvatarImage
+                src={searchUser ? undefined : profile?.avatarUrl}
+                alt={currentUser || profile?.displayName}
+              />
+              <AvatarFallback>{currentUser || profile?.displayName?.charAt(0)}</AvatarFallback>
             </Avatar>
 
             <div className="space-y-4">
               <div>
-                <h1 className="text-2xl font-bold text-white">{searchUser || profile?.displayName}</h1>
+                <h1 className="text-2xl font-bold text-white">{currentUser || profile?.displayName}</h1>{' '}
                 <p className="text-gray-400">Remote Developer</p>
               </div>
 
               <div className="flex flex-wrap gap-4">
-                <a href={`github/${profile?.username}`} className="flex items-center text-gray-400 hover:text-white">
+                <a href={`github/${currentUser}`} className="flex items-center text-gray-400 hover:text-white">
                   <Github className="mr-2 h-4 w-4" />
-                  <span>github/{profile?.username}</span>
+                  <span>github/{currentUser}</span>
                 </a>
-                <a href={`stats/${profile?.username}`} className="flex items-center text-gray-400 hover:text-white">
+                <a href={`stats/${currentUser}`} className="flex items-center text-gray-400 hover:text-white">
                   <Link className="mr-2 h-4 w-4" />
-                  <span>stats/{profile?.username}</span>
+                  <span>stats/{currentUser}</span>
                 </a>
                 <div className="flex items-center text-gray-400">
                   <Mail className="mr-2 h-4 w-4" />
@@ -487,7 +492,7 @@ export default function ProfilePageV2() {
           <Card className="p-6">
             <h2 className="mb-4 text-xl font-bold text-white">Contributions</h2>
             <div className="w-full overflow-x-auto">
-              {profile?.username && <GitHubCalendar username={profile.username} colorScheme="dark" fontSize={12} />}
+              {profile?.username && <GitHubCalendar username={currentUser || ''} colorScheme="dark" fontSize={12} />}
             </div>
             <p className="mt-4 text-gray-400">40 contributions in the last year</p>
           </Card>
@@ -514,7 +519,7 @@ export default function ProfilePageV2() {
       )}
 
       {activeTab === 'languages' && (
-        <LanguageTab userName={username || ''} />
+        <LanguageTab userName={currentUser || ''} />
         // <Card className="p-6">
         //   <div className="flex items-center justify-between">
         //     <h2 className="text-xl font-bold text-white">Programming Languages</h2>
