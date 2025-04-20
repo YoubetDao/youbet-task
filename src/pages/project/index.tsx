@@ -41,7 +41,7 @@ function renderTags(tags: string[]): React.ReactNode[] {
 
 function ProjectItem({ item }: { item: Project }) {
   return (
-    <Link key={item._id} to={`/projects/${item._id}/`}>
+    <Link key={item._id} to={`/projects/${item._id}?projectName=${item.name}`}>
       <article className="group relative z-[1] w-full cursor-pointer rounded-2xl border p-4 !pr-0 !pt-0 transition-all duration-200 ease-in hover:scale-[0.998] hover:border hover:border-opacity-80 hover:bg-white/10 lg:p-6">
         <div className="flex gap-5">
           <div className="pt-4">
