@@ -21,7 +21,7 @@ function RewardsTable({ type }: { type: 'period' | 'task' }): React.ReactElement
   const queryClient = useQueryClient()
 
   const { data: periods, isLoading: isPullRequestsLoading } = useQuery<IResultPaginationData<Receipt> | undefined>({
-    queryKey: ['receipts', type],
+    queryKey: ['receipts', type, page],
     queryFn: () => {
       return fetchReceipts({
         offset: (page - 1) * pageSize,
