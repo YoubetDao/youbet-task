@@ -102,14 +102,6 @@ export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
       hideInMenu: !userPermission,
       children: [
         {
-          title: 'Pull Requests',
-          href: '/admin/pull-requests',
-          icon: 'gitPullRequest',
-          component: 'pullRequestAdmin',
-          layout: 'dashboard',
-          hideInMenu: userPermission !== UserPermission.PullRequest && userPermission !== UserPermission.All,
-        },
-        {
           title: 'Period',
           href: '/admin/period',
           icon: 'period',
