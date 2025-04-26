@@ -24,7 +24,7 @@ import {
   PeriodReport,
 } from '@/types'
 import http from './instance'
-import { TasksApi, Configuration } from '@/openapi/client'
+import { TaskApi, Configuration } from '@/openapi/client'
 
 // ===== 认证 (Auth) =====
 export async function fetchUserInfo(code: string): Promise<UserInfo> {
@@ -255,7 +255,7 @@ export async function getRepos(org: string) {
 }
 
 // ===== 测试 (Test) =====
-export const taskApi = new TasksApi(
+export const taskApi = new TaskApi(
   new Configuration({
     basePath: import.meta.env.VITE_BASE_URL,
   }),
