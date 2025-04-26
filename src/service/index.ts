@@ -256,7 +256,6 @@ export async function getRepos(org: string) {
 
 // ===== 测试 (Test) =====
 export const taskApi = new TaskApi(
-<<<<<<< HEAD
   new Configuration({
     basePath: import.meta.env.VITE_BASE_URL,
   }),
@@ -265,8 +264,6 @@ export const taskApi = new TaskApi(
 )
 
 export const reportApi = new ReportApi(
-=======
->>>>>>> 0dd065c (feat: update openapi)
   new Configuration({
     basePath: import.meta.env.VITE_BASE_URL,
   }),
