@@ -217,6 +217,15 @@ export const baseSepoliaOptions: SdkCtorOptions = {
   chainName: 'Base Sepolia',
 }
 
+export const juChainTestnetOptions: SdkCtorOptions = {
+  networkOptions: {
+    rpcUrl: 'https://testnet-rpc.juchain.org',
+    chainId: 202599,
+    contractAddress: '0x009B2B2509d08f4Ed860b2f528ef2166bBE33D00',
+  },
+  chainName: 'JuChain Testnet',
+}
+
 const eduChain = {
   id: 41923,
   name: 'Edu Chain',
@@ -277,6 +286,21 @@ const monadDevnet = {
   },
 }
 
+const juChainTestnet = {
+  id: 202599,
+  name: 'JuChain Testnet',
+  nativeCurrency: {
+    name: 'JU',
+    symbol: 'JU',
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://testnet-rpc.juchain.org'],
+    },
+  },
+}
+
 // define supported chains
 const SUPPORTED_CHAINS: Record<string, Chain> = {
   educhain: eduChain,
@@ -289,6 +313,7 @@ const SUPPORTED_CHAINS: Record<string, Chain> = {
   neoTest: neoTest,
   monadDevnet: monadDevnet,
   baseSepolia: baseSepolia,
+  juChainTestnet: juChainTestnet,
 }
 
 // TODO: move this chain options to a separated chain config file
@@ -302,6 +327,7 @@ const CHAIN_OPTIONS: Record<string, SdkCtorOptions> = {
   monadDevnet: monadDevOptions,
   opSepolia: opSepoliaOptions,
   baseSepolia: baseSepoliaOptions,
+  juChainTestnet: juChainTestnetOptions,
 }
 
 const getCurrentChain = (): Chain => {
