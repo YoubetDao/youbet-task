@@ -299,6 +299,13 @@ const juChainTestnet = {
       http: ['https://testnet-rpc.juchain.org'],
     },
   },
+  blockExplorers: {
+    default: {
+      name: 'Blockscout',
+      url: 'https://testnet.juscan.io',
+      apiUrl: 'https://testnet.juscan.io/api',
+    },
+  },
 }
 
 // define supported chains
