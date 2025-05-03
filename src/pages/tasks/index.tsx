@@ -19,6 +19,7 @@ import PaginationFast from '@/components/pagination-fast'
 import { TaskCard } from '@/components/task-v2/task-card'
 import { TaskItem } from '@/components/task-v2/task-item'
 import { LoadingCards } from '@/components/loading-cards'
+import { TaskControllerGetTasksRewardGrantedEnum, TaskControllerGetTasksRewardClaimedEnum } from '@/openapi/client'
 
 export default function Tasks() {
   const [page, setPage] = useState(1)
@@ -33,7 +34,8 @@ export default function Tasks() {
         '',
         'open',
         selectedAssignment !== 'all' ? selectedAssignment : '',
-        false,
+        TaskControllerGetTasksRewardGrantedEnum.All,
+        TaskControllerGetTasksRewardClaimedEnum.All,
         (page - 1) * pageSize,
         pageSize,
       )
