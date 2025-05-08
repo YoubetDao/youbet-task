@@ -1,0 +1,16 @@
+name: Move to next iteration
+
+on:
+  schedule:
+    - cron: '0 0 * * SUN' # 每周日 UTC 0 点运行
+  workflow_dispatch: # 支持手动触发
+
+jobs:
+  move:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Move items to next iteration
+        uses: alex-page/move-to-next-iteration@v1
+        with:
+          project-url: https://github.com/orgs/youbetdao/projects/2
+          github-token: ${{ secrets.GITHUB_TOKEN }}
