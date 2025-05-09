@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { fetchTasks, getLoadMoreProjectList, grantTaskRewards } from '@/service'
-import { IResultPagination, IResultPaginationData, Project, Task } from '@/types'
+import { getLoadMoreProjectList, grantTaskRewards, taskApi } from '@/service'
+import { IResultPagination, Project } from '@/types'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount, useSwitchChain } from 'wagmi'
@@ -78,23 +78,17 @@ function CompletedTaskTable(): React.ReactElement {
     },
   )
 
-  const { data: tasks, isLoading: isTasksLoading } = useQuery<IResultPaginationData<Task> | undefined>({
-    queryKey: ['tasks', page, pageSize, projectId ?? ''],
-    queryFn: () => {
-      return fetchTasks({
-        offset: (page - 1) * pageSize,
-        limit: pageSize,
-        project: projectId ?? '',
-        states: ['closed'],
-      })
-    },
+  const { data: tasks, isLoading: isTasksLoading } = useQuery(['tasks', page, pageSize, projectId ?? ''], () => {
+    return taskApi
+      .taskControllerGetTasks(projectId ?? '', '', 'closed', '', (page - 1) * pageSize, pageSize)
+      .then((res) => res.data)
   })
 
   useEffect(() => {
     switchChain({ chainId: paymentChain.id })
   }, [switchChain])
 
-  const totalPages = Math.ceil((tasks?.pagination.totalCount || 0) / pageSize)
+  const totalPages = Math.ceil((tasks?.pagination?.totalCount || 0) / pageSize)
 
   const [hasAllowance, setHasAllowance] = useState(false)
   const [tokenDecimals, setTokenDecimals] = useState<bigint>(BigInt(18))
@@ -152,7 +146,7 @@ function CompletedTaskTable(): React.ReactElement {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {tasks.data.map((task) => (
+            {tasks.data?.map((task) => (
               <TableRow key={task._id}>
                 <TableCell className="font-medium">{task.title}</TableCell>
                 <TableCell>
@@ -175,7 +169,7 @@ function CompletedTaskTable(): React.ReactElement {
                     <img
                       className="h-6 w-6 rounded-full border-2 border-white"
                       src={task.assignee.avatarUrl}
-                      alt={task.assignee._id}
+                      alt={task.assignee.login}
                     />
                   )}
                 </TableCell>
@@ -220,6 +214,8 @@ function CompletedTaskTable(): React.ReactElement {
                         Approve Contract
                       </Button>
                     ))
+                  ) : task.rewardClaimed ? (
+                    <p>Claimed</p>
                   ) : (
                     <p>Granted</p>
                   )}
