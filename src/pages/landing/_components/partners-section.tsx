@@ -2,10 +2,20 @@ import { motion } from 'framer-motion'
 import useEmblaCarousel from 'embla-carousel-react'
 import { useEffect } from 'react'
 
+// 导入图片
+import animocaLogo from '@/assets/logos/animoca.png'
+import openCampusLogo from '@/assets/logos/openCampus.png'
+import openbuildLogo from '@/assets/logos/openbuild.svg?url'
+import socialLayerLogo from '@/assets/logos/social_layer.svg?url'
+import superfluidLogo from '@/assets/logos/superfluid.jpeg'
+import virtualsLogo from '@/assets/logos/virtuals.svg?url'
+import bewaterLogo from '@/assets/logos/bewater.jpeg'
+import antalphaLogo from '@/assets/logos/antalpha.jpg'
+
 const partners = [
   {
     name: 'Animoca',
-    logo: '/src/assets/logos/animoca.png',
+    logo: animocaLogo,
   },
   // {
   //   name: 'Coset',
@@ -13,31 +23,31 @@ const partners = [
   // },
   {
     name: 'OpenCampus',
-    logo: '/src/assets/logos/openCampus.png',
+    logo: openCampusLogo,
   },
   {
     name: 'Openbuild',
-    logo: '/src/assets/logos/openbuild.svg',
+    logo: openbuildLogo,
   },
   {
     name: 'Social Layer',
-    logo: '/src/assets/logos/social_layer.svg',
+    logo: socialLayerLogo,
   },
   {
     name: 'Superfluid',
-    logo: '/src/assets/logos/superfluid.jpeg',
+    logo: superfluidLogo,
   },
   {
     name: 'Virtuals',
-    logo: '/src/assets/logos/virtuals.svg',
+    logo: virtualsLogo,
   },
   {
     name: 'bewater',
-    logo: '/src/assets/logos/bewater.jpeg',
+    logo: bewaterLogo,
   },
   {
     name: 'antalpha',
-    logo: '/src/assets/logos/antalpha.jpg',
+    logo: antalphaLogo,
   },
 ]
 
