@@ -1,80 +1,66 @@
 import { motion } from 'framer-motion'
-import { Button } from '@/components/ui/button'
 import { RainbowButton } from '@/components/ui/rainbow-button'
-import { Twitter, MessageCircle, Github, Award } from 'lucide-react'
+import { Sparkles, Radar, LineChart, Wallet, Award, Boxes } from 'lucide-react'
 import { ShineBorder } from '@/components/ui/shine-border'
 import { BackgroundCanvas } from '@/components/ui/background-canvas'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { PartnersSection } from './_components/partners-section'
 
-const LandingPage = () => {
-  const socialLinks = [
+const features = {
+  enterprise: [
     {
-      name: 'Twitter',
-      url: 'https://x.com/youbetdao',
-      icon: Twitter,
-    },
-    {
-      name: 'Telegram',
-      url: 'https://t.me/+_a-io1KqMIc5ZjQ9',
-      icon: MessageCircle,
-    },
-    {
-      name: 'GitHub',
-      url: 'https://github.com/YoubetDao/',
-      icon: Github,
-    },
-  ]
-
-  const features = [
-    {
-      title: 'Optimize processes, boost productivity',
-      description:
-        'Track and record workflow data in software development, creating a robust and efficient feedback loop to enhance team productivity and error correction.',
-      icon: () => <div />,
-    },
-    {
-      title: 'Smart project radar, connecting developers to opportunities',
-      description: 'Discover top projects and tasks, effectively bridging developers with the right opportunities.',
-      icon: () => <div />,
-    },
-    {
-      title: 'Track contributions, showcase true impact',
-      description:
-        'Record contributions on-chain to create an accurate Developer Influence Score, showcasing true capabilities.',
-      icon: () => <div />,
-    },
-    {
-      title: 'Powerful payments, tailored to your needs',
-      description: 'Pay wallets or third-party accounts across multiple chains or through traditional payment methods.',
-      icon: () => <div />,
-    },
-    {
-      title: 'Automated rewards, fair and efficient',
-      description:
-        'Distribute rewards automatically with diverse allocation strategies to ensure fairness and efficiency.',
-      icon: () => <div />,
-    },
-    {
-      title: 'Enterprise-grade project management',
+      title: 'Enterprise-grade Project Management',
       description:
         'A robust task management system designed to integrate smoothly with GitHub and empower decentralized workflows.',
-      icon: () => <div />,
+      icon: Boxes,
     },
-  ]
+    {
+      title: 'Automated Rewards Distribution',
+      description:
+        'Distribute rewards automatically with diverse allocation strategies to ensure fairness and efficiency.',
+      icon: Award,
+    },
+    {
+      title: 'Optimize Processes, Boost Productivity',
+      description:
+        'Track and record workflow data in software development, creating a robust and efficient feedback loop to enhance team productivity and error correction.',
+      icon: Sparkles,
+    },
+  ],
+  individual: [
+    {
+      title: 'Smart Project Radar',
+      description: 'Discover top projects and tasks, effectively bridging developers with the right opportunities.',
+      icon: Radar,
+    },
+    {
+      title: 'Track Contributions, Showcase Impact',
+      description:
+        'Record contributions on-chain to create an accurate Developer Influence Score, showcasing true capabilities.',
+      icon: LineChart,
+    },
+    {
+      title: 'Powerful Payment System',
+      description: 'Pay wallets or third-party accounts across multiple chains or through traditional payment methods.',
+      icon: Wallet,
+    },
+  ],
+}
 
-  const partners = [
-    {
-      name: 'Antalpha',
-      logo: '/landing/partner-antalpha.svg',
-    },
-    {
-      name: 'Openbuild',
-      logo: '/landing/partner-openbuild.svg',
-    },
-    {
-      name: 'Social Layer',
-      logo: '/landing/partner-sociallayer.svg',
-    },
-  ]
+const slogans = ['Collaborate Smarter, Not Harder', 'To Reward Every Effort']
+
+const LandingPage = () => {
+  const [currentSlogan, setCurrentSlogan] = useState(0)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlogan((prev) => (prev + 1) % slogans.length)
+    }, 5000)
+
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <>
@@ -82,7 +68,7 @@ const LandingPage = () => {
       <main className="relative">
         <div className="min-h-screen">
           {/* Hero Section */}
-          <section className="relative mt-24 flex">
+          <section className="relative flex py-24">
             <div className="container mx-auto px-4 text-center">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -91,129 +77,191 @@ const LandingPage = () => {
                 className="-translate-y-1/3 transform"
               >
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.3 }}
-                  className="mb-12 inline-flex"
+                  animate={{
+                    opacity: [0, 1, 1, 0],
+                    y: [20, 0, 0, -20],
+                  }}
+                  transition={{
+                    duration: 5,
+                    times: [0, 0.1, 0.9, 1],
+                    repeat: Infinity,
+                    repeatDelay: 0,
+                  }}
+                  className="flex h-16 items-center justify-center"
                 >
-                  <Button
-                    variant="outline"
-                    className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-2 backdrop-blur-sm transition-colors hover:bg-white/10"
-                  >
-                    <Award className="h-4 w-4" />
-                    <span className="font-medium text-white/90">To Reward Every Effort</span>
-                  </Button>
+                  <h1 className="mb-8 bg-gradient-to-r from-purple-400 via-purple-600 to-purple-800 bg-clip-text text-4xl font-bold text-transparent md:text-6xl">
+                    {slogans[currentSlogan]}
+                  </h1>
                 </motion.div>
-
-                <h1 className="mb-4 text-4xl font-bold md:text-6xl">
-                  <span className="bg-gradient-to-r from-purple-400 via-purple-600 to-purple-800 bg-clip-text text-transparent">
-                    Collaborate
-                  </span>{' '}
-                  Smarter, Not Harder
-                </h1>
                 <p className="mb-6 text-xl text-muted-foreground md:text-2xl">
-                  Evaluating and Rewarding Every Contribution in Next-Gen Decentralized Collaboration
+                  Evaluating and rewarding every contribution in next-gen decentralized collaboration
                 </p>
                 <p className="mb-8 text-lg text-muted-foreground md:text-xl">
                   A cutting-edge platform for automated and fair reward distribution to open source developers based on
                   their contributions.
                 </p>
                 <div className="space-x-4">
-                  <RainbowButton>Go to app</RainbowButton>
+                  <RainbowButton onClick={() => navigate('/dashboard', { replace: true })}>Go to app</RainbowButton>
                 </div>
               </motion.div>
             </div>
           </section>
 
+          {/* User Stats Section */}
+          <section className="py-24">
+            <div className="container mx-auto px-4">
+              <div className="text-center">
+                <h2 className="mb-8 bg-gradient-to-r from-purple-400 via-purple-600 to-purple-800 bg-clip-text text-2xl font-bold text-transparent md:text-4xl">
+                  Platform Impact
+                </h2>
+                <p className="mb-12 text-lg text-muted-foreground md:text-xl">
+                  Join thousands of developers and projects already using According.work
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  viewport={{ once: true }}
+                  className="text-center"
+                >
+                  <div className="mb-2 text-4xl font-bold text-purple-400 md:text-5xl">1K+</div>
+                  <div className="text-sm text-muted-foreground md:text-base">Active Developers</div>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  viewport={{ once: true }}
+                  className="text-center"
+                >
+                  <div className="mb-2 text-4xl font-bold text-purple-400 md:text-5xl">100+</div>
+                  <div className="text-sm text-muted-foreground md:text-base">Projects</div>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  viewport={{ once: true }}
+                  className="text-center"
+                >
+                  <div className="mb-2 text-4xl font-bold text-purple-400 md:text-5xl">1k+</div>
+                  <div className="text-sm text-muted-foreground md:text-base">Total Tasks</div>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  viewport={{ once: true }}
+                  className="text-center"
+                >
+                  <div className="mb-2 text-4xl font-bold text-purple-400 md:text-5xl">500+</div>
+                  <div className="text-sm text-muted-foreground md:text-base">Opened Tasks</div>
+                </motion.div>
+              </div>
+            </div>
+          </section>
+
           {/* Features Section */}
-          <section className="py-24">
+          <section className="relative overflow-hidden py-24">
+            <div className="pointer-events-none absolute inset-0 from-purple-900/20 to-transparent" />
             <div className="container mx-auto px-4">
-              <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-                {features.map((feature, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: i * 0.1 }}
-                    viewport={{ once: true }}
-                    className="h-full"
-                  >
-                    <ShineBorder
-                      className="relative flex h-full flex-col overflow-hidden rounded-lg border bg-background p-8"
-                      color={['#A07CFE', '#FE8FB5', '#FFBE7B']}
+              <div className="relative text-center">
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-purple-500/10 blur-3xl" />
+                <h2 className="relative mb-8 bg-gradient-to-r from-purple-400 via-purple-600 to-purple-800 bg-clip-text text-2xl font-bold text-transparent md:text-4xl">
+                  Platform Features
+                </h2>
+                <p className="relative mb-8 text-lg text-muted-foreground md:text-xl">
+                  Our platform offers powerful tools for decentralized collaboration and fair reward distribution
+                </p>
+              </div>
+
+              {/* Enterprise Features */}
+              <div className="relative mb-24">
+                <div className="absolute -left-20 top-1/2 h-40 w-40 rounded-full bg-purple-500/20 blur-3xl" />
+                <div className="absolute -right-20 top-1/2 h-40 w-40 rounded-full bg-pink-500/20 blur-3xl" />
+                <h3 className="mb-12 text-center text-2xl font-semibold text-white md:text-3xl">
+                  <span className="bg-gradient-to-r from-purple-400 via-purple-600 to-purple-800 bg-clip-text text-transparent">
+                    Enterprise Solutions
+                  </span>
+                </h3>
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+                  {features.enterprise.map((feature, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: i * 0.1 }}
+                      viewport={{ once: true }}
+                      className="group h-full"
                     >
-                      <div className="relative z-10 flex h-full flex-col">
-                        <div className="mb-4 inline-block w-5 rounded-xl bg-white/10 p-3">
-                          <feature.icon />
-                        </div>
-                        <h3 className="mb-3 bg-gradient-to-r from-white via-white to-white/70 bg-clip-text text-xl font-semibold text-transparent">
-                          {feature.title}
-                        </h3>
-                        <p className="text-gray-400 transition-colors group-hover:text-gray-300">
-                          {feature.description}
-                        </p>
-                      </div>
-                      <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br from-color-1/30 to-color-3/30 blur-3xl transition-all duration-300 group-hover:from-color-1/40 group-hover:to-color-3/40" />
-                    </ShineBorder>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* Partners Section */}
-          <section className="py-24">
-            <div className="container mx-auto px-4">
-              <h2 className="mb-16 bg-gradient-to-r from-white via-white to-white/70 bg-clip-text text-center text-3xl font-bold text-transparent">
-                Our Valued Partners
-              </h2>
-              <div className="grid grid-cols-2 items-center gap-12 md:grid-cols-4">
-                {partners.map((partner, index) => (
-                  <motion.div
-                    key={partner.name}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    viewport={{ once: true }}
-                    className="group flex items-center justify-center"
-                  >
-                    <img
-                      src={partner.logo}
-                      alt={partner.name}
-                      className="h-12 w-32 opacity-50 brightness-0 invert filter transition-all duration-300 group-hover:opacity-100"
-                    />
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* Social Links */}
-          <section className="py-16">
-            <div className="container mx-auto px-4">
-              <div className="flex flex-col items-center justify-center space-y-8">
-                <h2 className="text-center text-2xl font-bold">Connect With Us</h2>
-                <div className="flex items-center space-x-6">
-                  {socialLinks.map((link) => {
-                    const Icon = link.icon
-                    return (
-                      <motion.a
-                        key={link.name}
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="rounded-full bg-white/5 p-3 transition-colors hover:bg-white/10"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
+                      <ShineBorder
+                        className="relative flex h-full flex-col overflow-hidden rounded-2xl border bg-background/50 p-8 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20"
+                        color={['#A07CFE', '#FE8FB5', '#FFBE7B']}
                       >
-                        <Icon className="h-6 w-6" />
-                      </motion.a>
-                    )
-                  })}
+                        <div className="relative z-10 flex h-full flex-col">
+                          <div className="mb-6 inline-block rounded-xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 p-3 transition-transform duration-300 group-hover:scale-110">
+                            <feature.icon className="h-8 w-8 text-purple-400" />
+                          </div>
+                          <h3 className="mb-4 bg-gradient-to-r from-purple-400 via-purple-600 to-purple-800 bg-clip-text text-xl font-semibold text-transparent">
+                            {feature.title}
+                          </h3>
+                          <p className="text-gray-400 transition-colors group-hover:text-gray-300">
+                            {feature.description}
+                          </p>
+                        </div>
+                        <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br from-purple-500/30 to-pink-500/30 blur-3xl transition-all duration-300 group-hover:from-purple-500/40 group-hover:to-pink-500/40" />
+                      </ShineBorder>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Individual Features */}
+              <div className="relative">
+                <div className="absolute -left-20 top-1/2 h-40 w-40 rounded-full bg-purple-500/20 blur-3xl" />
+                <div className="absolute -right-20 top-1/2 h-40 w-40 rounded-full bg-pink-500/20 blur-3xl" />
+                <h3 className="mb-12 text-center text-2xl font-semibold text-white md:text-3xl">
+                  <span className="bg-gradient-to-r from-purple-400 via-purple-600 to-purple-800 bg-clip-text text-transparent">
+                    Individual Developer Tools
+                  </span>
+                </h3>
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+                  {features.individual.map((feature, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: i * 0.1 }}
+                      viewport={{ once: true }}
+                      className="group h-full"
+                    >
+                      <ShineBorder
+                        className="relative flex h-full flex-col overflow-hidden rounded-2xl border bg-background/50 p-8 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20"
+                        color={['#A07CFE', '#FE8FB5', '#FFBE7B']}
+                      >
+                        <div className="relative z-10 flex h-full flex-col">
+                          <div className="mb-6 inline-block rounded-xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 p-3 transition-transform duration-300 group-hover:scale-110">
+                            <feature.icon className="h-8 w-8 text-purple-400" />
+                          </div>
+                          <h3 className="mb-4 bg-gradient-to-r from-purple-400 via-purple-600 to-purple-800 bg-clip-text text-xl font-semibold text-transparent">
+                            {feature.title}
+                          </h3>
+                          <p className="text-gray-400 transition-colors group-hover:text-gray-300">
+                            {feature.description}
+                          </p>
+                        </div>
+                        <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br from-purple-500/30 to-pink-500/30 blur-3xl transition-all duration-300 group-hover:from-purple-500/40 group-hover:to-pink-500/40" />
+                      </ShineBorder>
+                    </motion.div>
+                  ))}
                 </div>
               </div>
             </div>
           </section>
+
+          <PartnersSection />
         </div>
       </main>
     </>

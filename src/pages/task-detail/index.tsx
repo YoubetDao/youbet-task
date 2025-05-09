@@ -206,7 +206,7 @@ function QuestLog({ createUser }: { createUser: string }) {
           <Button
             disabled={isClaiming}
             onClick={handleClaim}
-            variant="emphasis"
+            variant="default"
             className="border border-muted text-white hover:border-opacity-80 hover:bg-white/10"
           >
             Apply
@@ -216,7 +216,7 @@ function QuestLog({ createUser }: { createUser: string }) {
           <Button
             disabled={isWithdrawing}
             onClick={handleDisclaim}
-            variant="emphasis"
+            variant="default"
             className="bg-gray-8/50 text-l border border-muted text-white hover:border-opacity-80 hover:bg-white/10"
           >
             Withdraw
@@ -231,7 +231,7 @@ function QuestLog({ createUser }: { createUser: string }) {
             <TooltipTrigger>
               <Button
                 onClick={handleShare}
-                variant="emphasis"
+                variant="default"
                 className="bg-gray-8/50 text-l border border-muted bg-green-500 hover:border-opacity-80 hover:bg-primary/80"
               >
                 Share
