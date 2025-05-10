@@ -10,17 +10,17 @@ import socialLayerLogo from '@/assets/logos/social_layer.svg?url'
 import superfluidLogo from '@/assets/logos/superfluid.jpeg'
 import virtualsLogo from '@/assets/logos/virtuals.svg?url'
 import bewaterLogo from '@/assets/logos/bewater.jpeg'
-import antalphaLogo from '@/assets/logos/antalpha.jpg'
+import cosetLogo from '@/assets/logos/coset.svg?url'
 
 const partners = [
   {
     name: 'Animoca',
     logo: animocaLogo,
   },
-  // {
-  //   name: 'Coset',
-  //   logo: '/src/assets/logos/coset.svg',
-  // },
+  {
+    name: 'Coset',
+    logo: cosetLogo,
+  },
   {
     name: 'OpenCampus',
     logo: openCampusLogo,
@@ -44,10 +44,6 @@ const partners = [
   {
     name: 'bewater',
     logo: bewaterLogo,
-  },
-  {
-    name: 'antalpha',
-    logo: antalphaLogo,
   },
 ]
 
