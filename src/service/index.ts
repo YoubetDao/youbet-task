@@ -106,6 +106,7 @@ export async function fetchTasks(params: {
   limit: number
   states: TaskState[]
   assignmentStatus?: string
+  rewardGranted?: boolean
 }) {
   const response = await http.get<IResultPaginationData<Task>>('/tasks', { params })
   return response.data

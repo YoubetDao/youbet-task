@@ -14,6 +14,9 @@ import { PencilLine } from 'lucide-react'
 import { RewardDialogForm } from '../period/reward-form'
 import { Button } from '@/components/ui/button'
 import { distributor } from '@/constants/distributor'
+import { RewardButton } from '@/components/reward-button'
+import { rewardAtomFamily } from '@/store'
+import { useAtom } from 'jotai'
 
 interface ProjectListProps {
   loading: boolean
@@ -49,6 +52,8 @@ function CompletedTaskTable(): React.ReactElement {
   const [projectId, setProjectId] = useState<string | undefined>('')
   const [filterTags] = useState<string[]>([])
   const { address, chain } = useAccount()
+  const [rewardState, setRewardState] = useAtom(rewardAtomFamily('completed'))
+
   const pageSize = 10
 
   const {
@@ -79,13 +84,14 @@ function CompletedTaskTable(): React.ReactElement {
   )
 
   const { data: tasks, isLoading: isTasksLoading } = useQuery<IResultPaginationData<Task> | undefined>({
-    queryKey: ['tasks', page, pageSize, projectId ?? ''],
+    queryKey: ['tasks', page, pageSize, projectId || '', JSON.stringify(rewardState)],
     queryFn: () => {
       return fetchTasks({
         offset: (page - 1) * pageSize,
         limit: pageSize,
         project: projectId ?? '',
         states: ['closed'],
+        ...(rewardState.length === 1 ? { rewardGranted: Boolean(Number(rewardState[0])) } : {}),
       })
     },
   })
@@ -121,24 +127,34 @@ function CompletedTaskTable(): React.ReactElement {
     checkAllowance()
   }, [checkAllowance])
 
+  // remove filterTags in deps
   useEffect(() => {
     reload()
-  }, [filterTags, reload, urlParam])
+  }, [reload, urlParam])
 
   return (
     <div className="space-y-4">
-      <Select value={projectId} onValueChange={setProjectId}>
-        <SelectTrigger className="w-[180px] border-gray-700 bg-transparent">
-          <SelectValue placeholder="Select project" />
-        </SelectTrigger>
-        <SelectContent>
-          {!projectLoading && projects ? (
-            <ProjectList loading={projectLoading} loadingMore={projectLoadingMore} data={projects} />
-          ) : (
-            <LoadingCards count={1} />
-          )}
-        </SelectContent>
-      </Select>
+      <div className="flex space-x-4">
+        <Select value={projectId} onValueChange={setProjectId}>
+          <SelectTrigger className="w-[180px] border-gray-700 bg-transparent">
+            <SelectValue placeholder="Select project" />
+          </SelectTrigger>
+          <SelectContent>
+            {!projectLoading && projects ? (
+              <ProjectList loading={projectLoading} loadingMore={projectLoadingMore} data={projects} />
+            ) : (
+              <LoadingCards count={1} />
+            )}
+          </SelectContent>
+        </Select>
+        <RewardButton
+          selected={rewardState}
+          data={[]}
+          pageId="completed"
+          rewardState={rewardState}
+          setRewardState={setRewardState}
+        />
+      </div>
 
       {!isTasksLoading && tasks ? (
         <Table>

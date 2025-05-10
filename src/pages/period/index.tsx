@@ -15,6 +15,9 @@ import { RewardDialogForm } from './reward-form'
 import { Button } from '@/components/ui/button'
 import { distributor } from '@/constants/distributor'
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
+import { RewardButton } from '@/components/reward-button'
+import { useAtom } from 'jotai'
+import { rewardAtomFamily } from '@/store'
 
 interface ProjectListProps {
   loading: boolean
@@ -53,7 +56,7 @@ function PeriodTable(): React.ReactElement {
   const pageSize = 10
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   const [selectedPeriodId, setSelectedPeriodId] = useState<string | null>(null)
-
+  const [rewardState, setRewardState] = useAtom(rewardAtomFamily('period'))
   const {
     data: projects,
     loading: projectLoading,
@@ -82,12 +85,13 @@ function PeriodTable(): React.ReactElement {
   )
 
   const { data: periods, isLoading: isPullRequestsLoading } = useQuery<IResultPaginationData<Period> | undefined>({
-    queryKey: ['periods', page, pageSize, projectId ?? ''],
+    queryKey: ['periods', page, pageSize, projectId ?? '', JSON.stringify(rewardState)],
     queryFn: () => {
       return fetchPeriods({
         offset: (page - 1) * pageSize,
         limit: pageSize,
         projectId: projectId ?? '',
+        ...(rewardState.length === 1 ? { rewardGranted: Boolean(Number(rewardState[0])) } : {}),
       })
     },
   })
@@ -140,9 +144,10 @@ function PeriodTable(): React.ReactElement {
     checkAllowance()
   }, [checkAllowance])
 
+  // remove filterTags in deps
   useEffect(() => {
     reload()
-  }, [filterTags, reload, urlParam])
+  }, [reload, urlParam])
 
   const handleDetailClick = (periodId: string) => {
     setSelectedPeriodId(periodId)
@@ -151,18 +156,27 @@ function PeriodTable(): React.ReactElement {
 
   return (
     <div className="space-y-4">
-      <Select value={projectId} onValueChange={setProjectId}>
-        <SelectTrigger className="w-[180px] border-gray-700 bg-transparent">
-          <SelectValue placeholder="Select project" />
-        </SelectTrigger>
-        <SelectContent>
-          {!projectLoading && projects ? (
-            <ProjectList loading={projectLoading} loadingMore={projectLoadingMore} data={projects} />
-          ) : (
-            <LoadingCards count={1} />
-          )}
-        </SelectContent>
-      </Select>
+      <div className="flex space-x-4">
+        <Select value={projectId} onValueChange={setProjectId}>
+          <SelectTrigger className="w-[180px] border-gray-700 bg-transparent">
+            <SelectValue placeholder="Select project" />
+          </SelectTrigger>
+          <SelectContent>
+            {!projectLoading && projects ? (
+              <ProjectList loading={projectLoading} loadingMore={projectLoadingMore} data={projects} />
+            ) : (
+              <LoadingCards count={1} />
+            )}
+          </SelectContent>
+        </Select>
+        <RewardButton
+          selected={rewardState}
+          data={periods?.data || []}
+          pageId="period"
+          rewardState={rewardState}
+          setRewardState={setRewardState}
+        />
+      </div>
 
       {!isPullRequestsLoading && periods ? (
         <Table>
@@ -289,7 +303,6 @@ function PeriodTable(): React.ReactElement {
                   </TableHeader>
                   <TableBody>
                     {periodReceipts.data.map((periodReceipt) => {
-                      console.log('periodReceipt', periodReceipt)
                       return (
                         <TableRow key={periodReceipt._id}>
                           <TableCell className="font-medium">{periodReceipt.user}</TableCell>
