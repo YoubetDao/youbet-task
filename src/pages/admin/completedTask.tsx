@@ -148,7 +148,20 @@ function CompletedTaskTable(): React.ReactElement {
           <TableBody>
             {tasks.data?.map((task) => (
               <TableRow key={task._id}>
-                <TableCell className="font-medium">{task.title}</TableCell>
+                <TableCell className="font-medium">
+                  {task.htmlUrl ? (
+                    <a
+                      href={task.htmlUrl}
+                      className="text-white no-underline hover:text-blue-500 hover:no-underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {task.title}
+                    </a>
+                  ) : (
+                    <span>{task.title}</span>
+                  )}
+                </TableCell>
                 <TableCell>
                   {new Date(task.createdAt).toLocaleDateString('en-US', {
                     month: 'long',
