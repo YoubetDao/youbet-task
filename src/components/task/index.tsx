@@ -8,7 +8,6 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { taskApi } from '@/service'
 import { TaskState } from '@/types'
-import { useUsername } from '@/store'
 
 // TODO: should separate this in another way since project task and my task have different filter
 const DEFAULT_CATEGORIES = ['all', 'open', 'closed']
@@ -20,7 +19,6 @@ interface ITaskCatalog {
 
 export const TaskCatalog = ({ project }: ITaskCatalog) => {
   const [page, setPage] = useState(1)
-  const [username] = useUsername()
   const [selectedCategory, setSelectedCategory] = useState<string>('open')
   const [selectedAssignment, setSelectedAssignment] = useState<string>('unassigned')
   const pageSize = 9
@@ -33,7 +31,7 @@ export const TaskCatalog = ({ project }: ITaskCatalog) => {
       taskApi
         .taskControllerGetTasks(
           project || '',
-          username || '',
+          '',
           selectedCategory !== 'all' ? [selectedCategory as TaskState].join(',') : [].join(','),
           '',
           (page - 1) * pageSize,
