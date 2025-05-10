@@ -138,8 +138,8 @@ export default function MyRewards() {
   useEffect(() => {
     if (!new URLSearchParams(location.search).has('tab')) {
       const params = new URLSearchParams(location.search)
-      params.set('tab', type) // 默认设置为 'overview' tab
-      navigate(`?${params.toString()}`, { replace: true }) // 更新 URL 而不刷新页面
+      params.set('tab', type)
+      navigate(`?${params.toString()}`, { replace: true })
     }
   }, [location.search, navigate])
 
