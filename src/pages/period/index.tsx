@@ -15,6 +15,8 @@ import { RewardDialogForm } from './reward-form'
 import { Button } from '@/components/ui/button'
 import { distributor } from '@/constants/distributor'
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
+import { useDistributorToken } from '@/hooks/useDistributorToken'
+import { toast } from '@/components/ui/use-toast'
 
 interface ProjectListProps {
   loading: boolean
@@ -115,34 +117,56 @@ function PeriodTable(): React.ReactElement {
 
   const totalPages = Math.ceil((periods?.pagination.totalCount || 0) / pageSize)
 
-  const [hasAllowance, setHasAllowance] = useState(false)
-  const [tokenDecimals, setTokenDecimals] = useState<bigint>(BigInt(18))
-
-  const getTokenInfo = useCallback(async () => {
-    const [, decimals] = await distributor.getTokenSymbolAndDecimals()
-    setTokenDecimals(decimals)
-  }, [])
-
-  useEffect(() => {
-    getTokenInfo()
-  }, [getTokenInfo])
+  const [hasAllowance, setHasAllowance] = useState<boolean | null>(null)
+  const { symbol, decimals, error: tokenError, loading: tokenLoading } = useDistributorToken()
+  const tokenDecimals = BigInt(decimals)
 
   const MIN_ALLOWANCE = BigInt(50) * BigInt(10) ** tokenDecimals
 
   const checkAllowance = useCallback(async () => {
-    if (address) {
-      const allowance = await distributor.getAllowance(address)
-      setHasAllowance(allowance >= MIN_ALLOWANCE)
+    if (address && !tokenError && !tokenLoading) {
+      try {
+        const allowance = await distributor.getAllowance(address)
+        setHasAllowance(allowance >= MIN_ALLOWANCE)
+      } catch (error) {
+        if (error instanceof Error && error.message.includes('JsonRpcProvider failed to detect network')) {
+          toast({
+            variant: 'destructive',
+            title: 'Network Error',
+            description: 'Failed to connect to the network. Please check your connection and try again.',
+          })
+        } else {
+          toast({
+            variant: 'destructive',
+            title: 'Error',
+            description: 'Failed to check allowance',
+          })
+        }
+        console.error('Error checking allowance:', error)
+        setHasAllowance(false)
+      }
     }
-  }, [address, MIN_ALLOWANCE])
+  }, [address, MIN_ALLOWANCE, tokenError, tokenLoading, toast])
 
   useEffect(() => {
-    checkAllowance()
-  }, [checkAllowance])
+    if (address && !tokenError && !tokenLoading) {
+      checkAllowance()
+    }
+  }, [address, checkAllowance, tokenError, tokenLoading])
 
   useEffect(() => {
     reload()
   }, [filterTags, reload, urlParam])
+
+  useEffect(() => {
+    if (tokenError) {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to load token information',
+      })
+    }
+  }, [tokenError, toast])
 
   const handleDetailClick = (periodId: string) => {
     setSelectedPeriodId(periodId)
@@ -217,6 +241,9 @@ function PeriodTable(): React.ReactElement {
                     {!period.rewardGranted ? (
                       address &&
                       chain &&
+                      !tokenError &&
+                      !tokenLoading &&
+                      hasAllowance !== null &&
                       (hasAllowance ? (
                         <RewardDialogForm
                           trigger={
