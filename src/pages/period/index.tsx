@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { fetchPeriods, getLoadMoreProjectList, fetchReceiptsByPeriod } from '@/service'
-import { IResultPagination, IResultPaginationData, Project, Period, PeriodReceipt, ReceiptStatus } from '@/types'
+import { getLoadMoreProjectList, fetchReceiptsByPeriod, periodApi } from '@/service'
+import { IResultPagination, IResultPaginationData, Project, PeriodReceipt, ReceiptStatus } from '@/types'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount, useSwitchChain } from 'wagmi'
@@ -10,11 +10,13 @@ import PaginationFast from '@/components/pagination-fast'
 import { useQuery } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { PencilLine, Info } from 'lucide-react'
-import { RewardDialogForm } from './reward-form'
+import { Info, PencilLine } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { distributor } from '@/constants/distributor'
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
+import { capitalizeFirstLetter, RewardButton } from '@/components/reward-button'
+import { PeriodControllerGetPeriodsRewardGrantedEnum } from '@/openapi/client'
+import { RewardDialogForm } from './reward-form'
 
 interface ProjectListProps {
   loading: boolean
@@ -53,7 +55,7 @@ function PeriodTable(): React.ReactElement {
   const pageSize = 10
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   const [selectedPeriodId, setSelectedPeriodId] = useState<string | null>(null)
-
+  const [rewardState, setRewardState] = useState<string>(PeriodControllerGetPeriodsRewardGrantedEnum.All)
   const {
     data: projects,
     loading: projectLoading,
@@ -81,16 +83,20 @@ function PeriodTable(): React.ReactElement {
     },
   )
 
-  const { data: periods, isLoading: isPullRequestsLoading } = useQuery<IResultPaginationData<Period> | undefined>({
-    queryKey: ['periods', page, pageSize, projectId ?? ''],
-    queryFn: () => {
-      return fetchPeriods({
-        offset: (page - 1) * pageSize,
-        limit: pageSize,
-        projectId: projectId ?? '',
-      })
-    },
-  })
+  const key = capitalizeFirstLetter(rewardState)
+  const { data: periods, isLoading: isPullRequestsLoading } = useQuery(
+    ['periods', page, pageSize, projectId ?? '', rewardState],
+    () =>
+      periodApi
+        .periodControllerGetPeriods(
+          projectId ?? '',
+          '',
+          PeriodControllerGetPeriodsRewardGrantedEnum[key as keyof typeof PeriodControllerGetPeriodsRewardGrantedEnum],
+          (page - 1) * pageSize,
+          pageSize,
+        )
+        .then((res) => res.data),
+  )
 
   const [receiptPage, setReceiptPage] = useState(1)
   const receiptPageSize = 10
@@ -113,7 +119,7 @@ function PeriodTable(): React.ReactElement {
     switchChain({ chainId: paymentChain.id })
   }, [switchChain])
 
-  const totalPages = Math.ceil((periods?.pagination.totalCount || 0) / pageSize)
+  const totalPages = Math.ceil((periods?.pagination?.totalCount || 0) / pageSize)
 
   const [hasAllowance, setHasAllowance] = useState(false)
   const [tokenDecimals, setTokenDecimals] = useState<bigint>(BigInt(18))
@@ -140,9 +146,10 @@ function PeriodTable(): React.ReactElement {
     checkAllowance()
   }, [checkAllowance])
 
+  // remove filterTags in deps
   useEffect(() => {
     reload()
-  }, [filterTags, reload, urlParam])
+  }, [reload, urlParam])
 
   const handleDetailClick = (periodId: string) => {
     setSelectedPeriodId(periodId)
@@ -151,18 +158,26 @@ function PeriodTable(): React.ReactElement {
 
   return (
     <div className="space-y-4">
-      <Select value={projectId} onValueChange={setProjectId}>
-        <SelectTrigger className="w-[180px] border-gray-700 bg-transparent">
-          <SelectValue placeholder="Select project" />
-        </SelectTrigger>
-        <SelectContent>
-          {!projectLoading && projects ? (
-            <ProjectList loading={projectLoading} loadingMore={projectLoadingMore} data={projects} />
-          ) : (
-            <LoadingCards count={1} />
-          )}
-        </SelectContent>
-      </Select>
+      <div className="flex space-x-4">
+        <Select value={projectId} onValueChange={setProjectId}>
+          <SelectTrigger className="w-[180px] border-gray-700 bg-transparent">
+            <SelectValue placeholder="Select project" />
+          </SelectTrigger>
+          <SelectContent>
+            {!projectLoading && projects ? (
+              <ProjectList loading={projectLoading} loadingMore={projectLoadingMore} data={projects} />
+            ) : (
+              <LoadingCards count={1} />
+            )}
+          </SelectContent>
+        </Select>
+        <RewardButton
+          selected={rewardState}
+          pageId="period"
+          rewardState={rewardState}
+          setRewardState={setRewardState}
+        />
+      </div>
 
       {!isPullRequestsLoading && periods ? (
         <Table>
@@ -177,9 +192,9 @@ function PeriodTable(): React.ReactElement {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {periods.data.map((period) => {
+            {(periods?.data || [])?.map((period, index) => {
               return (
-                <TableRow key={period._id}>
+                <TableRow key={index}>
                   <TableCell className="font-medium">
                     {new Date(period.from).toLocaleDateString('en-US', {
                       month: 'long',
@@ -200,13 +215,13 @@ function PeriodTable(): React.ReactElement {
                   </TableCell>
                   <TableCell>
                     <div className="flex -space-x-3">
-                      {period.contributors.map((user) => {
+                      {period.contributors.map((user, index) => {
                         return (
                           <img
-                            key={user._id}
+                            key={index}
                             className="h-6 w-6 rounded-full border-2 border-white"
                             src={user.avatarUrl}
-                            alt={user._id}
+                            alt={user.login}
                           />
                         )
                       })}
@@ -289,7 +304,6 @@ function PeriodTable(): React.ReactElement {
                   </TableHeader>
                   <TableBody>
                     {periodReceipts.data.map((periodReceipt) => {
-                      console.log('periodReceipt', periodReceipt)
                       return (
                         <TableRow key={periodReceipt._id}>
                           <TableCell className="font-medium">{periodReceipt.user}</TableCell>
