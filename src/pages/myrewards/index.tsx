@@ -133,19 +133,19 @@ export default function MyRewards() {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const currentTab = new URLSearchParams(location.search).get('tab') || type
+  const currentTab = new URLSearchParams(location.search).get('type') || type
 
   useEffect(() => {
-    if (!new URLSearchParams(location.search).has('tab')) {
+    if (!new URLSearchParams(location.search).has('type')) {
       const params = new URLSearchParams(location.search)
-      params.set('tab', type)
+      params.set('type', type)
       navigate(`?${params.toString()}`, { replace: true })
     }
   }, [location.search, navigate])
 
   const handleTabChange = (tab: string) => {
     const params = new URLSearchParams(location.search)
-    params.set('tab', tab)
+    params.set('type', tab)
     navigate(`?${params.toString()}`)
     setType(tab as 'period' | 'task')
   }
