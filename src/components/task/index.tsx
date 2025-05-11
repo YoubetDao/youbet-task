@@ -22,16 +22,34 @@ export const TaskCatalog = ({ project }: ITaskCatalog) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('open')
   const [selectedAssignment, setSelectedAssignment] = useState<string>('unassigned')
   const pageSize = 9
+  let queryKey
+  let queryFn
 
-  const queryKey = ['my-tasks', page, selectedCategory]
-  const queryFn = () =>
-    taskApi
-      .taskControllerMyTasks(
-        selectedCategory !== 'all' ? [selectedCategory as TaskState].join(',') : [].join(','),
-        (page - 1) * pageSize,
-        pageSize,
-      )
-      .then((res) => res.data)
+  if (!project) {
+    queryKey = ['my-tasks', page, selectedCategory]
+    queryFn = () =>
+      taskApi
+        .taskControllerMyTasks(
+          selectedCategory !== 'all' ? [selectedCategory as TaskState].join(',') : [].join(','),
+          (page - 1) * pageSize,
+          pageSize,
+        )
+        .then((res) => res.data)
+  } else {
+    queryKey = ['tasks', project, page, pageSize, selectedCategory, selectedAssignment]
+    queryFn = () =>
+      taskApi
+        .taskControllerGetTasks(
+          project || '',
+          '',
+          selectedCategory !== 'all' ? [selectedCategory as TaskState].join(',') : [].join(','),
+          selectedAssignment !== 'all' ? selectedAssignment : '',
+          false, // api changed
+          (page - 1) * pageSize,
+          pageSize,
+        )
+        .then((res) => res.data)
+  }
 
   const { data, isLoading: loading } = useQuery({
     queryKey: queryKey,
