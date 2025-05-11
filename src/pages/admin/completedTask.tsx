@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { getLoadMoreProjectList, grantTaskRewards, taskApi } from '@/service'
 import { IResultPagination, Project } from '@/types'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { SelectItem } from '@/components/ui/select'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount, useSwitchChain } from 'wagmi'
 import { useInfiniteScroll } from 'ahooks'
@@ -14,6 +14,7 @@ import { PencilLine } from 'lucide-react'
 import { RewardDialogForm } from '../period/reward-form'
 import { Button } from '@/components/ui/button'
 import { distributor } from '@/constants/distributor'
+import { Combobox } from '@/components/import-project'
 
 interface ProjectListProps {
   loading: boolean
@@ -119,20 +120,23 @@ function CompletedTaskTable(): React.ReactElement {
     reload()
   }, [filterTags, reload, urlParam])
 
+  // Prepare options for searchable dropdown
+  const projectOptions =
+    projects?.list.map((project) => ({
+      value: project._id.toString(),
+      label: project.name,
+    })) ?? []
+  console.log('Dropdown options:', projectOptions)
+
   return (
     <div className="space-y-4">
-      <Select value={projectId} onValueChange={setProjectId}>
-        <SelectTrigger className="w-[180px] border-gray-700 bg-transparent">
-          <SelectValue placeholder="Select project" />
-        </SelectTrigger>
-        <SelectContent>
-          {!projectLoading && projects ? (
-            <ProjectList loading={projectLoading} loadingMore={projectLoadingMore} data={projects} />
-          ) : (
-            <LoadingCards count={1} />
-          )}
-        </SelectContent>
-      </Select>
+      <Combobox
+        options={projectOptions}
+        value={projectId ?? ''}
+        onSelect={setProjectId}
+        placeholder="Select project"
+        isLoading={projectLoading}
+      />
 
       {!isTasksLoading && tasks ? (
         <Table>

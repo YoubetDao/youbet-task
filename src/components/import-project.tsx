@@ -43,7 +43,9 @@ export function Combobox({
   const [open, setOpen] = useState(false)
   const [searchValue, setSearchValue] = useState('')
 
-  const filteredOptions = options.filter((option) => option.value.toLowerCase().includes(searchValue.toLowerCase()))
+  const filteredOptions = options.filter((option) =>
+    option.label.toString().toLowerCase().includes(searchValue.toLowerCase()),
+  )
 
   // 获取当前选中项的显示文本
   const selectedItem = options.find((option) => option.value === value)
@@ -58,7 +60,13 @@ export function Combobox({
       </PopoverTrigger>
       <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
         <Command shouldFilter={false}>
-          <CommandInput placeholder="Search..." value={searchValue} onValueChange={setSearchValue} />
+          <CommandInput
+            placeholder="Search..."
+            value={searchValue}
+            onValueChange={(newValue) => {
+              setSearchValue(newValue)
+            }}
+          />
           <CommandList>
             {isLoading ? (
               <div className="flex items-center justify-center py-2">
@@ -66,20 +74,23 @@ export function Combobox({
               </div>
             ) : (
               <>
-                {filteredOptions.map((option) => (
-                  <CommandItem
-                    key={option.value}
-                    value={option.value}
-                    onSelect={(currentValue) => {
-                      onSelect(currentValue)
-                      setOpen(false)
-                      setSearchValue('')
-                    }}
-                  >
-                    {option.label}
-                  </CommandItem>
-                ))}
-                {filteredOptions.length === 0 && !isLoading && <CommandEmpty>No results found.</CommandEmpty>}
+                {filteredOptions.length > 0 ? (
+                  filteredOptions.map((option) => (
+                    <CommandItem
+                      key={option.value}
+                      value={option.value}
+                      onSelect={(currentValue) => {
+                        onSelect(currentValue)
+                        setOpen(false)
+                        setSearchValue('') // Clear the search input after selection
+                      }}
+                    >
+                      {option.label}
+                    </CommandItem>
+                  ))
+                ) : (
+                  <CommandEmpty>No results found.</CommandEmpty>
+                )}
               </>
             )}
             {customOptionLabel && onCustomOptionSelect && (
