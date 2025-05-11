@@ -29,11 +29,8 @@ export const TaskCatalog = ({ project }: ITaskCatalog) => {
     queryKey = ['my-tasks', page, selectedCategory]
     queryFn = () =>
       taskApi
-        .taskControllerGetTasks(
-          project || '',
-          '',
+        .taskControllerMyTasks(
           selectedCategory !== 'all' ? [selectedCategory as TaskState].join(',') : [].join(','),
-          '',
           (page - 1) * pageSize,
           pageSize,
         )
@@ -47,6 +44,7 @@ export const TaskCatalog = ({ project }: ITaskCatalog) => {
           '',
           selectedCategory !== 'all' ? [selectedCategory as TaskState].join(',') : [].join(','),
           selectedAssignment !== 'all' ? selectedAssignment : '',
+          false, // api changed
           (page - 1) * pageSize,
           pageSize,
         )
