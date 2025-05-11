@@ -1,11 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { fetchPeriods, getLoadMoreProjectList, fetchReceiptsByPeriod } from '@/service'
 import { IResultPagination, IResultPaginationData, Project, Period, PeriodReceipt, ReceiptStatus } from '@/types'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { SelectItem } from '@/components/ui/select'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount, useSwitchChain } from 'wagmi'
-import { useInfiniteScroll } from 'ahooks'
-import { DEFAULT_PAGINATION_LIMIT, paymentChain } from '@/constants/data'
+import { paymentChain } from '@/constants/data'
 import PaginationFast from '@/components/pagination-fast'
 import { useQuery } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
@@ -15,6 +14,7 @@ import { RewardDialogForm } from './reward-form'
 import { Button } from '@/components/ui/button'
 import { distributor } from '@/constants/distributor'
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
+import { Combobox } from '@/components/combo-box'
 
 interface ProjectListProps {
   loading: boolean
@@ -54,32 +54,16 @@ function PeriodTable(): React.ReactElement {
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   const [selectedPeriodId, setSelectedPeriodId] = useState<string | null>(null)
 
-  const {
-    data: projects,
-    loading: projectLoading,
-    loadingMore: projectLoadingMore,
-    reload,
-  } = useInfiniteScroll<IResultPagination<Project>>(
-    async (d) => {
-      const res = await getLoadMoreProjectList({
-        offset: d ? d.pagination.currentPage * DEFAULT_PAGINATION_LIMIT : 0,
-        limit: DEFAULT_PAGINATION_LIMIT,
-        filterTags,
-        search: decodeURIComponent(urlParam.get('search') || ''),
-        sort: decodeURIComponent(urlParam.get('sort') || ''),
-        onlyPeriodicReward: true,
-      })
-      if (!projectId) setProjectId(res.list[0]._id.toString())
-      return res
-    },
-    {
-      manual: true,
-      target: document.querySelector('#scrollRef'),
-      isNoMore: (data) => {
-        return data ? !data.pagination.hasNextPage : false
-      },
-    },
-  )
+  const { data: projects, isLoading: projectLoading } = useQuery(['projects', filterTags, urlParam], async () => {
+    return getLoadMoreProjectList({
+      offset: 0,
+      limit: 1000, // TODO: deal with pagination
+      filterTags,
+      search: decodeURIComponent(urlParam.get('search') || ''),
+      sort: decodeURIComponent(urlParam.get('sort') || ''),
+      onlyPeriodicReward: true,
+    })
+  })
 
   const { data: periods, isLoading: isPullRequestsLoading } = useQuery<IResultPaginationData<Period> | undefined>({
     queryKey: ['periods', page, pageSize, projectId ?? ''],
@@ -140,29 +124,26 @@ function PeriodTable(): React.ReactElement {
     checkAllowance()
   }, [checkAllowance])
 
-  useEffect(() => {
-    reload()
-  }, [filterTags, reload, urlParam])
-
   const handleDetailClick = (periodId: string) => {
     setSelectedPeriodId(periodId)
     setIsDetailOpen(true)
   }
 
+  const projectOptions =
+    projects?.list.map((project) => ({
+      value: project._id.toString(),
+      label: project.name,
+    })) ?? []
+
   return (
     <div className="space-y-4">
-      <Select value={projectId} onValueChange={setProjectId}>
-        <SelectTrigger className="w-[180px] border-gray-700 bg-transparent">
-          <SelectValue placeholder="Select project" />
-        </SelectTrigger>
-        <SelectContent>
-          {!projectLoading && projects ? (
-            <ProjectList loading={projectLoading} loadingMore={projectLoadingMore} data={projects} />
-          ) : (
-            <LoadingCards count={1} />
-          )}
-        </SelectContent>
-      </Select>
+      <Combobox
+        options={projectOptions}
+        value={projectId ?? ''}
+        onSelect={setProjectId}
+        placeholder="Select project"
+        isLoading={projectLoading}
+      />
 
       {!isPullRequestsLoading && periods ? (
         <Table>

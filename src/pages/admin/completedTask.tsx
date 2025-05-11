@@ -1,10 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { getLoadMoreProjectList, grantTaskRewards, taskApi } from '@/service'
 import { IResultPagination, Project } from '@/types'
-import { SelectItem } from '@/components/ui/select'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount, useSwitchChain } from 'wagmi'
-import { useInfiniteScroll } from 'ahooks'
 import { paymentChain } from '@/constants/data'
 import PaginationFast from '@/components/pagination-fast'
 import { useQuery } from '@tanstack/react-query'
@@ -22,27 +20,6 @@ interface ProjectListProps {
   data: IResultPagination<Project> | undefined
 }
 
-function ProjectList({ loading, loadingMore, data }: ProjectListProps) {
-  if (loading) return <LoadingCards />
-  if (!data) return null
-
-  return (
-    <div className="flex w-full flex-col overflow-hidden p-2">
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">{data.pagination.totalCount} Projects</div>
-      </div>
-      <div className="flex w-full flex-col gap-2">
-        {data.list.map((project) => (
-          <SelectItem key={project._id} value={project._id.toString()}>
-            {project.name}
-          </SelectItem>
-        ))}
-        {loadingMore && <LoadingCards count={1} />}
-      </div>
-    </div>
-  )
-}
-
 function CompletedTaskTable(): React.ReactElement {
   const [page, setPage] = useState(1)
   const { switchChain } = useSwitchChain()
@@ -52,32 +29,15 @@ function CompletedTaskTable(): React.ReactElement {
   const { address, chain } = useAccount()
   const pageSize = 10
 
-  const {
-    data: projects,
-    loading: projectLoading,
-    loadingMore: projectLoadingMore,
-    reload,
-  } = useInfiniteScroll<IResultPagination<Project>>(
-    async () => {
-      // TODO: deal with pagination
-      const res = await getLoadMoreProjectList({
-        offset: 0,
-        limit: 100,
-        filterTags,
-        search: decodeURIComponent(urlParam.get('search') || ''),
-        sort: decodeURIComponent(urlParam.get('sort') || ''),
-      })
-      if (!projectId) setProjectId(res.list[0]._id.toString())
-      return res
-    },
-    {
-      manual: true,
-      target: document.querySelector('#scrollRef'),
-      isNoMore: (data) => {
-        return data ? !data.pagination.hasNextPage : false
-      },
-    },
-  )
+  const { data: projects, isLoading: projectLoading } = useQuery(['projects', filterTags, urlParam], async () => {
+    return getLoadMoreProjectList({
+      offset: 0,
+      limit: 1000, // TODO: deal with pagination
+      filterTags,
+      search: decodeURIComponent(urlParam.get('search') || ''),
+      sort: decodeURIComponent(urlParam.get('sort') || ''),
+    })
+  })
 
   const { data: tasks, isLoading: isTasksLoading } = useQuery(['tasks', page, pageSize, projectId ?? ''], () => {
     return taskApi
@@ -116,17 +76,12 @@ function CompletedTaskTable(): React.ReactElement {
     checkAllowance()
   }, [checkAllowance])
 
-  useEffect(() => {
-    reload()
-  }, [filterTags, reload, urlParam])
-
   // Prepare options for searchable dropdown
   const projectOptions =
     projects?.list.map((project) => ({
       value: project._id.toString(),
       label: project.name,
     })) ?? []
-  console.log('Dropdown options:', projectOptions)
 
   return (
     <div className="space-y-4">
