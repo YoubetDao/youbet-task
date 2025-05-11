@@ -37,7 +37,7 @@ const LandingLayout = ({ children }: PropsWithChildren) => {
               </Link>
             </div>
             <Link to={getNavItems().find((item) => item.title === 'Login')!.href}>
-              <InteractiveHoverButton>Go to dashboard</InteractiveHoverButton>
+              <InteractiveHoverButton>Go to app</InteractiveHoverButton>
             </Link>
           </div>
         </div>

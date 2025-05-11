@@ -126,7 +126,7 @@ const LandingPage = () => {
                   viewport={{ once: true }}
                   className="text-center"
                 >
-                  <div className="mb-2 text-4xl font-bold text-purple-400 md:text-5xl">1K+</div>
+                  <div className="mb-2 text-4xl font-bold text-purple-400 md:text-5xl">700+</div>
                   <div className="text-sm text-muted-foreground md:text-base">Active Developers</div>
                 </motion.div>
                 <motion.div
@@ -157,7 +157,7 @@ const LandingPage = () => {
                   className="text-center"
                 >
                   <div className="mb-2 text-4xl font-bold text-purple-400 md:text-5xl">500+</div>
-                  <div className="text-sm text-muted-foreground md:text-base">Opened Tasks</div>
+                  <div className="text-sm text-muted-foreground md:text-base">Delivered Tasks</div>
                 </motion.div>
               </div>
             </div>
