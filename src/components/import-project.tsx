@@ -44,7 +44,7 @@ export function Combobox({
   const [searchValue, setSearchValue] = useState('')
 
   const filteredOptions = options.filter((option) =>
-    option.label.toString().toLowerCase().includes(searchValue.toLowerCase()),
+    option.label?.toString().toLowerCase().includes(searchValue.toLowerCase()),
   )
 
   // 获取当前选中项的显示文本
