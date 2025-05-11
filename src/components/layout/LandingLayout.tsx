@@ -32,8 +32,8 @@ const LandingLayout = ({ children }: PropsWithChildren) => {
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center space-x-6">
               <Link to="/" className="group flex items-center gap-2">
-                <img src="/logo.svg" alt="According.work" className="h-8" />
-                <span className="font-outfit text-lg font-light tracking-wide">According.work</span>
+                <img src="/logo.svg" alt="According.Work" className="h-8" />
+                <span className="font-outfit text-lg font-light tracking-wide">According.Work</span>
               </Link>
             </div>
             <Link to={getNavItems().find((item) => item.title === 'Login')!.href}>
@@ -52,8 +52,8 @@ const LandingLayout = ({ children }: PropsWithChildren) => {
           <div className="flex flex-col items-center justify-between md:flex-row">
             <div className="flex flex-col items-center justify-between">
               <div className="mb-8 flex items-center gap-2 md:mb-0">
-                <img src="/logo.svg" alt="According.work" className="h-8" />
-                <span className="font-outfit text-lg font-light tracking-wide">According.work</span>
+                <img src="/logo.svg" alt="According.Work" className="h-8" />
+                <span className="font-outfit text-lg font-light tracking-wide">According.Work</span>
               </div>
 
               <div className="flex items-center gap-2">
@@ -83,7 +83,7 @@ const LandingLayout = ({ children }: PropsWithChildren) => {
               <a href="#" className="transition-colors hover:text-white">
                 Privacy
               </a>
-              <span> © 2025 According.work. All rights reserved.</span>
+              <span> © 2025 According.Work. All rights reserved.</span>
             </div>
           </div>
         </div>

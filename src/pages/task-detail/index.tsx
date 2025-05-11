@@ -179,8 +179,8 @@ function QuestLog({ createUser }: { createUser: string }) {
     const url = encodeURIComponent(window.location.href) // 获取当前网页URL并编码
     const text = encodeURIComponent(
       rewardAmount
-        ? `${createUser} shared an issue via According.work!\nSolve this issue and earn ${rewardAmount} $ !\nJoin us, create value with your code, and get rewarded!\n`
-        : `${createUser} shared an issue via According.work!\nSolve this issue and earn EDU Yuzu Points!\nJoin us, create value with your code, and get rewarded!\n`,
+        ? `${createUser} shared an issue via According.Work!\nSolve this issue and earn ${rewardAmount} $ !\nJoin us, create value with your code, and get rewarded!\n`
+        : `${createUser} shared an issue via According.Work!\nSolve this issue and earn EDU Yuzu Points!\nJoin us, create value with your code, and get rewarded!\n`,
     ) // 自定义分享文本
     const twitterShareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${url}`
 

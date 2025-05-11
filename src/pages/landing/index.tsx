@@ -115,7 +115,7 @@ const LandingPage = () => {
                   Platform Impact
                 </h2>
                 <p className="mb-12 text-lg text-muted-foreground md:text-xl">
-                  Join thousands of developers and projects already using According.work
+                  Join thousands of developers and projects already using According.Work
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
