@@ -9,6 +9,13 @@
   font-weight: normal;
 }
 
+@font-face {
+  font-family: Inter;
+  src: url('/fonts/Inter/Inter-VariableFont_opsz.ttf') format('truetype');
+  font-style: normal;
+  font-weight: normal;
+}
+
 .font-american-captain {
   font-family: AmericanCaptain, sans-serif;
   letter-spacing: 0.03em;

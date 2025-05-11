@@ -15,7 +15,7 @@ module.exports = {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         outfit: ['Outfit', 'system-ui', 'sans-serif'],
-        custom: ['MyCustomFont', 'sans-serif'],
+        custom: ['sans-serif'],
       },
       colors: {
         border: 'hsl(var(--border))',
