@@ -14,7 +14,7 @@ import { PencilLine } from 'lucide-react'
 import { RewardDialogForm } from '../period/reward-form'
 import { Button } from '@/components/ui/button'
 import { distributor } from '@/constants/distributor'
-import { Combobox } from '@/components/import-project'
+import { Combobox } from '@/components/combo-box'
 
 interface ProjectListProps {
   loading: boolean
