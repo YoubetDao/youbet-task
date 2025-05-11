@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input'
 import { useState, useEffect } from 'react'
 import { distributor } from '@/constants/distributor'
 import { USDT_DECIMAL, USDT_SYMBOL } from '@/constants/contracts/usdt'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { ShareButton } from '@/components/share-button'
 
 type TaskDetailItem = {
   id: number
@@ -223,25 +223,13 @@ function QuestLog({ createUser }: { createUser: string }) {
             {isWithdrawing && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
           </Button>
         )}
-        {/* <Badge variant="default" className="bg-green-500" onClick={handleShare}>
+        <ShareButton
+          iconSize={14}
+          variant="default"
+          className="flex gap-1 border border-muted text-white hover:border-opacity-80 hover:bg-white/10"
+        >
           Share
-        </Badge> */}
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <Button
-                onClick={handleShare}
-                variant="default"
-                className="bg-gray-8/50 text-l border border-muted bg-green-500 hover:border-opacity-80 hover:bg-primary/80"
-              >
-                Share
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <div>Sharing on X</div>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        </ShareButton>
       </div>
       <Card className="sticky left-0 top-0 mt-4 bg-transparent">
         <CardHeader className="flex flex-row items-center justify-between border-b border-muted py-4">
@@ -381,8 +369,6 @@ export default function TaskDetailPage() {
   if (task == null) {
     return <ErrorPage />
   }
-
-  console.log('task >>>', task)
 
   return (
     <div className="mt-5 flex w-full flex-col-reverse gap-5 xl:flex-row">

@@ -1,7 +1,15 @@
 import { getAppearances } from '@/lib/appearances'
 import { NavItem } from '@/types'
 import { SdkCtorOptions, SDK } from 'youbet-sdk'
-import { polygon, moonbaseAlpha, Chain, optimismSepolia, optimism, mantleSepoliaTestnet } from 'viem/chains'
+import {
+  polygon,
+  moonbaseAlpha,
+  Chain,
+  optimismSepolia,
+  optimism,
+  mantleSepoliaTestnet,
+  baseSepolia,
+} from 'viem/chains'
 import { UserPermission } from '@/store'
 
 export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
@@ -110,14 +118,6 @@ export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
       hideInMenu: !userPermission,
       children: [
         {
-          title: 'Pull Requests',
-          href: '/admin/pull-requests',
-          icon: 'gitPullRequest',
-          component: 'pullRequestAdmin',
-          layout: 'dashboard',
-          hideInMenu: userPermission !== UserPermission.PullRequest && userPermission !== UserPermission.All,
-        },
-        {
           title: 'Period',
           href: '/admin/period',
           icon: 'period',
@@ -176,6 +176,24 @@ const eduChainOptions: SdkCtorOptions = {
   chainName: 'EduChain-Testnet',
 }
 
+const eduSepoliaChainOptions: SdkCtorOptions = {
+  networkOptions: {
+    rpcUrl: 'https://open-campus-codex-sepolia.drpc.org',
+    chainId: 656476,
+    contractAddress: '0xd8dcbd828a40f6590a5bee5095c38994dab3bdee',
+  },
+  chainName: 'EduChain-Testnet',
+}
+
+const opSepoliaOptions: SdkCtorOptions = {
+  networkOptions: {
+    rpcUrl: 'https://sepolia.optimism.io',
+    chainId: 11155420,
+    contractAddress: '0x411d99703453e5A49a2E57d5b7B97Dc1f8E3715b',
+  },
+  chainName: 'Optimism Sepolia',
+}
+
 const mantleSepoliaOptions: SdkCtorOptions = {
   networkOptions: {
     rpcUrl: 'https://rpc.sepolia.mantle.xyz',
@@ -203,6 +221,24 @@ export const monadDevOptions: SdkCtorOptions = {
   chainName: 'Monad Devnet',
 }
 
+export const baseSepoliaOptions: SdkCtorOptions = {
+  networkOptions: {
+    rpcUrl: 'https://sepolia.base.org',
+    chainId: 84532,
+    contractAddress: '0x009B2B2509d08f4Ed860b2f528ef2166bBE33D00',
+  },
+  chainName: 'Base Sepolia',
+}
+
+export const juChainTestnetOptions: SdkCtorOptions = {
+  networkOptions: {
+    rpcUrl: 'https://testnet-rpc.juchain.org',
+    chainId: 202599,
+    contractAddress: '0x009B2B2509d08f4Ed860b2f528ef2166bBE33D00',
+  },
+  chainName: 'JuChain Testnet',
+}
+
 const eduChain = {
   id: 41923,
   name: 'Edu Chain',
@@ -214,6 +250,21 @@ const eduChain = {
   rpcUrls: {
     default: {
       http: ['https://rpc.edu-chain.raas.gelato.cloud'],
+    },
+  },
+}
+
+const eduSepoliaChain = {
+  id: 656476,
+  name: 'EduChain-Testnet',
+  nativeCurrency: {
+    name: 'EDU',
+    symbol: 'EDU',
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://open-campus-codex-sepolia.drpc.org'],
     },
   },
 }
@@ -248,9 +299,32 @@ const monadDevnet = {
   },
 }
 
+const juChainTestnet = {
+  id: 202599,
+  name: 'JuChain Testnet',
+  nativeCurrency: {
+    name: 'JU',
+    symbol: 'JU',
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://testnet-rpc.juchain.org'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Blockscout',
+      url: 'https://testnet.juscan.io',
+      apiUrl: 'https://testnet.juscan.io/api',
+    },
+  },
+}
+
 // define supported chains
 const SUPPORTED_CHAINS: Record<string, Chain> = {
   educhain: eduChain,
+  educhainSepolia: eduSepoliaChain,
   moonbase: moonbaseAlpha,
   polygon: polygon,
   opSepolia: optimismSepolia,
@@ -258,16 +332,22 @@ const SUPPORTED_CHAINS: Record<string, Chain> = {
   mantleSepolia: mantleSepoliaTestnet,
   neoTest: neoTest,
   monadDevnet: monadDevnet,
+  baseSepolia: baseSepolia,
+  juChainTestnet: juChainTestnet,
 }
 
 // TODO: move this chain options to a separated chain config file
 // define chain options
 const CHAIN_OPTIONS: Record<string, SdkCtorOptions> = {
   educhain: eduChainOptions,
+  educhainSepolia: eduSepoliaChainOptions,
   moonbase: moonbaseAlphaOptions,
   mantleSepolia: mantleSepoliaOptions,
   neoTest: neoTestOptions,
   monadDevnet: monadDevOptions,
+  opSepolia: opSepoliaOptions,
+  baseSepolia: baseSepoliaOptions,
+  juChainTestnet: juChainTestnetOptions,
 }
 
 const getCurrentChain = (): Chain => {
@@ -307,3 +387,5 @@ export const paymentChain = getPaymentChain()
 export const currentChainOptions = getChainOptions()
 // TODO: move to other file
 export const sdk = new SDK(currentChainOptions)
+
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'

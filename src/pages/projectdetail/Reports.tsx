@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
-import { Info, Share2 } from 'lucide-react'
+import { Info } from 'lucide-react'
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
 import { LoadingCards } from '@/components/loading-cards'
 import { cn } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import ReactMarkdown from 'react-markdown'
 import { PeriodReport } from '@/types'
-import { fetchProjectReports } from '@/service'
+import { fetchProjectReports, reportApi } from '@/service'
 import { useSearchParams } from 'react-router-dom'
+import { ShareButton } from '@/components/share-button'
+import { Textarea } from '@/components/ui/textarea'
 
 interface ReportsProps {
   project: string
@@ -19,6 +21,9 @@ export default function Reports({ project }: ReportsProps) {
   const [searchParams, setSearchParams] = useSearchParams()
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   const [selectedReport, setSelectedReport] = useState<PeriodReport | null>(null)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editContent, setEditContent] = useState('')
+  const [isSaving, setIsSaving] = useState(false)
 
   const { data: reports = [], isLoading } = useQuery({
     queryKey: ['project-reports', project],
@@ -35,6 +40,12 @@ export default function Reports({ project }: ReportsProps) {
       }
     }
   }, [searchParams, reports])
+
+  useEffect(() => {
+    if (selectedReport) {
+      setEditContent(selectedReport.summary || '')
+    }
+  }, [selectedReport, isEditing])
 
   const handleDetailClick = (report: PeriodReport) => {
     setSelectedReport(report)
@@ -55,6 +66,36 @@ export default function Reports({ project }: ReportsProps) {
       `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(text)}`,
       '_blank',
     )
+  }
+
+  const handleSaveEdit = async () => {
+    if (!selectedReport) return
+
+    setIsSaving(true)
+    try {
+      await reportApi.reportControllerUpdateReport(selectedReport._id, {
+        summary: editContent,
+        title: selectedReport.title,
+      })
+
+      setSelectedReport({
+        ...selectedReport,
+        summary: editContent,
+      })
+
+      setIsEditing(false)
+    } catch (error) {
+      console.error('Failed to update report:', error)
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const handleCancelEdit = () => {
+    setIsEditing(false)
+    if (selectedReport) {
+      setEditContent(selectedReport.summary || '')
+    }
   }
 
   if (isLoading) {
@@ -111,32 +152,52 @@ export default function Reports({ project }: ReportsProps) {
             </div>
           </DrawerHeader>
           <div className="prose prose-invert max-h-[calc(100vh-10rem)] max-w-none overflow-y-auto p-6">
-            <article
-              className={cn(
-                'prose-headings:font-bold prose-headings:text-gray-100',
-                'prose-p:text-gray-300 prose-li:text-gray-300',
-                'prose-strong:text-gray-200 prose-code:text-gray-200',
-              )}
-            >
-              <ReactMarkdown>{selectedReport?.summary || ''}</ReactMarkdown>
-            </article>
+            {isEditing ? (
+              <div className="flex flex-col gap-4">
+                <Textarea
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                  className="min-h-[300px] font-mono text-base"
+                  placeholder="编辑报告内容 (支持 Markdown 语法)"
+                />
+                <div className="flex justify-end gap-2">
+                  <Button variant="outline" onClick={handleCancelEdit} disabled={isSaving}>
+                    取消
+                  </Button>
+                  <Button onClick={handleSaveEdit} disabled={isSaving} className="bg-green-600 hover:bg-green-700">
+                    {isSaving ? '保存中...' : '保存'}
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <article
+                className={cn(
+                  'prose-headings:font-bold prose-headings:text-gray-100',
+                  'prose-p:text-gray-300 prose-li:text-gray-300',
+                  'prose-strong:text-gray-200 prose-code:text-gray-200',
+                )}
+              >
+                <ReactMarkdown>{selectedReport?.summary || ''}</ReactMarkdown>
+              </article>
+            )}
           </div>
           <DrawerFooter>
             <div className="flex items-center gap-2">
+              {!isEditing && (
+                <Button
+                  onClick={() => setIsEditing(true)}
+                  variant="default"
+                  className="w-1/2 bg-purple-500 hover:bg-purple-600"
+                >
+                  编辑
+                </Button>
+              )}
               <DrawerClose asChild>
-                <Button variant="outline" className="w-full">
-                  Close
+                <Button variant="outline" className={isEditing ? 'w-full' : 'w-1/2'}>
+                  关闭
                 </Button>
               </DrawerClose>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 w-8 p-0 hover:bg-gray-800"
-                onClick={handleShare}
-                title="Share on X (Twitter)"
-              >
-                <Share2 />
-              </Button>
+              <ShareButton variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-800" onClick={handleShare} />
             </div>
           </DrawerFooter>
         </DrawerContent>

@@ -45,6 +45,7 @@ const Tutorial = () => {
       if (path && owner && repo) {
         try {
           setLoading(true)
+          console.log(owner, repo, path)
           const response = await getMdBookContent(owner, repo, encodeURIComponent(path))
           setContent(response)
         } catch (error) {
