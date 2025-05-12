@@ -41,7 +41,7 @@ function CompletedTaskTable(): React.ReactElement {
 
   const { data: tasks, isLoading: isTasksLoading } = useQuery(['tasks', page, pageSize, projectId ?? ''], () => {
     return taskApi
-      .taskControllerGetTasks(projectId ?? '', '', 'closed', '', (page - 1) * pageSize, pageSize)
+      .taskControllerGetTasks(projectId ?? '', '', 'closed', '', false, (page - 1) * pageSize, pageSize)
       .then((res) => res.data)
   })
 
