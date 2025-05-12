@@ -127,7 +127,7 @@ export default function Tasks() {
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="gap-1">
+                    <Button variant="outline" size="lg" className="gap-1">
                       <Filter className="h-4 w-4" />
                       <span>Filter</span>
                     </Button>
