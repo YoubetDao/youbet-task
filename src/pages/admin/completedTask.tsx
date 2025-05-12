@@ -1,10 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { fetchTasks, getLoadMoreProjectList, grantTaskRewards } from '@/service'
-import { IResultPagination, IResultPaginationData, Project, Task } from '@/types'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { getLoadMoreProjectList, grantTaskRewards, taskApi } from '@/service'
+import { IResultPagination, Project } from '@/types'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount, useSwitchChain } from 'wagmi'
-import { useInfiniteScroll } from 'ahooks'
 import { paymentChain } from '@/constants/data'
 import PaginationFast from '@/components/pagination-fast'
 import { useQuery } from '@tanstack/react-query'
@@ -14,32 +12,12 @@ import { PencilLine } from 'lucide-react'
 import { RewardDialogForm } from '../period/reward-form'
 import { Button } from '@/components/ui/button'
 import { distributor } from '@/constants/distributor'
+import { Combobox } from '@/components/combo-box'
 
 interface ProjectListProps {
   loading: boolean
   loadingMore: boolean
   data: IResultPagination<Project> | undefined
-}
-
-function ProjectList({ loading, loadingMore, data }: ProjectListProps) {
-  if (loading) return <LoadingCards />
-  if (!data) return null
-
-  return (
-    <div className="flex w-full flex-col overflow-hidden p-2">
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">{data.pagination.totalCount} Projects</div>
-      </div>
-      <div className="flex w-full flex-col gap-2">
-        {data.list.map((project) => (
-          <SelectItem key={project._id} value={project._id.toString()}>
-            {project.name}
-          </SelectItem>
-        ))}
-        {loadingMore && <LoadingCards count={1} />}
-      </div>
-    </div>
-  )
 }
 
 function CompletedTaskTable(): React.ReactElement {
@@ -51,50 +29,27 @@ function CompletedTaskTable(): React.ReactElement {
   const { address, chain } = useAccount()
   const pageSize = 10
 
-  const {
-    data: projects,
-    loading: projectLoading,
-    loadingMore: projectLoadingMore,
-    reload,
-  } = useInfiniteScroll<IResultPagination<Project>>(
-    async () => {
-      // TODO: deal with pagination
-      const res = await getLoadMoreProjectList({
-        offset: 0,
-        limit: 100,
-        filterTags,
-        search: decodeURIComponent(urlParam.get('search') || ''),
-        sort: decodeURIComponent(urlParam.get('sort') || ''),
-      })
-      if (!projectId) setProjectId(res.list[0]._id.toString())
-      return res
-    },
-    {
-      manual: true,
-      target: document.querySelector('#scrollRef'),
-      isNoMore: (data) => {
-        return data ? !data.pagination.hasNextPage : false
-      },
-    },
-  )
+  const { data: projects, isLoading: projectLoading } = useQuery(['projects', filterTags, urlParam], async () => {
+    return getLoadMoreProjectList({
+      offset: 0,
+      limit: 1000, // TODO: deal with pagination
+      filterTags,
+      search: decodeURIComponent(urlParam.get('search') || ''),
+      sort: decodeURIComponent(urlParam.get('sort') || ''),
+    })
+  })
 
-  const { data: tasks, isLoading: isTasksLoading } = useQuery<IResultPaginationData<Task> | undefined>({
-    queryKey: ['tasks', page, pageSize, projectId ?? ''],
-    queryFn: () => {
-      return fetchTasks({
-        offset: (page - 1) * pageSize,
-        limit: pageSize,
-        project: projectId ?? '',
-        states: ['closed'],
-      })
-    },
+  const { data: tasks, isLoading: isTasksLoading } = useQuery(['tasks', page, pageSize, projectId ?? ''], () => {
+    return taskApi
+      .taskControllerGetTasks(projectId ?? '', '', 'closed', '', false, (page - 1) * pageSize, pageSize)
+      .then((res) => res.data)
   })
 
   useEffect(() => {
     switchChain({ chainId: paymentChain.id })
   }, [switchChain])
 
-  const totalPages = Math.ceil((tasks?.pagination.totalCount || 0) / pageSize)
+  const totalPages = Math.ceil((tasks?.pagination?.totalCount || 0) / pageSize)
 
   const [hasAllowance, setHasAllowance] = useState(false)
   const [tokenDecimals, setTokenDecimals] = useState<bigint>(BigInt(18))
@@ -121,24 +76,22 @@ function CompletedTaskTable(): React.ReactElement {
     checkAllowance()
   }, [checkAllowance])
 
-  useEffect(() => {
-    reload()
-  }, [filterTags, reload, urlParam])
+  // Prepare options for searchable dropdown
+  const projectOptions =
+    projects?.list.map((project) => ({
+      value: project._id.toString(),
+      label: project.name,
+    })) ?? []
 
   return (
     <div className="space-y-4">
-      <Select value={projectId} onValueChange={setProjectId}>
-        <SelectTrigger className="w-[180px] border-gray-700 bg-transparent">
-          <SelectValue placeholder="Select project" />
-        </SelectTrigger>
-        <SelectContent>
-          {!projectLoading && projects ? (
-            <ProjectList loading={projectLoading} loadingMore={projectLoadingMore} data={projects} />
-          ) : (
-            <LoadingCards count={1} />
-          )}
-        </SelectContent>
-      </Select>
+      <Combobox
+        options={projectOptions}
+        value={projectId ?? ''}
+        onSelect={setProjectId}
+        placeholder="Select project"
+        isLoading={projectLoading}
+      />
 
       {!isTasksLoading && tasks ? (
         <Table>
@@ -152,7 +105,7 @@ function CompletedTaskTable(): React.ReactElement {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {tasks.data.map((task) => (
+            {tasks.data?.map((task) => (
               <TableRow key={task._id}>
                 <TableCell className="font-medium">{task.title}</TableCell>
                 <TableCell>
@@ -175,7 +128,7 @@ function CompletedTaskTable(): React.ReactElement {
                     <img
                       className="h-6 w-6 rounded-full border-2 border-white"
                       src={task.assignee.avatarUrl}
-                      alt={task.assignee._id}
+                      alt={task.assignee.login}
                     />
                   )}
                 </TableCell>
@@ -220,6 +173,8 @@ function CompletedTaskTable(): React.ReactElement {
                         Approve Contract
                       </Button>
                     ))
+                  ) : task.rewardClaimed ? (
+                    <p>Claimed</p>
                   ) : (
                     <p>Granted</p>
                   )}

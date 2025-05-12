@@ -13,14 +13,13 @@ import { Dialog } from '@radix-ui/react-dialog'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { paymentChain } from '@/constants/data'
-import { User } from '@/types'
 import { distributor } from '@/constants/distributor'
 
 import _ from 'lodash'
 import { postGrantPeriodRewards } from '@/service'
 import { useDistributorToken } from '@/hooks/useDistributorToken'
 import { useQueryClient } from '@tanstack/react-query'
-
+import { GithubUser } from '@/openapi/client/models/github-user'
 function randomDistribute(amount: number, people: number): number[] {
   const points = _.sortBy(_.times(people - 1, () => Math.random()))
   points.push(1)
@@ -48,12 +47,12 @@ interface IRewardForm {
   trigger: React.ReactNode
   id: string
   addressFrom: `0x${string}`
-  users: User[]
+  users: GithubUser[]
   chain: Chain
   onRewardDistributed?: (data: {
     id: string
     amounts: number[]
-    users: User[]
+    users: GithubUser[]
     symbol: string
     decimals: number
   }) => Promise<void>
@@ -103,7 +102,7 @@ export const RewardDialogForm = ({
     setLoading(true)
     try {
       // TODO: some github name is login, some is username in backend
-      const githubIds = users.map((user) => user.username || user.login)
+      const githubIds = users.map((user) => user.login)
       const amountsInWei = amounts.map((amount) => BigInt(Math.floor(amount * 10 ** Number(decimals))))
 
       const totalAmount = amountsInWei.reduce((a, b) => a + b, 0n)
@@ -230,12 +229,12 @@ export const RewardDialogForm = ({
                   <section className="flex flex-col">
                     {users.map((user, index) => {
                       return (
-                        <div key={user._id} className="flex flex-row items-center gap-2">
+                        <div key={user.login} className="flex flex-row items-center gap-2">
                           <img
-                            key={user._id}
+                            key={user.login}
                             className="h-6 w-6 rounded-full border-2 border-white"
                             src={user.avatarUrl}
-                            alt={user._id}
+                            alt={user.login}
                           />
                           <span className="text-sm text-muted-foreground">{user?.login}</span>
                         </div>

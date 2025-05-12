@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { claimReceipt, fetchReceipts, getRewardSignature } from '@/service'
 import { IResultPaginationData, Receipt, ReceiptStatus } from '@/types'
 import { LoadingCards } from '@/components/loading-cards'
@@ -12,6 +12,7 @@ import { toast } from '@/components/ui/use-toast'
 import { useUsername } from '@/store'
 import { formatDate } from '@/lib/utils'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 function RewardsTable({ type }: { type: 'period' | 'task' }): React.ReactElement {
   const [page, setPage] = useState(1)
@@ -129,10 +130,29 @@ function RewardsTable({ type }: { type: 'period' | 'task' }): React.ReactElement
 
 export default function MyRewards() {
   const [type, setType] = useState<'period' | 'task'>('period')
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  const currentTab = new URLSearchParams(location.search).get('type') || type
+
+  useEffect(() => {
+    if (!new URLSearchParams(location.search).has('type')) {
+      const params = new URLSearchParams(location.search)
+      params.set('type', type)
+      navigate(`?${params.toString()}`, { replace: true })
+    }
+  }, [location.search, navigate])
+
+  const handleTabChange = (tab: string) => {
+    const params = new URLSearchParams(location.search)
+    params.set('type', tab)
+    navigate(`?${params.toString()}`)
+    setType(tab as 'period' | 'task')
+  }
 
   return (
     <div className="space-y-4">
-      <Tabs defaultValue="period" onValueChange={(value) => setType(value as 'period' | 'task')}>
+      <Tabs defaultValue="period" onValueChange={handleTabChange}>
         <TabsList>
           <TabsTrigger value="period">Period Rewards</TabsTrigger>
           <TabsTrigger value="task">Task Rewards</TabsTrigger>
