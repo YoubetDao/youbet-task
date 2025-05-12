@@ -149,18 +149,17 @@ function CompletedTaskTable(): React.ReactElement {
             {tasks.data?.map((task) => (
               <TableRow key={task._id}>
                 <TableCell className="font-medium">
-                  {task.htmlUrl ? (
+                  <div className="space-y-1">
+                    <div>{task?.title}</div>
                     <a
-                      href={task.htmlUrl}
-                      className="text-white no-underline hover:text-blue-500 hover:no-underline"
+                      href={task?.htmlUrl}
+                      className="text-xs text-gray-500 hover:text-blue-500"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      {task.title}
+                      {task?._id}
                     </a>
-                  ) : (
-                    <span>{task.title}</span>
-                  )}
+                  </div>
                 </TableCell>
                 <TableCell>
                   {new Date(task.createdAt).toLocaleDateString('en-US', {
