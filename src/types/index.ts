@@ -387,23 +387,6 @@ export interface TransactionInfo {
 }
 
 export type TaskState = '' | 'open' | 'closed'
-export interface TaskV2 {
-  id: number
-  title: string
-  description: string
-  time: string
-  status: 'open' | 'assigned'
-  avatar?: string
-  technologies: string[]
-  difficulty: 'easy' | 'medium' | 'hard'
-  reference?: string
-  reward?: {
-    amount: number
-    decimals: number
-    symbol: string
-    tokenAddress: string
-  }
-}
 export interface Activity {
   user: string
   action: string
