@@ -8,7 +8,7 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { taskApi } from '@/service'
 import { TaskState } from '@/types'
-
+import { PeriodControllerGetPeriodsRewardGrantedEnum } from '@/openapi/client/api'
 // TODO: should separate this in another way since project task and my task have different filter
 const DEFAULT_CATEGORIES = ['all', 'open', 'closed']
 const ASSIGNMENT_STATUS = ['all', 'unassigned', 'assigned']
@@ -44,7 +44,7 @@ export const TaskCatalog = ({ project }: ITaskCatalog) => {
           '',
           selectedCategory !== 'all' ? [selectedCategory as TaskState].join(',') : [].join(','),
           selectedAssignment !== 'all' ? selectedAssignment : '',
-          false, // api changed
+          PeriodControllerGetPeriodsRewardGrantedEnum.All, // api changed
           (page - 1) * pageSize,
           pageSize,
         )
