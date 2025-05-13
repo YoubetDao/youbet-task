@@ -13,7 +13,10 @@ import { RewardDialogForm } from '../period/reward-form'
 import { Button } from '@/components/ui/button'
 import { distributor } from '@/constants/distributor'
 import { Combobox } from '@/components/combo-box'
-import { PeriodControllerGetPeriodsRewardGrantedEnum } from '@/openapi/client'
+import {
+  PeriodControllerGetPeriodsRewardGrantedEnum,
+  TaskControllerGetCompletedTasksRewardClaimedEnum,
+} from '@/openapi/client'
 
 interface ProjectListProps {
   loading: boolean
@@ -48,6 +51,7 @@ function CompletedTaskTable(): React.ReactElement {
         'closed',
         '',
         PeriodControllerGetPeriodsRewardGrantedEnum.All,
+        TaskControllerGetCompletedTasksRewardClaimedEnum.All,
         (page - 1) * pageSize,
         pageSize,
       )
