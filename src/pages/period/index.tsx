@@ -72,6 +72,7 @@ function PeriodTable(): React.ReactElement {
         offset: (page - 1) * pageSize,
         limit: pageSize,
         projectId: projectId ?? '',
+        sortDirection: 'desc',
       })
     },
   })
