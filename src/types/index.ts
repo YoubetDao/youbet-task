@@ -297,6 +297,7 @@ export interface Profile {
   score?: number
   adminNamespaces: string[]
   adminProjects?: string[]
+  totalContributions?: number
 }
 
 export interface UserInfo {

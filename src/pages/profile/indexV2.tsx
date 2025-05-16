@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { LoadingCards } from '@/components/loading-cards'
 import { useUsername, walletAtom } from '@/store'
 import { Card } from '@/components/ui/card'
@@ -18,6 +18,8 @@ import { ContributedTo } from './components/ContributedTo'
 import { Skillsets } from './components/Skillsets'
 import { Achievements } from './components/Achievements'
 import { userApi } from '@/service/openApi'
+import { ScanButton } from './components/ScanButton'
+import { OnboardingGuide } from './components/OnboardingGuide'
 
 // 添加类型定义
 interface MainSkill {
@@ -218,6 +220,13 @@ export default function ProfilePageV2() {
   const [achievementPage, setAchievementPage] = useState(0)
   const achievementsPerPage = 6
   const totalAchievementPages = Math.ceil(achievementsData.length / achievementsPerPage)
+  const [isNewUser, setIsNewUser] = useState(true)
+  const [showGuide, setShowGuide] = useState(() => {
+    // 检查用户是否已经看过引导
+    const hasSeenGuide = localStorage.getItem('hasSeenGuide')
+    return !hasSeenGuide // 如果没有看过，则显示引导
+  })
+  const scanButtonRef = useRef<HTMLButtonElement>(null)
 
   const currentUser = searchUser || username
 
@@ -231,6 +240,25 @@ export default function ProfilePageV2() {
   useAsyncEffect(async () => {
     if (!currentUser) return
     try {
+      // 获取用户配置信息
+      // const { data: userConfig } = await userApi.userControllerGetUserConfig(currentUser)
+      const userConfig = {
+        data: {
+          hasScannedRepos: false,
+        },
+      }
+      const isFirstVisit = !userConfig.data.hasScannedRepos
+      setIsNewUser(isFirstVisit)
+
+      // 只有在用户没有看过引导的情况下才显示
+      const hasSeenGuide = localStorage.getItem('hasSeenGuide')
+      if (isFirstVisit && !hasSeenGuide) {
+        setShowGuide(true)
+      }
+      // 暂时先显示引导
+      setShowGuide(true)
+
+      // 获取用户概览信息
       const { data } = (await userApi.userControllerGetProfileOverview(currentUser)) as any
       setProfile(data.data)
     } catch (error) {
@@ -266,79 +294,89 @@ export default function ProfilePageV2() {
     setShowOpenBuildID(false)
   }
 
+  // 处理引导关闭
+  const handleGuideClose = () => {
+    setShowGuide(false)
+    // 记录用户已查看引导
+    localStorage.setItem('hasSeenGuide', 'true')
+  }
+
   console.log('profile', profile)
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6">
+    <div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6">
       {/* 主卡片 - 个人信息 */}
-      <Card className="p-6">
+      <Card className="p-4 sm:p-6">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-          <div className="flex flex-col gap-6 lg:flex-row">
-            <Avatar className="h-24 w-24 lg:h-32 lg:w-32">
+          {/* 左侧：个人信息 */}
+          <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
+            <Avatar className="h-20 w-20 shrink-0 bg-orange-500 sm:h-24 sm:w-24 lg:h-28 lg:w-28">
               <AvatarImage src={profile?.avatarUrl} alt={currentUser || profile?.displayName} />
               <AvatarFallback>{currentUser || profile?.displayName?.charAt(0)}</AvatarFallback>
             </Avatar>
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <div>
-                <h1 className="text-2xl font-bold text-white">{currentUser || profile?.displayName}</h1>{' '}
-                <p className="text-gray-400">Remote Developer</p>
+                <h1 className="text-xl font-bold text-white sm:text-2xl">{currentUser || profile?.displayName}</h1>
+                <p className="text-sm text-gray-400 sm:text-base">Remote Developer</p>
               </div>
 
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-3 text-sm sm:gap-4">
                 <a href={`github/${currentUser}`} className="flex items-center text-gray-400 hover:text-white">
-                  <Github className="mr-2 h-4 w-4" />
+                  <Github className="mr-1.5 h-4 w-4" />
                   <span>github/{currentUser}</span>
                 </a>
                 <a href={`stats/${currentUser}`} className="flex items-center text-gray-400 hover:text-white">
-                  <Link className="mr-2 h-4 w-4" />
+                  <Link className="mr-1.5 h-4 w-4" />
                   <span>stats/{currentUser}</span>
                 </a>
                 {profile?.email && (
                   <div className="flex items-center text-gray-400">
-                    <Mail className="mr-2 h-4 w-4" />
-                    <span>{profile?.email}</span>
+                    <Mail className="mr-1.5 h-4 w-4" />
+                    <span className="break-all">{profile?.email}</span>
                   </div>
                 )}
               </div>
 
-              <div className="flex gap-6">
+              <div className="flex gap-4">
                 <div className="text-center">
-                  <p className="text-xl font-bold text-white">{profile?.followers || 14}</p>
-                  <p className="text-sm text-gray-400">followers</p>
+                  <p className="text-lg font-bold text-white sm:text-xl">{profile?.followers || 14}</p>
+                  <p className="text-xs text-gray-400 sm:text-sm">followers</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-xl font-bold text-white">{profile?.following || 50}</p>
-                  <p className="text-sm text-gray-400">following</p>
+                  <p className="text-lg font-bold text-white sm:text-xl">{profile?.following || 50}</p>
+                  <p className="text-xs text-gray-400 sm:text-sm">following</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="text-right">
-            <div className="mb-4">
-              <span className="text-5xl font-bold text-purple-400"> {profile?.score || 0}</span>
+          {/* 右侧：评分和操作 */}
+          <div className="flex flex-col items-end justify-start gap-3 sm:gap-4">
+            {currentUser && (
+              <div className="w-full sm:w-auto">
+                <ScanButton
+                  ref={scanButtonRef}
+                  userName={currentUser}
+                  onScanComplete={() => {
+                    window.location.reload()
+                  }}
+                />
+              </div>
+            )}
+            <div className="flex w-full flex-row items-center justify-between gap-4 sm:flex-col sm:items-end">
+              <span className="text-4xl font-bold text-purple-400 sm:text-5xl lg:text-6xl">5.5</span>
+              <div className="flex flex-col items-end">
+                <p className="text-sm text-purple-400">Above 96% of developers</p>
+                <div className="mt-2 flex items-center gap-2">
+                  <div className="h-1.5 w-24 rounded-full bg-gray-800 sm:w-32 lg:w-40">
+                    <div className="h-full w-[96%] rounded-full bg-purple-400" />
+                  </div>
+                  <span className="text-xs text-gray-400">96%</span>
+                </div>
+              </div>
             </div>
-            <Button variant="outline" onClick={() => setShowIdentitySettings(true)}>
-              Edit Profile
-            </Button>
           </div>
-        </div>
-
-        {/* OCID 和 OpenBuild ID */}
-        <div className="mt-6 flex flex-wrap gap-4">
-          {showOCID && (
-            <div className="flex items-center gap-2">
-              <span className="text-gray-400">OCID:</span>
-              <code className="rounded bg-gray-800 px-2 py-1 text-sm text-purple-400">0C1D-2023-78945612</code>
-            </div>
-          )}
-          {showOpenBuildID && (
-            <div className="flex items-center gap-2">
-              <span className="text-gray-400">OpenBuild ID:</span>
-              <code className="rounded bg-gray-800 px-2 py-1 text-sm text-purple-400">0B-2023-98765432</code>
-            </div>
-          )}
         </div>
       </Card>
 
@@ -396,13 +434,16 @@ export default function ProfilePageV2() {
         </DialogContent>
       </Dialog>
 
+      {/* 引导组件 */}
+      <OnboardingGuide isVisible={showGuide} onClose={handleGuideClose} targetButtonRef={scanButtonRef} />
+
       {/* 导航标签 */}
-      <div className="flex overflow-x-auto border-b border-gray-800">
+      <div className="no-scrollbar flex overflow-x-auto border-b border-gray-800">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`relative px-4 py-2 transition-colors hover:text-white
+            className={`relative whitespace-nowrap px-3 py-2 text-sm transition-colors hover:text-white sm:px-4
               ${activeTab === tab.id ? 'text-white' : 'text-gray-400'}
             `}
           >
@@ -410,7 +451,6 @@ export default function ProfilePageV2() {
             {activeTab === tab.id && (
               <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-500 to-purple-300" />
             )}
-            {/* 添加悬停效果 */}
             <div
               className={`absolute bottom-0 left-0 right-0 h-0.5 scale-x-0 bg-purple-500/50 transition-transform duration-200
                 ${activeTab === tab.id ? 'scale-x-0' : 'hover:scale-x-100'}
@@ -420,27 +460,74 @@ export default function ProfilePageV2() {
         ))}
       </div>
 
-      {/* 根据激活的标签显示不同内容 */}
-      {activeTab === 'overview' && (
-        <>
-          {/* 贡献图表 */}
-          <Card className="p-6">
-            <h2 className="mb-4 text-xl font-bold text-white">Contributions</h2>
-            <div className="w-full overflow-x-auto">
-              {profile?.login && <GitHubCalendar username={profile.login || ''} colorScheme="dark" fontSize={12} />}
+      {/* 内容区域 */}
+      <div className="min-h-[500px]">
+        {activeTab === 'overview' && (
+          <>
+            {/* 贡献图表 */}
+            <Card className="overflow-hidden p-4 sm:p-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-bold text-white sm:text-xl">Contributions</h2>
+                <p className="text-sm text-gray-400">
+                  {profile?.totalContributions || 48} contributions in the last year
+                </p>
+              </div>
+              <div className="mt-6 flex min-h-[140px] w-full items-center justify-center">
+                <div className="w-full overflow-x-auto">
+                  <div className="min-w-full">
+                    {profile?.login && (
+                      <GitHubCalendar
+                        username={profile.login}
+                        colorScheme="dark"
+                        fontSize={10}
+                        blockSize={12}
+                        blockMargin={4}
+                        blockRadius={2}
+                        showWeekdayLabels={true}
+                        hideColorLegend={false}
+                        style={{
+                          minWidth: '100%',
+                          width: '100%',
+                        }}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="mt-6 flex items-center justify-end gap-3">
+                <span className="text-sm text-gray-400">Less</span>
+                <div className="flex gap-2">
+                  {[0, 1, 2, 3, 4].map((level) => (
+                    <div
+                      key={level}
+                      className={`h-4 w-4 rounded-sm ${
+                        level === 0
+                          ? 'bg-gray-800'
+                          : level === 1
+                          ? 'bg-green-900'
+                          : level === 2
+                          ? 'bg-green-700'
+                          : level === 3
+                          ? 'bg-green-500'
+                          : 'bg-green-300'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <span className="text-sm text-gray-400">More</span>
+              </div>
+            </Card>
+            {/* Contributed To */}
+            <div className="mt-6">
+              <ContributedTo userName={currentUser || ''} />
             </div>
-            <p className="mt-4 text-gray-400">40 contributions in the last year</p>
-          </Card>
-          {/* Contributed To */}
-          <ContributedTo userName={currentUser || ''} />
-        </>
-      )}
+          </>
+        )}
 
-      {activeTab === 'languages' && <LanguageTab userName={currentUser || ''} />}
-
-      {activeTab === 'skillsets' && <Skillsets userName={currentUser || ''} />}
-
-      {activeTab === 'achievements' && <Achievements userName={currentUser || ''} />}
+        {activeTab === 'languages' && <LanguageTab userName={currentUser || ''} />}
+        {activeTab === 'skillsets' && <Skillsets userName={currentUser || ''} />}
+        {activeTab === 'achievements' && <Achievements userName={currentUser || ''} />}
+      </div>
     </div>
   )
 }
