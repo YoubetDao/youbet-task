@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Loader2, ChevronsUpDown } from 'lucide-react'
+import { Loader2, ChevronsUpDown, X } from 'lucide-react'
 import { Command, CommandInput, CommandList, CommandItem, CommandEmpty } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
@@ -33,12 +33,24 @@ export function Combobox({
   // 获取当前选中项的显示文本
   const selectedItem = options.find((option) => option.value === value)
 
+  const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    onSelect('')
+    setOpen(false)
+  }
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between">
           <span className="truncate">{selectedItem ? selectedItem.label : placeholder}</span>
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <div className="flex items-center gap-1">
+            {selectedItem ? (
+              <X className="h-4 w-4 shrink-0 opacity-50 hover:opacity-100" onClick={handleClear} />
+            ) : (
+              <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+            )}
+          </div>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
