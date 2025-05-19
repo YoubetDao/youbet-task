@@ -17,6 +17,10 @@ import {
   TaskControllerGetCompletedTasksRewardClaimedEnum,
 } from '@/openapi/client'
 import { Combobox } from '@/components/combo-box'
+import { Checkbox } from '@/components/ui/checkbox'
+import { BatchGrantDialog, RewardTask } from './BatchGrantDialog'
+import { Task } from '@/openapi/client/models'
+import { useUsername } from '@/store'
 
 const statuses = (
   Object.keys(PeriodControllerGetPeriodsRewardGrantedEnum) as Array<
@@ -32,6 +36,8 @@ const valueToLabel = Object.entries(PeriodControllerGetPeriodsRewardGrantedEnum)
   return acc
 }, {} as Record<string, string>)
 
+const DEFAULT_PAGE_SIZE = 10
+
 function CompletedTaskTable(): React.ReactElement {
   const [page, setPage] = useState(1)
   const { switchChain } = useSwitchChain()
@@ -42,7 +48,10 @@ function CompletedTaskTable(): React.ReactElement {
   const [rewardState, setRewardState] = useState<string>(PeriodControllerGetPeriodsRewardGrantedEnum.All)
 
   const pageSize = 10
-
+  const [hasAllowance, setHasAllowance] = useState(false)
+  const [tokenDecimals, setTokenDecimals] = useState<bigint>(BigInt(18))
+  const [batchGrantTasks, setBatchGrantTasks] = useState<Array<RewardTask>>([])
+  const [userName] = useUsername()
   const { data: projects, isLoading: projectLoading } = useQuery(['projects', filterTags, urlParam], async () => {
     return getLoadMoreProjectList({
       offset: 0,
@@ -71,14 +80,29 @@ function CompletedTaskTable(): React.ReactElement {
         .then((res) => res.data),
   )
 
+  const handleSelectTask = (task: Task) => {
+    if (batchGrantTasks.some((t) => t.id === task._id)) {
+      setBatchGrantTasks((prev) => prev.filter((t) => t.id !== task._id))
+    } else {
+      setBatchGrantTasks((prev) => [
+        ...prev,
+        {
+          taskTitle: task.title,
+          amount: Number(task.reward?.amount) / 10 ** Number(task.reward?.decimals) || 0,
+          decimals: task.reward?.decimals,
+          id: task._id,
+          users: task.assignee,
+          creator: task.user.login,
+        },
+      ])
+    }
+  }
+
   useEffect(() => {
     switchChain({ chainId: paymentChain.id })
   }, [switchChain])
 
-  const totalPages = Math.ceil((tasks?.pagination?.totalCount || 0) / pageSize)
-
-  const [hasAllowance, setHasAllowance] = useState(false)
-  const [tokenDecimals, setTokenDecimals] = useState<bigint>(BigInt(18))
+  const totalPages = Math.ceil((tasks?.pagination?.totalCount || 0) / DEFAULT_PAGE_SIZE)
 
   const getTokenInfo = useCallback(async () => {
     const [, decimals] = await distributor.getTokenSymbolAndDecimals()
@@ -128,10 +152,25 @@ function CompletedTaskTable(): React.ReactElement {
           valueToLabel={valueToLabel}
         />
       </div>
+      <div className="flex justify-end">
+        <BatchGrantDialog
+          defaultRewardTasks={batchGrantTasks}
+          rewardType="task"
+          trigger={
+            <Button
+              className="whitespace-nowrap"
+              disabled={batchGrantTasks.length === 0 || !hasAllowance || !address || !chain}
+            >
+              Grant Selected
+            </Button>
+          }
+        />
+      </div>
       {!isTasksLoading && tasks ? (
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="text-gray-400"></TableHead>
               <TableHead className="text-gray-400">Title</TableHead>
               <TableHead className="text-gray-400">Created At</TableHead>
               <TableHead className="text-gray-400">Completed At</TableHead>
@@ -142,6 +181,13 @@ function CompletedTaskTable(): React.ReactElement {
           <TableBody>
             {tasks.data?.map((task) => (
               <TableRow key={task._id}>
+                <TableCell>
+                  <Checkbox
+                    disabled={task.rewardClaimed || task.rewardGranted}
+                    checked={batchGrantTasks.some((t) => t.id === task._id)}
+                    onCheckedChange={() => handleSelectTask(task)}
+                  />
+                </TableCell>
                 <TableCell className="font-medium">
                   <div className="space-y-1">
                     <div>{task?.title}</div>
@@ -192,6 +238,7 @@ function CompletedTaskTable(): React.ReactElement {
                           </Button>
                         }
                         id={task._id}
+                        creatorId={userName!}
                         users={task.assignee ? [task.assignee] : []}
                         addressFrom={address}
                         chain={chain}
@@ -206,6 +253,7 @@ function CompletedTaskTable(): React.ReactElement {
                           })
                         }}
                         defaultAmount={Number(task.reward?.amount) / 10 ** Number(task.reward?.decimals)}
+                        sourceType="task"
                       />
                     ) : (
                       <Button

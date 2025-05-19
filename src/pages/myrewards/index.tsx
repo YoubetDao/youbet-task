@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { claimReceipt, fetchReceipts, getRewardSignature } from '@/service'
+import React, { useEffect, useState, useCallback } from 'react'
+import { fetchReceipts, getRewardSignature } from '@/service'
 import { IResultPaginationData, Receipt, ReceiptStatus } from '@/types'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount } from 'wagmi'
@@ -8,18 +8,106 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { distributor } from '@/constants/distributor'
-import { toast } from '@/components/ui/use-toast'
+import { toast, useToast } from '@/components/ui/use-toast'
 import { useUsername } from '@/store'
 import { formatDate } from '@/lib/utils'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { Checkbox } from '@/components/ui/checkbox'
 
-function RewardsTable({ type }: { type: 'period' | 'task' }): React.ReactElement {
+// 添加奖励状态组件
+const RewardStatus = ({
+  status,
+  isLogin,
+  onClaim,
+  isLoading,
+}: {
+  status: ReceiptStatus
+  isLogin: boolean
+  onClaim: () => void
+  isLoading?: boolean
+}) => {
+  if (status !== ReceiptStatus.GRANTED) {
+    return <p>Claimed</p>
+  }
+
+  if (!isLogin) {
+    return <p>Please connect wallet</p>
+  }
+
+  return (
+    <Button
+      variant="link"
+      className={`gap-2 p-0 ${isLoading ? 'cursor-not-allowed text-gray-400' : 'text-blue-500 hover:text-blue-600'}`}
+      disabled={isLoading}
+      onClick={onClaim}
+    >
+      {isLoading ? (
+        <span className="flex items-center gap-2">
+          <span className="animate-spin">⏳</span>
+          Claiming...
+        </span>
+      ) : (
+        'Claim'
+      )}
+    </Button>
+  )
+}
+
+// 添加领取处理函数
+const useClaimReward = (github: string | null, queryClient: any) => {
+  const [claimingId, setClaimingId] = useState<string | null>(null)
+
+  const handleClaim = useCallback(
+    async (receipt: Receipt) => {
+      if ((!receipt.source.period && !receipt.source.task) || !github) return
+      const sourceId = receipt.source.period?._id || receipt.source.task?._id
+      if (!sourceId) return
+
+      setClaimingId(receipt._id)
+      try {
+        const signature = await getRewardSignature(sourceId)
+        await distributor.claimRedPacket(sourceId, github, signature.signature)
+        await queryClient.invalidateQueries({ queryKey: ['receipts'] })
+        toast({
+          title: '领取成功',
+          description: '奖励已成功领取',
+        })
+      } catch (error) {
+        toast({
+          variant: 'destructive',
+          title: '错误',
+          description: error instanceof Error ? error.message : '领取奖励失败',
+        })
+      } finally {
+        setClaimingId(null)
+      }
+    },
+    [github, queryClient],
+  )
+
+  return {
+    handleClaim,
+    isClaiming: (id: string) => claimingId === id,
+  }
+}
+
+function RewardsTable({
+  type,
+  isLogin,
+  selectedRewards,
+  handleSelectReward,
+}: {
+  type: 'period' | 'task'
+  selectedRewards: string[]
+  isLogin: boolean
+  handleSelectReward: (resourceId: string) => void
+}): React.ReactElement {
   const [page, setPage] = useState(1)
   const [github] = useUsername()
-  const { address, chain } = useAccount()
   const pageSize = 10
   const queryClient = useQueryClient()
+  const { handleClaim, isClaiming } = useClaimReward(github, queryClient)
 
   const { data: periods, isLoading: isPullRequestsLoading } = useQuery<IResultPaginationData<Receipt> | undefined>({
     queryKey: ['receipts', type, page],
@@ -40,6 +128,7 @@ function RewardsTable({ type }: { type: 'period' | 'task' }): React.ReactElement
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="text-gray-400"></TableHead>
               {type === 'period' ? (
                 <TableHead className="text-gray-400">Period</TableHead>
               ) : (
@@ -53,6 +142,15 @@ function RewardsTable({ type }: { type: 'period' | 'task' }): React.ReactElement
             {periods.data.map((receipts) => {
               return (
                 <TableRow key={receipts._id}>
+                  <TableCell>
+                    <Checkbox
+                      disabled={receipts.status !== ReceiptStatus.GRANTED}
+                      checked={selectedRewards.includes(receipts._id)}
+                      onCheckedChange={() => {
+                        handleSelectReward(receipts._id)
+                      }}
+                    />
+                  </TableCell>
                   <TableCell>
                     {type === 'period' ? (
                       <>
@@ -78,41 +176,12 @@ function RewardsTable({ type }: { type: 'period' | 'task' }): React.ReactElement
                       : '***'}
                   </TableCell>
                   <TableCell>
-                    {receipts.status === ReceiptStatus.GRANTED ? (
-                      address && github && chain ? (
-                        <Button
-                          variant="link"
-                          className="gap-2 p-0 text-blue-500"
-                          onClick={async () => {
-                            if (!receipts.source.period && !receipts.source.task) return
-                            const sourceId = receipts.source.period?._id || receipts.source.task?._id
-                            if (!sourceId) return
-                            try {
-                              const signature = await getRewardSignature(sourceId)
-                              await distributor.claimRedPacket(sourceId, github, signature.signature)
-                              await claimReceipt(receipts._id)
-                              queryClient.invalidateQueries({ queryKey: ['receipts'] })
-                              toast({
-                                title: 'Success',
-                                description: 'Reward claimed successfully',
-                              })
-                            } catch (error) {
-                              toast({
-                                variant: 'destructive',
-                                title: 'Error',
-                                description: error instanceof Error ? error.message : 'Failed to claim reward',
-                              })
-                            }
-                          }}
-                        >
-                          Claim
-                        </Button>
-                      ) : (
-                        <p>Please connect wallet</p>
-                      )
-                    ) : (
-                      <p>Claimed</p>
-                    )}
+                    <RewardStatus
+                      status={receipts.status}
+                      isLogin={isLogin}
+                      onClaim={() => handleClaim(receipts)}
+                      isLoading={isClaiming(receipts._id)}
+                    />
                   </TableCell>
                 </TableRow>
               )
@@ -130,10 +199,19 @@ function RewardsTable({ type }: { type: 'period' | 'task' }): React.ReactElement
 
 export default function MyRewards() {
   const [type, setType] = useState<'period' | 'task'>('period')
+  const [selectedRewards, setSelectedRewards] = useState<string[]>([])
+  const { address, chain } = useAccount()
+  const [github] = useUsername()
+  const [loading, setLoading] = useState(false)
+  const { toast } = useToast()
+  const queryClient = useQueryClient()
+
   const navigate = useNavigate()
   const location = useLocation()
 
   const currentTab = new URLSearchParams(location.search).get('type') || type
+
+  const isLogin = !!address && !!github && !!chain
 
   useEffect(() => {
     if (!new URLSearchParams(location.search).has('type')) {
@@ -150,15 +228,99 @@ export default function MyRewards() {
     setType(tab as 'period' | 'task')
   }
 
+  const handleClaimSelected = async () => {
+    if (!address || selectedRewards.length === 0 || !github) return
+    setLoading(true)
+    try {
+      // Get signatures for all selected rewards
+      const batch = await Promise.all(
+        selectedRewards.map(async (receiptId) => {
+          // Get signature for each reward
+          const signature = await getRewardSignature(receiptId)
+          return {
+            uuid: receiptId,
+            githubId: github,
+            signature: signature.signature,
+          }
+        }),
+      )
+
+      // Call batch claim contract
+      await distributor.batchClaimRedPacket(batch)
+
+      // Refresh data
+      queryClient.invalidateQueries({ queryKey: ['receipts'] })
+
+      // Clear selection
+      setSelectedRewards([])
+
+      // Show success message
+      toast({
+        variant: 'default',
+        title: 'Success',
+        description: 'Rewards claimed successfully',
+      })
+    } catch (error) {
+      console.error('Claim error:', error)
+      if (error instanceof Error) {
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: (
+            <div className="max-h-60 overflow-y-auto whitespace-pre-wrap break-all">
+              {error.message || JSON.stringify(error)}
+            </div>
+          ),
+        })
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Failed to claim rewards',
+        })
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleSelectReward = (resourceId: string) => {
+    setSelectedRewards((prev) => {
+      if (prev.includes(resourceId)) {
+        return prev.filter((id) => id !== resourceId)
+      }
+      return [...prev, resourceId]
+    })
+  }
+
   return (
     <div className="space-y-4">
-      <Tabs defaultValue="period" onValueChange={handleTabChange}>
+      <Tabs className="flex justify-between" defaultValue="period" onValueChange={handleTabChange}>
         <TabsList>
           <TabsTrigger value="period">Period Rewards</TabsTrigger>
           <TabsTrigger value="task">Task Rewards</TabsTrigger>
         </TabsList>
+        <Button
+          onClick={handleClaimSelected}
+          disabled={loading || selectedRewards.length === 0}
+          className={loading ? 'cursor-not-allowed opacity-50' : ''}
+        >
+          {loading ? (
+            <div className="flex items-center gap-2">
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+              <span>Processing...</span>
+            </div>
+          ) : (
+            'Claim Selected'
+          )}
+        </Button>
       </Tabs>
-      <RewardsTable type={type} />
+      <RewardsTable
+        type={type}
+        isLogin={isLogin}
+        selectedRewards={selectedRewards}
+        handleSelectReward={handleSelectReward}
+      />
     </div>
   )
 }
