@@ -1,48 +1,43 @@
-'use client'
-
 import * as React from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { CirclePlus } from 'lucide-react'
-import { Checkbox } from './ui/checkbox'
-import { RewardState } from '@/store'
-import { Period, Task } from '@/types'
 import { Separator } from './ui/separator'
+import { PeriodControllerGetPeriodsRewardGrantedEnum } from '@/openapi/client'
+import { Checkbox } from './ui/checkbox'
 
+export function capitalizeFirstLetter(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
 interface IRewardButtonProps {
-  selected: string[]
-  data: Task[] | Period[]
+  selected: string
   pageId: string
-  rewardState: string[]
-  setRewardState: (update: string[] | ((prev: string[]) => string[])) => void
+  rewardState: string
+  setRewardState: (update: string | ((prev: string) => string)) => void
 }
 
-const statuses = (Object.keys(RewardState) as Array<keyof typeof RewardState>)
-  .filter((key) => isNaN(Number(key)))
-  .map((key) => ({
-    label: key,
-    value: key,
-  }))
+const statuses = (
+  Object.keys(PeriodControllerGetPeriodsRewardGrantedEnum) as Array<
+    keyof typeof PeriodControllerGetPeriodsRewardGrantedEnum
+  >
+).map((key) => ({
+  label: key,
+  value: PeriodControllerGetPeriodsRewardGrantedEnum[key],
+}))
 
-const valueToLabel = Object.entries(RewardState).reduce((acc, [key, value]) => {
+const valueToLabel = Object.entries(PeriodControllerGetPeriodsRewardGrantedEnum).reduce((acc, [key, value]) => {
   acc[value] = key
   return acc
 }, {} as Record<string, string>)
 
-export function RewardButton(data: IRewardButtonProps) {
+export function RewardButton(props: IRewardButtonProps) {
   const [open, setOpen] = React.useState(false)
-  const { rewardState, setRewardState } = data
+  const { rewardState, setRewardState } = props
 
   const changeValue = (value: string) => {
-    let newState = JSON.parse(JSON.stringify(rewardState))
-    if (rewardState.includes(value)) {
-      newState = newState.filter((x: string) => x != value)
-    } else {
-      newState.push(value)
-    }
-    setRewardState(newState)
+    setRewardState(value)
   }
 
   return (
@@ -53,11 +48,9 @@ export function RewardButton(data: IRewardButtonProps) {
           {rewardState.length > 0 ? (
             <>
               <Separator orientation="vertical" />
-              {rewardState.map((rs) => (
-                <div key={rs} className="rounded-lg border-2 border-solid border-muted bg-muted px-2">
-                  {valueToLabel[rs]}
-                </div>
-              ))}
+              <div key={rewardState} className="rounded-lg border-2 border-solid border-muted bg-muted px-2">
+                {valueToLabel[rewardState]}
+              </div>
             </>
           ) : null}
         </Button>
@@ -70,27 +63,27 @@ export function RewardButton(data: IRewardButtonProps) {
             <CommandGroup>
               {statuses.map((status) => (
                 <CommandItem
-                  key={status.value}
-                  value={status.value}
+                  key={status.value.toString()}
+                  value={status.value.toString()}
                   onSelect={(value) => {
-                    changeValue(valueToLabel[value])
+                    changeValue(value)
                     setOpen(false)
                   }}
                 >
                   <Checkbox
-                    checked={rewardState.includes(valueToLabel[status.value])}
-                    id={status.value}
-                    value={status.value}
-                    onChange={(e) => {
-                      const value = (e.target as HTMLButtonElement).value
-                      changeValue(valueToLabel[value])
+                    checked={rewardState === status.value.toString()}
+                    id={status.value.toString()}
+                    value={status.value.toString()}
+                    onChange={(e: React.FormEvent<HTMLButtonElement>) => {
+                      const value = (e.target as HTMLInputElement).value
+                      changeValue(value)
                     }}
                   />
                   <label
-                    htmlFor={status.value}
+                    htmlFor={status.value.toString()}
                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    {status.label}
+                    {status.label.toString()}
                   </label>
                 </CommandItem>
               ))}

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { fetchPeriods, getLoadMoreProjectList, fetchReceiptsByPeriod } from '@/service'
-import { IResultPagination, IResultPaginationData, Project, Period, PeriodReceipt, ReceiptStatus } from '@/types'
+import { getLoadMoreProjectList, fetchReceiptsByPeriod, periodApi } from '@/service'
+import { IResultPagination, IResultPaginationData, Project, PeriodReceipt, ReceiptStatus } from '@/types'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount, useSwitchChain } from 'wagmi'
@@ -15,9 +15,8 @@ import { RewardDialogForm } from './reward-form'
 import { Button } from '@/components/ui/button'
 import { distributor } from '@/constants/distributor'
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
-import { RewardButton } from '@/components/reward-button'
-import { useAtom } from 'jotai'
-import { rewardAtomFamily } from '@/store'
+import { capitalizeFirstLetter, RewardButton } from '@/components/reward-button'
+import { PeriodControllerGetPeriodsRewardGrantedEnum } from '@/openapi/client'
 
 interface ProjectListProps {
   loading: boolean
@@ -56,7 +55,7 @@ function PeriodTable(): React.ReactElement {
   const pageSize = 10
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   const [selectedPeriodId, setSelectedPeriodId] = useState<string | null>(null)
-  const [rewardState, setRewardState] = useAtom(rewardAtomFamily('period'))
+  const [rewardState, setRewardState] = useState<string>(PeriodControllerGetPeriodsRewardGrantedEnum.All)
   const {
     data: projects,
     loading: projectLoading,
@@ -84,17 +83,20 @@ function PeriodTable(): React.ReactElement {
     },
   )
 
-  const { data: periods, isLoading: isPullRequestsLoading } = useQuery<IResultPaginationData<Period> | undefined>({
-    queryKey: ['periods', page, pageSize, projectId ?? '', JSON.stringify(rewardState)],
-    queryFn: () => {
-      return fetchPeriods({
-        offset: (page - 1) * pageSize,
-        limit: pageSize,
-        projectId: projectId ?? '',
-        ...(rewardState.length === 1 ? { rewardGranted: Boolean(Number(rewardState[0])) } : {}),
-      })
-    },
-  })
+  const key = capitalizeFirstLetter(rewardState)
+  const { data: periods, isLoading: isPullRequestsLoading } = useQuery(
+    ['periods', page, pageSize, projectId ?? '', rewardState],
+    () =>
+      periodApi
+        .periodControllerGetPeriods(
+          projectId ?? '',
+          '',
+          PeriodControllerGetPeriodsRewardGrantedEnum[key as keyof typeof PeriodControllerGetPeriodsRewardGrantedEnum],
+          (page - 1) * pageSize,
+          pageSize,
+        )
+        .then((res) => res.data),
+  )
 
   const [receiptPage, setReceiptPage] = useState(1)
   const receiptPageSize = 10
@@ -117,7 +119,7 @@ function PeriodTable(): React.ReactElement {
     switchChain({ chainId: paymentChain.id })
   }, [switchChain])
 
-  const totalPages = Math.ceil((periods?.pagination.totalCount || 0) / pageSize)
+  const totalPages = Math.ceil((periods?.pagination?.totalCount || 0) / pageSize)
 
   const [hasAllowance, setHasAllowance] = useState(false)
   const [tokenDecimals, setTokenDecimals] = useState<bigint>(BigInt(18))
@@ -171,7 +173,6 @@ function PeriodTable(): React.ReactElement {
         </Select>
         <RewardButton
           selected={rewardState}
-          data={periods?.data || []}
           pageId="period"
           rewardState={rewardState}
           setRewardState={setRewardState}
@@ -191,9 +192,9 @@ function PeriodTable(): React.ReactElement {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {periods.data.map((period) => {
+            {(periods?.data || [])?.map((period, index) => {
               return (
-                <TableRow key={period._id}>
+                <TableRow key={index}>
                   <TableCell className="font-medium">
                     {new Date(period.from).toLocaleDateString('en-US', {
                       month: 'long',
@@ -214,13 +215,13 @@ function PeriodTable(): React.ReactElement {
                   </TableCell>
                   <TableCell>
                     <div className="flex -space-x-3">
-                      {period.contributors.map((user) => {
+                      {period.contributors.map((user, index) => {
                         return (
                           <img
-                            key={user._id}
+                            key={index}
                             className="h-6 w-6 rounded-full border-2 border-white"
                             src={user.avatarUrl}
-                            alt={user._id}
+                            alt={user.login}
                           />
                         )
                       })}

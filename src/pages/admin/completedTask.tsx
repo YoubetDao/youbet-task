@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { fetchTasks, getLoadMoreProjectList, grantTaskRewards } from '@/service'
-import { IResultPagination, IResultPaginationData, Project, Task } from '@/types'
+import { getLoadMoreProjectList, grantTaskRewards, taskApi } from '@/service'
+import { IResultPagination, Project } from '@/types'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount, useSwitchChain } from 'wagmi'
@@ -14,9 +14,9 @@ import { PencilLine } from 'lucide-react'
 import { RewardDialogForm } from '../period/reward-form'
 import { Button } from '@/components/ui/button'
 import { distributor } from '@/constants/distributor'
-import { RewardButton } from '@/components/reward-button'
-import { rewardAtomFamily } from '@/store'
-import { useAtom } from 'jotai'
+import { capitalizeFirstLetter, RewardButton } from '@/components/reward-button'
+import { PeriodControllerGetPeriodsRewardGrantedEnum } from '@/openapi/client'
+import { TaskControllerGetCompletedTasksRewardClaimedEnum } from '../../openapi/client/api/task-api'
 
 interface ProjectListProps {
   loading: boolean
@@ -52,7 +52,7 @@ function CompletedTaskTable(): React.ReactElement {
   const [projectId, setProjectId] = useState<string | undefined>('')
   const [filterTags] = useState<string[]>([])
   const { address, chain } = useAccount()
-  const [rewardState, setRewardState] = useAtom(rewardAtomFamily('completed'))
+  const [rewardState, setRewardState] = useState<string>(PeriodControllerGetPeriodsRewardGrantedEnum.All)
 
   const pageSize = 10
 
@@ -82,25 +82,29 @@ function CompletedTaskTable(): React.ReactElement {
       },
     },
   )
-
-  const { data: tasks, isLoading: isTasksLoading } = useQuery<IResultPaginationData<Task> | undefined>({
-    queryKey: ['tasks', page, pageSize, projectId || '', JSON.stringify(rewardState)],
-    queryFn: () => {
-      return fetchTasks({
-        offset: (page - 1) * pageSize,
-        limit: pageSize,
-        project: projectId ?? '',
-        states: ['closed'],
-        ...(rewardState.length === 1 ? { rewardGranted: Boolean(Number(rewardState[0])) } : {}),
-      })
-    },
-  })
+  const key = capitalizeFirstLetter(rewardState)
+  const { data: tasks, isLoading: isTasksLoading } = useQuery(
+    ['tasks', page, pageSize, projectId || '', rewardState],
+    () =>
+      taskApi
+        .taskControllerGetTasks(
+          projectId ?? '',
+          '',
+          'closed',
+          '',
+          PeriodControllerGetPeriodsRewardGrantedEnum[key as keyof typeof PeriodControllerGetPeriodsRewardGrantedEnum],
+          TaskControllerGetCompletedTasksRewardClaimedEnum.All,
+          (page - 1) * pageSize,
+          pageSize,
+        )
+        .then((res) => res.data),
+  )
 
   useEffect(() => {
     switchChain({ chainId: paymentChain.id })
   }, [switchChain])
 
-  const totalPages = Math.ceil((tasks?.pagination.totalCount || 0) / pageSize)
+  const totalPages = Math.ceil((tasks?.pagination?.totalCount || 0) / pageSize)
 
   const [hasAllowance, setHasAllowance] = useState(false)
   const [tokenDecimals, setTokenDecimals] = useState<bigint>(BigInt(18))
@@ -149,7 +153,6 @@ function CompletedTaskTable(): React.ReactElement {
         </Select>
         <RewardButton
           selected={rewardState}
-          data={[]}
           pageId="completed"
           rewardState={rewardState}
           setRewardState={setRewardState}
@@ -168,7 +171,7 @@ function CompletedTaskTable(): React.ReactElement {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {tasks.data.map((task) => (
+            {tasks.data?.map((task) => (
               <TableRow key={task._id}>
                 <TableCell className="font-medium">{task.title}</TableCell>
                 <TableCell>
@@ -191,7 +194,7 @@ function CompletedTaskTable(): React.ReactElement {
                     <img
                       className="h-6 w-6 rounded-full border-2 border-white"
                       src={task.assignee.avatarUrl}
-                      alt={task.assignee._id}
+                      alt={task.assignee.login}
                     />
                   )}
                 </TableCell>
