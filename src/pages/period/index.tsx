@@ -10,8 +10,7 @@ import PaginationFast from '@/components/pagination-fast'
 import { useQuery } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { PencilLine, Info } from 'lucide-react'
-import { RewardDialogForm } from './reward-form'
+import { Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { distributor } from '@/constants/distributor'
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
@@ -217,11 +216,12 @@ function PeriodTable(): React.ReactElement {
                     <div className="flex -space-x-3">
                       {period.contributors.map((user, index) => {
                         return (
+                          /*** should fix  */
                           <img
                             key={index}
                             className="h-6 w-6 rounded-full border-2 border-white"
-                            src={user.avatarUrl}
-                            alt={user.login}
+                            // src={user.avatarUrl}
+                            // alt={user.login}
                           />
                         )
                       })}
@@ -233,18 +233,20 @@ function PeriodTable(): React.ReactElement {
                       address &&
                       chain &&
                       (hasAllowance ? (
-                        <RewardDialogForm
-                          trigger={
-                            <Button variant="link" className="gap-2 p-0 text-blue-500">
-                              <PencilLine size={15} />
-                              Grant
-                            </Button>
-                          }
-                          id={period._id}
-                          users={period.contributors}
-                          addressFrom={address}
-                          chain={chain}
-                        />
+                        /*** should fix  */
+                        //   <RewardDialogForm
+                        //     trigger={
+                        //       <Button variant="link" className="gap-2 p-0 text-blue-500">
+                        //         <PencilLine size={15} />
+                        //         Grant
+                        //       </Button>
+                        //     }
+                        //     id={period._id}
+                        //     users={period.contributors}
+                        //     addressFrom={address}
+                        //     chain={chain}
+                        //   />
+                        <></>
                       ) : (
                         <Button
                           variant="link"
@@ -266,7 +268,8 @@ function PeriodTable(): React.ReactElement {
                     <Button
                       variant="link"
                       className="gap-2 p-0 text-blue-500"
-                      onClick={() => handleDetailClick(period._id)}
+                      /*** should fix  */
+                      // onClick={() => handleDetailClick(period._id)}
                     >
                       <Info size={15} />
                       Detail
