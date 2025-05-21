@@ -30,13 +30,8 @@ export const TaskCatalog = ({ project }: ITaskCatalog) => {
     queryKey = ['my-tasks', page, selectedCategory]
     queryFn = () =>
       taskApi
-        .taskControllerGetTasks(
-          project || '',
-          '',
+        .taskControllerMyTasks(
           selectedCategory !== 'all' ? [selectedCategory as TaskState].join(',') : [].join(','),
-          '',
-          TaskControllerGetTasksRewardGrantedEnum.All,
-          TaskControllerGetTasksRewardClaimedEnum.All,
           (page - 1) * pageSize,
           pageSize,
         )

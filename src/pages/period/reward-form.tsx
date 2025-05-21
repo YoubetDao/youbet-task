@@ -232,9 +232,9 @@ export const RewardDialogForm = ({
                   <section className="flex flex-col">
                     {users.map((user, index) => {
                       return (
-                        <div key={index} className="flex flex-row items-center gap-2">
+                        <div key={user.login} className="flex flex-row items-center gap-2">
                           <img
-                            key={index}
+                            key={user.login}
                             className="h-6 w-6 rounded-full border-2 border-white"
                             src={user.avatarUrl}
                             alt={user.login}

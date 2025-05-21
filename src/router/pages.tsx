@@ -13,9 +13,11 @@ import TaskApplyAdmin from '@/pages/task-apply'
 import PeriodAdmin from '@/pages/period'
 import MyRewards from '@/pages/myrewards'
 import CompletedTaskAdmin from '@/pages/admin/completedTask'
+import LandingPage from '@/pages/landing'
 import ProjectDetailPage from '@/pages/projectdetail'
 
 export const Pages = {
+  landing: LandingPage,
   dashboard: Dashboard,
   mytask: MyTask,
   myrewards: MyRewards,

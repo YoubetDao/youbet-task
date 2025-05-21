@@ -1,10 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { getLoadMoreProjectList, grantTaskRewards, taskApi } from '@/service'
 import { IResultPagination, Project } from '@/types'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount, useSwitchChain } from 'wagmi'
-import { useInfiniteScroll } from 'ahooks'
 import { paymentChain } from '@/constants/data'
 import PaginationFast from '@/components/pagination-fast'
 import { useQuery } from '@tanstack/react-query'
@@ -15,34 +13,16 @@ import { RewardDialogForm } from '../period/reward-form'
 import { Button } from '@/components/ui/button'
 import { distributor } from '@/constants/distributor'
 import { capitalizeFirstLetter, RewardButton } from '@/components/reward-button'
-import { PeriodControllerGetPeriodsRewardGrantedEnum } from '@/openapi/client'
-import { TaskControllerGetCompletedTasksRewardClaimedEnum } from '../../openapi/client/api/task-api'
+import { Combobox } from '@/components/combo-box'
+import {
+  PeriodControllerGetPeriodsRewardGrantedEnum,
+  TaskControllerGetCompletedTasksRewardClaimedEnum,
+} from '@/openapi/client'
 
 interface ProjectListProps {
   loading: boolean
   loadingMore: boolean
   data: IResultPagination<Project> | undefined
-}
-
-function ProjectList({ loading, loadingMore, data }: ProjectListProps) {
-  if (loading) return <LoadingCards />
-  if (!data) return null
-
-  return (
-    <div className="flex w-full flex-col overflow-hidden p-2">
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">{data.pagination.totalCount} Projects</div>
-      </div>
-      <div className="flex w-full flex-col gap-2">
-        {data.list.map((project) => (
-          <SelectItem key={project._id} value={project._id.toString()}>
-            {project.name}
-          </SelectItem>
-        ))}
-        {loadingMore && <LoadingCards count={1} />}
-      </div>
-    </div>
-  )
 }
 
 function CompletedTaskTable(): React.ReactElement {
@@ -56,32 +36,16 @@ function CompletedTaskTable(): React.ReactElement {
 
   const pageSize = 10
 
-  const {
-    data: projects,
-    loading: projectLoading,
-    loadingMore: projectLoadingMore,
-    reload,
-  } = useInfiniteScroll<IResultPagination<Project>>(
-    async () => {
-      // TODO: deal with pagination
-      const res = await getLoadMoreProjectList({
-        offset: 0,
-        limit: 100,
-        filterTags,
-        search: decodeURIComponent(urlParam.get('search') || ''),
-        sort: decodeURIComponent(urlParam.get('sort') || ''),
-      })
-      if (!projectId) setProjectId(res.list[0]._id.toString())
-      return res
-    },
-    {
-      manual: true,
-      target: document.querySelector('#scrollRef'),
-      isNoMore: (data) => {
-        return data ? !data.pagination.hasNextPage : false
-      },
-    },
-  )
+  const { data: projects, isLoading: projectLoading } = useQuery(['projects', filterTags, urlParam], async () => {
+    return getLoadMoreProjectList({
+      offset: 0,
+      limit: 1000, // TODO: deal with pagination
+      filterTags,
+      search: decodeURIComponent(urlParam.get('search') || ''),
+      sort: decodeURIComponent(urlParam.get('sort') || ''),
+    })
+  })
+
   const key = capitalizeFirstLetter(rewardState)
   const { data: tasks, isLoading: isTasksLoading } = useQuery(
     ['tasks', page, pageSize, projectId || '', rewardState],
@@ -131,34 +95,28 @@ function CompletedTaskTable(): React.ReactElement {
     checkAllowance()
   }, [checkAllowance])
 
-  // remove filterTags in deps
-  useEffect(() => {
-    reload()
-  }, [reload, urlParam])
+  // Prepare options for searchable dropdown
+  const projectOptions =
+    projects?.list.map((project) => ({
+      value: project._id.toString(),
+      label: project.name,
+    })) ?? []
 
   return (
     <div className="space-y-4">
-      <div className="flex space-x-4">
-        <Select value={projectId} onValueChange={setProjectId}>
-          <SelectTrigger className="w-[180px] border-gray-700 bg-transparent">
-            <SelectValue placeholder="Select project" />
-          </SelectTrigger>
-          <SelectContent>
-            {!projectLoading && projects ? (
-              <ProjectList loading={projectLoading} loadingMore={projectLoadingMore} data={projects} />
-            ) : (
-              <LoadingCards count={1} />
-            )}
-          </SelectContent>
-        </Select>
-        <RewardButton
-          selected={rewardState}
-          pageId="completed"
-          rewardState={rewardState}
-          setRewardState={setRewardState}
-        />
-      </div>
-
+      <Combobox
+        options={projectOptions}
+        value={projectId ?? ''}
+        onSelect={setProjectId}
+        placeholder="Select project"
+        isLoading={projectLoading}
+      />
+      <RewardButton
+        selected={rewardState}
+        pageId="completed"
+        rewardState={rewardState}
+        setRewardState={setRewardState}
+      />
       {!isTasksLoading && tasks ? (
         <Table>
           <TableHeader>
@@ -173,7 +131,19 @@ function CompletedTaskTable(): React.ReactElement {
           <TableBody>
             {tasks.data?.map((task) => (
               <TableRow key={task._id}>
-                <TableCell className="font-medium">{task.title}</TableCell>
+                <TableCell className="font-medium">
+                  <div className="space-y-1">
+                    <div>{task?.title}</div>
+                    <a
+                      href={task?.htmlUrl}
+                      className="text-xs text-gray-500 hover:text-blue-500"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {task?._id}
+                    </a>
+                  </div>
+                </TableCell>
                 <TableCell>
                   {new Date(task.createdAt).toLocaleDateString('en-US', {
                     month: 'long',
@@ -239,6 +209,8 @@ function CompletedTaskTable(): React.ReactElement {
                         Approve Contract
                       </Button>
                     ))
+                  ) : task.rewardClaimed ? (
+                    <p>Claimed</p>
                   ) : (
                     <p>Granted</p>
                   )}

@@ -179,8 +179,8 @@ function QuestLog({ createUser }: { createUser: string }) {
     const url = encodeURIComponent(window.location.href) // 获取当前网页URL并编码
     const text = encodeURIComponent(
       rewardAmount
-        ? `${createUser} shared an issue via According.work!\nSolve this issue and earn ${rewardAmount} $ !\nJoin us, create value with your code, and get rewarded!\n`
-        : `${createUser} shared an issue via According.work!\nSolve this issue and earn EDU Yuzu Points!\nJoin us, create value with your code, and get rewarded!\n`,
+        ? `${createUser} shared an issue via According.Work!\nSolve this issue and earn ${rewardAmount} $ !\nJoin us, create value with your code, and get rewarded!\n`
+        : `${createUser} shared an issue via According.Work!\nSolve this issue and earn EDU Yuzu Points!\nJoin us, create value with your code, and get rewarded!\n`,
     ) // 自定义分享文本
     const twitterShareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${url}`
 
@@ -206,7 +206,7 @@ function QuestLog({ createUser }: { createUser: string }) {
           <Button
             disabled={isClaiming}
             onClick={handleClaim}
-            variant="emphasis"
+            variant="default"
             className="border border-muted text-white hover:border-opacity-80 hover:bg-white/10"
           >
             Apply
@@ -216,7 +216,7 @@ function QuestLog({ createUser }: { createUser: string }) {
           <Button
             disabled={isWithdrawing}
             onClick={handleDisclaim}
-            variant="emphasis"
+            variant="default"
             className="bg-gray-8/50 text-l border border-muted text-white hover:border-opacity-80 hover:bg-white/10"
           >
             Withdraw
@@ -225,7 +225,7 @@ function QuestLog({ createUser }: { createUser: string }) {
         )}
         <ShareButton
           iconSize={14}
-          variant="emphasis"
+          variant="default"
           className="flex gap-1 border border-muted text-white hover:border-opacity-80 hover:bg-white/10"
         >
           Share
