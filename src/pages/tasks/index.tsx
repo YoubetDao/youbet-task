@@ -18,22 +18,20 @@ import { useQuery } from '@tanstack/react-query'
 import PaginationFast from '@/components/pagination-fast'
 import { TaskCard } from '@/components/task-v2/task-card'
 import { TaskItem } from '@/components/task-v2/task-item'
-import { TaskState } from '@/types'
 import { LoadingCards } from '@/components/loading-cards'
 
 export default function Tasks() {
   const [page, setPage] = useState(1)
-  const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [selectedAssignment, setSelectedAssignment] = useState<string>('all')
   const pageSize = 9
 
-  const queryKey = ['tasks', '', page, pageSize, selectedCategory]
+  const queryKey = ['tasks', '', page, pageSize, selectedAssignment]
   const queryFn = () =>
     taskApi
       .taskControllerGetTasks(
         '',
         '',
-        selectedCategory !== 'all' ? [selectedCategory as TaskState].join(',') : [].join(','),
+        'open',
         selectedAssignment !== 'all' ? selectedAssignment : '',
         false,
         (page - 1) * pageSize,
@@ -52,20 +50,13 @@ export default function Tasks() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
 
   const handleCategoryChange = (value: string) => {
-    if (value == 'all') {
-      setSelectedCategory(value)
-      setSelectedAssignment(value)
+    setPage(1)
+    if (value == 'open') {
+      setSelectedAssignment('all')
       return
     }
 
-    if (value == 'assigned') {
-      setSelectedCategory('all')
-      setSelectedAssignment(value)
-      return
-    }
-
-    setSelectedAssignment('all')
-    setSelectedCategory(value)
+    setSelectedAssignment(value)
   }
 
   if (loading) return <LoadingCards count={3} />
@@ -91,18 +82,12 @@ export default function Tasks() {
           </div>
 
           {/* Tabs */}
-          <Tabs defaultValue="all" className="mb-6" onValueChange={handleCategoryChange}>
+          <Tabs defaultValue="open" className="mb-6" onValueChange={handleCategoryChange}>
             <div className="flex w-full items-center justify-between">
               <TabsList className="flex w-auto flex-nowrap">
-                <TabsTrigger className="w-[41px]" value="all">
-                  All
-                </TabsTrigger>
-                <TabsTrigger className="w-[60px]" value="open">
-                  Open
-                </TabsTrigger>
-                <TabsTrigger className="w-[87px]" value="assigned">
-                  Assigned
-                </TabsTrigger>
+                <TabsTrigger value="open">All</TabsTrigger>
+                <TabsTrigger value="assigned">Assigned</TabsTrigger>
+                <TabsTrigger value="unassigned">Unassigned</TabsTrigger>
               </TabsList>
 
               <div className="flex items-center gap-2">

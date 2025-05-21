@@ -53,7 +53,7 @@ export const TaskCard = ({ item }: ITaskItemProps) => {
         <CardContent className="flex-1 pt-4">
           <h4 className="line-clamp-2 h-[56px] text-lg font-semibold">{item.title}</h4>
 
-          <p className="mt-2 line-clamp-3 text-sm text-slate-500 dark:text-slate-400">
+          <p className="mt-2 line-clamp-3 h-[56px] text-sm text-slate-500 dark:text-slate-400">
             {item.body || 'No description...'}
           </p>
 
@@ -64,7 +64,7 @@ export const TaskCard = ({ item }: ITaskItemProps) => {
             </div>
             {item.assignees && item.assignees.length == 0 && (
               <div className="flex w-[96px] flex-col">
-                <span className="text-xs text-[#67E8F9]">Due in</span>
+                <span className="text-xs text-[#67E8F9]">Created</span>
                 <span className="text-[18px]">{timeAgo(item.createdAt)}</span>
               </div>
             )}
@@ -72,7 +72,7 @@ export const TaskCard = ({ item }: ITaskItemProps) => {
               <div className="flex w-[96px] flex-col">
                 <span className="text-xs text-[#67E8F9]">Assignee </span>
                 {/* TODO: assignees 定义为字符串数组，与接口返回的不一致 */}
-                {/* {renderAssigneeAvatars(item.assignees)} */}
+                {renderAssigneeAvatars(item.assignees)}
               </div>
             )}
           </div>
