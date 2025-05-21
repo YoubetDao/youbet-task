@@ -24,7 +24,7 @@ import {
   PeriodReport,
 } from '@/types'
 import http from './instance'
-import { TaskApi, Configuration, ReportApi } from '@/openapi/client'
+import { TaskApi, Configuration, ReportApi, PeriodApi } from '@/openapi/client'
 
 // ===== 认证 (Auth) =====
 export async function fetchUserInfo(code: string): Promise<UserInfo> {
@@ -106,6 +106,7 @@ export async function fetchTasks(params: {
   limit: number
   states: TaskState[]
   assignmentStatus?: string
+  rewardGranted?: boolean
 }) {
   const response = await http.get<IResultPaginationData<Task>>('/tasks', { params })
   return response.data
@@ -264,6 +265,14 @@ export const taskApi = new TaskApi(
 )
 
 export const reportApi = new ReportApi(
+  new Configuration({
+    basePath: import.meta.env.VITE_BASE_URL,
+  }),
+  '',
+  http,
+)
+
+export const periodApi = new PeriodApi(
   new Configuration({
     basePath: import.meta.env.VITE_BASE_URL,
   }),

@@ -19,7 +19,8 @@ import _ from 'lodash'
 import { postGrantPeriodRewards } from '@/service'
 import { useDistributorToken } from '@/hooks/useDistributorToken'
 import { useQueryClient } from '@tanstack/react-query'
-import { GithubUser } from '@/openapi/client/models/github-user'
+import { GithubUser } from '@/openapi/client'
+
 function randomDistribute(amount: number, people: number): number[] {
   const points = _.sortBy(_.times(people - 1, () => Math.random()))
   points.push(1)
