@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { getLoadMoreProjectList, grantTaskRewards, taskApi } from '@/service'
-import { IResultPagination, Project } from '@/types'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount, useSwitchChain } from 'wagmi'
 import { paymentChain } from '@/constants/data'
@@ -13,17 +12,25 @@ import { RewardDialogForm } from '../period/reward-form'
 import { Button } from '@/components/ui/button'
 import { distributor } from '@/constants/distributor'
 import { capitalizeFirstLetter, RewardButton } from '@/components/reward-button'
-import { Combobox } from '@/components/combo-box'
 import {
   PeriodControllerGetPeriodsRewardGrantedEnum,
   TaskControllerGetCompletedTasksRewardClaimedEnum,
 } from '@/openapi/client'
+import { Combobox } from '@/components/combo-box'
 
-interface ProjectListProps {
-  loading: boolean
-  loadingMore: boolean
-  data: IResultPagination<Project> | undefined
-}
+const statuses = (
+  Object.keys(PeriodControllerGetPeriodsRewardGrantedEnum) as Array<
+    keyof typeof PeriodControllerGetPeriodsRewardGrantedEnum
+  >
+).map((key) => ({
+  label: key,
+  value: PeriodControllerGetPeriodsRewardGrantedEnum[key],
+}))
+
+const valueToLabel = Object.entries(PeriodControllerGetPeriodsRewardGrantedEnum).reduce((acc, [key, value]) => {
+  acc[value] = key
+  return acc
+}, {} as Record<string, string>)
 
 function CompletedTaskTable(): React.ReactElement {
   const [page, setPage] = useState(1)
@@ -103,20 +110,24 @@ function CompletedTaskTable(): React.ReactElement {
     })) ?? []
 
   return (
-    <div className="space-x-4 space-y-4">
-      <Combobox
-        options={projectOptions}
-        value={projectId ?? ''}
-        onSelect={setProjectId}
-        placeholder="Select project"
-        isLoading={projectLoading}
-      />
-      <RewardButton
-        selected={rewardState}
-        pageId="completed"
-        rewardState={rewardState}
-        setRewardState={setRewardState}
-      />
+    <div className="space-y-4">
+      <div className="flex justify-items-start space-x-4">
+        <Combobox
+          options={projectOptions}
+          value={projectId ?? ''}
+          onSelect={setProjectId}
+          placeholder="Select project"
+          isLoading={projectLoading}
+        />
+        <RewardButton
+          selected={rewardState}
+          pageId="completed"
+          rewardState={rewardState}
+          setRewardState={setRewardState}
+          statuses={statuses}
+          valueToLabel={valueToLabel}
+        />
+      </div>
       {!isTasksLoading && tasks ? (
         <Table>
           <TableHeader>

@@ -5,36 +5,28 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { CirclePlus } from 'lucide-react'
 import { Separator } from './ui/separator'
-import { PeriodControllerGetPeriodsRewardGrantedEnum } from '@/openapi/client'
 import { Checkbox } from './ui/checkbox'
+import { PeriodControllerGetPeriodsRewardGrantedEnum } from '@/openapi/client'
 
 export function capitalizeFirstLetter(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1)
+}
+interface IStatuses {
+  label: keyof typeof PeriodControllerGetPeriodsRewardGrantedEnum
+  value: (typeof PeriodControllerGetPeriodsRewardGrantedEnum)[keyof typeof PeriodControllerGetPeriodsRewardGrantedEnum]
 }
 interface IRewardButtonProps {
   selected: string
   pageId: string
   rewardState: string
   setRewardState: (update: string | ((prev: string) => string)) => void
+  valueToLabel: Record<string, string>
+  statuses: IStatuses[]
 }
-
-const statuses = (
-  Object.keys(PeriodControllerGetPeriodsRewardGrantedEnum) as Array<
-    keyof typeof PeriodControllerGetPeriodsRewardGrantedEnum
-  >
-).map((key) => ({
-  label: key,
-  value: PeriodControllerGetPeriodsRewardGrantedEnum[key],
-}))
-
-const valueToLabel = Object.entries(PeriodControllerGetPeriodsRewardGrantedEnum).reduce((acc, [key, value]) => {
-  acc[value] = key
-  return acc
-}, {} as Record<string, string>)
 
 export function RewardButton(props: IRewardButtonProps) {
   const [open, setOpen] = React.useState(false)
-  const { rewardState, setRewardState } = props
+  const { rewardState, setRewardState, statuses, valueToLabel } = props
 
   const changeValue = (value: string) => {
     setRewardState(value)

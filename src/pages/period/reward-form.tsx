@@ -48,13 +48,11 @@ interface IRewardForm {
   trigger: React.ReactNode
   id: string
   addressFrom: `0x${string}`
-  // users: User[]
   users: GithubUser[]
   chain: Chain
   onRewardDistributed?: (data: {
     id: string
     amounts: number[]
-    // users: User[]
     users: GithubUser[]
     symbol: string
     decimals: number

@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { getLoadMoreProjectList, fetchReceiptsByPeriod, periodApi } from '@/service'
 import { IResultPagination, IResultPaginationData, Project, PeriodReceipt, ReceiptStatus } from '@/types'
-import { SelectItem } from '@/components/ui/select'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount, useSwitchChain } from 'wagmi'
 import { paymentChain } from '@/constants/data'
@@ -24,26 +23,19 @@ interface ProjectListProps {
   data: IResultPagination<Project> | undefined
 }
 
-function ProjectList({ loading, loadingMore, data }: ProjectListProps) {
-  if (loading) return <LoadingCards />
-  if (!data) return null
+const statuses = (
+  Object.keys(PeriodControllerGetPeriodsRewardGrantedEnum) as Array<
+    keyof typeof PeriodControllerGetPeriodsRewardGrantedEnum
+  >
+).map((key) => ({
+  label: key,
+  value: PeriodControllerGetPeriodsRewardGrantedEnum[key],
+}))
 
-  return (
-    <div className="flex w-full flex-col overflow-hidden p-2">
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">{data.pagination.totalCount} Projects</div>
-      </div>
-      <div className="flex w-full flex-col gap-2">
-        {data.list.map((project) => (
-          <SelectItem key={project._id} value={project._id.toString()}>
-            {project.name}
-          </SelectItem>
-        ))}
-        {loadingMore && <LoadingCards count={1} />}
-      </div>
-    </div>
-  )
-}
+const valueToLabel = Object.entries(PeriodControllerGetPeriodsRewardGrantedEnum).reduce((acc, [key, value]) => {
+  acc[value] = key
+  return acc
+}, {} as Record<string, string>)
 
 function PeriodTable(): React.ReactElement {
   const [page, setPage] = useState(1)
@@ -143,15 +135,24 @@ function PeriodTable(): React.ReactElement {
     })) ?? []
 
   return (
-    <div className="space-x-4 space-y-4">
-      <Combobox
-        options={projectOptions}
-        value={projectId ?? ''}
-        onSelect={setProjectId}
-        placeholder="Select project"
-        isLoading={projectLoading}
-      />
-      <RewardButton selected={rewardState} pageId="period" rewardState={rewardState} setRewardState={setRewardState} />
+    <div className="space-y-4">
+      <div className="flex justify-items-start space-x-4">
+        <Combobox
+          options={projectOptions}
+          value={projectId ?? ''}
+          onSelect={setProjectId}
+          placeholder="Select project"
+          isLoading={projectLoading}
+        />
+        <RewardButton
+          selected={rewardState}
+          pageId="period"
+          rewardState={rewardState}
+          setRewardState={setRewardState}
+          statuses={statuses}
+          valueToLabel={valueToLabel}
+        />
+      </div>
 
       {!isPullRequestsLoading && periods ? (
         <Table>
