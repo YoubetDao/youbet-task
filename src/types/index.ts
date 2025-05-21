@@ -388,3 +388,9 @@ export interface TransactionInfo {
 }
 
 export type TaskState = '' | 'open' | 'closed'
+export interface Activity {
+  user: string
+  action: string
+  time: string
+  avatar?: string
+}
