@@ -6,15 +6,9 @@ on:
       - main
   # manual trigger
   workflow_dispatch:
-    inputs:
-      simulate_failure:
-        description: 'Simulate failure for testing'
-        required: false
-        default: 'false'
 
 jobs:
   sync-main-to-dev:
-    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       contents: write # Gives write access to repository contents
