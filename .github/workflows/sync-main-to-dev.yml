@@ -1,12 +1,9 @@
 name: Sync Main to Dev
 
 on:
-  pull_request: 
+  push:
     branches:
       - main
-    types:
-      - closed
-
   # manual trigger
   workflow_dispatch:
     inputs:
@@ -17,30 +14,39 @@ on:
 
 jobs:
   sync-main-to-dev:
-    if : github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # Gives write access to repository contents
+      contents: write # Gives write access to repository contents
     steps:
-      - name: Checkout repository
+      - name: Checkout main and dev
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # 获取全部历史，便于 rebase
 
-      - name: Update dev branch
-        id: sync
+      - name: Set up Git
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Check if main is ahead of dev
+        id: check_ahead
+        run: |
           git fetch origin dev
+          # 判断 main 是否领先 dev
+          AHEAD=$(git rev-list --left-right --count origin/dev...origin/main | awk '{print $2}')
+          echo "main ahead by $AHEAD"
+          echo "ahead=$AHEAD" >> $GITHUB_OUTPUT
+
+      - name: Rebase main onto dev and push
+        if: steps.check_ahead.outputs.ahead != '0'
+        run: |
           git checkout dev
-          git merge origin/main --no-ff -m "chore: sync main to dev"
-          git push origin dev
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          git rebase origin/main
+          git push origin dev --force-with-lease
 
       - name: Send Feishu notification on success
-        if: ${{ success() && inputs.simulate_failure != 'true' }}
+        if: ${{ success() && steps.check_ahead.outputs.ahead != '0' && inputs.simulate_failure != 'true' }}
         run: |
           timestamp=$(date +%s)
           curl -X POST \
