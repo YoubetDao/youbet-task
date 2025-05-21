@@ -43,7 +43,7 @@ export function RewardButton(props: IRewardButtonProps) {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="w-max-[300px] h-[40px] justify-start space-x-4 ">
+        <Button variant="outline" className="w-max-[300px] justify-start space-x-4 ">
           <CirclePlus className="h-[12px]" /> Reward
           {rewardState.length > 0 ? (
             <>

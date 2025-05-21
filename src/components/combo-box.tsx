@@ -42,7 +42,7 @@ export function Combobox({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between">
+        <Button variant="outline" role="combobox" aria-expanded={open} className="w-[70%] justify-between">
           <span className="truncate">{selectedItem ? selectedItem.label : placeholder}</span>
           <div className="flex items-center gap-1">
             {selectedItem ? (

@@ -103,7 +103,7 @@ function CompletedTaskTable(): React.ReactElement {
     })) ?? []
 
   return (
-    <div className="space-y-4">
+    <div className="space-x-4 space-y-4">
       <Combobox
         options={projectOptions}
         value={projectId ?? ''}
