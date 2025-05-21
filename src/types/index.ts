@@ -184,6 +184,7 @@ export interface FetchPullRequestParams extends PaginationParams {
 export interface FetchPeriodsParams extends PaginationParams {
   projectId: string
   sortDirection?: 'asc' | 'desc'
+  rewardGranted?: boolean
 }
 
 export interface FetchReceiptsParams extends PaginationParams {

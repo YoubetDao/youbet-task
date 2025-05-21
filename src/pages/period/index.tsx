@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { fetchPeriods, getLoadMoreProjectList, fetchReceiptsByPeriod } from '@/service'
-import { IResultPagination, IResultPaginationData, Project, Period, PeriodReceipt, ReceiptStatus } from '@/types'
-import { SelectItem } from '@/components/ui/select'
+import { getLoadMoreProjectList, fetchReceiptsByPeriod, periodApi } from '@/service'
+import { IResultPagination, IResultPaginationData, Project, PeriodReceipt, ReceiptStatus } from '@/types'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount, useSwitchChain } from 'wagmi'
 import { paymentChain } from '@/constants/data'
@@ -9,11 +8,13 @@ import PaginationFast from '@/components/pagination-fast'
 import { useQuery } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { PencilLine, Info } from 'lucide-react'
-import { RewardDialogForm } from './reward-form'
+import { Info, PencilLine } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { distributor } from '@/constants/distributor'
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
+import { capitalizeFirstLetter, RewardButton } from '@/components/reward-button'
+import { PeriodControllerGetPeriodsRewardGrantedEnum } from '@/openapi/client'
+import { RewardDialogForm } from './reward-form'
 import { Combobox } from '@/components/combo-box'
 
 interface ProjectListProps {
@@ -22,26 +23,19 @@ interface ProjectListProps {
   data: IResultPagination<Project> | undefined
 }
 
-function ProjectList({ loading, loadingMore, data }: ProjectListProps) {
-  if (loading) return <LoadingCards />
-  if (!data) return null
+const statuses = (
+  Object.keys(PeriodControllerGetPeriodsRewardGrantedEnum) as Array<
+    keyof typeof PeriodControllerGetPeriodsRewardGrantedEnum
+  >
+).map((key) => ({
+  label: key,
+  value: PeriodControllerGetPeriodsRewardGrantedEnum[key],
+}))
 
-  return (
-    <div className="flex w-full flex-col overflow-hidden p-2">
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">{data.pagination.totalCount} Projects</div>
-      </div>
-      <div className="flex w-full flex-col gap-2">
-        {data.list.map((project) => (
-          <SelectItem key={project._id} value={project._id.toString()}>
-            {project.name}
-          </SelectItem>
-        ))}
-        {loadingMore && <LoadingCards count={1} />}
-      </div>
-    </div>
-  )
-}
+const valueToLabel = Object.entries(PeriodControllerGetPeriodsRewardGrantedEnum).reduce((acc, [key, value]) => {
+  acc[value] = key
+  return acc
+}, {} as Record<string, string>)
 
 function PeriodTable(): React.ReactElement {
   const [page, setPage] = useState(1)
@@ -53,6 +47,7 @@ function PeriodTable(): React.ReactElement {
   const pageSize = 10
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   const [selectedPeriodId, setSelectedPeriodId] = useState<string | null>(null)
+  const [rewardState, setRewardState] = useState<string>(PeriodControllerGetPeriodsRewardGrantedEnum.All)
 
   const { data: projects, isLoading: projectLoading } = useQuery(['projects', filterTags, urlParam], async () => {
     return getLoadMoreProjectList({
@@ -65,16 +60,20 @@ function PeriodTable(): React.ReactElement {
     })
   })
 
-  const { data: periods, isLoading: isPullRequestsLoading } = useQuery<IResultPaginationData<Period> | undefined>({
-    queryKey: ['periods', page, pageSize, projectId ?? ''],
-    queryFn: () => {
-      return fetchPeriods({
-        offset: (page - 1) * pageSize,
-        limit: pageSize,
-        projectId: projectId ?? '',
-      })
-    },
-  })
+  const key = capitalizeFirstLetter(rewardState)
+  const { data: periods, isLoading: isPullRequestsLoading } = useQuery(
+    ['periods', page, pageSize, projectId ?? '', rewardState],
+    () =>
+      periodApi
+        .periodControllerGetPeriods(
+          projectId ?? '',
+          '',
+          PeriodControllerGetPeriodsRewardGrantedEnum[key as keyof typeof PeriodControllerGetPeriodsRewardGrantedEnum],
+          (page - 1) * pageSize,
+          pageSize,
+        )
+        .then((res) => res.data),
+  )
 
   const [receiptPage, setReceiptPage] = useState(1)
   const receiptPageSize = 10
@@ -97,7 +96,7 @@ function PeriodTable(): React.ReactElement {
     switchChain({ chainId: paymentChain.id })
   }, [switchChain])
 
-  const totalPages = Math.ceil((periods?.pagination.totalCount || 0) / pageSize)
+  const totalPages = Math.ceil((periods?.pagination?.totalCount || 0) / pageSize)
 
   const [hasAllowance, setHasAllowance] = useState(false)
   const [tokenDecimals, setTokenDecimals] = useState<bigint>(BigInt(18))
@@ -137,13 +136,23 @@ function PeriodTable(): React.ReactElement {
 
   return (
     <div className="space-y-4">
-      <Combobox
-        options={projectOptions}
-        value={projectId ?? ''}
-        onSelect={setProjectId}
-        placeholder="Select project"
-        isLoading={projectLoading}
-      />
+      <div className="flex justify-items-start space-x-4">
+        <Combobox
+          options={projectOptions}
+          value={projectId ?? ''}
+          onSelect={setProjectId}
+          placeholder="Select project"
+          isLoading={projectLoading}
+        />
+        <RewardButton
+          selected={rewardState}
+          pageId="period"
+          rewardState={rewardState}
+          setRewardState={setRewardState}
+          statuses={statuses}
+          valueToLabel={valueToLabel}
+        />
+      </div>
 
       {!isPullRequestsLoading && periods ? (
         <Table>
@@ -158,9 +167,9 @@ function PeriodTable(): React.ReactElement {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {periods.data.map((period) => {
+            {(periods?.data || [])?.map((period, index) => {
               return (
-                <TableRow key={period._id}>
+                <TableRow key={index}>
                   <TableCell className="font-medium">
                     {new Date(period.from).toLocaleDateString('en-US', {
                       month: 'long',
@@ -181,13 +190,13 @@ function PeriodTable(): React.ReactElement {
                   </TableCell>
                   <TableCell>
                     <div className="flex -space-x-3">
-                      {period.contributors.map((user) => {
+                      {period.contributors.map((user, index) => {
                         return (
                           <img
-                            key={user._id}
+                            key={index}
                             className="h-6 w-6 rounded-full border-2 border-white"
                             src={user.avatarUrl}
-                            alt={user._id}
+                            alt={user.login}
                           />
                         )
                       })}
@@ -270,7 +279,6 @@ function PeriodTable(): React.ReactElement {
                   </TableHeader>
                   <TableBody>
                     {periodReceipts.data.map((periodReceipt) => {
-                      console.log('periodReceipt', periodReceipt)
                       return (
                         <TableRow key={periodReceipt._id}>
                           <TableCell className="font-medium">{periodReceipt.user}</TableCell>

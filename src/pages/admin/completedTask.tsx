@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { getLoadMoreProjectList, grantTaskRewards, taskApi } from '@/service'
-import { IResultPagination, Project } from '@/types'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount, useSwitchChain } from 'wagmi'
 import { paymentChain } from '@/constants/data'
@@ -12,13 +11,26 @@ import { PencilLine } from 'lucide-react'
 import { RewardDialogForm } from '../period/reward-form'
 import { Button } from '@/components/ui/button'
 import { distributor } from '@/constants/distributor'
+import { capitalizeFirstLetter, RewardButton } from '@/components/reward-button'
+import {
+  PeriodControllerGetPeriodsRewardGrantedEnum,
+  TaskControllerGetCompletedTasksRewardClaimedEnum,
+} from '@/openapi/client'
 import { Combobox } from '@/components/combo-box'
 
-interface ProjectListProps {
-  loading: boolean
-  loadingMore: boolean
-  data: IResultPagination<Project> | undefined
-}
+const statuses = (
+  Object.keys(PeriodControllerGetPeriodsRewardGrantedEnum) as Array<
+    keyof typeof PeriodControllerGetPeriodsRewardGrantedEnum
+  >
+).map((key) => ({
+  label: key,
+  value: PeriodControllerGetPeriodsRewardGrantedEnum[key],
+}))
+
+const valueToLabel = Object.entries(PeriodControllerGetPeriodsRewardGrantedEnum).reduce((acc, [key, value]) => {
+  acc[value] = key
+  return acc
+}, {} as Record<string, string>)
 
 function CompletedTaskTable(): React.ReactElement {
   const [page, setPage] = useState(1)
@@ -27,6 +39,8 @@ function CompletedTaskTable(): React.ReactElement {
   const [projectId, setProjectId] = useState<string | undefined>('')
   const [filterTags] = useState<string[]>([])
   const { address, chain } = useAccount()
+  const [rewardState, setRewardState] = useState<string>(PeriodControllerGetPeriodsRewardGrantedEnum.All)
+
   const pageSize = 10
 
   const { data: projects, isLoading: projectLoading } = useQuery(['projects', filterTags, urlParam], async () => {
@@ -39,11 +53,23 @@ function CompletedTaskTable(): React.ReactElement {
     })
   })
 
-  const { data: tasks, isLoading: isTasksLoading } = useQuery(['tasks', page, pageSize, projectId ?? ''], () => {
-    return taskApi
-      .taskControllerGetTasks(projectId ?? '', '', 'closed', '', false, (page - 1) * pageSize, pageSize)
-      .then((res) => res.data)
-  })
+  const key = capitalizeFirstLetter(rewardState)
+  const { data: tasks, isLoading: isTasksLoading } = useQuery(
+    ['tasks', page, pageSize, projectId || '', rewardState],
+    () =>
+      taskApi
+        .taskControllerGetTasks(
+          projectId ?? '',
+          '',
+          'closed',
+          '',
+          PeriodControllerGetPeriodsRewardGrantedEnum[key as keyof typeof PeriodControllerGetPeriodsRewardGrantedEnum],
+          TaskControllerGetCompletedTasksRewardClaimedEnum.All,
+          (page - 1) * pageSize,
+          pageSize,
+        )
+        .then((res) => res.data),
+  )
 
   useEffect(() => {
     switchChain({ chainId: paymentChain.id })
@@ -85,14 +111,23 @@ function CompletedTaskTable(): React.ReactElement {
 
   return (
     <div className="space-y-4">
-      <Combobox
-        options={projectOptions}
-        value={projectId ?? ''}
-        onSelect={setProjectId}
-        placeholder="Select project"
-        isLoading={projectLoading}
-      />
-
+      <div className="flex justify-items-start space-x-4">
+        <Combobox
+          options={projectOptions}
+          value={projectId ?? ''}
+          onSelect={setProjectId}
+          placeholder="Select project"
+          isLoading={projectLoading}
+        />
+        <RewardButton
+          selected={rewardState}
+          pageId="completed"
+          rewardState={rewardState}
+          setRewardState={setRewardState}
+          statuses={statuses}
+          valueToLabel={valueToLabel}
+        />
+      </div>
       {!isTasksLoading && tasks ? (
         <Table>
           <TableHeader>
@@ -107,7 +142,19 @@ function CompletedTaskTable(): React.ReactElement {
           <TableBody>
             {tasks.data?.map((task) => (
               <TableRow key={task._id}>
-                <TableCell className="font-medium">{task.title}</TableCell>
+                <TableCell className="font-medium">
+                  <div className="space-y-1">
+                    <div>{task?.title}</div>
+                    <a
+                      href={task?.htmlUrl}
+                      className="text-xs text-gray-500 hover:text-blue-500"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {task?._id}
+                    </a>
+                  </div>
+                </TableCell>
                 <TableCell>
                   {new Date(task.createdAt).toLocaleDateString('en-US', {
                     month: 'long',

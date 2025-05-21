@@ -1,0 +1,165 @@
+name: Sync Main to Dev
+
+on:
+  push:
+    branches:
+      - main
+  # manual trigger
+  workflow_dispatch:
+
+jobs:
+  sync-main-to-dev:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Gives write access to repository contents
+    steps:
+      - name: Checkout main and dev
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 获取全部历史，便于 rebase
+
+      - name: Set up Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Check if main is ahead of dev
+        id: check_ahead
+        run: |
+          git fetch origin dev
+          # 判断 main 是否领先 dev
+          AHEAD=$(git rev-list --left-right --count origin/dev...origin/main | awk '{print $2}')
+          echo "main ahead by $AHEAD"
+          echo "ahead=$AHEAD" >> $GITHUB_OUTPUT
+
+      - name: Rebase main onto dev and push
+        if: steps.check_ahead.outputs.ahead != '0'
+        run: |
+          git checkout dev
+          git rebase origin/main
+          git push origin dev --force-with-lease
+
+      - name: Send Feishu notification on success
+        if: ${{ success() && steps.check_ahead.outputs.ahead != '0' && inputs.simulate_failure != 'true' }}
+        run: |
+          timestamp=$(date +%s)
+          curl -X POST \
+          -H "Content-Type: application/json" \
+          -d '{
+            "msg_type": "interactive",
+            "card": {
+              "config": { "wide_screen_mode": true },
+              "header": {
+                "title": { "tag": "plain_text", "content": "✅ Dev Branch Sync Completed" },
+                "template": "green"
+              },
+              "elements": [
+                {
+                  "tag": "div",
+                  "text": {
+                    "tag": "lark_md",
+                    "content": "📦 **Repository:** [${{ github.repository }}](github.com/${{ github.repository }})"
+                  }
+                },
+                {
+                  "tag": "div",
+                  "text": {
+                    "tag": "lark_md",
+                    "content": "🔄 **Workflow:** [${{ github.workflow }}](github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+                  }
+                },
+                {
+                  "tag": "div",
+                  "text": {
+                    "tag": "lark_md",
+                    "content": "🚀 **Triggered by:** ${{ github.actor }}"
+                  }
+                },
+                {
+                  "tag": "div",
+                  "text": {
+                    "tag": "lark_md",
+                    "content": "🔔 **Event:** ${{ github.event_name }}"
+                  }
+                },
+                {
+                    "tag": "action",
+                    "actions": [
+                        {
+                            "tag": "button",
+                            "text": {
+                                "tag": "plain_text",
+                                "content": "View Action Details"
+                            },
+                            "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                            "type": "primary"
+                        }
+                    ]
+                }
+              ]
+            }
+          }' \
+          ${{ secrets.FEISHU_BOT_WEBHOOK_URL }}
+
+      - name: Send Feishu notification on failure
+        if: ${{ failure() || inputs.simulate_failure == 'true' }}
+
+        run: |
+          timestamp=$(date +%s)
+          curl -X POST \
+          -H "Content-Type: application/json" \
+          -d '{
+            "msg_type": "interactive",
+            "card": {
+              "config": { "wide_screen_mode": true },
+              "header": {
+                "title": { "tag": "plain_text", "content": "❌ Dev Branch Sync Failed" },
+                "template": "red"
+              },
+              "elements": [
+                {
+                  "tag": "div",
+                  "text": {
+                    "tag": "lark_md",
+                    "content": "📦 **Repository:** [${{ github.repository }}](github.com/${{ github.repository }})"
+                  }
+                },
+                {
+                  "tag": "div",
+                  "text": {
+                    "tag": "lark_md",
+                    "content": "🔄 **Workflow:** [${{ github.workflow }}](github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+                  }
+                },
+                {
+                  "tag": "div",
+                  "text": {
+                    "tag": "lark_md",
+                    "content": "🚀 **Triggered by:** ${{ github.actor }}"
+                  }
+                },
+                {
+                  "tag": "div",
+                  "text": {
+                    "tag": "lark_md",
+                    "content": "🔔 **Event:** ${{ github.event_name }}"
+                  }
+                },
+                {
+                    "tag": "action",
+                    "actions": [
+                        {
+                            "tag": "button",
+                            "text": {
+                                "tag": "plain_text",
+                                "content": "View Action Details"
+                            },
+                            "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                            "type": "primary"
+                        }
+                    ]
+                }
+              ]
+            }
+          }' \
+          ${{ secrets.FEISHU_BOT_WEBHOOK_URL }}
