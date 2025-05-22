@@ -126,6 +126,7 @@ function CompletedTaskTable(): React.ReactElement {
           setRewardState={setRewardState}
           statuses={statuses}
           valueToLabel={valueToLabel}
+          title="Reward"
         />
       </div>
       {!isTasksLoading && tasks ? (

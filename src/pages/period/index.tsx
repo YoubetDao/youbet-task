@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { getLoadMoreProjectList, fetchReceiptsByPeriod, periodApi } from '@/service'
-import { IResultPagination, IResultPaginationData, Project, PeriodReceipt, ReceiptStatus } from '@/types'
+import { IResultPaginationData, PeriodReceipt, ReceiptStatus } from '@/types'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount, useSwitchChain } from 'wagmi'
 import { paymentChain } from '@/constants/data'
@@ -16,12 +16,6 @@ import { capitalizeFirstLetter, RewardButton } from '@/components/reward-button'
 import { PeriodControllerGetPeriodsRewardGrantedEnum } from '@/openapi/client'
 import { RewardDialogForm } from './reward-form'
 import { Combobox } from '@/components/combo-box'
-
-interface ProjectListProps {
-  loading: boolean
-  loadingMore: boolean
-  data: IResultPagination<Project> | undefined
-}
 
 const statuses = (
   Object.keys(PeriodControllerGetPeriodsRewardGrantedEnum) as Array<
@@ -74,7 +68,7 @@ function PeriodTable(): React.ReactElement {
         )
         .then((res) => res.data),
   )
-
+  console.log(periods)
   const [receiptPage, setReceiptPage] = useState(1)
   const receiptPageSize = 10
   const { data: periodReceipts, isLoading: isDetailLoading } = useQuery<
@@ -151,6 +145,7 @@ function PeriodTable(): React.ReactElement {
           setRewardState={setRewardState}
           statuses={statuses}
           valueToLabel={valueToLabel}
+          title="Reward"
         />
       </div>
 
