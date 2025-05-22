@@ -13,9 +13,12 @@ import { Button } from '@/components/ui/button'
 import { distributor } from '@/constants/distributor'
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
 import { capitalizeFirstLetter, RewardButton } from '@/components/reward-button'
-import { PeriodControllerGetPeriodsRewardGrantedEnum } from '@/openapi/client'
+import { Period, PeriodControllerGetPeriodsRewardGrantedEnum } from '@/openapi/client'
 import { RewardDialogForm } from './reward-form'
 import { Combobox } from '@/components/combo-box'
+import { Checkbox } from '@/components/ui/checkbox'
+import { BatchGrantDialog, RewardTask } from '../admin/BatchGrantDialog'
+import { useUsername } from '@/store'
 
 interface ProjectListProps {
   loading: boolean
@@ -48,6 +51,8 @@ function PeriodTable(): React.ReactElement {
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   const [selectedPeriodId, setSelectedPeriodId] = useState<string | null>(null)
   const [rewardState, setRewardState] = useState<string>(PeriodControllerGetPeriodsRewardGrantedEnum.All)
+  const [batchGrantPeriods, setBatchGrantPeriods] = useState<Array<RewardTask>>([])
+  const [userName] = useUsername()
 
   const { data: projects, isLoading: projectLoading } = useQuery(['projects', filterTags, urlParam], async () => {
     return getLoadMoreProjectList({
@@ -134,9 +139,27 @@ function PeriodTable(): React.ReactElement {
       label: project.name,
     })) ?? []
 
+  const handleSelectTask = (period: Period) => {
+    if (batchGrantPeriods.some((t) => t.id === period._id)) {
+      setBatchGrantPeriods((prev) => prev.filter((t) => t.id !== period._id))
+    } else {
+      setBatchGrantPeriods((prev) => [
+        ...prev,
+        {
+          id: period._id,
+          taskTitle: 'period reward',
+          users: period.contributors[0],
+          amount: 0,
+          decimals: 18,
+          creator: userName!,
+        },
+      ])
+    }
+  }
+
   return (
     <div className="space-y-4">
-      <div className="flex justify-items-start space-x-4">
+      <div className="flex justify-between gap-4">
         <Combobox
           options={projectOptions}
           value={projectId ?? ''}
@@ -153,11 +176,26 @@ function PeriodTable(): React.ReactElement {
           valueToLabel={valueToLabel}
         />
       </div>
+      <div className="flex justify-end">
+        <BatchGrantDialog
+          defaultRewardTasks={batchGrantPeriods}
+          rewardType="period"
+          trigger={
+            <Button
+              className="whitespace-nowrap"
+              disabled={batchGrantPeriods.length === 0 || !hasAllowance || !address || !chain}
+            >
+              Grant Selected
+            </Button>
+          }
+        />
+      </div>
 
       {!isPullRequestsLoading && periods ? (
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="text-gray-400"></TableHead>
               <TableHead className="text-gray-400">From</TableHead>
               <TableHead className="text-gray-400">To</TableHead>
               <TableHead className="text-gray-400">Users</TableHead>
@@ -169,7 +207,14 @@ function PeriodTable(): React.ReactElement {
           <TableBody>
             {(periods?.data || [])?.map((period, index) => {
               return (
-                <TableRow key={index}>
+                <TableRow key={period._id}>
+                  <TableCell>
+                    <Checkbox
+                      disabled={period.rewardGranted}
+                      checked={batchGrantPeriods.some((t) => t.id === period._id)}
+                      onCheckedChange={() => handleSelectTask(period)}
+                    />
+                  </TableCell>
                   <TableCell className="font-medium">
                     {new Date(period.from).toLocaleDateString('en-US', {
                       month: 'long',
@@ -216,9 +261,11 @@ function PeriodTable(): React.ReactElement {
                             </Button>
                           }
                           id={period._id}
+                          creatorId={userName!}
                           users={period.contributors}
                           addressFrom={address}
                           chain={chain}
+                          sourceType="period"
                         />
                       ) : (
                         <Button

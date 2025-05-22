@@ -47,6 +47,7 @@ const formSchema = z.object({
 interface IRewardForm {
   trigger: React.ReactNode
   id: string
+  creatorId: string
   addressFrom: `0x${string}`
   users: GithubUser[]
   chain: Chain
@@ -58,16 +59,19 @@ interface IRewardForm {
     decimals: number
   }) => Promise<void>
   defaultAmount?: number
+  sourceType: string
 }
 
 export const RewardDialogForm = ({
   trigger,
   id,
+  creatorId,
   users,
   addressFrom,
   chain,
   onRewardDistributed,
   defaultAmount,
+  sourceType,
 }: IRewardForm) => {
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
@@ -114,7 +118,7 @@ export const RewardDialogForm = ({
         await distributor.approveAllowance(MIN_ALLOWANCE * BigInt(10))
       }
 
-      await distributor.createRedPacket(id, githubIds, amountsInWei)
+      await distributor.createRedPacket(id, githubIds, amountsInWei, creatorId, sourceType)
 
       if (onRewardDistributed) {
         await onRewardDistributed({
@@ -268,15 +272,38 @@ export const RewardDialogForm = ({
                   </FormDescription>
                 </div>
                 <DialogFooter className="flex flex-1 justify-end pt-4">
-                  <Button variant="secondary" type="submit">
-                    Submit
+                  <Button
+                    variant="secondary"
+                    type="submit"
+                    disabled={loading}
+                    className={loading ? 'cursor-not-allowed opacity-50' : ''}
+                  >
+                    {loading ? (
+                      <div className="flex items-center gap-2">
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                        <span>Processing...</span>
+                      </div>
+                    ) : (
+                      'Submit'
+                    )}
                   </Button>
                 </DialogFooter>
               </form>
             </>
           ) : (
-            <div className="flex flex-1 items-center justify-center">
-              <div className="m-28 h-48 w-48 animate-spin rounded-full border-8 border-solid border-slate-500 border-t-transparent" />
+            <div className="flex flex-col items-center justify-center space-y-4 p-8">
+              <div className="relative">
+                <div className="h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="h-8 w-8 rounded-full bg-background" />
+                </div>
+              </div>
+              <div className="text-center">
+                <p className="text-lg font-medium">Processing Transaction</p>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Please wait while we process your reward distribution...
+                </p>
+              </div>
             </div>
           )}
         </Form>

@@ -5,10 +5,12 @@ export class Distributor {
 
   // Contract ABIs
   private static DISTRIBUTOR_ABI = [
-    'function createRedPacket(string uuid, string[] githubIds, uint256[] amounts) external',
+    'function createRedPacket(string uuid, string[] githubIds, uint256[] amounts, string creatorId, string sourceType) external',
     'function claimRedPacket(string uuid, string githubId, bytes signature) external',
     'function refundRedPacket(string uuid) external',
     'function token() external view returns (address)',
+    'function batchCreateRedPacket(tuple(string uuid, string[] githubIds, uint256[] amounts, string creatorId, string sourceType)[] batch) external',
+    'function batchClaimRedPacket(tuple(string uuid, string githubId, bytes signature)[] batch) external',
   ]
 
   private static TOKEN_ABI = [
@@ -69,9 +71,9 @@ export class Distributor {
     return await tokenContract.balanceOf(walletAddress)
   }
 
-  async createRedPacket(uuid: string, githubIds: string[], amounts: bigint[]) {
+  async createRedPacket(uuid: string, githubIds: string[], amounts: bigint[], creatorId: string, sourceType: string) {
     const contract = await this.getDistributorContract()
-    const tx = await contract.createRedPacket(uuid, githubIds, amounts)
+    const tx = await contract.createRedPacket(uuid, githubIds, amounts, creatorId, sourceType)
     return await tx.wait()
   }
 
@@ -84,6 +86,32 @@ export class Distributor {
   async refundRedPacket(uuid: string) {
     const contract = await this.getDistributorContract()
     const tx = await contract.refundRedPacket(uuid)
+    return await tx.wait()
+  }
+
+  async batchCreateRedPacket(
+    batch: {
+      uuid: string
+      githubIds: string[]
+      amounts: bigint[]
+      creatorId: string
+      sourceType: string
+    }[],
+  ) {
+    const contract = await this.getDistributorContract()
+    const tx = await contract.batchCreateRedPacket(batch)
+    return await tx.wait()
+  }
+
+  async batchClaimRedPacket(
+    batch: {
+      uuid: string
+      githubId: string
+      signature: string
+    }[],
+  ) {
+    const contract = await this.getDistributorContract()
+    const tx = await contract.batchClaimRedPacket(batch)
     return await tx.wait()
   }
 
