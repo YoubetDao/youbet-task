@@ -68,7 +68,7 @@ function PeriodTable(): React.ReactElement {
         )
         .then((res) => res.data),
   )
-  console.log(periods)
+
   const [receiptPage, setReceiptPage] = useState(1)
   const receiptPageSize = 10
   const { data: periodReceipts, isLoading: isDetailLoading } = useQuery<
