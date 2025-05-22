@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button'
 import { distributor } from '@/constants/distributor'
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
 import { capitalizeFirstLetter, RewardButton } from '@/components/reward-button'
-import { PeriodControllerGetPeriodsRewardGrantedEnum } from '@/openapi/client'
+import { Period, PeriodControllerGetPeriodsRewardGrantedEnum } from '@/openapi/client'
 import { RewardDialogForm } from './reward-form'
 import { Combobox } from '@/components/combo-box'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -50,12 +50,9 @@ function PeriodTable(): React.ReactElement {
   const pageSize = 10
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   const [selectedPeriodId, setSelectedPeriodId] = useState<string | null>(null)
-<<<<<<< HEAD
   const [rewardState, setRewardState] = useState<string>(PeriodControllerGetPeriodsRewardGrantedEnum.All)
-=======
   const [batchGrantPeriods, setBatchGrantPeriods] = useState<Array<RewardTask>>([])
   const [userName] = useUsername()
->>>>>>> eb07190 (feat: batch operations)
 
   const { data: projects, isLoading: projectLoading } = useQuery(['projects', filterTags, urlParam], async () => {
     return getLoadMoreProjectList({
@@ -162,11 +159,7 @@ function PeriodTable(): React.ReactElement {
 
   return (
     <div className="space-y-4">
-<<<<<<< HEAD
-      <div className="flex justify-items-start space-x-4">
-=======
       <div className="flex justify-between gap-4">
->>>>>>> eb07190 (feat: batch operations)
         <Combobox
           options={projectOptions}
           value={projectId ?? ''}
@@ -174,7 +167,6 @@ function PeriodTable(): React.ReactElement {
           placeholder="Select project"
           isLoading={projectLoading}
         />
-<<<<<<< HEAD
         <RewardButton
           selected={rewardState}
           pageId="period"
@@ -182,16 +174,20 @@ function PeriodTable(): React.ReactElement {
           setRewardState={setRewardState}
           statuses={statuses}
           valueToLabel={valueToLabel}
-=======
+        />
+      </div>
+      <div className="flex justify-end">
         <BatchGrantDialog
           defaultRewardTasks={batchGrantPeriods}
           rewardType="period"
           trigger={
-            <Button className="whitespace-nowrap" disabled={batchGrantPeriods.length === 0}>
+            <Button
+              className="whitespace-nowrap"
+              disabled={batchGrantPeriods.length === 0 || !hasAllowance || !address || !chain}
+            >
               Grant Selected
             </Button>
           }
->>>>>>> eb07190 (feat: batch operations)
         />
       </div>
 
@@ -211,9 +207,6 @@ function PeriodTable(): React.ReactElement {
           <TableBody>
             {(periods?.data || [])?.map((period, index) => {
               return (
-<<<<<<< HEAD
-                <TableRow key={index}>
-=======
                 <TableRow key={period._id}>
                   <TableCell>
                     <Checkbox
@@ -222,7 +215,6 @@ function PeriodTable(): React.ReactElement {
                       onCheckedChange={() => handleSelectTask(period)}
                     />
                   </TableCell>
->>>>>>> eb07190 (feat: batch operations)
                   <TableCell className="font-medium">
                     {new Date(period.from).toLocaleDateString('en-US', {
                       month: 'long',
