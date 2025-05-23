@@ -70,14 +70,14 @@ const useClaimReward = (github: string | null, queryClient: any) => {
         await distributor.claimRedPacket(sourceId, github, signature.signature)
         await queryClient.invalidateQueries({ queryKey: ['receipts'] })
         toast({
-          title: '领取成功',
-          description: '奖励已成功领取',
+          title: 'Claimed',
+          description: 'Reward claimed successfully',
         })
       } catch (error) {
         toast({
           variant: 'destructive',
-          title: '错误',
-          description: error instanceof Error ? error.message : '领取奖励失败',
+          title: 'Error',
+          description: error instanceof Error ? error.message : 'Failed to claim reward',
         })
       } finally {
         setClaimingId(null)
@@ -145,9 +145,9 @@ function RewardsTable({
                   <TableCell>
                     <Checkbox
                       disabled={receipts.status !== ReceiptStatus.GRANTED}
-                      checked={selectedRewards.includes(receipts._id)}
+                      checked={selectedRewards.includes(receipts.source.period?._id ?? receipts.source.task?._id ?? '')}
                       onCheckedChange={() => {
-                        handleSelectReward(receipts._id)
+                        handleSelectReward(receipts.source.period?._id ?? receipts.source.task?._id ?? '')
                       }}
                     />
                   </TableCell>
