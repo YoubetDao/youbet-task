@@ -22,11 +22,12 @@ interface IRewardButtonProps {
   setRewardState: (update: string | ((prev: string) => string)) => void
   valueToLabel: Record<string, string>
   statuses: IStatuses[]
+  title: string
 }
 
 export function RewardButton(props: IRewardButtonProps) {
   const [open, setOpen] = React.useState(false)
-  const { rewardState, setRewardState, statuses, valueToLabel } = props
+  const { rewardState, setRewardState, statuses, valueToLabel, title } = props
 
   const changeValue = (value: string) => {
     setRewardState(value)
@@ -36,11 +37,11 @@ export function RewardButton(props: IRewardButtonProps) {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="outline" className="w-max-[300px] justify-start space-x-4 ">
-          <CirclePlus className="h-[12px]" /> Reward
+          <CirclePlus className="h-[12px]" /> {title}
           {rewardState.length > 0 ? (
             <>
               <Separator orientation="vertical" />
-              <div key={rewardState} className="rounded-lg border-2 border-solid border-muted bg-muted px-2">
+              <div key={rewardState} className="w-[100px] rounded-lg border-2 border-solid border-muted bg-muted px-2">
                 {valueToLabel[rewardState]}
               </div>
             </>
@@ -49,7 +50,7 @@ export function RewardButton(props: IRewardButtonProps) {
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0" side="bottom" align="start">
         <Command>
-          <CommandInput placeholder="Reward" />
+          <CommandInput placeholder={title} />
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup>

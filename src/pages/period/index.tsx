@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { getLoadMoreProjectList, fetchReceiptsByPeriod, periodApi } from '@/service'
-import { IResultPagination, IResultPaginationData, Project, PeriodReceipt, ReceiptStatus } from '@/types'
+import { IResultPaginationData, PeriodReceipt, ReceiptStatus } from '@/types'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount, useSwitchChain } from 'wagmi'
 import { paymentChain } from '@/constants/data'
@@ -19,12 +19,6 @@ import { Combobox } from '@/components/combo-box'
 import { Checkbox } from '@/components/ui/checkbox'
 import { BatchGrantDialog, RewardTask } from '../admin/BatchGrantDialog'
 import { useUsername } from '@/store'
-
-interface ProjectListProps {
-  loading: boolean
-  loadingMore: boolean
-  data: IResultPagination<Project> | undefined
-}
 
 const statuses = (
   Object.keys(PeriodControllerGetPeriodsRewardGrantedEnum) as Array<
@@ -174,6 +168,7 @@ function PeriodTable(): React.ReactElement {
           setRewardState={setRewardState}
           statuses={statuses}
           valueToLabel={valueToLabel}
+          title="Reward"
         />
       </div>
       <div className="flex justify-end">
