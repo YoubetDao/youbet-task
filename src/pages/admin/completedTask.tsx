@@ -1,6 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { getLoadMoreProjectList, grantTaskRewards, taskApi } from '@/service'
-import { Task } from '@/openapi/client'
+import {
+  Task,
+  PeriodControllerGetPeriodsRewardGrantedEnum,
+  TaskControllerGetCompletedTasksRewardClaimedEnum,
+} from '@/openapi/client'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount, useSwitchChain } from 'wagmi'
 import { paymentChain } from '@/constants/data'
@@ -12,16 +16,11 @@ import { PencilLine } from 'lucide-react'
 import { RewardDialogForm } from '../period/reward-form'
 import { Button } from '@/components/ui/button'
 import { useAllowanceCheck } from '@/hooks/useAllowanceCheck'
-import {
-  PeriodControllerGetPeriodsRewardGrantedEnum,
-  TaskControllerGetCompletedTasksRewardClaimedEnum,
-} from '@/openapi/client'
 import { Combobox } from '@/components/combo-box'
 import { RewardButton, capitalizeFirstLetter } from '@/components/reward-button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { BatchGrantDialog, RewardTask } from '../admin/BatchGrantDialog'
 import { useUsername } from '@/store'
-import { distributor } from '@/constants/distributor'
 
 const statuses = (
   Object.keys(PeriodControllerGetPeriodsRewardGrantedEnum) as Array<
@@ -47,9 +46,7 @@ function CompletedTaskTable(): React.ReactElement {
   const [filterTags] = useState<string[]>([])
   const { address, chain } = useAccount()
   const [rewardState, setRewardState] = useState<string>(PeriodControllerGetPeriodsRewardGrantedEnum.All)
-
-  const pageSize = 10
-  const [tokenDecimals, setTokenDecimals] = useState<bigint>(BigInt(18))
+  const pageSize = DEFAULT_PAGE_SIZE
   const [batchGrantTasks, setBatchGrantTasks] = useState<Array<RewardTask>>([])
   const [userName] = useUsername()
   const { data: projects, isLoading: projectLoading } = useQuery(['projects', filterTags, urlParam], async () => {
@@ -103,15 +100,6 @@ function CompletedTaskTable(): React.ReactElement {
   }, [switchChain])
 
   const totalPages = Math.ceil((tasks?.pagination?.totalCount || 0) / DEFAULT_PAGE_SIZE)
-
-  const getTokenInfo = useCallback(async () => {
-    const [, decimals] = await distributor.getTokenSymbolAndDecimals()
-    setTokenDecimals(decimals)
-  }, [])
-
-  useEffect(() => {
-    getTokenInfo()
-  }, [getTokenInfo])
 
   const { hasAllowance, approveAllowance, checkAllowance, tokenError, tokenLoading } = useAllowanceCheck()
 
