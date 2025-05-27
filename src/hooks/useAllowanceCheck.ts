@@ -4,8 +4,10 @@ import { distributor } from '@/constants/distributor'
 import { useDistributorToken } from './useDistributorToken'
 import { useToast } from '@/components/ui/use-toast'
 
+const APPROVE_MULTIPLIER = 10
+
 interface UseAllowanceCheckOptions {
-  minAllowanceMultiplier?: number // 默认为 50
+  minAllowanceMultiplier?: number // default 50
 }
 
 export function useAllowanceCheck(options: UseAllowanceCheckOptions = {}) {
@@ -16,7 +18,7 @@ export function useAllowanceCheck(options: UseAllowanceCheckOptions = {}) {
   const [hasAllowance, setHasAllowance] = useState<boolean | null>(null)
 
   const tokenDecimals = BigInt(decimals)
-  const MIN_ALLOWANCE = BigInt(minAllowanceMultiplier) * BigInt(10) ** tokenDecimals
+  const MIN_ALLOWANCE = BigInt(minAllowanceMultiplier) * BigInt(APPROVE_MULTIPLIER) ** tokenDecimals
 
   const checkAllowance = useCallback(async () => {
     if (address && !tokenError && !tokenLoading) {
@@ -45,7 +47,7 @@ export function useAllowanceCheck(options: UseAllowanceCheckOptions = {}) {
 
   const approveAllowance = useCallback(async () => {
     try {
-      await distributor.approveAllowance(MIN_ALLOWANCE * BigInt(10))
+      await distributor.approveAllowance(MIN_ALLOWANCE * BigInt(APPROVE_MULTIPLIER))
       await checkAllowance()
     } catch (error) {
       toast({
