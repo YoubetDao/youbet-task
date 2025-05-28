@@ -3,15 +3,10 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Task } from '@/openapi/client/models/task'
 import { Link } from 'react-router-dom'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { GithubUser } from '@/openapi/client'
 
 interface ITaskItemProps {
   item: Task
-}
-
-interface GitHubAssignee {
-  login: string
-  htmlUrl: string
-  avatarUrl: string
 }
 
 export const TaskCard = ({ item }: ITaskItemProps) => {
@@ -68,11 +63,11 @@ export const TaskCard = ({ item }: ITaskItemProps) => {
                 <span className="text-[18px]">{timeAgo(item.createdAt)}</span>
               </div>
             )}
-            {item.assignees && item.assignees.length > 0 && (
+            {item.assignee && item.assignees.length > 0 && (
               <div className="flex w-[96px] flex-col">
                 <span className="text-xs text-[#67E8F9]">Assignee </span>
                 {/* TODO: assignees 定义为字符串数组，与接口返回的不一致 */}
-                {renderAssigneeAvatars(item.assignees)}
+                {renderAssigneeAvatar(item.assignee)}
               </div>
             )}
           </div>
@@ -85,29 +80,18 @@ export const TaskCard = ({ item }: ITaskItemProps) => {
   )
 }
 
-export function renderAssigneeAvatars(assignees: GitHubAssignee[]): React.ReactNode {
-  const defaultColors = ['#10B981', '#F59E0B', '#3B82F6', '#8B5CF6', '#EC4899']
-
+export function renderAssigneeAvatar(assignee: GithubUser): React.ReactNode {
   return (
     <div className="flex w-[96px] flex-col">
       <div className="mt-1 flex -space-x-2">
-        {assignees.map((assignee, index) => (
-          <div
-            key={assignee.login}
-            className="relative rounded-full"
-            style={{
-              zIndex: assignees.length - index,
-              boxShadow: `0 0 0 2px ${defaultColors[index % defaultColors.length]}`,
-            }}
-          >
-            <a href={assignee.htmlUrl} target="_blank" rel="noopener noreferrer" title={assignee.login}>
-              <Avatar className="h-7 w-7 border-2 border-[#1E293B]">
-                <AvatarImage src={assignee.avatarUrl || '/placeholder.svg'} alt={assignee.login} />
-                <AvatarFallback className="text-xs">{assignee.login.charAt(0).toUpperCase()}</AvatarFallback>
-              </Avatar>
-            </a>
-          </div>
-        ))}
+        <div key={assignee.login} className="relative rounded-full">
+          <a href={assignee.htmlUrl} target="_blank" rel="noopener noreferrer" title={assignee.login}>
+            <Avatar className="h-7 w-7 border-2 border-[#1E293B]">
+              <AvatarImage src={assignee.avatarUrl || '/placeholder.svg'} alt={assignee.login} />
+              <AvatarFallback className="text-xs">{assignee.login.charAt(0).toUpperCase()}</AvatarFallback>
+            </Avatar>
+          </a>
+        </div>
       </div>
     </div>
   )

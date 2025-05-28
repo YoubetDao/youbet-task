@@ -68,15 +68,6 @@ export default function Tasks() {
       <div className="flex flex-col gap-6 lg:flex-row">
         {/* Main content */}
         <main className="flex-1">
-          <div className="mb-4 flex h-[98px] flex-col justify-between gap-4 sm:flex-row sm:items-center">
-            <div>
-              <div className="h-[62px]">
-                <h1 className="text-5xl font-bold text-[#E2E8F0]">Task Hall</h1>
-              </div>
-              <p className="text-slate-500 dark:text-slate-400">Discover and claim GitHub issues as tasks</p>
-            </div>
-          </div>
-
           {/* Search */}
           <div className="relative mb-6">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
