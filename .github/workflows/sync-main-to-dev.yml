@@ -22,6 +22,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin git@github.com:YoubetDao/youbet-task.git
 
       - name: Set up SSH deploy key for ACTIONS_BOT
         run: |
