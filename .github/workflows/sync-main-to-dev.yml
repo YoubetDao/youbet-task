@@ -23,6 +23,13 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+      - name: Set up SSH deploy key for ACTIONS_BOT
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ACTIONS_BOT }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
       - name: Check if main is ahead of dev
         id: check_ahead
         run: |
