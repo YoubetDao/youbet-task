@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { getMyInfo, getRepos, getUserOrgs, importProjectForUser } from '@/service'
+import { getRepos, getUserOrgs, importProjectForUser, userApi } from '@/service'
 import {
   Dialog,
   DialogClose,
@@ -46,7 +46,7 @@ export default function ImportProject() {
 
   const { data: profile } = useQuery({
     queryKey: ['profile'],
-    queryFn: getMyInfo,
+    queryFn: () => userApi.userControllerMyInfo().then((res) => res.data),
     enabled: !!open,
   })
 

@@ -1,11 +1,11 @@
-import { Profile } from '@/types'
 import LeaderboardRow from './leaderboard-row'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { LucideCrown } from 'lucide-react'
+import { UserTaskCompletionDto } from '@/openapi/client'
 
 // 定义 IssueCompletionLeaderboardProps 接口
 interface TaskCompletionLeaderboardProps {
-  leaderboard: Profile[]
+  leaderboard: UserTaskCompletionDto[]
 }
 
 export function TaskCompletionLeaderboard({ leaderboard }: TaskCompletionLeaderboardProps) {

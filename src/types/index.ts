@@ -252,23 +252,6 @@ export interface Task {
   }
 }
 
-export interface Profile {
-  _id: string
-  username: string
-  email?: string
-  avatarUrl: string
-  displayName?: string
-  location?: string
-  bio?: string
-  followers?: number
-  following?: number
-  twitterUsername?: string
-  completedTasks?: number
-  githubAccessToken?: string
-  adminNamespaces: string[]
-  adminProjects?: string[]
-}
-
 export interface UserInfo {
   id: string
   username: string

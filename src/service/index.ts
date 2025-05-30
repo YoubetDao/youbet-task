@@ -1,7 +1,6 @@
 import {
   Project,
   Task,
-  Profile,
   FetchPullRequestParams,
   IResultPaginationData,
   PullRequest,
@@ -20,26 +19,12 @@ import {
   PeriodReport,
 } from '@/types'
 import http from './instance'
-import { TaskApi, Configuration, ReportApi, PeriodApi, TaskApplyApi } from '@/openapi/client'
+import { TaskApi, Configuration, ReportApi, PeriodApi, TaskApplyApi, UserApi } from '@/openapi/client'
 
 // ===== 认证 (Auth) =====
 export async function fetchUserInfo(code: string): Promise<UserInfo> {
   const response = await http.get('/auth/github/callback', { params: { code } })
   return response.data.data
-}
-
-// ===== 用户 (Users) =====
-export async function getMyInfo() {
-  const response = await http.get<Profile>(`/users/me`)
-  return response.data
-}
-
-export async function fetchLeaderboard(): Promise<{ data: Profile[]; totalCount: number }> {
-  const response = await http.get('/users/leaderboard?limit=5')
-  return {
-    data: response.data.data,
-    totalCount: response.data.pagination.totalCount,
-  }
 }
 
 // ===== 合约 (Youbet) =====
@@ -233,6 +218,14 @@ export const periodApi = new PeriodApi(
 )
 
 export const taskApplyApi = new TaskApplyApi(
+  new Configuration({
+    basePath: import.meta.env.VITE_BASE_URL,
+  }),
+  '',
+  http,
+)
+
+export const userApi = new UserApi(
   new Configuration({
     basePath: import.meta.env.VITE_BASE_URL,
   }),
