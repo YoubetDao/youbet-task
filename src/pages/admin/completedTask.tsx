@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { getLoadMoreProjectList, grantTaskRewards, taskApi } from '@/service'
+import { getLoadMoreProjectList, taskApi } from '@/service'
 import {
   Task,
   PeriodControllerGetPeriodsRewardGrantedEnum,
@@ -228,8 +228,8 @@ function CompletedTaskTable(): React.ReactElement {
                         addressFrom={address}
                         chain={chain}
                         onRewardDistributed={async (data) => {
-                          await grantTaskRewards(task._id, {
-                            contributors: data.users.map((user) => ({
+                          await taskApi.taskControllerGrantRewards(task._id, {
+                            contributorRewards: data.users.map((user) => ({
                               contributor: user.login,
                               amount: data.amounts[data.users.indexOf(user)],
                               symbol: data.symbol,

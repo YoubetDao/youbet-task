@@ -12,7 +12,6 @@ import {
   Period,
   Receipt,
   PeriodReceipt,
-  TaskRewardParams,
   FetchReceiptsParams,
   PeriodReport,
 } from '@/types'
@@ -74,22 +73,6 @@ export async function importProjectForUser(params: { org: string; project: strin
 }
 
 // ===== 任务 (Tasks) =====
-export async function claimTask(params: { org: string; project?: string; task?: string }) {
-  const response = await http.patch('/tasks/claim', params)
-  return response.data
-}
-
-export async function disclaimTask(params: { org: string; project?: string; task?: string }) {
-  const response = await http.patch('/tasks/disclaim', params)
-  return response.data
-}
-
-export async function grantTaskRewards(taskId: string, params: TaskRewardParams) {
-  const response = await http.post(`/tasks/${taskId}/rewards`, {
-    contributors: params.contributors,
-  })
-  return response.data
-}
 
 export async function applyTask(params: { taskGithubId: string; comment: string }) {
   const response = await http.post('/task-applies', params)
