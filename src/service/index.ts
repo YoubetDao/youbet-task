@@ -6,8 +6,6 @@ import {
   FetchPullRequestParams,
   IResultPaginationData,
   PullRequest,
-  FetchTaskAppliesParams,
-  PopulatedTaskApply,
   GithubOrganization,
   GithubRepo,
   Tutorial,
@@ -24,7 +22,7 @@ import {
   PeriodReport,
 } from '@/types'
 import http from './instance'
-import { TaskApi, Configuration, ReportApi, PeriodApi } from '@/openapi/client'
+import { TaskApi, Configuration, ReportApi, PeriodApi, TaskApplyApi } from '@/openapi/client'
 
 // ===== 认证 (Auth) =====
 export async function fetchUserInfo(code: string): Promise<UserInfo> {
@@ -117,11 +115,6 @@ export async function fetchMyTasks(params: { offset: number; limit: number; stat
   return response.data
 }
 
-export async function myAppliesForTask(taskGithubId: string) {
-  const response = await http.get(`/tasks/${taskGithubId}/my-applies`)
-  return response.data
-}
-
 export async function updateTaskInfo(taskId: string, data: { reward: any }) {
   return await http.patch(`/tasks/${taskId}`, data)
 }
@@ -143,12 +136,6 @@ export async function grantTaskRewards(taskId: string, params: TaskRewardParams)
   return response.data
 }
 
-// ===== 任务申请 (Task Applies) =====
-export async function fetchTaskApplies(params: FetchTaskAppliesParams) {
-  const response = await http.get<IResultPaginationData<PopulatedTaskApply>>('/task-applies', { params })
-  return response.data
-}
-
 export async function applyTask(params: { taskGithubId: string; comment: string }) {
   const response = await http.post('/task-applies', params)
   return response.data
@@ -161,11 +148,6 @@ export async function approveTaskApply(id: string) {
 
 export async function rejectTaskApply(id: string) {
   const response = await http.patch(`/task-applies/${id}/reject`, {})
-  return response.data
-}
-
-export async function withdrawApply(params: { id: string }) {
-  const response = await http.patch(`/task-applies/${params.id}/withdraw`, {})
   return response.data
 }
 
@@ -255,7 +237,6 @@ export async function getRepos(org: string) {
   return response.data
 }
 
-// ===== 测试 (Test) =====
 export const taskApi = new TaskApi(
   new Configuration({
     basePath: import.meta.env.VITE_BASE_URL,
@@ -273,6 +254,14 @@ export const reportApi = new ReportApi(
 )
 
 export const periodApi = new PeriodApi(
+  new Configuration({
+    basePath: import.meta.env.VITE_BASE_URL,
+  }),
+  '',
+  http,
+)
+
+export const taskApplyApi = new TaskApplyApi(
   new Configuration({
     basePath: import.meta.env.VITE_BASE_URL,
   }),

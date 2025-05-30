@@ -235,28 +235,6 @@ export interface FetchTaskAppliesParams extends PaginationParams {
   sort?: string
 }
 
-export interface PopulatedTaskApply extends Omit<TaskApply, 'task' | 'user'> {
-  task: Task
-  user: User
-}
-
-export interface TaskApply {
-  _id: string
-  githubId: string
-  project: string
-  task: string
-  projectName: string
-  user: {
-    login: string
-  }
-  comment?: string
-  htmlUrl?: string
-  createdAt: Date
-  updatedAt: Date
-  canceledAt?: Date
-  approvedAt?: Date
-}
-
 export interface Task {
   htmlUrl: string
   githubId: string

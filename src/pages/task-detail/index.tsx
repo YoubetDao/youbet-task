@@ -6,9 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { CircleDollarSign, FilePenLine, Loader2, PencilLine } from 'lucide-react'
 import UtterancesComments from './utterances-comments'
-import { Task, TaskApply, User } from '@/types'
+import { Task, User } from '@/types'
 import { useParams } from 'react-router-dom'
-import { applyTask, fetchTask as getTaskDetail, myAppliesForTask, withdrawApply, updateTaskInfo } from '@/service'
+import { applyTask, fetchTask as getTaskDetail, updateTaskInfo, taskApplyApi, taskApi } from '@/service'
 import { LoadingCards } from '@/components/loading-cards'
 import ErrorPage from '../error'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -97,14 +97,14 @@ const renderPriority = (priority: TaskDetailItem['priority']) => {
 function QuestLog({ createUser }: { createUser: string }) {
   const { githubId = '' } = useParams()
   const { data: task } = useTask(githubId)
-  const { data: myApplies = [], isLoading: isMyAppliesLoading } = useMyApplies(githubId)
+  const { data: myApplies = [], isLoading: isMyAppliesLoading } = useMyApplies(Number(githubId))
   const queryClient = useQueryClient()
   const { mutateAsync: applyTaskAsync, isLoading: _isClaiming } = useMutation({
     mutationFn: applyTask,
   })
   const isClaiming = _isClaiming || isMyAppliesLoading
   const { mutateAsync: withdrawApplyAsync, isLoading: _isWithdrawing } = useMutation({
-    mutationFn: withdrawApply,
+    mutationFn: (id: string) => taskApplyApi.taskApplyControllerWithdrawApply(id),
   })
   const isWithdrawing = _isWithdrawing || isMyAppliesLoading
   const [isEditing, setIsEditing] = useState(false)
@@ -168,9 +168,7 @@ function QuestLog({ createUser }: { createUser: string }) {
 
   const handleDisclaim = async () => {
     if (myApplies.length > 0) {
-      await withdrawApplyAsync({
-        id: myApplies[0]._id,
-      })
+      await withdrawApplyAsync(myApplies[0]._id)
       queryClient.invalidateQueries({ queryKey: ['myApplies', githubId] })
     }
   }
@@ -349,10 +347,10 @@ function useTask(githubId?: string) {
   })
 }
 
-function useMyApplies(githubId?: string) {
-  return useQuery<TaskApply[]>({
+function useMyApplies(githubId: number) {
+  return useQuery({
     queryKey: ['myApplies', githubId],
-    queryFn: () => myAppliesForTask(githubId as string),
+    queryFn: () => taskApi.taskControllerMyTaskApply(githubId).then((res) => res.data),
     enabled: !!githubId,
   })
 }
