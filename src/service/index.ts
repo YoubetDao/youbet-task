@@ -1,13 +1,11 @@
 import {
   Project,
-  Task,
   FetchPullRequestParams,
   IResultPaginationData,
   PullRequest,
   GithubOrganization,
   GithubRepo,
   PrRewardInfo,
-  TaskState,
   UserInfo,
   FetchPeriodsParams,
   GrantPeriodRewardsParams,
@@ -76,32 +74,6 @@ export async function importProjectForUser(params: { org: string; project: strin
 }
 
 // ===== 任务 (Tasks) =====
-export async function fetchTask(issueGithubId: string) {
-  const response = await http.get(`/tasks/${issueGithubId}`)
-  return response.data as Task
-}
-
-export async function fetchTasks(params: {
-  project: string
-  offset: number
-  limit: number
-  states: TaskState[]
-  assignmentStatus?: string
-  rewardGranted?: boolean
-}) {
-  const response = await http.get<IResultPaginationData<Task>>('/tasks', { params })
-  return response.data
-}
-
-export async function fetchMyTasks(params: { offset: number; limit: number; states: TaskState[] }) {
-  const response = await http.get<IResultPaginationData<Task>>('/tasks/mine', { params })
-  return response.data
-}
-
-export async function updateTaskInfo(taskId: string, data: { reward: any }) {
-  return await http.patch(`/tasks/${taskId}`, data)
-}
-
 export async function claimTask(params: { org: string; project?: string; task?: string }) {
   const response = await http.patch('/tasks/claim', params)
   return response.data

@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useEffect, useState } from 'react'
-import { fetchTasks, fetchProjects, userApi } from '@/service'
+import { fetchProjects, userApi, taskApi } from '@/service'
 import { TaskCompletionLeaderboard } from '@/components/task-completion-leaderboard'
 import { Project } from '@/types'
 import { LucideUsers, LucidePackage, LucideListChecks, LucideCircleCheck, LucideStar } from 'lucide-react'
@@ -81,11 +81,14 @@ export default function Dashboard() {
         setLeaderboard(data.data || [])
         setUserCount(data.pagination?.totalCount || 0)
       })
-    fetchTasks({ project: '', offset: 0, limit: 1000, states: [] }).then((tasks) => {
-      const openedTasks = (tasks?.data || []).filter((task) => task.state === 'open')
-      setOpenedCount(openedTasks.length)
-      setTotalCount(tasks?.pagination.totalCount || 0)
-    })
+    taskApi
+      .taskControllerGetTasks('', '', 'closed', 'all', undefined, undefined, 0, 1000)
+      .then((res) => res.data)
+      .then((tasks) => {
+        const openedTasks = (tasks?.data || []).filter((task) => task.state === 'open')
+        setOpenedCount(openedTasks.length)
+        setTotalCount(tasks?.pagination?.totalCount || 0)
+      })
     fetchProjects().then((projects) => {
       setProjects(projects || [])
     })
