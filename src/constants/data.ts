@@ -48,15 +48,6 @@ export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
       ],
     },
     {
-      title: 'Tutorials',
-      href: '/tutorials',
-      icon: 'tutorial',
-      component: 'tutorials',
-      layout: 'dashboard',
-      hideInMenu: false,
-      disabled: !appearances.showTutorials,
-    },
-    {
       title: 'MyTasks',
       href: '/mytasks',
       icon: 'listChecks',
@@ -89,15 +80,6 @@ export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
       href: '/auth/github/callback',
       component: 'callback',
       description: 'Redirect route.',
-      hideInMenu: true,
-    },
-    {
-      title: 'Tutorial',
-      href: '/tutorial/:githubId/:owner/:repo/:path',
-      icon: 'tutorial',
-      component: 'tutorial',
-      description: 'tutorial.',
-      layout: 'tutorial',
       hideInMenu: true,
     },
     {

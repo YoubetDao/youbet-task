@@ -2,13 +2,11 @@ import {
   Project,
   Task,
   Profile,
-  Chapter,
   FetchPullRequestParams,
   IResultPaginationData,
   PullRequest,
   GithubOrganization,
   GithubRepo,
-  Tutorial,
   PrRewardInfo,
   TaskState,
   UserInfo,
@@ -87,7 +85,7 @@ export async function fetchProjectReports(projectId: string) {
   return Array.isArray(response.data) ? response.data : []
 }
 
-export async function importProjectForUser(params: { org: string; project: string; tutorial?: Tutorial }) {
+export async function importProjectForUser(params: { org: string; project: string }) {
   const response = await http.post('/projects/import', params)
   return response.data
 }
@@ -148,33 +146,6 @@ export async function approveTaskApply(id: string) {
 
 export async function rejectTaskApply(id: string) {
   const response = await http.patch(`/task-applies/${id}/reject`, {})
-  return response.data
-}
-
-// ===== 教程 (Tutorials) =====
-export async function fetchTutorials(params: {
-  categories: string[]
-  offset: number
-  limit: number
-  sort: string
-  search: string
-}) {
-  const response = await http.get<IResultPaginationData<Project>>('/tutorials', { params })
-  return response.data
-}
-
-export async function fetchTutorialContent(githubId: string) {
-  const response = await http.get(`/tutorials/${githubId}`)
-  return response.data
-}
-
-export async function getTutorialToC(owner: string, repo: string) {
-  const response = await http.get<Chapter[]>(`/tutorials/${owner}/${repo}/chapters`)
-  return response.data
-}
-
-export async function getMdBookContent(owner: string, repo: string, path: string) {
-  const response = await http.get<string>(`/tutorials/${owner}/${repo}/content?path=${path}.md`)
   return response.data
 }
 

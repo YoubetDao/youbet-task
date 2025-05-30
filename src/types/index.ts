@@ -116,12 +116,6 @@ export interface TaskItem extends BaseItem {
   status: 'todo' | 'in-progress' | 'done'
 }
 
-export interface Tutorial {
-  level: string
-  time: string
-  categories: string[]
-}
-
 export interface YoubetExtra {
   tags?: string[]
 }
@@ -139,7 +133,6 @@ export interface Project {
   openIssuesCount: number
   language: string | null
   owner: User
-  tutorial?: Tutorial
   youbetExtra?: YoubetExtra
   contributors: number
 }
@@ -299,13 +292,6 @@ export interface Photo {
 
 export interface Email {
   value: string
-}
-
-export interface Chapter {
-  title: string
-  path: string
-  children: Chapter[] | null
-  level: number
 }
 
 export interface GithubOrganization {

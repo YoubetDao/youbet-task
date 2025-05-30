@@ -40,7 +40,7 @@ export default function ImportProject() {
     },
   })
 
-  const { mutateAsync: importTutorial, isLoading: isImportTutorialLoading } = useMutation({
+  const { mutateAsync: importProject, isLoading: isImportProjectLoading } = useMutation({
     mutationFn: importProjectForUser,
   })
 
@@ -73,7 +73,7 @@ export default function ImportProject() {
   }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    await importTutorial(values)
+    await importProject(values)
     handleOpenChange(false)
   }
 
@@ -158,7 +158,7 @@ export default function ImportProject() {
                 <Button variant="outline">Cancel</Button>
               </DialogClose>
               <Button type="submit" disabled={isConfirmButtonDisabled}>
-                Import{isImportTutorialLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+                Import{isImportProjectLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
               </Button>
             </div>
           </form>

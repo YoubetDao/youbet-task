@@ -5,8 +5,6 @@ import Callback from '@/pages/callback'
 import ProfilePage from '@/pages/profile'
 import MyTask from '@/pages/mytask'
 import Tasks from '@/pages/tasks'
-import Tutorial from '@/pages/tutorial'
-import Tutorials from '@/pages/tutorials'
 import TaskDetailPage from '@/pages/task-detail'
 import ErrorPage from '@/pages/error'
 import PullRequestAdmin from '@/pages/pull-request'
@@ -27,8 +25,6 @@ export const Pages = {
   login: Login,
   callback: Callback,
   profile: ProfilePage,
-  tutorial: Tutorial,
-  tutorials: Tutorials,
   taskDetail: TaskDetailPage,
   error: ErrorPage,
   pullRequestAdmin: PullRequestAdmin,

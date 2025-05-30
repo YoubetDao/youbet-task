@@ -3,12 +3,11 @@ import { Toaster } from '../../ui/toaster'
 import Header from './Header'
 import Sidebar from './Sidebar'
 import Title from './Title'
-import { TutorialToC } from '../tutorial/tutorial-toc'
 import { useInitState } from '../hooks/useInitState'
 
 interface IBaseLayout {
   children: React.ReactNode
-  mode?: 'tutorial' | 'default'
+  mode?: 'default'
 }
 
 export default function BaseLayout({ children, mode = 'default' }: IBaseLayout) {
@@ -23,11 +22,6 @@ export default function BaseLayout({ children, mode = 'default' }: IBaseLayout) 
           </div>
           <div className="mt-6 flex-1">
             <Sidebar />
-            {mode === 'tutorial' && (
-              <section className="flex flex-col items-start px-4 py-4 text-sm font-medium lg:px-6">
-                <TutorialToC />
-              </section>
-            )}
           </div>
         </div>
       </div>
