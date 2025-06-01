@@ -11,6 +11,7 @@ import { GithubUser } from '@/openapi/client/models'
 import { distributor } from '@/constants/distributor'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from '@/components/ui/use-toast'
+import { usePendingGrantList } from '@/store/admin'
 
 export interface RewardTask {
   users: GithubUser
@@ -35,6 +36,7 @@ export const BatchGrantDialog = ({ defaultRewardTasks, rewardType, trigger }: Pr
   const { symbol, decimals } = useDistributorToken()
   const [rewardTasks, setRewardTasks] = useState<Array<RewardTask>>(defaultRewardTasks)
   const queryClient = useQueryClient()
+  const [pendingGrantTasks, setPendingGrantTasks] = usePendingGrantList()
 
   const chains = [paymentChain]
 
@@ -68,6 +70,9 @@ export const BatchGrantDialog = ({ defaultRewardTasks, rewardType, trigger }: Pr
           sourceType: rewardType,
         })),
       )
+
+      //update pendingGrantTasks
+      setPendingGrantTasks([...pendingGrantTasks, ...rewardTasks.map((task) => task.id)])
 
       setOpen(false)
 
