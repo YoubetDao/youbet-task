@@ -8,7 +8,7 @@ import { CircleDollarSign, FilePenLine, Loader2, PencilLine } from 'lucide-react
 import UtterancesComments from './utterances-comments'
 import { User } from '@/types'
 import { useParams } from 'react-router-dom'
-import { applyTask, taskApplyApi, taskApi } from '@/service'
+import { taskApplyApi, taskApi } from '@/service'
 import { LoadingCards } from '@/components/loading-cards'
 import ErrorPage from '../error'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -100,7 +100,8 @@ function QuestLog({ createUser }: { createUser: string }) {
   const { data: myApplies = [], isLoading: isMyAppliesLoading } = useMyApplies(Number(githubId))
   const queryClient = useQueryClient()
   const { mutateAsync: applyTaskAsync, isLoading: _isClaiming } = useMutation({
-    mutationFn: applyTask,
+    mutationFn: (id: number) =>
+      taskApplyApi.taskApplyControllerApplyTask({ taskGithubId: id, comment: 'I would like to claim this issue.' }),
   })
   const isClaiming = _isClaiming || isMyAppliesLoading
   const { mutateAsync: withdrawApplyAsync, isLoading: _isWithdrawing } = useMutation({
@@ -158,10 +159,7 @@ function QuestLog({ createUser }: { createUser: string }) {
 
   const handleClaim = async () => {
     try {
-      await applyTaskAsync({
-        taskGithubId: githubId,
-        comment: 'I would like to claim this issue.',
-      })
+      await applyTaskAsync(Number(githubId))
     } catch (error) {
       console.error('Error claiming task:', error)
     }

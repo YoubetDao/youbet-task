@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Button } from '@/components/ui/button'
 import { format } from 'date-fns'
 import { LoadingCards } from '@/components/loading-cards'
-import { approveTaskApply, rejectTaskApply, taskApplyApi } from '@/service'
+import { taskApplyApi } from '@/service'
 import PaginationFast from '@/components/pagination-fast'
 import { SearchInput } from '@/components/search'
 import { useSearchParams } from 'react-router-dom'
@@ -30,7 +30,8 @@ const TaskAppliesTable = () => {
 
   const queryClient = useQueryClient()
 
-  const approveMutation = useMutation(approveTaskApply, {
+  const approveMutation = useMutation({
+    mutationFn: (applyId: string) => taskApplyApi.taskApplyControllerApproveTaskApply(applyId),
     onMutate: (applyId) => {
       setLoadingStates((prev) => ({ ...prev, [applyId]: true }))
     },
@@ -40,7 +41,8 @@ const TaskAppliesTable = () => {
     },
   })
 
-  const rejectMutation = useMutation(rejectTaskApply, {
+  const rejectMutation = useMutation({
+    mutationFn: (applyId: string) => taskApplyApi.taskApplyControllerRejectTaskApply(applyId),
     onMutate: (applyId) => {
       setLoadingStates((prev) => ({ ...prev, [applyId]: true }))
     },

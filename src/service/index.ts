@@ -72,23 +72,6 @@ export async function importProjectForUser(params: { org: string; project: strin
   return response.data
 }
 
-// ===== 任务 (Tasks) =====
-
-export async function applyTask(params: { taskGithubId: string; comment: string }) {
-  const response = await http.post('/task-applies', params)
-  return response.data
-}
-
-export async function approveTaskApply(id: string) {
-  const response = await http.patch(`/task-applies/${id}/approve`, {})
-  return response.data
-}
-
-export async function rejectTaskApply(id: string) {
-  const response = await http.patch(`/task-applies/${id}/reject`, {})
-  return response.data
-}
-
 // ===== Pull Requests =====
 export async function fetchPullRequests(params: FetchPullRequestParams) {
   const response = await http.get<IResultPaginationData<PullRequest>>('/pull-requests', { params })
