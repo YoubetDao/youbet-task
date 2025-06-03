@@ -12,6 +12,11 @@ import { distributor } from '@/constants/distributor'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from '@/components/ui/use-toast'
 
+export const getPendingGrantTasks = (): string[] => {
+  const pendingGrantTasks = localStorage.getItem('pendingGrantTasks')
+  return pendingGrantTasks ? JSON.parse(pendingGrantTasks) : []
+}
+
 export interface RewardTask {
   users: GithubUser
   id: string
@@ -68,6 +73,11 @@ export const BatchGrantDialog = ({ defaultRewardTasks, rewardType, trigger }: Pr
           sourceType: rewardType,
         })),
       )
+
+      //update pendingGrantTasks
+      const pendingGrantTasksArray = getPendingGrantTasks()
+      pendingGrantTasksArray.push(...rewardTasks.map((task) => task.id))
+      localStorage.setItem('pendingGrantTasks', JSON.stringify(pendingGrantTasksArray))
 
       setOpen(false)
 

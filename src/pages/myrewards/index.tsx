@@ -14,44 +14,11 @@ import { formatDate } from '@/lib/utils'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Checkbox } from '@/components/ui/checkbox'
+import { RewardStatus } from './RewardStatus'
 
-// 添加奖励状态组件
-const RewardStatus = ({
-  status,
-  isLogin,
-  onClaim,
-  isLoading,
-}: {
-  status: ReceiptStatus
-  isLogin: boolean
-  onClaim: () => void
-  isLoading?: boolean
-}) => {
-  if (status !== ReceiptStatus.GRANTED) {
-    return <p>Claimed</p>
-  }
-
-  if (!isLogin) {
-    return <p>Please connect wallet</p>
-  }
-
-  return (
-    <Button
-      variant="link"
-      className={`gap-2 p-0 ${isLoading ? 'cursor-not-allowed text-gray-400' : 'text-blue-500 hover:text-blue-600'}`}
-      disabled={isLoading}
-      onClick={onClaim}
-    >
-      {isLoading ? (
-        <span className="flex items-center gap-2">
-          <span className="animate-spin">⏳</span>
-          Claiming...
-        </span>
-      ) : (
-        'Claim'
-      )}
-    </Button>
-  )
+export const getPendingReceipts = (): string[] => {
+  const pendingReceipts = localStorage.getItem('pendingReceipts')
+  return pendingReceipts ? JSON.parse(pendingReceipts) : []
 }
 
 // 添加领取处理函数
@@ -69,6 +36,12 @@ const useClaimReward = (github: string | null, queryClient: any) => {
         const signature = await getRewardSignature(sourceId)
         await distributor.claimRedPacket(sourceId, github, signature.signature)
         await queryClient.invalidateQueries({ queryKey: ['receipts'] })
+
+        //update pendingReceipts
+        const pendingReceiptsArray = getPendingReceipts()
+        pendingReceiptsArray.push(sourceId)
+        localStorage.setItem('pendingReceipts', JSON.stringify(pendingReceiptsArray))
+
         toast({
           title: 'Claimed',
           description: 'Reward claimed successfully',
@@ -121,6 +94,22 @@ function RewardsTable({
   })
 
   const totalPages = Math.ceil((periods?.pagination.totalCount || 0) / pageSize)
+
+  useEffect(() => {
+    //update pendingReceipts
+    const pendingReceiptsArray = getPendingReceipts()
+
+    pendingReceiptsArray.forEach((pendingId: string) => {
+      const receipt = periods?.data.find(
+        (receipt) => receipt.source.period?._id === pendingId || receipt.source.task?._id === pendingId,
+      )
+
+      if (receipt?.status === ReceiptStatus.GRANTED) {
+        pendingReceiptsArray.splice(pendingReceiptsArray.indexOf(pendingId), 1)
+        localStorage.setItem('pendingReceipts', JSON.stringify(pendingReceiptsArray))
+      }
+    })
+  }, [periods])
 
   return (
     <div className="space-y-4">
@@ -181,6 +170,7 @@ function RewardsTable({
                       isLogin={isLogin}
                       onClaim={() => handleClaim(receipts)}
                       isLoading={isClaiming(receipts._id)}
+                      receipt={receipts}
                     />
                   </TableCell>
                 </TableRow>
@@ -247,6 +237,11 @@ export default function MyRewards() {
 
       // Call batch claim contract
       await distributor.batchClaimRedPacket(batch)
+
+      //update pendingReceipts
+      const pendingReceiptsArray = getPendingReceipts()
+      pendingReceiptsArray.push(...selectedRewards)
+      localStorage.setItem('pendingReceipts', JSON.stringify(pendingReceiptsArray))
 
       // Refresh data
       queryClient.invalidateQueries({ queryKey: ['receipts'] })

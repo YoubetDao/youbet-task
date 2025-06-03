@@ -8,17 +8,17 @@ import PaginationFast from '@/components/pagination-fast'
 import { useQuery } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Info, PencilLine } from 'lucide-react'
+import { Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
 import { capitalizeFirstLetter, RewardButton } from '@/components/reward-button'
 import { Period, PeriodControllerGetPeriodsRewardGrantedEnum } from '@/openapi/client'
-import { RewardDialogForm } from './reward-form'
 import { Combobox } from '@/components/combo-box'
 import { Checkbox } from '@/components/ui/checkbox'
-import { BatchGrantDialog, RewardTask } from '../admin/BatchGrantDialog'
+import { BatchGrantDialog, getPendingGrantTasks, RewardTask } from '../admin/BatchGrantDialog'
 import { useUsername } from '@/store'
 import { useAllowanceCheck } from '@/hooks/useAllowanceCheck'
+import { TaskRewardCell } from '@/components/task-reward-cell'
 
 const statuses = (
   Object.keys(PeriodControllerGetPeriodsRewardGrantedEnum) as Array<
@@ -127,6 +127,16 @@ function PeriodTable(): React.ReactElement {
       ])
     }
   }
+  useEffect(() => {
+    const pendingGrantPeriods = getPendingGrantTasks()
+    pendingGrantPeriods.forEach((periodId) => {
+      const period = periods?.data?.find((period) => period._id === periodId)
+      if (period?.rewardGranted) {
+        pendingGrantPeriods.splice(pendingGrantPeriods.indexOf(periodId), 1)
+        localStorage.setItem('pendingGrantPeriods', JSON.stringify(pendingGrantPeriods))
+      }
+    })
+  }, [periods])
 
   return (
     <div className="space-y-4">
@@ -146,20 +156,6 @@ function PeriodTable(): React.ReactElement {
           statuses={statuses}
           valueToLabel={valueToLabel}
           title="Reward"
-        />
-      </div>
-      <div className="flex justify-end">
-        <BatchGrantDialog
-          defaultRewardTasks={batchGrantPeriods}
-          rewardType="period"
-          trigger={
-            <Button
-              className="whitespace-nowrap"
-              disabled={batchGrantPeriods.length === 0 || !hasAllowance || !address || !chain}
-            >
-              Grant Selected
-            </Button>
-          }
         />
       </div>
       <div className="flex justify-end">
@@ -235,42 +231,19 @@ function PeriodTable(): React.ReactElement {
                   </TableCell>
                   <TableCell>{period.pullRequests.length}</TableCell>
                   <TableCell>
-                    {!period.rewardGranted ? (
-                      address &&
-                      chain &&
-                      !tokenError &&
-                      !tokenLoading &&
-                      hasAllowance !== null &&
-                      (hasAllowance ? (
-                        <RewardDialogForm
-                          trigger={
-                            <Button variant="link" className="gap-2 p-0 text-blue-500">
-                              <PencilLine size={15} />
-                              Grant
-                            </Button>
-                          }
-                          id={period._id}
-                          creatorId={userName!}
-                          users={period.contributors}
-                          addressFrom={address}
-                          chain={chain}
-                          sourceType="period"
-                        />
-                      ) : (
-                        <Button
-                          variant="link"
-                          className="gap-2 p-0 text-blue-500"
-                          onClick={async () => {
-                            await switchChain({ chainId: paymentChain.id })
-                            await approveAllowance()
-                          }}
-                        >
-                          Approve Contract
-                        </Button>
-                      ))
-                    ) : (
-                      <p>Granted</p>
-                    )}
+                    <TaskRewardCell
+                      id={period._id}
+                      isGranted={period.rewardGranted}
+                      users={period.contributors}
+                      tokenError={tokenError}
+                      tokenLoading={tokenLoading}
+                      address={address}
+                      chain={chain}
+                      hasAllowance={hasAllowance}
+                      pendingGrantTasks={[]}
+                      switchChain={switchChain}
+                      approveAllowance={approveAllowance}
+                    />
                   </TableCell>
                   <TableCell>
                     <Button
