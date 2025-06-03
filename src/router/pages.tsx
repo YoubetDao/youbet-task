@@ -7,7 +7,6 @@ import MyTask from '@/pages/mytask'
 import Tasks from '@/pages/tasks'
 import TaskDetailPage from '@/pages/task-detail'
 import ErrorPage from '@/pages/error'
-import PullRequestAdmin from '@/pages/pull-request'
 import TaskApplyAdmin from '@/pages/task-apply'
 import PeriodAdmin from '@/pages/period'
 import MyRewards from '@/pages/myrewards'
@@ -27,7 +26,6 @@ export const Pages = {
   profile: ProfilePage,
   taskDetail: TaskDetailPage,
   error: ErrorPage,
-  pullRequestAdmin: PullRequestAdmin,
   taskApplyAdmin: TaskApplyAdmin,
   completedTaskAdmin: CompletedTaskAdmin,
   periodAdmin: PeriodAdmin,

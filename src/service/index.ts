@@ -1,8 +1,6 @@
 import {
   Project,
-  FetchPullRequestParams,
   IResultPaginationData,
-  PullRequest,
   GithubOrganization,
   GithubRepo,
   PrRewardInfo,
@@ -62,12 +60,6 @@ export async function fetchProjectReports(projectId: string) {
 
 export async function importProjectForUser(params: { org: string; project: string }) {
   const response = await http.post('/projects/import', params)
-  return response.data
-}
-
-// ===== Pull Requests =====
-export async function fetchPullRequests(params: FetchPullRequestParams) {
-  const response = await http.get<IResultPaginationData<PullRequest>>('/pull-requests', { params })
   return response.data
 }
 
