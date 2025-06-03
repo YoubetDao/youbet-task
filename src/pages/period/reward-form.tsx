@@ -19,7 +19,7 @@ import _ from 'lodash'
 import { useDistributorToken } from '@/hooks/useDistributorToken'
 import { useQueryClient } from '@tanstack/react-query'
 import { GithubUser } from '@/openapi/client'
-import { usePendingGrantList } from '@/store/admin'
+import { usePendingGrantTasks, usePendingGrantPeriods } from '@/store/admin'
 
 function randomDistribute(amount: number, people: number): number[] {
   const points = _.sortBy(_.times(people - 1, () => Math.random()))
@@ -80,7 +80,8 @@ export const RewardDialogForm = ({
   const [amounts, setAmounts] = useState<number[]>(Array(users.length).fill(0.0))
   const { symbol, decimals } = useDistributorToken()
   const queryClient = useQueryClient()
-  const [pendingGrantTasks, setPendingGrantTasks] = usePendingGrantList()
+  const [pendingGrantTasks, setPendingGrantTasks] = usePendingGrantTasks()
+  const [pendingGrantPeriods, setPendingGrantPeriods] = usePendingGrantPeriods()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -122,12 +123,20 @@ export const RewardDialogForm = ({
       await distributor.createRedPacket(id, githubIds, amountsInWei, creatorId, sourceType)
 
       //update pendingGrantTasks
-      setPendingGrantTasks([...pendingGrantTasks, id])
+      if (sourceType === 'task') {
+        setPendingGrantTasks([...pendingGrantTasks, id])
+      } else if (sourceType === 'period') {
+        setPendingGrantPeriods([...pendingGrantPeriods, id])
+      }
 
       setOpen(false)
 
-      queryClient.invalidateQueries({ queryKey: ['periods'] })
-      queryClient.invalidateQueries({ queryKey: ['tasks'] })
+      if (sourceType === 'task') {
+        queryClient.invalidateQueries({ queryKey: ['tasks'] })
+      } else if (sourceType === 'period') {
+        queryClient.invalidateQueries({ queryKey: ['periods'] })
+      }
+
       toast({
         variant: 'default',
         title: 'Success',

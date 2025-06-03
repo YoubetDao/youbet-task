@@ -19,7 +19,7 @@ import { BatchGrantDialog, RewardTask } from '../admin/BatchGrantDialog'
 import { useUsername } from '@/store'
 import { useAllowanceCheck } from '@/hooks/useAllowanceCheck'
 import { TaskRewardCell } from '@/components/task-reward-cell'
-import { usePendingGrantList } from '@/store/admin'
+import { usePendingGrantPeriods } from '@/store/admin'
 
 const statuses = (
   Object.keys(PeriodControllerGetPeriodsRewardGrantedEnum) as Array<
@@ -48,7 +48,7 @@ function PeriodTable(): React.ReactElement {
   const [rewardState, setRewardState] = useState<string>(PeriodControllerGetPeriodsRewardGrantedEnum.All)
   const [batchGrantPeriods, setBatchGrantPeriods] = useState<Array<RewardTask>>([])
   const [userName] = useUsername()
-  const [pendingGrantPeriods, setPendingGrantPeriods] = usePendingGrantList()
+  const [pendingGrantPeriods, setPendingGrantPeriods] = usePendingGrantPeriods()
 
   const { data: projects, isLoading: projectLoading } = useQuery(['projects', filterTags, urlParam], async () => {
     return projectApi

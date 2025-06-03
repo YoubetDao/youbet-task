@@ -20,7 +20,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { BatchGrantDialog, RewardTask } from '../admin/BatchGrantDialog'
 import { useUsername } from '@/store'
 import { TaskRewardCell } from '@/components/task-reward-cell'
-import { usePendingGrantList } from '@/store/admin'
+import { usePendingGrantTasks } from '@/store/admin'
 
 const statuses = (
   Object.keys(PeriodControllerGetPeriodsRewardGrantedEnum) as Array<
@@ -49,7 +49,7 @@ function CompletedTaskTable(): React.ReactElement {
   const pageSize = DEFAULT_PAGE_SIZE
   const [batchGrantTasks, setBatchGrantTasks] = useState<Array<RewardTask>>([])
   const [userName] = useUsername()
-  const [pendingGrantTasks, setPendingGrantTasks] = usePendingGrantList()
+  const [pendingGrantTasks, setPendingGrantTasks] = usePendingGrantTasks()
 
   const { data: projects, isLoading: projectLoading } = useQuery(['projects', filterTags, urlParam], async () => {
     return projectApi
