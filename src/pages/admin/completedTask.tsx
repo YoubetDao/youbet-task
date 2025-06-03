@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { getLoadMoreProjectList, taskApi } from '@/service'
+import { projectApi, taskApi } from '@/service'
 import {
   Task,
   PeriodControllerGetPeriodsRewardGrantedEnum,
@@ -50,13 +50,17 @@ function CompletedTaskTable(): React.ReactElement {
   const [batchGrantTasks, setBatchGrantTasks] = useState<Array<RewardTask>>([])
   const [userName] = useUsername()
   const { data: projects, isLoading: projectLoading } = useQuery(['projects', filterTags, urlParam], async () => {
-    return getLoadMoreProjectList({
-      offset: 0,
-      limit: 1000, // TODO: deal with pagination
-      filterTags,
-      search: decodeURIComponent(urlParam.get('search') || ''),
-      sort: decodeURIComponent(urlParam.get('sort') || ''),
-    })
+    return projectApi
+      .projectControllerGetProjects(
+        filterTags.join(','),
+        '',
+        'false',
+        urlParam.get('search') || '',
+        urlParam.get('sort') || '',
+        0,
+        1000,
+      )
+      .then((res) => res.data)
   })
 
   const key = capitalizeFirstLetter(rewardState)
@@ -109,7 +113,7 @@ function CompletedTaskTable(): React.ReactElement {
 
   // Prepare options for searchable dropdown
   const projectOptions =
-    projects?.list.map((project) => ({
+    projects?.data?.map((project) => ({
       value: project._id.toString(),
       label: project.name,
     })) ?? []

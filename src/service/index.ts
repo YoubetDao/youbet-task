@@ -1,5 +1,4 @@
 import {
-  Project,
   IResultPaginationData,
   GithubOrganization,
   GithubRepo,
@@ -13,7 +12,16 @@ import {
   PeriodReport,
 } from '@/types'
 import http from './instance'
-import { TaskApi, Configuration, ReportApi, PeriodApi, TaskApplyApi, UserApi, AuthApi } from '@/openapi/client'
+import {
+  TaskApi,
+  Configuration,
+  ReportApi,
+  PeriodApi,
+  TaskApplyApi,
+  UserApi,
+  AuthApi,
+  ProjectApi,
+} from '@/openapi/client'
 
 // ===== 合约 (Youbet) =====
 export async function getLinkedWallet(github: string) {
@@ -27,32 +35,6 @@ export async function linkWallet(params: { github: string; address: string }) {
 }
 
 // ===== 项目 (Projects) =====
-export async function fetchProjects(): Promise<Project[]> {
-  const response = await http.get('/projects?limit=1000')
-  return response.data.data
-}
-
-export async function getLoadMoreProjectList(params: {
-  offset: number | undefined
-  limit: number
-  filterTags?: string[]
-  sort?: string
-  search?: string
-  onlyPeriodicReward?: boolean
-}) {
-  const res = await http.get<IResultPaginationData<Project>>(`/projects`, {
-    params: {
-      tags: params.filterTags ?? '',
-      offset: params.offset,
-      limit: params.limit,
-      sort: params.sort ?? '',
-      search: params.search ?? '',
-      onlyPeriodicReward: params.onlyPeriodicReward,
-    },
-  })
-  return { list: res.data.data, pagination: res.data.pagination }
-}
-
 export async function fetchProjectReports(projectId: string) {
   const response = await http.get<PeriodReport[]>(`/projects/${projectId}/reports`)
   return Array.isArray(response.data) ? response.data : []
@@ -116,50 +98,13 @@ export async function getRepos(org: string) {
   return response.data
 }
 
-export const taskApi = new TaskApi(
-  new Configuration({
-    basePath: import.meta.env.VITE_BASE_URL,
-  }),
-  '',
-  http,
-)
-
-export const reportApi = new ReportApi(
-  new Configuration({
-    basePath: import.meta.env.VITE_BASE_URL,
-  }),
-  '',
-  http,
-)
-
-export const periodApi = new PeriodApi(
-  new Configuration({
-    basePath: import.meta.env.VITE_BASE_URL,
-  }),
-  '',
-  http,
-)
-
-export const taskApplyApi = new TaskApplyApi(
-  new Configuration({
-    basePath: import.meta.env.VITE_BASE_URL,
-  }),
-  '',
-  http,
-)
-
-export const userApi = new UserApi(
-  new Configuration({
-    basePath: import.meta.env.VITE_BASE_URL,
-  }),
-  '',
-  http,
-)
-
-export const authApi = new AuthApi(
-  new Configuration({
-    basePath: import.meta.env.VITE_BASE_URL,
-  }),
-  '',
-  http,
-)
+function createApi<T>(ApiClass: new (...args: any[]) => T): T {
+  return new ApiClass(new Configuration({ basePath: import.meta.env.VITE_BASE_URL }), '', http)
+}
+export const taskApi = createApi(TaskApi)
+export const reportApi = createApi(ReportApi)
+export const periodApi = createApi(PeriodApi)
+export const taskApplyApi = createApi(TaskApplyApi)
+export const userApi = createApi(UserApi)
+export const authApi = createApi(AuthApi)
+export const projectApi = createApi(ProjectApi)
