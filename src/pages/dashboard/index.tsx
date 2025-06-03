@@ -1,13 +1,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useEffect, useState } from 'react'
-import { fetchTasks, fetchLeaderboard, fetchProjects } from '@/service'
+import { fetchProjects, userApi, taskApi } from '@/service'
 import { TaskCompletionLeaderboard } from '@/components/task-completion-leaderboard'
-import { Profile, Project } from '@/types'
+import { Project } from '@/types'
 import { LucideUsers, LucidePackage, LucideListChecks, LucideCircleCheck, LucideStar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Link } from 'react-router-dom'
 import { BRAND_NAME } from '@/lib/config'
 import { useUsername } from '@/store'
+import { UserTaskCompletionDto } from '@/openapi/client'
 
 function StatsCard({ title, value, icon }: { title: string; value: number; icon: React.ReactNode }) {
   return (
@@ -65,7 +66,7 @@ function ProjectRecommendations({ projects }: { projects: Project[] }) {
 }
 
 export default function Dashboard() {
-  const [leaderboard, setLeaderboard] = useState<Profile[]>([])
+  const [leaderboard, setLeaderboard] = useState<UserTaskCompletionDto[]>([])
   const [openedCount, setOpenedCount] = useState<number>(0)
   const [totalCount, setTotalCount] = useState<number>(0)
   const [projects, setProjects] = useState<Project[]>([])
@@ -73,15 +74,21 @@ export default function Dashboard() {
   const [username] = useUsername()
 
   useEffect(() => {
-    fetchLeaderboard().then(({ data, totalCount }) => {
-      setLeaderboard(data)
-      setUserCount(totalCount || 0)
-    })
-    fetchTasks({ project: '', offset: 0, limit: 1000, states: [] }).then((tasks) => {
-      const openedTasks = (tasks?.data || []).filter((task) => task.state === 'open')
-      setOpenedCount(openedTasks.length)
-      setTotalCount(tasks?.pagination.totalCount || 0)
-    })
+    userApi
+      .userControllerLeaderboard()
+      .then((res) => res.data)
+      .then((data) => {
+        setLeaderboard(data.data || [])
+        setUserCount(data.pagination?.totalCount || 0)
+      })
+    taskApi
+      .taskControllerGetTasks('', '', 'closed', 'all', undefined, undefined, 0, 1000)
+      .then((res) => res.data)
+      .then((tasks) => {
+        const openedTasks = (tasks?.data || []).filter((task) => task.state === 'open')
+        setOpenedCount(openedTasks.length)
+        setTotalCount(tasks?.pagination?.totalCount || 0)
+      })
     fetchProjects().then((projects) => {
       setProjects(projects || [])
     })

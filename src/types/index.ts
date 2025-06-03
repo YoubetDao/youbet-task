@@ -116,12 +116,6 @@ export interface TaskItem extends BaseItem {
   status: 'todo' | 'in-progress' | 'done'
 }
 
-export interface Tutorial {
-  level: string
-  time: string
-  categories: string[]
-}
-
 export interface YoubetExtra {
   tags?: string[]
 }
@@ -139,7 +133,6 @@ export interface Project {
   openIssuesCount: number
   language: string | null
   owner: User
-  tutorial?: Tutorial
   youbetExtra?: YoubetExtra
   contributors: number
 }
@@ -235,28 +228,6 @@ export interface FetchTaskAppliesParams extends PaginationParams {
   sort?: string
 }
 
-export interface PopulatedTaskApply extends Omit<TaskApply, 'task' | 'user'> {
-  task: Task
-  user: User
-}
-
-export interface TaskApply {
-  _id: string
-  githubId: string
-  project: string
-  task: string
-  projectName: string
-  user: {
-    login: string
-  }
-  comment?: string
-  htmlUrl?: string
-  createdAt: Date
-  updatedAt: Date
-  canceledAt?: Date
-  approvedAt?: Date
-}
-
 export interface Task {
   htmlUrl: string
   githubId: string
@@ -279,23 +250,6 @@ export interface Task {
     symbol: string
     tokenAddress: string
   }
-}
-
-export interface Profile {
-  _id: string
-  username: string
-  email?: string
-  avatarUrl: string
-  displayName?: string
-  location?: string
-  bio?: string
-  followers?: number
-  following?: number
-  twitterUsername?: string
-  completedTasks?: number
-  githubAccessToken?: string
-  adminNamespaces: string[]
-  adminProjects?: string[]
 }
 
 export interface UserInfo {
@@ -321,13 +275,6 @@ export interface Photo {
 
 export interface Email {
   value: string
-}
-
-export interface Chapter {
-  title: string
-  path: string
-  children: Chapter[] | null
-  level: number
 }
 
 export interface GithubOrganization {
@@ -388,3 +335,9 @@ export interface TransactionInfo {
 }
 
 export type TaskState = '' | 'open' | 'closed'
+export interface Activity {
+  user: string
+  action: string
+  time: string
+  avatar?: string
+}

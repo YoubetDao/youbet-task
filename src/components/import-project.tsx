@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { getMyInfo, getRepos, getUserOrgs, importProjectForUser } from '@/service'
+import { getRepos, getUserOrgs, importProjectForUser, userApi } from '@/service'
 import {
   Dialog,
   DialogClose,
@@ -40,13 +40,13 @@ export default function ImportProject() {
     },
   })
 
-  const { mutateAsync: importTutorial, isLoading: isImportTutorialLoading } = useMutation({
+  const { mutateAsync: importProject, isLoading: isImportProjectLoading } = useMutation({
     mutationFn: importProjectForUser,
   })
 
   const { data: profile } = useQuery({
     queryKey: ['profile'],
-    queryFn: getMyInfo,
+    queryFn: () => userApi.userControllerMyInfo().then((res) => res.data),
     enabled: !!open,
   })
 
@@ -73,7 +73,7 @@ export default function ImportProject() {
   }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    await importTutorial(values)
+    await importProject(values)
     handleOpenChange(false)
   }
 
@@ -158,7 +158,7 @@ export default function ImportProject() {
                 <Button variant="outline">Cancel</Button>
               </DialogClose>
               <Button type="submit" disabled={isConfirmButtonDisabled}>
-                Import{isImportTutorialLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+                Import{isImportProjectLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
               </Button>
             </div>
           </form>

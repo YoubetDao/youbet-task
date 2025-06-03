@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { getLoadMoreProjectList, fetchReceiptsByPeriod, periodApi } from '@/service'
-import { IResultPagination, IResultPaginationData, Project, PeriodReceipt, ReceiptStatus } from '@/types'
+import { IResultPaginationData, PeriodReceipt, ReceiptStatus } from '@/types'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount, useSwitchChain } from 'wagmi'
 import { paymentChain } from '@/constants/data'
@@ -10,7 +10,6 @@ import { useSearchParams } from 'react-router-dom'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Info, PencilLine } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { distributor } from '@/constants/distributor'
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
 import { capitalizeFirstLetter, RewardButton } from '@/components/reward-button'
 import { Period, PeriodControllerGetPeriodsRewardGrantedEnum } from '@/openapi/client'
@@ -19,12 +18,7 @@ import { Combobox } from '@/components/combo-box'
 import { Checkbox } from '@/components/ui/checkbox'
 import { BatchGrantDialog, RewardTask } from '../admin/BatchGrantDialog'
 import { useUsername } from '@/store'
-
-interface ProjectListProps {
-  loading: boolean
-  loadingMore: boolean
-  data: IResultPagination<Project> | undefined
-}
+import { useAllowanceCheck } from '@/hooks/useAllowanceCheck'
 
 const statuses = (
   Object.keys(PeriodControllerGetPeriodsRewardGrantedEnum) as Array<
@@ -103,30 +97,7 @@ function PeriodTable(): React.ReactElement {
 
   const totalPages = Math.ceil((periods?.pagination?.totalCount || 0) / pageSize)
 
-  const [hasAllowance, setHasAllowance] = useState(false)
-  const [tokenDecimals, setTokenDecimals] = useState<bigint>(BigInt(18))
-
-  const getTokenInfo = useCallback(async () => {
-    const [, decimals] = await distributor.getTokenSymbolAndDecimals()
-    setTokenDecimals(decimals)
-  }, [])
-
-  useEffect(() => {
-    getTokenInfo()
-  }, [getTokenInfo])
-
-  const MIN_ALLOWANCE = BigInt(50) * BigInt(10) ** tokenDecimals
-
-  const checkAllowance = useCallback(async () => {
-    if (address) {
-      const allowance = await distributor.getAllowance(address)
-      setHasAllowance(allowance >= MIN_ALLOWANCE)
-    }
-  }, [address, MIN_ALLOWANCE])
-
-  useEffect(() => {
-    checkAllowance()
-  }, [checkAllowance])
+  const { hasAllowance, approveAllowance, tokenError, tokenLoading } = useAllowanceCheck()
 
   const handleDetailClick = (periodId: string) => {
     setSelectedPeriodId(periodId)
@@ -174,6 +145,21 @@ function PeriodTable(): React.ReactElement {
           setRewardState={setRewardState}
           statuses={statuses}
           valueToLabel={valueToLabel}
+          title="Reward"
+        />
+      </div>
+      <div className="flex justify-end">
+        <BatchGrantDialog
+          defaultRewardTasks={batchGrantPeriods}
+          rewardType="period"
+          trigger={
+            <Button
+              className="whitespace-nowrap"
+              disabled={batchGrantPeriods.length === 0 || !hasAllowance || !address || !chain}
+            >
+              Grant Selected
+            </Button>
+          }
         />
       </div>
       <div className="flex justify-end">
@@ -252,6 +238,9 @@ function PeriodTable(): React.ReactElement {
                     {!period.rewardGranted ? (
                       address &&
                       chain &&
+                      !tokenError &&
+                      !tokenLoading &&
+                      hasAllowance !== null &&
                       (hasAllowance ? (
                         <RewardDialogForm
                           trigger={
@@ -273,8 +262,7 @@ function PeriodTable(): React.ReactElement {
                           className="gap-2 p-0 text-blue-500"
                           onClick={async () => {
                             await switchChain({ chainId: paymentChain.id })
-                            await distributor.approveAllowance(MIN_ALLOWANCE * BigInt(10))
-                            await checkAllowance()
+                            await approveAllowance()
                           }}
                         >
                           Approve Contract

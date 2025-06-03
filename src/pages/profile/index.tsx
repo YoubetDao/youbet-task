@@ -7,12 +7,12 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Github, Loader2, Twitter, Wallet } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 
-import { Profile } from '@/types'
 import { Button } from '@/components/ui/button'
-import { getMyInfo } from '@/service'
+import { userApi } from '@/service'
 import { currentChain, sdk, ZERO_ADDRESS } from '@/constants/data'
 import { useAtom } from 'jotai'
 import { useAsyncEffect } from 'ahooks'
+import { User } from '@/openapi/client'
 
 export default function ProfilePage() {
   const [userPoints, setUserPoints] = useState('')
@@ -20,7 +20,7 @@ export default function ProfilePage() {
   const [claimedRewards, setClaimedRewards] = useState(0)
   const [loading, setLoading] = useState(true)
   const [username] = useUsername()
-  const [profile, setProfile] = useState<Profile>()
+  const [profile, setProfile] = useState<User>()
   const [claiming, setClaiming] = useState(false)
   const { toast } = useToast()
 
@@ -39,7 +39,7 @@ export default function ProfilePage() {
     if (!username) return
 
     try {
-      const profileData = await getMyInfo()
+      const profileData = await userApi.userControllerMyInfo().then((res) => res.data)
       setProfile(profileData)
 
       if (linkedAddress && linkedAddress !== ZERO_ADDRESS) {

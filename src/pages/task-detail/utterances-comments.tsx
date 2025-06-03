@@ -1,4 +1,4 @@
-import { Task } from '@/types'
+import { Task } from '@/openapi/client'
 import React, { useEffect, useRef } from 'react'
 
 const UtterancesComments = ({ task }: { task: Task }) => {

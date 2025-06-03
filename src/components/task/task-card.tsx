@@ -38,7 +38,7 @@ export const TaskCard = ({ item }: ITaskItemProps) => {
   let state: TaskState
 
   if (item.state === 'open') {
-    state = item.assignees.length ? 'assigned' : 'open'
+    state = item.assignee ? 'assigned' : 'open'
   } else {
     state = 'closed'
   }

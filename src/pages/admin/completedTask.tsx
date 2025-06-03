@@ -1,5 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { getLoadMoreProjectList, grantTaskRewards, taskApi } from '@/service'
+import React, { useEffect, useState } from 'react'
+import { getLoadMoreProjectList, taskApi } from '@/service'
+import {
+  Task,
+  PeriodControllerGetPeriodsRewardGrantedEnum,
+  TaskControllerGetCompletedTasksRewardClaimedEnum,
+} from '@/openapi/client'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount, useSwitchChain } from 'wagmi'
 import { paymentChain } from '@/constants/data'
@@ -10,16 +15,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { PencilLine } from 'lucide-react'
 import { RewardDialogForm } from '../period/reward-form'
 import { Button } from '@/components/ui/button'
-import { distributor } from '@/constants/distributor'
-import { capitalizeFirstLetter, RewardButton } from '@/components/reward-button'
-import {
-  PeriodControllerGetPeriodsRewardGrantedEnum,
-  TaskControllerGetCompletedTasksRewardClaimedEnum,
-} from '@/openapi/client'
+import { useAllowanceCheck } from '@/hooks/useAllowanceCheck'
 import { Combobox } from '@/components/combo-box'
+import { RewardButton, capitalizeFirstLetter } from '@/components/reward-button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { BatchGrantDialog, RewardTask } from './BatchGrantDialog'
-import { Task } from '@/openapi/client/models'
+import { BatchGrantDialog, RewardTask } from '../admin/BatchGrantDialog'
 import { useUsername } from '@/store'
 
 const statuses = (
@@ -46,10 +46,7 @@ function CompletedTaskTable(): React.ReactElement {
   const [filterTags] = useState<string[]>([])
   const { address, chain } = useAccount()
   const [rewardState, setRewardState] = useState<string>(PeriodControllerGetPeriodsRewardGrantedEnum.All)
-
-  const pageSize = 10
-  const [hasAllowance, setHasAllowance] = useState(false)
-  const [tokenDecimals, setTokenDecimals] = useState<bigint>(BigInt(18))
+  const pageSize = DEFAULT_PAGE_SIZE
   const [batchGrantTasks, setBatchGrantTasks] = useState<Array<RewardTask>>([])
   const [userName] = useUsername()
   const { data: projects, isLoading: projectLoading } = useQuery(['projects', filterTags, urlParam], async () => {
@@ -104,23 +101,7 @@ function CompletedTaskTable(): React.ReactElement {
 
   const totalPages = Math.ceil((tasks?.pagination?.totalCount || 0) / DEFAULT_PAGE_SIZE)
 
-  const getTokenInfo = useCallback(async () => {
-    const [, decimals] = await distributor.getTokenSymbolAndDecimals()
-    setTokenDecimals(decimals)
-  }, [])
-
-  useEffect(() => {
-    getTokenInfo()
-  }, [getTokenInfo])
-
-  const MIN_ALLOWANCE = BigInt(50) * BigInt(10) ** tokenDecimals
-
-  const checkAllowance = useCallback(async () => {
-    if (address) {
-      const allowance = await distributor.getAllowance(address)
-      setHasAllowance(allowance >= MIN_ALLOWANCE)
-    }
-  }, [address, MIN_ALLOWANCE])
+  const { hasAllowance, approveAllowance, checkAllowance, tokenError, tokenLoading } = useAllowanceCheck()
 
   useEffect(() => {
     checkAllowance()
@@ -150,6 +131,21 @@ function CompletedTaskTable(): React.ReactElement {
           setRewardState={setRewardState}
           statuses={statuses}
           valueToLabel={valueToLabel}
+          title="Reward"
+        />
+      </div>
+      <div className="flex justify-end">
+        <BatchGrantDialog
+          defaultRewardTasks={batchGrantTasks}
+          rewardType="task"
+          trigger={
+            <Button
+              className="whitespace-nowrap"
+              disabled={batchGrantTasks.length === 0 || !hasAllowance || !address || !chain}
+            >
+              Grant Selected
+            </Button>
+          }
         />
       </div>
       <div className="flex justify-end">
@@ -229,6 +225,9 @@ function CompletedTaskTable(): React.ReactElement {
                   {!task.rewardGranted ? (
                     address &&
                     chain &&
+                    !tokenError &&
+                    !tokenLoading &&
+                    hasAllowance !== null &&
                     (hasAllowance ? (
                       <RewardDialogForm
                         trigger={
@@ -243,8 +242,8 @@ function CompletedTaskTable(): React.ReactElement {
                         addressFrom={address}
                         chain={chain}
                         onRewardDistributed={async (data) => {
-                          await grantTaskRewards(task._id, {
-                            contributors: data.users.map((user) => ({
+                          await taskApi.taskControllerGrantRewards(task._id, {
+                            contributorRewards: data.users.map((user) => ({
                               contributor: user.login,
                               amount: data.amounts[data.users.indexOf(user)],
                               symbol: data.symbol,
@@ -261,8 +260,7 @@ function CompletedTaskTable(): React.ReactElement {
                         className="gap-2 p-0 text-blue-500"
                         onClick={async () => {
                           await switchChain({ chainId: paymentChain.id })
-                          await distributor.approveAllowance(MIN_ALLOWANCE * BigInt(10))
-                          await checkAllowance()
+                          await approveAllowance()
                         }}
                       >
                         Approve Contract

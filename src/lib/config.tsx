@@ -3,7 +3,7 @@ export const COMPANY_NAME = import.meta.env.VITE_COMPANY_NAME || 'YouBet'
 export const BRAND_LOGO = import.meta.env.VITE_BRAND_LOGO || '/logo.svg'
 export const X_HANDLE = import.meta.env.VITE_X_HANDLE || 'youbetdao'
 
-import { LucidePackage, LucideBookOpen } from 'lucide-react'
+import { LucidePackage } from 'lucide-react'
 
 export const FOOTER_LINKS = [
   {
@@ -11,12 +11,6 @@ export const FOOTER_LINKS = [
     href: '/projects',
     description: 'View all projects.',
     icon: LucidePackage,
-  },
-  {
-    name: 'Tutorials',
-    href: '/tutorials',
-    description: 'There are many tutorials to learn from.',
-    icon: LucideBookOpen,
   },
 ]
 

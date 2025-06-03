@@ -1,11 +1,10 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { PopulatedTaskApply, IResultPaginationData } from '@/types'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { format } from 'date-fns'
 import { LoadingCards } from '@/components/loading-cards'
-import { fetchTaskApplies, approveTaskApply, rejectTaskApply } from '@/service'
+import { taskApplyApi } from '@/service'
 import PaginationFast from '@/components/pagination-fast'
 import { SearchInput } from '@/components/search'
 import { useSearchParams } from 'react-router-dom'
@@ -16,15 +15,10 @@ const TaskAppliesTable = () => {
   const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({})
   const pageSize = 10
 
-  const { data, isLoading } = useQuery<IResultPaginationData<PopulatedTaskApply>>({
+  const { data, isLoading } = useQuery({
     queryKey: ['taskApplies', page, pageSize, urlParam.toString()],
     queryFn: () => {
-      return fetchTaskApplies({
-        offset: (page - 1) * pageSize,
-        limit: pageSize,
-        search: decodeURIComponent(urlParam.get('search') || ''),
-        sort: decodeURIComponent(urlParam.get('sort') || ''),
-      })
+      return taskApplyApi.taskApplyControllerGetTaskApplies('', page, pageSize).then((res) => res.data)
     },
   })
 
@@ -32,16 +26,12 @@ const TaskAppliesTable = () => {
     setUrlParam(`search=${searchValue}&sort=${sortValue}`)
   }
 
-  const totalPages = Math.ceil((data?.pagination.totalCount || 0) / pageSize)
-
-  const filteredData =
-    data?.data.filter((apply) =>
-      apply.task.title.toLowerCase().includes((urlParam.get('search') || '').toLowerCase()),
-    ) || []
+  const totalPages = Math.ceil((data?.pagination?.totalCount || 0) / pageSize)
 
   const queryClient = useQueryClient()
 
-  const approveMutation = useMutation(approveTaskApply, {
+  const approveMutation = useMutation({
+    mutationFn: (applyId: string) => taskApplyApi.taskApplyControllerApproveTaskApply(applyId),
     onMutate: (applyId) => {
       setLoadingStates((prev) => ({ ...prev, [applyId]: true }))
     },
@@ -51,7 +41,8 @@ const TaskAppliesTable = () => {
     },
   })
 
-  const rejectMutation = useMutation(rejectTaskApply, {
+  const rejectMutation = useMutation({
+    mutationFn: (applyId: string) => taskApplyApi.taskApplyControllerRejectTaskApply(applyId),
     onMutate: (applyId) => {
       setLoadingStates((prev) => ({ ...prev, [applyId]: true }))
     },
@@ -81,7 +72,7 @@ const TaskAppliesTable = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredData.map((apply) => (
+            {data?.data?.map((apply) => (
               <TableRow key={apply._id}>
                 <TableCell>{apply.projectName}</TableCell>
                 <TableCell>
@@ -90,7 +81,7 @@ const TaskAppliesTable = () => {
                   </a>
                 </TableCell>
                 <TableCell>
-                  <a href={apply.user.htmlUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                  <a href={apply.user.login} target="_blank" rel="noopener noreferrer" className="hover:underline">
                     {apply.user.login}
                   </a>
                 </TableCell>

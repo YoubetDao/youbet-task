@@ -6,9 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { CircleDollarSign, FilePenLine, Loader2, PencilLine } from 'lucide-react'
 import UtterancesComments from './utterances-comments'
-import { Task, TaskApply, User } from '@/types'
+import { User } from '@/types'
 import { useParams } from 'react-router-dom'
-import { applyTask, fetchTask as getTaskDetail, myAppliesForTask, withdrawApply, updateTaskInfo } from '@/service'
+import { taskApplyApi, taskApi } from '@/service'
 import { LoadingCards } from '@/components/loading-cards'
 import ErrorPage from '../error'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -97,14 +97,15 @@ const renderPriority = (priority: TaskDetailItem['priority']) => {
 function QuestLog({ createUser }: { createUser: string }) {
   const { githubId = '' } = useParams()
   const { data: task } = useTask(githubId)
-  const { data: myApplies = [], isLoading: isMyAppliesLoading } = useMyApplies(githubId)
+  const { data: myApplies = [], isLoading: isMyAppliesLoading } = useMyApplies(Number(githubId))
   const queryClient = useQueryClient()
   const { mutateAsync: applyTaskAsync, isLoading: _isClaiming } = useMutation({
-    mutationFn: applyTask,
+    mutationFn: (id: number) =>
+      taskApplyApi.taskApplyControllerApplyTask({ taskGithubId: id, comment: 'I would like to claim this issue.' }),
   })
   const isClaiming = _isClaiming || isMyAppliesLoading
   const { mutateAsync: withdrawApplyAsync, isLoading: _isWithdrawing } = useMutation({
-    mutationFn: withdrawApply,
+    mutationFn: (id: string) => taskApplyApi.taskApplyControllerWithdrawApply(id),
   })
   const isWithdrawing = _isWithdrawing || isMyAppliesLoading
   const [isEditing, setIsEditing] = useState(false)
@@ -140,13 +141,15 @@ function QuestLog({ createUser }: { createUser: string }) {
 
   const { mutateAsync: updateReward, isLoading } = useMutation({
     mutationFn: (displayAmount: number) =>
-      updateTaskInfo(githubId, {
+      taskApi.taskControllerUpdateTask(Number(githubId), {
         reward: {
           amount: parseAmount(displayAmount.toString(), tokenInfo?.decimals || USDT_DECIMAL),
           decimals: tokenInfo?.decimals || USDT_DECIMAL,
           symbol: tokenInfo?.symbol || USDT_SYMBOL,
           tokenAddress: tokenInfo?.tokenAddress || '0xc2132d05d31c914a87c6611c10748aeb04b58e8f',
         },
+        // TODO: allow level be empty
+        level: '',
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['task', githubId] })
@@ -156,10 +159,7 @@ function QuestLog({ createUser }: { createUser: string }) {
 
   const handleClaim = async () => {
     try {
-      await applyTaskAsync({
-        taskGithubId: githubId,
-        comment: 'I would like to claim this issue.',
-      })
+      await applyTaskAsync(Number(githubId))
     } catch (error) {
       console.error('Error claiming task:', error)
     }
@@ -168,9 +168,7 @@ function QuestLog({ createUser }: { createUser: string }) {
 
   const handleDisclaim = async () => {
     if (myApplies.length > 0) {
-      await withdrawApplyAsync({
-        id: myApplies[0]._id,
-      })
+      await withdrawApplyAsync(myApplies[0]._id)
       queryClient.invalidateQueries({ queryKey: ['myApplies', githubId] })
     }
   }
@@ -342,17 +340,17 @@ function QuestLog({ createUser }: { createUser: string }) {
 }
 
 function useTask(githubId?: string) {
-  return useQuery<Task>({
+  return useQuery({
     queryKey: ['task', githubId],
-    queryFn: () => getTaskDetail(githubId as string),
+    queryFn: () => taskApi.taskControllerGetTask(Number(githubId)).then((res) => res.data),
     enabled: !!githubId,
   })
 }
 
-function useMyApplies(githubId?: string) {
-  return useQuery<TaskApply[]>({
+function useMyApplies(githubId: number) {
+  return useQuery({
     queryKey: ['myApplies', githubId],
-    queryFn: () => myAppliesForTask(githubId as string),
+    queryFn: () => taskApi.taskControllerMyTaskApply(githubId).then((res) => res.data),
     enabled: !!githubId,
   })
 }
@@ -377,9 +375,9 @@ export default function TaskDetailPage() {
           <h1 className="text-4xl font-bold">{task.title}</h1>
         </header>
         <div className="flex flex-row gap-3">
-          {task.labelsWithColors &&
-            task.labelsWithColors.length > 0 &&
-            task.labelsWithColors.map((label, index) => (
+          {task.labelsWithColor &&
+            task.labelsWithColor.length > 0 &&
+            task.labelsWithColor.map((label, index) => (
               <Badge key={index} variant="outline" style={{ backgroundColor: label.color }}>
                 {label.name}
               </Badge>

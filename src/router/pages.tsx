@@ -4,8 +4,7 @@ import Login from '@/pages/login'
 import Callback from '@/pages/callback'
 import ProfilePage from '@/pages/profile'
 import MyTask from '@/pages/mytask'
-import Tutorial from '@/pages/tutorial'
-import Tutorials from '@/pages/tutorials'
+import Tasks from '@/pages/tasks'
 import TaskDetailPage from '@/pages/task-detail'
 import ErrorPage from '@/pages/error'
 import PullRequestAdmin from '@/pages/pull-request'
@@ -20,13 +19,12 @@ export const Pages = {
   landing: LandingPage,
   dashboard: Dashboard,
   mytask: MyTask,
+  tasks: Tasks,
   myrewards: MyRewards,
   project: Project,
   login: Login,
   callback: Callback,
   profile: ProfilePage,
-  tutorial: Tutorial,
-  tutorials: Tutorials,
   taskDetail: TaskDetailPage,
   error: ErrorPage,
   pullRequestAdmin: PullRequestAdmin,
