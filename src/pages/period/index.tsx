@@ -71,7 +71,7 @@ function PeriodTable(): React.ReactElement {
       periodApi
         .periodControllerGetPeriods(
           projectId ?? '',
-          '',
+          'desc',
           PeriodControllerGetPeriodsRewardGrantedEnum[key as keyof typeof PeriodControllerGetPeriodsRewardGrantedEnum],
           (page - 1) * pageSize,
           pageSize,
