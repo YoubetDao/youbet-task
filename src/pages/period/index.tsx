@@ -128,6 +128,26 @@ function PeriodTable(): React.ReactElement {
     }
   }
 
+  const handleAllSelectTask = (checked: boolean) => {
+    if (checked) {
+      const periodUngranted = (periods?.data || [])
+        .filter((x) => !x.rewardGranted)
+        .map((x) => {
+          return {
+            id: x._id,
+            taskTitle: 'period reward',
+            users: x.contributors[0],
+            amount: 0,
+            decimals: 18,
+            creator: userName!,
+          }
+        })
+      setBatchGrantPeriods(periodUngranted)
+    } else {
+      setBatchGrantPeriods([])
+    }
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between gap-4">
@@ -167,7 +187,9 @@ function PeriodTable(): React.ReactElement {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-gray-400"></TableHead>
+              <TableHead className="text-gray-400">
+                <Checkbox onCheckedChange={handleAllSelectTask} />
+              </TableHead>
               <TableHead className="text-gray-400">From</TableHead>
               <TableHead className="text-gray-400">To</TableHead>
               <TableHead className="text-gray-400">Users</TableHead>
