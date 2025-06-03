@@ -1,14 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useEffect, useState } from 'react'
-import { fetchProjects, userApi, taskApi } from '@/service'
+import { userApi, taskApi, projectApi } from '@/service'
 import { TaskCompletionLeaderboard } from '@/components/task-completion-leaderboard'
-import { Project } from '@/types'
 import { LucideUsers, LucidePackage, LucideListChecks, LucideCircleCheck, LucideStar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Link } from 'react-router-dom'
 import { BRAND_NAME } from '@/lib/config'
 import { useUsername } from '@/store'
-import { UserTaskCompletionDto } from '@/openapi/client'
+import { Project, UserTaskCompletionDto } from '@/openapi/client'
 
 function StatsCard({ title, value, icon }: { title: string; value: number; icon: React.ReactNode }) {
   return (
@@ -89,8 +88,8 @@ export default function Dashboard() {
         setOpenedCount(openedTasks.length)
         setTotalCount(tasks?.pagination?.totalCount || 0)
       })
-    fetchProjects().then((projects) => {
-      setProjects(projects || [])
+    projectApi.projectControllerGetProjects('', '', 'false', '', '', 0, 1000).then((res) => {
+      setProjects(res.data.data || [])
     })
   }, [])
 

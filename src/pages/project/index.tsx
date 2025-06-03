@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { LoadingCards } from '@/components/loading-cards'
-import { Project, IResultPagination } from '@/types'
+import { Project } from '@/openapi/client'
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Label } from '@/components/ui/label'
@@ -19,12 +19,13 @@ import {
 } from 'lucide-react'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { useInfiniteScroll } from 'ahooks'
-import { getLoadMoreProjectList } from '@/service'
+import { useInfiniteScroll } from 'ahooks' // TODO: api schema conflict with ahooks api design
+import { projectApi } from '@/service'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constants/data'
 import ImportProjectDialog from '@/components/import-project'
 import { getAppearances } from '@/lib/appearances'
 import { SearchInput } from '@/components/search'
+import { IPagination, IResultPagination } from '@/types'
 
 function renderTags(tags: string[]): React.ReactNode[] {
   return tags.map((tag) => {
@@ -83,7 +84,7 @@ function ProjectItem({ item }: { item: Project }) {
               </div>
               <div className="flex gap-1 md:items-center md:justify-center">
                 <LucideUser className="h-4 w-4" />
-                {item.contributors} contributors
+                {item.contributorsCount} contributors
               </div>
               <div>Languages</div>
             </div>
@@ -109,10 +110,10 @@ function ProjectList({ loading, loadingMore, data, appearances }: ProjectListPro
     <div className="flex w-full flex-col gap-4 overflow-hidden pt-4 lg:pl-4">
       <div className="flex items-center justify-between">
         {appearances.showImportProject && <ImportProjectDialog />}
-        <div className="text-sm text-muted-foreground">{data.pagination.totalCount} Projects</div>
+        <div className="text-sm text-muted-foreground">{data.pagination?.totalCount} Projects</div>
       </div>
       <div className="flex w-full flex-col gap-4">
-        {data.list.map((item) => (
+        {data.list?.map((item) => (
           <ProjectItem key={item._id} item={item} />
         ))}
         {loadingMore && <LoadingCards count={2} />}
@@ -212,18 +213,25 @@ export default function ProjectPage() {
 
   const { data, loading, loadingMore, reload } = useInfiniteScroll<IResultPagination<Project>>(
     (d) =>
-      getLoadMoreProjectList({
-        offset: d ? d.pagination.currentPage * DEFAULT_PAGINATION_LIMIT : 0,
-        limit: DEFAULT_PAGINATION_LIMIT,
-        filterTags,
-        search: decodeURIComponent(urlParam.get('search') || ''),
-        sort: decodeURIComponent(urlParam.get('sort') || ''),
-      }),
+      projectApi
+        .projectControllerGetProjects(
+          '',
+          '',
+          'false',
+          urlParam.get('search') || '',
+          urlParam.get('sort') || '',
+          d ? d.pagination?.currentPage * DEFAULT_PAGINATION_LIMIT : 0,
+          DEFAULT_PAGINATION_LIMIT,
+        )
+        .then((res) => ({
+          list: res.data.data || [],
+          pagination: res.data.pagination as IPagination,
+        })),
     {
       manual: true,
       target: document.querySelector('#scrollRef'),
       isNoMore: (data) => {
-        return data ? !data.pagination.hasNextPage : false
+        return data ? !data.pagination?.hasNextPage : false
       },
     },
   )

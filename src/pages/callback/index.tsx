@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { fetchUserInfo } from '@/service'
+import { authApi } from '@/service'
 import Loading from '@/components/loading'
 import { useToken, useUsername, useUserPermission } from '@/store'
 import { UserPermission } from '@/types'
@@ -17,7 +17,7 @@ const Callback = () => {
     const redirectUri = searchParams.get('redirect_uri')
 
     const handleFetchUserInfo = async (code: string) => {
-      const userInfo = await fetchUserInfo(code)
+      const userInfo = await authApi.authControllerGithubAuthRedirect(code).then((res) => res.data)
       setToken(userInfo.jwt)
       setUsername(userInfo.username)
 

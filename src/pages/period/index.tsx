@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { getLoadMoreProjectList, fetchReceiptsByPeriod, periodApi } from '@/service'
+import { fetchReceiptsByPeriod, periodApi, projectApi } from '@/service'
 import { IResultPaginationData, PeriodReceipt, ReceiptStatus } from '@/types'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount, useSwitchChain } from 'wagmi'
@@ -51,14 +51,17 @@ function PeriodTable(): React.ReactElement {
   const [pendingGrantPeriods, setPendingGrantPeriods] = usePendingGrantList()
 
   const { data: projects, isLoading: projectLoading } = useQuery(['projects', filterTags, urlParam], async () => {
-    return getLoadMoreProjectList({
-      offset: 0,
-      limit: 1000, // TODO: deal with pagination
-      filterTags,
-      search: decodeURIComponent(urlParam.get('search') || ''),
-      sort: decodeURIComponent(urlParam.get('sort') || ''),
-      onlyPeriodicReward: true,
-    })
+    return projectApi
+      .projectControllerGetProjects(
+        filterTags.join(','),
+        '',
+        'true',
+        urlParam.get('search') || '',
+        urlParam.get('sort') || '',
+        0,
+        1000,
+      )
+      .then((res) => res.data)
   })
 
   const key = capitalizeFirstLetter(rewardState)
@@ -107,7 +110,7 @@ function PeriodTable(): React.ReactElement {
   }
 
   const projectOptions =
-    projects?.list.map((project) => ({
+    projects?.data?.map((project) => ({
       value: project._id.toString(),
       label: project.name,
     })) ?? []
