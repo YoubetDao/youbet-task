@@ -236,6 +236,7 @@ function CompletedTaskTable(): React.ReactElement {
                     pendingGrantTasks={pendingGrantTasks}
                     switchChain={switchChain}
                     approveAllowance={approveAllowance}
+                    sourceType="task"
                   />
                 </TableCell>
               </TableRow>

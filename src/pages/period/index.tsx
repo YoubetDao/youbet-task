@@ -237,6 +237,7 @@ function PeriodTable(): React.ReactElement {
                       id={period._id}
                       isGranted={period.rewardGranted}
                       users={period.contributors}
+                      userName={userName || undefined}
                       tokenError={tokenError}
                       tokenLoading={tokenLoading}
                       address={address}
@@ -245,6 +246,7 @@ function PeriodTable(): React.ReactElement {
                       pendingGrantTasks={[]}
                       switchChain={switchChain}
                       approveAllowance={approveAllowance}
+                      sourceType="period"
                     />
                   </TableCell>
                   <TableCell>

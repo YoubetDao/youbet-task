@@ -21,6 +21,7 @@ interface TaskRewardCellProps {
   pendingGrantTasks: string[]
   switchChain: (params: { chainId: number }) => void
   approveAllowance: () => Promise<void>
+  sourceType: string
 }
 
 export function TaskRewardCell({
@@ -36,6 +37,7 @@ export function TaskRewardCell({
   hasAllowance,
   userName,
   pendingGrantTasks,
+  sourceType,
   switchChain,
   approveAllowance,
 }: TaskRewardCellProps) {
@@ -70,7 +72,7 @@ export function TaskRewardCell({
           addressFrom={address}
           chain={chain}
           defaultAmount={defaultAmount}
-          sourceType="task"
+          sourceType={sourceType}
         />
       )
     } else {
