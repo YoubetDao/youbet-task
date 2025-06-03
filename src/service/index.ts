@@ -6,7 +6,6 @@ import {
   GithubOrganization,
   GithubRepo,
   PrRewardInfo,
-  UserInfo,
   FetchPeriodsParams,
   GrantPeriodRewardsParams,
   Period,
@@ -16,13 +15,7 @@ import {
   PeriodReport,
 } from '@/types'
 import http from './instance'
-import { TaskApi, Configuration, ReportApi, PeriodApi, TaskApplyApi, UserApi } from '@/openapi/client'
-
-// ===== 认证 (Auth) =====
-export async function fetchUserInfo(code: string): Promise<UserInfo> {
-  const response = await http.get('/auth/github/callback', { params: { code } })
-  return response.data.data
-}
+import { TaskApi, Configuration, ReportApi, PeriodApi, TaskApplyApi, UserApi, AuthApi } from '@/openapi/client'
 
 // ===== 合约 (Youbet) =====
 export async function getLinkedWallet(github: string) {
@@ -164,6 +157,14 @@ export const taskApplyApi = new TaskApplyApi(
 )
 
 export const userApi = new UserApi(
+  new Configuration({
+    basePath: import.meta.env.VITE_BASE_URL,
+  }),
+  '',
+  http,
+)
+
+export const authApi = new AuthApi(
   new Configuration({
     basePath: import.meta.env.VITE_BASE_URL,
   }),

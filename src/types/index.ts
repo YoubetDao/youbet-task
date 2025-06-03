@@ -252,23 +252,6 @@ export interface Task {
   }
 }
 
-export interface UserInfo {
-  id: string
-  username: string
-  displayName: string
-  photos: Photo[]
-  emails: Email[]
-  jwt: string
-  location: string | null
-  bio: string | null
-  followers: number
-  following: number
-  twitterUsername: string | null
-  githubAccessToken: string
-  adminNamespaces: string[]
-  adminProjects: string[]
-}
-
 export interface Photo {
   value: string
 }
