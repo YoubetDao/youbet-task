@@ -12,8 +12,6 @@ import PaginationFast from '@/components/pagination-fast'
 import { useQuery } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { PencilLine } from 'lucide-react'
-import { RewardDialogForm } from '../period/reward-form'
 import { Button } from '@/components/ui/button'
 import { useAllowanceCheck } from '@/hooks/useAllowanceCheck'
 import { Combobox } from '@/components/combo-box'
@@ -21,6 +19,8 @@ import { RewardButton, capitalizeFirstLetter } from '@/components/reward-button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { BatchGrantDialog, RewardTask } from '../admin/BatchGrantDialog'
 import { useUsername } from '@/store'
+import { TaskRewardCell } from '@/components/task-reward-cell'
+import { usePendingGrantList } from '@/store/admin'
 
 const statuses = (
   Object.keys(PeriodControllerGetPeriodsRewardGrantedEnum) as Array<
@@ -49,6 +49,8 @@ function CompletedTaskTable(): React.ReactElement {
   const pageSize = DEFAULT_PAGE_SIZE
   const [batchGrantTasks, setBatchGrantTasks] = useState<Array<RewardTask>>([])
   const [userName] = useUsername()
+  const [pendingGrantTasks, setPendingGrantTasks] = usePendingGrantList()
+
   const { data: projects, isLoading: projectLoading } = useQuery(['projects', filterTags, urlParam], async () => {
     return projectApi
       .projectControllerGetProjects(
@@ -111,6 +113,13 @@ function CompletedTaskTable(): React.ReactElement {
     checkAllowance()
   }, [checkAllowance])
 
+  useEffect(() => {
+    const newList = pendingGrantTasks.filter((taskId) => {
+      const task = tasks?.data?.find((task) => task._id === taskId)
+      return !task?.rewardGranted
+    })
+    setPendingGrantTasks(newList)
+  }, [tasks])
   // Prepare options for searchable dropdown
   const projectOptions =
     projects?.data?.map((project) => ({
@@ -212,55 +221,22 @@ function CompletedTaskTable(): React.ReactElement {
                   )}
                 </TableCell>
                 <TableCell>
-                  {!task.rewardGranted ? (
-                    address &&
-                    chain &&
-                    !tokenError &&
-                    !tokenLoading &&
-                    hasAllowance !== null &&
-                    (hasAllowance ? (
-                      <RewardDialogForm
-                        trigger={
-                          <Button variant="link" className="gap-2 p-0 text-blue-500">
-                            <PencilLine size={15} />
-                            Grant
-                          </Button>
-                        }
-                        id={task._id}
-                        creatorId={userName!}
-                        users={task.assignee ? [task.assignee] : []}
-                        addressFrom={address}
-                        chain={chain}
-                        onRewardDistributed={async (data) => {
-                          await taskApi.taskControllerGrantRewards(task._id, {
-                            contributorRewards: data.users.map((user) => ({
-                              contributor: user.login,
-                              amount: data.amounts[data.users.indexOf(user)],
-                              symbol: data.symbol,
-                              decimals: data.decimals,
-                            })),
-                          })
-                        }}
-                        defaultAmount={Number(task.reward?.amount) / 10 ** Number(task.reward?.decimals)}
-                        sourceType="task"
-                      />
-                    ) : (
-                      <Button
-                        variant="link"
-                        className="gap-2 p-0 text-blue-500"
-                        onClick={async () => {
-                          await switchChain({ chainId: paymentChain.id })
-                          await approveAllowance()
-                        }}
-                      >
-                        Approve Contract
-                      </Button>
-                    ))
-                  ) : task.rewardClaimed ? (
-                    <p>Claimed</p>
-                  ) : (
-                    <p>Granted</p>
-                  )}
+                  <TaskRewardCell
+                    id={task._id}
+                    isGranted={task.rewardGranted}
+                    isClaimed={task.rewardClaimed}
+                    users={task.assignee ? [task.assignee] : []}
+                    defaultAmount={Number(task.reward?.amount) / 10 ** Number(task.reward?.decimals)}
+                    address={address}
+                    chain={chain}
+                    tokenError={tokenError}
+                    tokenLoading={tokenLoading}
+                    hasAllowance={hasAllowance}
+                    userName={userName!}
+                    pendingGrantTasks={pendingGrantTasks}
+                    switchChain={switchChain}
+                    approveAllowance={approveAllowance}
+                  />
                 </TableCell>
               </TableRow>
             ))}

@@ -16,10 +16,10 @@ import { paymentChain } from '@/constants/data'
 import { distributor } from '@/constants/distributor'
 
 import _ from 'lodash'
-import { postGrantPeriodRewards } from '@/service'
 import { useDistributorToken } from '@/hooks/useDistributorToken'
 import { useQueryClient } from '@tanstack/react-query'
 import { GithubUser } from '@/openapi/client'
+import { usePendingGrantList } from '@/store/admin'
 
 function randomDistribute(amount: number, people: number): number[] {
   const points = _.sortBy(_.times(people - 1, () => Math.random()))
@@ -69,7 +69,6 @@ export const RewardDialogForm = ({
   users,
   addressFrom,
   chain,
-  onRewardDistributed,
   defaultAmount,
   sourceType,
 }: IRewardForm) => {
@@ -81,6 +80,8 @@ export const RewardDialogForm = ({
   const [amounts, setAmounts] = useState<number[]>(Array(users.length).fill(0.0))
   const { symbol, decimals } = useDistributorToken()
   const queryClient = useQueryClient()
+  const [pendingGrantTasks, setPendingGrantTasks] = usePendingGrantList()
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -120,25 +121,8 @@ export const RewardDialogForm = ({
 
       await distributor.createRedPacket(id, githubIds, amountsInWei, creatorId, sourceType)
 
-      if (onRewardDistributed) {
-        await onRewardDistributed({
-          id,
-          amounts: amounts,
-          users: users,
-          symbol: symbol,
-          decimals: Number(decimals),
-        })
-      } else {
-        await postGrantPeriodRewards({
-          id,
-          contributors: users.map((user) => ({
-            contributor: user.login,
-            amount: amounts[users.indexOf(user)],
-            symbol: symbol,
-            decimals: Number(decimals),
-          })),
-        })
-      }
+      //update pendingGrantTasks
+      setPendingGrantTasks([...pendingGrantTasks, id])
 
       setOpen(false)
 
