@@ -243,7 +243,7 @@ function PeriodTable(): React.ReactElement {
                       address={address}
                       chain={chain}
                       hasAllowance={hasAllowance}
-                      pendingGrantTasks={[]}
+                      pendingGrantTasks={pendingGrantPeriods}
                       switchChain={switchChain}
                       approveAllowance={approveAllowance}
                       sourceType="period"
