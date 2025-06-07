@@ -65,11 +65,13 @@ function RewardsTable({
   isLogin,
   selectedRewards,
   handleSelectReward,
+  handleAllSelectTask,
 }: {
   type: 'period' | 'task'
   selectedRewards: string[]
   isLogin: boolean
   handleSelectReward: (resourceId: string) => void
+  handleAllSelectTask: (periods: IResultPaginationData<Receipt>, checked: boolean) => void
 }): React.ReactElement {
   const [page, setPage] = useState(1)
   const [github] = useUsername()
@@ -108,7 +110,9 @@ function RewardsTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-gray-400"></TableHead>
+              <TableHead className="text-gray-400">
+                <Checkbox onCheckedChange={(checked: boolean) => handleAllSelectTask(periods, checked)} />
+              </TableHead>
               {type === 'period' ? (
                 <TableHead className="text-gray-400">Period</TableHead>
               ) : (
@@ -277,6 +281,18 @@ export default function MyRewards() {
       return [...prev, resourceId]
     })
   }
+  const handleAllSelectTask = (periods: IResultPaginationData<Receipt>, checked: boolean) => {
+    if (checked) {
+      const taskUngrantedOrUnclaimed = (periods?.data || [])
+        .filter((receipts) => receipts.status === ReceiptStatus.GRANTED)
+        .map((receipts) => {
+          return receipts.source.period?._id ?? receipts.source.task?._id ?? ''
+        })
+      setSelectedRewards(taskUngrantedOrUnclaimed)
+    } else {
+      setSelectedRewards([])
+    }
+  }
 
   return (
     <div className="space-y-4">
@@ -305,6 +321,7 @@ export default function MyRewards() {
         isLogin={isLogin}
         selectedRewards={selectedRewards}
         handleSelectReward={handleSelectReward}
+        handleAllSelectTask={handleAllSelectTask}
       />
     </div>
   )
