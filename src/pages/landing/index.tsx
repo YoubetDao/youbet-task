@@ -1,11 +1,11 @@
 import { motion } from 'framer-motion'
-import { RainbowButton } from '@/components/ui/rainbow-button'
 import { Sparkles, Radar, LineChart, Wallet, Award, Boxes } from 'lucide-react'
 import { ShineBorder } from '@/components/ui/shine-border'
 import { BackgroundCanvas } from '@/components/ui/background-canvas'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { PartnersSection } from './_components/partners-section'
+import Hero from './_components/hero'
 
 const features = {
   enterprise: [
@@ -67,54 +67,14 @@ const LandingPage = () => {
       <BackgroundCanvas />
       <main className="relative">
         <div className="min-h-screen">
-          {/* Hero Section */}
-          <section className="relative flex py-24">
-            <div className="container mx-auto px-4 text-center">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-                className="-translate-y-1/3 transform"
-              >
-                <motion.div
-                  animate={{
-                    opacity: [0, 1, 1, 0],
-                    y: [20, 0, 0, -20],
-                  }}
-                  transition={{
-                    duration: 5,
-                    times: [0, 0.1, 0.9, 1],
-                    repeat: Infinity,
-                    repeatDelay: 0,
-                  }}
-                  className="flex h-16 items-center justify-center"
-                >
-                  <h1 className="mb-8 bg-gradient-to-r from-purple-400 via-purple-600 to-purple-800 bg-clip-text text-4xl font-bold text-transparent md:text-6xl">
-                    {slogans[currentSlogan]}
-                  </h1>
-                </motion.div>
-                <p className="mb-6 text-xl text-muted-foreground md:text-2xl">
-                  Evaluating and rewarding every contribution in next-gen decentralized collaboration
-                </p>
-                <p className="mb-8 text-lg text-muted-foreground md:text-xl">
-                  A cutting-edge platform for automated and fair reward distribution to open source developers based on
-                  their contributions.
-                </p>
-                <div className="space-x-4">
-                  <RainbowButton onClick={() => navigate('/dashboard', { replace: true })}>Go to app</RainbowButton>
-                </div>
-              </motion.div>
-            </div>
-          </section>
+          <Hero />
 
           {/* User Stats Section */}
           <section className="py-24">
             <div className="container mx-auto px-4">
               <div className="text-center">
-                <h2 className="mb-8 bg-gradient-to-r from-purple-400 via-purple-600 to-purple-800 bg-clip-text text-2xl font-bold text-transparent md:text-4xl">
-                  Platform Impact
-                </h2>
-                <p className="mb-12 text-lg text-muted-foreground md:text-xl">
+                <h2 className="mb-8 text-2xl font-bold text-transparent text-white md:text-4xl">Platform Impact</h2>
+                <p className="mb-12 text-lg  md:text-xl">
                   Join thousands of developers and projects already using According.Work
                 </p>
               </div>
@@ -126,7 +86,7 @@ const LandingPage = () => {
                   viewport={{ once: true }}
                   className="text-center"
                 >
-                  <div className="mb-2 text-4xl font-bold text-purple-400 md:text-5xl">700+</div>
+                  <div className="mb-2 text-4xl font-bold  md:text-5xl">1k+</div>
                   <div className="text-sm text-muted-foreground md:text-base">Active Developers</div>
                 </motion.div>
                 <motion.div
@@ -136,7 +96,7 @@ const LandingPage = () => {
                   viewport={{ once: true }}
                   className="text-center"
                 >
-                  <div className="mb-2 text-4xl font-bold text-purple-400 md:text-5xl">100+</div>
+                  <div className="mb-2 text-4xl font-bold  md:text-5xl">100+</div>
                   <div className="text-sm text-muted-foreground md:text-base">Projects</div>
                 </motion.div>
                 <motion.div
@@ -146,7 +106,7 @@ const LandingPage = () => {
                   viewport={{ once: true }}
                   className="text-center"
                 >
-                  <div className="mb-2 text-4xl font-bold text-purple-400 md:text-5xl">1k+</div>
+                  <div className="mb-2 text-4xl font-bold  md:text-5xl">1k+</div>
                   <div className="text-sm text-muted-foreground md:text-base">Total Tasks</div>
                 </motion.div>
                 <motion.div
@@ -156,7 +116,7 @@ const LandingPage = () => {
                   viewport={{ once: true }}
                   className="text-center"
                 >
-                  <div className="mb-2 text-4xl font-bold text-purple-400 md:text-5xl">500+</div>
+                  <div className="mb-2 text-4xl font-bold  md:text-5xl">500+</div>
                   <div className="text-sm text-muted-foreground md:text-base">Delivered Tasks</div>
                 </motion.div>
               </div>
@@ -169,10 +129,10 @@ const LandingPage = () => {
             <div className="container mx-auto px-4">
               <div className="relative text-center">
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-purple-500/10 blur-3xl" />
-                <h2 className="relative mb-8 bg-gradient-to-r from-purple-400 via-purple-600 to-purple-800 bg-clip-text text-2xl font-bold text-transparent md:text-4xl">
+                <h3 className="relative text-center text-5xl font-medium leading-normal text-white max-md:text-3xl ">
                   Platform Features
-                </h2>
-                <p className="relative mb-8 text-lg text-muted-foreground md:text-xl">
+                </h3>
+                <p className="relative mb-8 text-lg  md:text-xl">
                   Our platform offers powerful tools for decentralized collaboration and fair reward distribution
                 </p>
               </div>
@@ -182,9 +142,7 @@ const LandingPage = () => {
                 <div className="absolute -left-20 top-1/2 h-40 w-40 rounded-full bg-purple-500/20 blur-3xl" />
                 <div className="absolute -right-20 top-1/2 h-40 w-40 rounded-full bg-pink-500/20 blur-3xl" />
                 <h3 className="mb-12 text-center text-2xl font-semibold text-white md:text-3xl">
-                  <span className="bg-gradient-to-r from-purple-400 via-purple-600 to-purple-800 bg-clip-text text-transparent">
-                    Enterprise Solutions
-                  </span>
+                  <span className="text-white">Enterprise Solutions</span>
                 </h3>
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
                   {features.enterprise.map((feature, i) => (
@@ -196,17 +154,12 @@ const LandingPage = () => {
                       viewport={{ once: true }}
                       className="group h-full"
                     >
-                      <ShineBorder
-                        className="relative flex h-full flex-col overflow-hidden rounded-2xl border bg-background/50 p-8 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20"
-                        color={['#A07CFE', '#FE8FB5', '#FFBE7B']}
-                      >
+                      <ShineBorder className="relative flex h-full flex-col overflow-hidden rounded-2xl border bg-background/50 p-8 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20">
                         <div className="relative z-10 flex h-full flex-col">
-                          <div className="mb-6 inline-block rounded-xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 p-3 transition-transform duration-300 group-hover:scale-110">
-                            <feature.icon className="h-8 w-8 text-purple-400" />
+                          <div className="mb-6 inline-block ">
+                            <feature.icon className="h-8 w-8 " />
                           </div>
-                          <h3 className="mb-4 bg-gradient-to-r from-purple-400 via-purple-600 to-purple-800 bg-clip-text text-xl font-semibold text-transparent">
-                            {feature.title}
-                          </h3>
+                          <h3 className="mb-4 text-xl font-semibold">{feature.title}</h3>
                           <p className="text-gray-400 transition-colors group-hover:text-gray-300">
                             {feature.description}
                           </p>
@@ -223,9 +176,7 @@ const LandingPage = () => {
                 <div className="absolute -left-20 top-1/2 h-40 w-40 rounded-full bg-purple-500/20 blur-3xl" />
                 <div className="absolute -right-20 top-1/2 h-40 w-40 rounded-full bg-pink-500/20 blur-3xl" />
                 <h3 className="mb-12 text-center text-2xl font-semibold text-white md:text-3xl">
-                  <span className="bg-gradient-to-r from-purple-400 via-purple-600 to-purple-800 bg-clip-text text-transparent">
-                    Individual Developer Tools
-                  </span>
+                  <span className="">Individual Developer Tools</span>
                 </h3>
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
                   {features.individual.map((feature, i) => (
@@ -237,17 +188,12 @@ const LandingPage = () => {
                       viewport={{ once: true }}
                       className="group h-full"
                     >
-                      <ShineBorder
-                        className="relative flex h-full flex-col overflow-hidden rounded-2xl border bg-background/50 p-8 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20"
-                        color={['#A07CFE', '#FE8FB5', '#FFBE7B']}
-                      >
+                      <ShineBorder className="relative flex h-full flex-col overflow-hidden rounded-2xl border bg-background/50 p-8 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20">
                         <div className="relative z-10 flex h-full flex-col">
-                          <div className="mb-6 inline-block rounded-xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 p-3 transition-transform duration-300 group-hover:scale-110">
-                            <feature.icon className="h-8 w-8 text-purple-400" />
+                          <div className="mb-6 inline-block">
+                            <feature.icon className="h-8 w-8 " />
                           </div>
-                          <h3 className="mb-4 bg-gradient-to-r from-purple-400 via-purple-600 to-purple-800 bg-clip-text text-xl font-semibold text-transparent">
-                            {feature.title}
-                          </h3>
+                          <h3 className="mb-4 text-xl font-semibold text-transparent text-white">{feature.title}</h3>
                           <p className="text-gray-400 transition-colors group-hover:text-gray-300">
                             {feature.description}
                           </p>

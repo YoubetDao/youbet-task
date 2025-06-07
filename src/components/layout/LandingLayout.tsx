@@ -1,9 +1,9 @@
 import { PropsWithChildren } from 'react'
-import { Link } from 'react-router-dom'
-import { getNavItems } from '@/constants/data'
-import { InteractiveHoverButton } from '../ui/interactive-hover-button'
 import { Github, MessageCircle, Twitter } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
+import { InteractiveHoverButton } from '../ui/interactive-hover-button'
+import { getNavItems } from '@/constants/data'
 
 const socialLinks = [
   {
@@ -26,22 +26,21 @@ const socialLinks = [
 const LandingLayout = ({ children }: PropsWithChildren) => {
   return (
     <div className="flex min-h-screen flex-col">
-      {/* Navigation */}
-      <nav className="fixed left-0 right-0 top-0 z-50 border-b bg-background/80 backdrop-blur-sm">
-        <div className="container mx-auto px-4">
-          <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center space-x-6">
-              <Link to="/" className="group flex items-center gap-2">
-                <img src="/logo.svg" alt="According.Work" className="h-8" />
-                <span className="font-outfit text-lg font-light tracking-wide">According.Work</span>
-              </Link>
-            </div>
-            <Link to={getNavItems().find((item) => item.title === 'Login')!.href}>
-              <InteractiveHoverButton>Go to app</InteractiveHoverButton>
-            </Link>
-          </div>
+      <header
+        className="max-w-lg:mr-auto fixed top-4 z-20 flex h-[60px] w-full max-w-[100vw] justify-between rounded-md bg-white px-[3%] 
+                    text-gray-700 shadow-md dark:bg-[#17181b] dark:text-gray-200 dark:shadow-gray-700 max-lg:top-0 lg:left-1/2 lg:max-w-5xl lg:-translate-x-1/2
+                    lg:px-4 lg:opacity-[0.99] lg:!backdrop-blur-lg"
+      >
+        <div className="flex items-center space-x-6">
+          <Link to="/" className="group flex items-center gap-2">
+            <img src="/logo.svg" alt="According.Work" className="h-8" />
+            <span className="font-outfit text-lg font-light tracking-wide">According.Work</span>
+          </Link>
         </div>
-      </nav>
+        <Link className="flex items-center" to={getNavItems().find((item) => item.title === 'Login')!.href}>
+          <InteractiveHoverButton>Go to app</InteractiveHoverButton>
+        </Link>
+      </header>
 
       {/* Main Content */}
       <main className="flex-grow pt-16">{children}</main>
