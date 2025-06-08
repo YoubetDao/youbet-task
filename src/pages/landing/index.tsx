@@ -5,6 +5,7 @@ import { BackgroundCanvas } from '@/components/ui/background-canvas'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { PartnersSection } from './_components/partners-section'
+import { UserReviewsSection } from './_components/user-reviews-section'
 import Hero from './_components/hero'
 
 const features = {
@@ -87,7 +88,7 @@ const LandingPage = () => {
                   className="text-center"
                 >
                   <div className="mb-2 text-4xl font-bold  md:text-5xl">1k+</div>
-                  <div className="text-sm text-muted-foreground md:text-base">Active Developers</div>
+                  <div className="text-sm text-muted-foreground md:text-base">Joined Developers</div>
                 </motion.div>
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -124,17 +125,11 @@ const LandingPage = () => {
           </section>
 
           {/* Features Section */}
-          <section className="relative overflow-hidden py-24">
+          <section id="features" className="relative overflow-hidden py-24">
             <div className="pointer-events-none absolute inset-0 from-purple-900/20 to-transparent" />
             <div className="container mx-auto px-4">
               <div className="relative text-center">
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-purple-500/10 blur-3xl" />
-                <h3 className="relative text-center text-5xl font-medium leading-normal text-white max-md:text-3xl ">
-                  Platform Features
-                </h3>
-                <p className="relative mb-8 text-lg  md:text-xl">
-                  Our platform offers powerful tools for decentralized collaboration and fair reward distribution
-                </p>
               </div>
 
               {/* Enterprise Features */}
@@ -142,7 +137,7 @@ const LandingPage = () => {
                 <div className="absolute -left-20 top-1/2 h-40 w-40 rounded-full bg-purple-500/20 blur-3xl" />
                 <div className="absolute -right-20 top-1/2 h-40 w-40 rounded-full bg-pink-500/20 blur-3xl" />
                 <h3 className="mb-12 text-center text-2xl font-semibold text-white md:text-3xl">
-                  <span className="text-white">Enterprise Solutions</span>
+                  <span className="text-white">Scale Your Projects</span>
                 </h3>
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
                   {features.enterprise.map((feature, i) => (
@@ -176,7 +171,7 @@ const LandingPage = () => {
                 <div className="absolute -left-20 top-1/2 h-40 w-40 rounded-full bg-purple-500/20 blur-3xl" />
                 <div className="absolute -right-20 top-1/2 h-40 w-40 rounded-full bg-pink-500/20 blur-3xl" />
                 <h3 className="mb-12 text-center text-2xl font-semibold text-white md:text-3xl">
-                  <span className="">Individual Developer Tools</span>
+                  <span className="">Seek Meaningful Work</span>
                 </h3>
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
                   {features.individual.map((feature, i) => (
@@ -206,6 +201,8 @@ const LandingPage = () => {
               </div>
             </div>
           </section>
+
+          <UserReviewsSection />
 
           <PartnersSection />
         </div>
