@@ -170,8 +170,8 @@ export const BatchGrantDialog = ({ defaultRewardTasks, rewardType, trigger }: Pr
                   <div className="flex items-center gap-2">
                     <img
                       className="h-6 w-6 rounded-full border-2 border-white"
-                      src={task.users.avatarUrl}
-                      alt={task.users.login}
+                      src={task.users?.avatarUrl}
+                      alt={task.users?.login}
                     />
                     <div className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
                       {task.taskTitle}

@@ -101,6 +101,26 @@ function CompletedTaskTable(): React.ReactElement {
     }
   }
 
+  const handleAllSelectTask = (checked: boolean) => {
+    if (checked) {
+      const taskUngrantedOrUnclaimed = (tasks?.data || [])
+        .filter((x) => !x.rewardGranted || !x.rewardClaimed)
+        .map((x) => {
+          return {
+            taskTitle: x.title,
+            amount: Number(x.reward?.amount) / 10 ** Number(x.reward?.decimals) || 0,
+            decimals: x.reward?.decimals,
+            id: x._id,
+            users: x.assignee,
+            creator: x.user.login,
+          }
+        })
+      setBatchGrantTasks(taskUngrantedOrUnclaimed)
+    } else {
+      setBatchGrantTasks([])
+    }
+  }
+
   useEffect(() => {
     switchChain({ chainId: paymentChain.id })
   }, [switchChain])
@@ -165,7 +185,9 @@ function CompletedTaskTable(): React.ReactElement {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-gray-400"></TableHead>
+              <TableHead className="text-gray-400">
+                <Checkbox onCheckedChange={handleAllSelectTask} />
+              </TableHead>
               <TableHead className="text-gray-400">Title</TableHead>
               <TableHead className="text-gray-400">Created At</TableHead>
               <TableHead className="text-gray-400">Completed At</TableHead>
