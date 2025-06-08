@@ -78,11 +78,11 @@ export const PartnersSection = () => {
     return () => clearInterval(autoplay)
   }, [emblaApi])
   return (
-    <section className="py-24">
+    <section id="partners" className="py-24">
       <div className="container mx-auto px-4">
         <div className="mb-16 text-center">
           <h2 className="mb-8  text-2xl font-bold text-transparent text-white md:text-4xl">Our valued partners</h2>
-          <p className="mb-8 text-lg text-muted-foreground md:text-xl">
+          <p className="mb-8 text-lg text-muted-foreground text-white">
             We&apos;re proud to work with industry leaders to deliver the best experience.
           </p>
         </div>

@@ -23,6 +23,24 @@ const socialLinks = [
   },
 ]
 
+// 导航锚点配置
+const navAnchorLinks = [
+  { name: 'Features', href: '#features' },
+  { name: 'User Reviews', href: '#user-reviews' },
+  { name: 'Partners', href: '#partners' },
+]
+
+// 平滑滚动到锚点的函数
+const scrollToAnchor = (href: string) => {
+  const element = document.querySelector(href)
+  if (element) {
+    element.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    })
+  }
+}
+
 const LandingLayout = ({ children }: PropsWithChildren) => {
   return (
     <div className="flex min-h-screen flex-col">
@@ -37,6 +55,20 @@ const LandingLayout = ({ children }: PropsWithChildren) => {
             <span className="font-outfit text-lg font-light tracking-wide">According.Work</span>
           </Link>
         </div>
+
+        {/* 导航菜单 */}
+        <nav className="hidden items-center space-x-6 md:flex">
+          {navAnchorLinks.map((link) => (
+            <button
+              key={link.name}
+              onClick={() => scrollToAnchor(link.href)}
+              className="text-sm font-medium transition-colors hover:text-primary"
+            >
+              {link.name}
+            </button>
+          ))}
+        </nav>
+
         <Link className="flex items-center" to={getNavItems().find((item) => item.title === 'Login')!.href}>
           <InteractiveHoverButton>Go to app</InteractiveHoverButton>
         </Link>
