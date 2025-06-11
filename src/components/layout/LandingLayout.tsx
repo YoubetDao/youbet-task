@@ -89,9 +89,8 @@ const LandingLayout = ({ children }: PropsWithChildren) => {
               <div className="mb-4 flex items-center space-x-2 text-2xl font-bold">About Us</div>
 
               <p className="max-w-md leading-relaxed text-gray-400">
-                We are a research-driven DAO focused on advancing foundational blockchain technologies, zero-knowledge
-                cryptography (zk), and the intersection of AI and Web3. Our contributors come from diverse backgrounds
-                and collaborate globally to build innovative, open-source solutions.
+                We’re building a decentralized platform that enables developers to collaborate trustless, contribute
+                meaningfully, and earn fairly — powered by open coordination.
               </p>
             </motion.div>
 

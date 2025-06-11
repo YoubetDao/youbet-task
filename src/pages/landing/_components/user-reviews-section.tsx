@@ -4,6 +4,7 @@ import review1 from '@/assets/user-reviews/review1.png'
 import review2 from '@/assets/user-reviews/review2.png'
 import review3 from '@/assets/user-reviews/review3.png'
 import review4 from '@/assets/user-reviews/review4.png'
+import ShapoWidget from '@/components/ShapoWidget'
 
 const reviews = [
   {
@@ -36,7 +37,7 @@ export const UserReviewsSection = () => {
   return (
     <section id="user-reviews" className="relative py-24">
       <div className="container mx-auto px-4">
-        <div className="mb-16 text-center">
+        <div className=" text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -57,19 +58,9 @@ export const UserReviewsSection = () => {
           >
             What Our Users Say
           </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="mx-auto max-w-2xl text-lg text-white"
-          >
-            Discover how According.Work connects developers with meaningful opportunities and fair rewards for their
-            contributions
-          </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {/* <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           {reviews.map((review, index) => (
             <motion.div
               key={review.id}
@@ -79,22 +70,7 @@ export const UserReviewsSection = () => {
               viewport={{ once: true }}
               className="group"
             >
-              {/* <div className="relative overflow-hidden rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-white/20 hover:bg-white/10">
-                <div className="flex h-80 items-center justify-center overflow-hidden rounded-lg bg-gray-900/20">
-                  <img
-                    src={review.image}
-                    alt={review.alt}
-                    className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
-                  />
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-              </div> */}
-              <div
-                className="cursor-pointer"
-                onClick={() => {
-                  window.open(`https://x.com/accordingwork/status/${review.tweetId}`, '_blank')
-                }}
-              >
+              <div className="cursor-pointer">
                 <img
                   src={review.image}
                   alt={review.alt}
@@ -103,7 +79,8 @@ export const UserReviewsSection = () => {
               </div>
             </motion.div>
           ))}
-        </div>
+        </div> */}
+        <ShapoWidget widgetId="18c1ae929eb2ef30f76f" />
 
         {/* 装饰性元素 */}
         <div className="absolute -left-20 top-1/4 h-40 w-40 rounded-full bg-purple-500/10 blur-3xl" />
