@@ -1,30 +1,34 @@
 import { motion } from 'framer-motion'
 import { Star } from 'lucide-react'
-import review1 from '@/assets/user-reviews/review1.jpg'
-import review2 from '@/assets/user-reviews/review2.jpg'
-import review3 from '@/assets/user-reviews/review3.jpg'
-import review4 from '@/assets/user-reviews/review4.jpg'
+import review1 from '@/assets/user-reviews/review1.png'
+import review2 from '@/assets/user-reviews/review2.png'
+import review3 from '@/assets/user-reviews/review3.png'
+import review4 from '@/assets/user-reviews/review4.png'
 
 const reviews = [
   {
     id: 1,
     image: review1,
     alt: 'User Review 1',
+    tweetId: '1928447674208104862',
   },
   {
     id: 2,
     image: review2,
     alt: 'User Review 2',
+    tweetId: '1927384098118533604',
   },
   {
     id: 3,
     image: review3,
     alt: 'User Review 3',
+    tweetId: '1927400129415266653',
   },
   {
     id: 4,
     image: review4,
     alt: 'User Review 4',
+    tweetId: '1927393499369922986',
   },
 ]
 
@@ -75,7 +79,7 @@ export const UserReviewsSection = () => {
               viewport={{ once: true }}
               className="group"
             >
-              <div className="relative overflow-hidden rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-white/20 hover:bg-white/10">
+              {/* <div className="relative overflow-hidden rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-white/20 hover:bg-white/10">
                 <div className="flex h-80 items-center justify-center overflow-hidden rounded-lg bg-gray-900/20">
                   <img
                     src={review.image}
@@ -84,6 +88,18 @@ export const UserReviewsSection = () => {
                   />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              </div> */}
+              <div
+                className="cursor-pointer"
+                onClick={() => {
+                  window.open(`https://x.com/accordingwork/status/${review.tweetId}`, '_blank')
+                }}
+              >
+                <img
+                  src={review.image}
+                  alt={review.alt}
+                  className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                />
               </div>
             </motion.div>
           ))}
