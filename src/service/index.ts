@@ -9,7 +9,6 @@ import {
   Receipt,
   PeriodReceipt,
   FetchReceiptsParams,
-  PeriodReport,
 } from '@/types'
 import http from './instance'
 import {
@@ -35,11 +34,6 @@ export async function linkWallet(params: { github: string; address: string }) {
 }
 
 // ===== 项目 (Projects) =====
-export async function fetchProjectReports(projectId: string) {
-  const response = await http.get<PeriodReport[]>(`/projects/${projectId}/reports`)
-  return Array.isArray(response.data) ? response.data : []
-}
-
 export async function importProjectForUser(params: { org: string; project: string }) {
   const response = await http.post('/projects/import', params)
   return response.data
