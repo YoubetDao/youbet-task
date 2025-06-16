@@ -56,6 +56,8 @@ export const TaskCatalog = ({ project }: ITaskCatalog) => {
   const { data, isLoading: loading } = useQuery({
     queryKey: queryKey,
     queryFn: queryFn,
+    staleTime: 1 * 60 * 1000,
+    refetchOnWindowFocus: false,
   })
 
   const tasks = data?.data || []

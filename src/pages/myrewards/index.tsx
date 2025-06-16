@@ -89,6 +89,7 @@ function RewardsTable({
         type,
       })
     },
+    staleTime: 1 * 60 * 1000,
   })
 
   const totalPages = Math.ceil((periods?.pagination.totalCount || 0) / pageSize)

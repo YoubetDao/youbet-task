@@ -39,6 +39,8 @@ export default function Tasks() {
   const { data, isLoading: loading } = useQuery({
     queryKey: queryKey,
     queryFn: queryFn,
+    staleTime: 1 * 60 * 1000,
+    refetchOnWindowFocus: false,
   })
 
   const tasks = data?.data || []
