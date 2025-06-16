@@ -93,7 +93,7 @@ const StarRating = ({
 const LockedOverlay = () => (
   <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-lg bg-black/50 backdrop-blur-sm">
     <Lock className="h-10 w-10 text-primary-foreground/80" />
-    <p className="text-md mt-2 font-semibold text-primary-foreground/90">即将推出</p>
+    <p className="text-md mt-2 font-semibold text-primary-foreground/90">Locked</p>
   </div>
 )
 
