@@ -1,18 +1,101 @@
 import { useState } from 'react'
-import { LoadingCards } from '@/components/loading-cards'
-import { useUsername, walletAtom } from '@/store'
-import { Card } from '@/components/ui/card'
-import GitHubCalendar from 'react-github-calendar'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Github, Loader2, Twitter, Wallet } from 'lucide-react'
-import { useToast } from '@/components/ui/use-toast'
-
 import { Button } from '@/components/ui/button'
-import { userApi } from '@/service'
-import { currentChain, sdk, ZERO_ADDRESS } from '@/constants/data'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Github, Twitter, Rss, Star, Code, Bug, Users, Trophy, TerminalSquare, Lock, TrendingUp } from 'lucide-react'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
+import { PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, RadarChart } from 'recharts'
+import { cn } from '@/lib/utils'
+import { useUsername, walletAtom } from '@/store'
+import { useToast } from '@/components/ui/use-toast'
 import { useAtom } from 'jotai'
-import { useAsyncEffect } from 'ahooks'
 import { User } from '@/openapi/client'
+import { sdk, ZERO_ADDRESS } from '@/constants/data'
+import { userApi } from '@/service'
+import { useAsyncEffect } from 'ahooks'
+import { LoadingCards } from '@/components/loading-cards'
+import GitHubCalendar from 'react-github-calendar'
+
+const programmingLanguagesData = [
+  { skill: 'JavaScript', value: 95, fullMark: 100 },
+  { skill: 'Python', value: 85, fullMark: 100 },
+  { skill: 'Go', value: 70, fullMark: 100 },
+  { skill: 'Rust', value: 60, fullMark: 100 },
+  { skill: 'TypeScript', value: 90, fullMark: 100 },
+  { skill: 'Java', value: 65, fullMark: 100 },
+]
+
+const techStackData = [
+  { skill: 'React', value: 92, fullMark: 100 },
+  { skill: 'Next.js', value: 88, fullMark: 100 },
+  { skill: 'Node.js', value: 80, fullMark: 100 },
+  { skill: 'Docker', value: 75, fullMark: 100 },
+  { skill: 'Kubernetes', value: 65, fullMark: 100 },
+  { skill: 'AWS', value: 70, fullMark: 100 },
+]
+
+const achievements = [
+  { icon: <Code className="h-5 w-5" />, label: 'Code Master' },
+  { icon: <Bug className="h-5 w-5" />, label: 'Bug Hunter' },
+  { icon: <Users className="h-5 w-5" />, label: 'Team Lead' },
+  { icon: <Trophy className="h-5 w-5" />, label: 'Top Contributor' },
+  { icon: <Github className="h-5 w-5" />, label: 'Open Source Star' },
+  { icon: <TerminalSquare className="h-5 w-5" />, label: 'Polyglot Programmer' },
+]
+
+const detailedSkills = [
+  { name: '代码质量', rating: 4.9, stars: 5 },
+  { name: '沟通能力', rating: 4.7, stars: 5 },
+  { name: '项目交付', rating: 4.8, stars: 5 },
+  { name: '技术创新', rating: 4.6, stars: 5 },
+]
+
+const chartConfig = {
+  value: { label: 'Proficiency', color: 'hsl(var(--chart-1))' },
+}
+
+const StarRating = ({
+  rating,
+  totalStars = 5,
+  className,
+  starSize = 'w-4 h-4',
+}: {
+  rating: number
+  totalStars?: number
+  className?: string
+  starSize?: string
+}) => {
+  const fullStars = Math.floor(rating)
+  const halfStar = rating % 1 >= 0.5
+  const emptyStars = totalStars - fullStars - (halfStar ? 1 : 0)
+
+  return (
+    <div className={cn('flex items-center', className)}>
+      {[...Array(fullStars)].map((_, i) => (
+        <Star key={`full-${i}`} className={cn(starSize, 'fill-yellow-400 text-yellow-400')} />
+      ))}
+      {halfStar && (
+        <div key="half" className={cn(starSize, 'relative')}>
+          <Star className={cn(starSize, 'absolute inset-0 text-yellow-400/30')} />
+          <Star
+            className={cn(starSize, 'absolute inset-0 fill-yellow-400 text-yellow-400')}
+            style={{ clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)' }}
+          />
+        </div>
+      )}
+      {[...Array(emptyStars)].map((_, i) => (
+        <Star key={`empty-${i}`} className={cn(starSize, 'text-yellow-400/30')} />
+      ))}
+    </div>
+  )
+}
+
+const LockedOverlay = () => (
+  <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-lg bg-black/50 backdrop-blur-sm">
+    <Lock className="h-10 w-10 text-primary-foreground/80" />
+    <p className="text-md mt-2 font-semibold text-primary-foreground/90">即将推出</p>
+  </div>
+)
 
 export default function ProfilePage() {
   const [userPoints, setUserPoints] = useState('')
@@ -26,14 +109,7 @@ export default function ProfilePage() {
 
   const [walletState] = useAtom(walletAtom)
   const linkedAddress = walletState.linkedAddress
-
-  const fetchRewards = async () => {
-    const totalRewards = await sdk.client.getTotalRewards(linkedAddress)
-    setTotalRewards(Number(totalRewards) / 10 ** 18)
-
-    const claimedRewards = await sdk.client.getClaimedRewards(linkedAddress)
-    setClaimedRewards(Number(claimedRewards) / 10 ** 18)
-  }
+  const isFeatureLocked = true
 
   useAsyncEffect(async () => {
     if (!username) return
@@ -60,149 +136,172 @@ export default function ProfilePage() {
     }
   }, [username, linkedAddress])
 
-  const handleClaim = async () => {
-    setClaiming(true)
-    try {
-      await sdk.contract.claimReward()
-      fetchRewards()
-    } catch (error) {
-      console.error('Error claiming rewards:', error)
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'Error claiming rewards',
-      })
-    } finally {
-      setClaiming(false)
-    }
-  }
-
   if (loading) {
     return <LoadingCards />
   }
 
   return (
-    <div className="mx-auto flex max-w-7xl flex-col space-y-6 lg:flex-row lg:space-x-6 lg:space-y-0">
-      <div className="w-full space-y-6 lg:w-1/3">
-        <Card className="rounded-lg shadow-lg">
-          <div className="flex items-center space-x-6 p-4">
-            <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-full">
-              <Avatar className="h-full w-full">
-                <AvatarImage src={profile?.avatarUrl} alt="Avatar" className="object-cover" />
-                <AvatarFallback>{profile?.displayName?.charAt(0)}</AvatarFallback>
-              </Avatar>
-            </div>
-            <div className="flex-grow">
-              <h2 className="text-2xl font-semibold leading-relaxed text-white">
-                {profile?.displayName || profile?.username}
-              </h2>
-              <p className="leading-relaxed text-gray-400">{profile?.bio || 'No bio...'}</p>
-              <div className="mt-2 flex space-x-4">
-                <a
-                  href={`https://github.com/${profile?.username}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-gray-500"
-                >
-                  <Github size={24} />
-                </a>
-                {profile?.twitterUsername && (
-                  <a
-                    href={`https://twitter.com/${profile?.twitterUsername}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-gray-400 hover:text-gray-500"
-                  >
-                    <Twitter size={24} />
+    <div className="min-h-screen bg-background p-4 text-foreground md:p-6">
+      <div className="mx-auto max-w-7xl space-y-6">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-stretch">
+          {/* 左侧卡片：个人信息 */}
+          <Card className="flex flex-1 flex-col justify-center overflow-hidden border-primary/20 bg-card/50 backdrop-blur-sm">
+            <div className="flex flex-1 flex-row items-center justify-center gap-4 p-4">
+              <div className="relative mr-4">
+                <Avatar className="h-20 w-20 border-4 border-primary shadow-lg md:h-24 md:w-24">
+                  <AvatarImage src={profile?.avatarUrl} alt="Avatar" />
+                  <AvatarFallback>{profile?.displayName?.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div className="absolute inset-0 animate-pulse rounded-full ring-4 ring-primary ring-offset-4 ring-offset-background" />
+              </div>
+              <div className="flex flex-col items-start">
+                <h1 className="text-2xl font-bold text-primary-foreground md:text-3xl">
+                  {profile?.displayName || profile?.username}
+                </h1>
+                <p className="mt-1 max-w-md text-sm text-muted-foreground">{profile?.bio || 'No bio...'}</p>
+                <div className="mt-2 flex flex-wrap justify-start gap-2">
+                  <a href={`https://github.com/${profile?.username}`} target="_blank" rel="noopener noreferrer">
+                    <Button variant="outline" size="sm">
+                      <Github className="mr-2 h-4 w-4" /> GitHub
+                    </Button>
                   </a>
-                )}
-
-                <a
-                  href={`${
-                    currentChain.blockExplorers?.default.url || 'https://opencampus-codex.blockscout.com'
-                  }/address/${linkedAddress}`}
-                  target="_blank"
-                  className="text-gray-400 hover:text-gray-500"
-                  rel="noreferrer"
-                >
-                  <Wallet size={24} />
-                </a>
+                  <Button variant="outline" size="sm">
+                    <Twitter className="mr-2 h-4 w-4" /> Twitter
+                  </Button>
+                  <Button variant="outline" size="sm">
+                    <Rss className="mr-2 h-4 w-4" /> Blog
+                  </Button>
+                </div>
+                <div className="mt-2 flex flex-wrap justify-start gap-4 md:gap-6">
+                  <div>
+                    <p className="text-xl font-bold">1,231</p>
+                    <p className="text-xs text-muted-foreground">Followers</p>
+                  </div>
+                  <div>
+                    <p className="text-xl font-bold">754</p>
+                    <p className="text-xs text-muted-foreground">Following</p>
+                  </div>
+                  <div>
+                    <p className="text-xl font-bold">89</p>
+                    <p className="text-xs text-muted-foreground">Projects</p>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          </Card>
 
-          <div className="grid grid-cols-2 items-center justify-between rounded-b-lg bg-gray-900 p-4">
-            <div className="text-center">
-              <h3 className="text-2xl font-bold text-white">{profile?.followers}</h3>
-              <p className="text-gray-400">Followers</p>
+          {/* 右侧卡片：开发者评分 */}
+          <Card className="relative flex flex-1 flex-col justify-center rounded-lg border border-primary/10 bg-card/30 p-6">
+            {isFeatureLocked && <LockedOverlay />}
+            <div
+              className={cn(
+                'flex flex-1 flex-col items-center justify-center text-center',
+                isFeatureLocked && 'blur-sm',
+              )}
+            >
+              <h3 className="mb-3 text-xl font-semibold text-primary">Developer Rating</h3>
+              <p className="text-6xl font-bold text-yellow-400">4.8</p>
+              <StarRating rating={4.8} starSize="w-6 h-6" className="my-2" />
+              <p className="mb-3 text-sm text-muted-foreground">Based on 156 reviews</p>
+              <div className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600 px-4 py-2 text-sm font-medium text-white">
+                <TrendingUp className="mr-2 h-4 w-4" />
+                Outperformed 92% of developers
+              </div>
             </div>
-            <div className="text-center">
-              <h3 className="text-2xl font-bold text-white">{profile?.following}</h3>
-              <p className="text-gray-400">Following</p>
-            </div>
-          </div>
-        </Card>
+          </Card>
+        </div>
 
-        <Card className="space-y-1 rounded-lg p-4 shadow-lg">
-          <div className="space-y-1">
-            <h3 className="text-lg font-semibold text-white">Points</h3>
-            <div className="flex items-center justify-between">
-              <p className="text-l mb-2 font-bold text-gray-400">{userPoints}</p>
-            </div>
-          </div>
-          <div className="space-y-1">
-            <h3 className="text-lg font-semibold text-white">Rewards</h3>
-            <div className="flex items-center justify-between">
-              <p className="text-l mb-2 font-bold text-gray-400">
-                {totalRewards.toFixed(5)} {currentChain.nativeCurrency.symbol}
-              </p>
-            </div>
-          </div>
-          <div className="space-y-1">
-            <h3 className="text-lg font-semibold text-white">To Claim</h3>
-            <div className="flex items-center justify-between">
-              <p className="text-l mb-2 font-bold text-gray-400">
-                {(totalRewards - claimedRewards).toFixed(5)} {currentChain.nativeCurrency.symbol}
-              </p>
-              <Button onClick={handleClaim} size="sm" disabled={claiming}>
-                Claim{claiming && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-              </Button>
-            </div>
-          </div>
-          <div className="space-y-1">
-            <h3 className="text-lg font-semibold text-white">Skills</h3>
-            <div className="flex flex-wrap">
-              <span className="m-1 rounded-full bg-gray-700 px-3 py-1 text-xs text-white">C++</span>
-              <span className="m-1 rounded-full bg-gray-700 px-3 py-1 text-xs text-white">Java</span>
-              <span className="m-1 rounded-full bg-gray-700 px-3 py-1 text-xs text-white">Python</span>
-            </div>
-          </div>
-        </Card>
-      </div>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <Card className="w-full border-primary/20 bg-card/50 backdrop-blur-sm">
+            <CardHeader className="px-5 py-4">
+              <CardTitle>Contribution Heatmap</CardTitle>
+              <CardDescription>An overview of activity in the past year</CardDescription>
+            </CardHeader>
+            <CardContent className="px-5 pb-1 pt-0">
+              <div className="flex flex-wrap justify-center gap-0.5">
+                <GitHubCalendar username={profile?.username || ''} />
+              </div>
+            </CardContent>
+          </Card>
 
-      <div className="w-full space-y-6 lg:w-2/3">
-        <Card className="rounded-lg p-4 shadow-lg">
-          <h3 className="mb-2 text-lg font-semibold text-white">Contributions</h3>
-          <GitHubCalendar username={profile?.username || ''} />
-        </Card>
+          <Card className="border-primary/20 bg-card/50 backdrop-blur-sm md:col-span-1">
+            <CardHeader className="px-5 py-4">
+              <div className="flex items-center gap-2">
+                <CardTitle>Programming Languages</CardTitle>
+              </div>
+              <CardDescription>Proficiency in each programming language</CardDescription>
+            </CardHeader>
+            <CardContent className="px-5 pb-4 pt-0">
+              <div className="h-64 w-full md:h-72">
+                <ChartContainer config={chartConfig}>
+                  <RadarChart data={programmingLanguagesData} margin={{ top: 10, right: 30, bottom: 10, left: 30 }}>
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <PolarGrid stroke="hsl(var(--border))" />
+                    <PolarAngleAxis dataKey="skill" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }} />
+                    <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+                    <Radar
+                      name="Proficiency"
+                      dataKey="value"
+                      stroke="hsl(var(--primary))"
+                      fill="hsl(var(--primary) / 0.4)"
+                      fillOpacity={0.6}
+                    />
+                  </RadarChart>
+                </ChartContainer>
+              </div>
+            </CardContent>
+          </Card>
 
-        <Card className="rounded-lg p-4 shadow-lg">
-          <h3 className="mb-2 text-lg font-semibold text-white">Recent Activities</h3>
-          <ul className="space-y-4">
-            <li className="flex items-center space-x-4">
-              <span className="text-gray-400">[PR] Merged PR #42 in youbet-task</span>
-              <span className="text-xs text-gray-500">2 hours ago</span>
-            </li>
-            <li className="flex items-center space-x-4">
-              <span className="text-gray-400">[Issue] Opened Issue #7 in youbet-task</span>
-              <span className="text-xs text-gray-500">4 hours ago</span>
-            </li>
-            <li className="flex items-center space-x-4">
-              <span className="text-gray-400">[Comment] Commented on Issue #7 in youbet-task</span>
-              <span className="text-xs text-gray-500">6 hours ago</span>
-            </li>
-          </ul>
-        </Card>
+          {/* Detailed Skills Card */}
+          <Card className="relative border-primary/20 bg-card/50 backdrop-blur-sm md:col-span-1">
+            {isFeatureLocked && <LockedOverlay />}
+            <div className={cn(isFeatureLocked && 'blur-sm')}>
+              <CardHeader className="px-5 py-4">
+                <CardTitle>Detailed Skill Ratings</CardTitle>
+                <CardDescription>Comprehensive ratings for various soft skills</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4 px-5 pb-4 pt-0">
+                {detailedSkills.map((skill) => (
+                  <div key={skill.name} className="flex items-center justify-between">
+                    <p className="text-sm font-medium">
+                      {skill.name === '代码质量'
+                        ? 'Code Quality'
+                        : skill.name === '沟通能力'
+                        ? 'Communication'
+                        : skill.name === '项目交付'
+                        ? 'Project Delivery'
+                        : skill.name === '技术创新'
+                        ? 'Technical Innovation'
+                        : skill.name}
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <StarRating rating={skill.rating} totalStars={skill.stars} />
+                      <span className="w-8 text-right text-sm font-bold text-cyan-400">{skill.rating.toFixed(1)}</span>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </div>
+          </Card>
+
+          <Card className="border-primary/20 bg-card/50 backdrop-blur-sm md:col-span-1">
+            <CardHeader className="px-5 py-4">
+              <CardTitle>Achievements</CardTitle>
+              <CardDescription>Honors and milestones obtained</CardDescription>
+            </CardHeader>
+            <CardContent className="grid grid-cols-2 gap-4 px-5 pb-4 pt-0 sm:grid-cols-3">
+              {achievements.map((ach, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col items-center gap-2 rounded-lg bg-muted p-3 text-center transition-colors hover:bg-muted/80"
+                >
+                  <div className="rounded-full bg-primary/10 p-3 text-primary">{ach.icon}</div>
+                  <span className="text-xs font-medium">{ach.label}</span>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   )
