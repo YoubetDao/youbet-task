@@ -33,12 +33,6 @@ export async function linkWallet(params: { github: string; address: string }) {
   return response.data
 }
 
-// ===== 项目 (Projects) =====
-export async function importProjectForUser(params: { org: string; project: string }) {
-  const response = await http.post('/projects/import', params)
-  return response.data
-}
-
 // ===== 周期 (Periods) =====
 export async function fetchPeriods(params: FetchPeriodsParams) {
   const response = await http.get<IResultPaginationData<Period>>('/periods', { params })
