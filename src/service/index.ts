@@ -2,14 +2,9 @@ import {
   IResultPaginationData,
   GithubOrganization,
   GithubRepo,
-  PrRewardInfo,
-  FetchPeriodsParams,
-  GrantPeriodRewardsParams,
-  Period,
   Receipt,
   PeriodReceipt,
   FetchReceiptsParams,
-  PeriodReport,
 } from '@/types'
 import http from './instance'
 import {
@@ -21,6 +16,7 @@ import {
   UserApi,
   AuthApi,
   ProjectApi,
+  ReceiptApi,
 } from '@/openapi/client'
 
 // ===== 合约 (Youbet) =====
@@ -31,30 +27,6 @@ export async function getLinkedWallet(github: string) {
 
 export async function linkWallet(params: { github: string; address: string }) {
   const response = await http.post('/youbet/wallet', params)
-  return response.data
-}
-
-// ===== 项目 (Projects) =====
-export async function fetchProjectReports(projectId: string) {
-  const response = await http.get<PeriodReport[]>(`/projects/${projectId}/reports`)
-  return Array.isArray(response.data) ? response.data : []
-}
-
-export async function importProjectForUser(params: { org: string; project: string }) {
-  const response = await http.post('/projects/import', params)
-  return response.data
-}
-
-// ===== 周期 (Periods) =====
-export async function fetchPeriods(params: FetchPeriodsParams) {
-  const response = await http.get<IResultPaginationData<Period>>('/periods', { params })
-  return response.data
-}
-
-export async function postGrantPeriodRewards(params: GrantPeriodRewardsParams) {
-  const response = await http.post(`/periods/${params.id}/grant-rewards`, {
-    contributors: params.contributors,
-  })
   return response.data
 }
 
@@ -77,11 +49,6 @@ export async function claimReceipt(id: string) {
 }
 
 // ===== 奖励 (Rewards) =====
-export async function postPrRewardInfo(params: PrRewardInfo) {
-  const response = await http.post('/rewards', params)
-  return response.data
-}
-
 export async function getRewardSignature(uuid: string) {
   const response = await http.get<{ signature: string }>(`/rewards/${uuid}/signature`)
   return response.data
@@ -108,3 +75,4 @@ export const taskApplyApi = createApi(TaskApplyApi)
 export const userApi = createApi(UserApi)
 export const authApi = createApi(AuthApi)
 export const projectApi = createApi(ProjectApi)
+export const receiptApi = createApi(ReceiptApi)

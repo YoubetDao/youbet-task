@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
+import { ReceiptDto, ReceiptDtoStatusEnum } from '@/openapi/client'
 import { usePendingClaimTasks } from '@/store/admin'
-import { ReceiptStatus, Receipt } from '@/types'
+import { ReceiptStatus } from '@/types'
 
 export const RewardStatus = ({
   status,
@@ -9,11 +10,11 @@ export const RewardStatus = ({
   isLoading,
   receipt,
 }: {
-  status: ReceiptStatus
+  status: ReceiptDtoStatusEnum
   isLogin: boolean
   onClaim: () => void
   isLoading?: boolean
-  receipt: Receipt
+  receipt: ReceiptDto
 }) => {
   const [pendingClaimTasks] = usePendingClaimTasks()
   const isPending = pendingClaimTasks.includes(receipt.source.period?._id || receipt.source.task?._id || '')
