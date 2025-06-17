@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Github, Twitter, Rss, Star, Code, Bug, Users, Trophy, TerminalSquare, Lock, TrendingUp } from 'lucide-react'
+import { Github, Star, Code, Bug, Users, Trophy, TerminalSquare, Lock, TrendingUp, Wallet } from 'lucide-react'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 import { PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, RadarChart } from 'recharts'
 import { cn } from '@/lib/utils'
@@ -199,25 +199,26 @@ export default function ProfilePage() {
                       <Github className="mr-2 h-4 w-4" /> GitHub
                     </Button>
                   </a>
-                  <Button variant="outline" size="sm">
-                    <Twitter className="mr-2 h-4 w-4" /> Twitter
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    <Rss className="mr-2 h-4 w-4" /> Blog
-                  </Button>
+                  <a
+                    href={`$ {
+                      'https://opencampus-codex.blockscout.com'
+                    }/address/${linkedAddress}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <Button variant="outline" size="sm">
+                      <Wallet className="mr-2 h-4 w-4" /> Wallet
+                    </Button>
+                  </a>
                 </div>
-                <div className="mt-2 flex flex-wrap justify-start gap-4 md:gap-6">
+                <div className="mt-2 flex flex-wrap justify-center gap-4 md:gap-6">
                   <div>
-                    <p className="text-xl font-bold">1,231</p>
+                    <p className="text-xl font-bold">{profile?.followers}</p>
                     <p className="text-xs text-muted-foreground">Followers</p>
                   </div>
                   <div>
-                    <p className="text-xl font-bold">754</p>
+                    <p className="text-xl font-bold">{profile?.following}</p>
                     <p className="text-xs text-muted-foreground">Following</p>
-                  </div>
-                  <div>
-                    <p className="text-xl font-bold">89</p>
-                    <p className="text-xs text-muted-foreground">Projects</p>
                   </div>
                 </div>
               </div>
