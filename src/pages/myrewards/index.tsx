@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { getRewardSignature, receiptApi } from '@/service'
+import { receiptApi, rewardApi } from '@/service'
 import { ReceiptStatus } from '@/types'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount } from 'wagmi'
@@ -31,8 +31,8 @@ const useClaimReward = (github: string | null, queryClient: any) => {
 
       setClaimingId(receipt._id)
       try {
-        const signature = await getRewardSignature(sourceId)
-        await distributor.claimRedPacket(sourceId, github, signature.signature)
+        const signature = await rewardApi.rewardControllerGetRewardSignature(sourceId)
+        await distributor.claimRedPacket(sourceId, github, signature.data.signature)
         await queryClient.invalidateQueries({ queryKey: ['receipts'] })
 
         //update pendingReceipts
@@ -219,11 +219,11 @@ export default function MyRewards() {
       const batch = await Promise.all(
         selectedRewards.map(async (receiptId) => {
           // Get signature for each reward
-          const signature = await getRewardSignature(receiptId)
+          const signature = await rewardApi.rewardControllerGetRewardSignature(receiptId)
           return {
             uuid: receiptId,
             githubId: github,
-            signature: signature.signature,
+            signature: signature.data.signature,
           }
         }),
       )

@@ -1,11 +1,4 @@
-import {
-  IResultPaginationData,
-  GithubOrganization,
-  GithubRepo,
-  Receipt,
-  PeriodReceipt,
-  FetchReceiptsParams,
-} from '@/types'
+import { GithubOrganization, GithubRepo } from '@/types'
 import http from './instance'
 import {
   TaskApi,
@@ -17,6 +10,9 @@ import {
   AuthApi,
   ProjectApi,
   ReceiptApi,
+  RewardApi,
+  GithubApi,
+  OrgApi,
 } from '@/openapi/client'
 
 // ===== 合约 (Youbet) =====
@@ -27,30 +23,6 @@ export async function getLinkedWallet(github: string) {
 
 export async function linkWallet(params: { github: string; address: string }) {
   const response = await http.post('/youbet/wallet', params)
-  return response.data
-}
-
-// ===== 收据 (Receipts) =====
-export async function fetchReceipts(params: FetchReceiptsParams) {
-  const response = await http.get<IResultPaginationData<Receipt>>('/receipts/mine', { params })
-  return response.data
-}
-
-export async function fetchReceiptsByPeriod(id: string) {
-  const response = await http.get<IResultPaginationData<PeriodReceipt>>(`/receipts`, {
-    params: { periodId: id },
-  })
-  return response.data
-}
-
-export async function claimReceipt(id: string) {
-  const response = await http.patch(`/receipts/${id}/claim`, {})
-  return response.data
-}
-
-// ===== 奖励 (Rewards) =====
-export async function getRewardSignature(uuid: string) {
-  const response = await http.get<{ signature: string }>(`/rewards/${uuid}/signature`)
   return response.data
 }
 
@@ -76,3 +48,6 @@ export const userApi = createApi(UserApi)
 export const authApi = createApi(AuthApi)
 export const projectApi = createApi(ProjectApi)
 export const receiptApi = createApi(ReceiptApi)
+export const rewardApi = createApi(RewardApi)
+export const githubApi = createApi(GithubApi)
+export const orgApi = createApi(OrgApi)
