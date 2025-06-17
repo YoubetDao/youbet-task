@@ -16,6 +16,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { Checkbox } from '@/components/ui/checkbox'
 import { RewardStatus } from './RewardStatus'
 import { usePendingClaimTasks } from '@/store/admin'
+import { STALETIME } from '@/constants/contracts/request'
 
 // 添加领取处理函数
 const useClaimReward = (github: string | null, queryClient: any) => {
@@ -89,7 +90,7 @@ function RewardsTable({
         type,
       })
     },
-    staleTime: 1 * 60 * 1000,
+    staleTime: STALETIME,
   })
 
   const totalPages = Math.ceil((periods?.pagination.totalCount || 0) / pageSize)

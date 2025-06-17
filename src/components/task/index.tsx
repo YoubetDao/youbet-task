@@ -9,6 +9,7 @@ import { useQuery } from '@tanstack/react-query'
 import { taskApi } from '@/service'
 import { TaskState } from '@/types'
 import { TaskControllerGetTasksRewardClaimedEnum, TaskControllerGetTasksRewardGrantedEnum } from '@/openapi/client/api'
+import { STALETIME } from '@/constants/contracts/request'
 
 // TODO: should separate this in another way since project task and my task have different filter
 const DEFAULT_CATEGORIES = ['all', 'open', 'closed']
@@ -56,7 +57,7 @@ export const TaskCatalog = ({ project }: ITaskCatalog) => {
   const { data, isLoading: loading } = useQuery({
     queryKey: queryKey,
     queryFn: queryFn,
-    staleTime: 1 * 60 * 1000,
+    staleTime: STALETIME,
     refetchOnWindowFocus: false,
   })
 
