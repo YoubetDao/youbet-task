@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { getRepos, getUserOrgs, importProjectForUser, userApi } from '@/service'
+import { getRepos, getUserOrgs, projectApi, userApi } from '@/service'
 import {
   Dialog,
   DialogClose,
@@ -41,7 +41,11 @@ export default function ImportProject() {
   })
 
   const { mutateAsync: importProject, isLoading: isImportProjectLoading } = useMutation({
-    mutationFn: importProjectForUser,
+    mutationFn: (values: z.infer<typeof formSchema>) =>
+      projectApi.projectControllerImportProjectForUser({
+        org: values.org,
+        project: values.project,
+      }),
   })
 
   const { data: profile } = useQuery({
