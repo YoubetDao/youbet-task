@@ -57,14 +57,14 @@ export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
     {
       title: 'Tasks',
       href: '/tasks',
-      icon: 'listChecks',
+      icon: 'layoutListIcon',
       component: 'tasks',
       layout: 'dashboard',
     },
     {
       title: 'MyRewards',
       href: '/myrewards',
-      icon: 'listChecks',
+      icon: 'circleDollarSignIcon',
       component: 'myrewards',
       layout: 'dashboard',
     },
