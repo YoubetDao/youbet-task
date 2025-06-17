@@ -92,6 +92,28 @@ export async function getRepos(org: string) {
   return response.data
 }
 
+export async function scanProfile(token: string, hasPrivateRepo = false) {
+  const response = await http.post(
+    '/users/profile/scan',
+    { hasPrivateRepo },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  )
+  return response.data
+}
+
+export async function getUserProfile(token: string) {
+  const response = await http.get('/users/me', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+  return response.data
+}
+
 function createApi<T>(ApiClass: new (...args: any[]) => T): T {
   return new ApiClass(new Configuration({ basePath: import.meta.env.VITE_BASE_URL }), '', http)
 }

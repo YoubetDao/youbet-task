@@ -6,15 +6,17 @@ import { Github, Twitter, Rss, Star, Code, Bug, Users, Trophy, TerminalSquare, L
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 import { PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, RadarChart } from 'recharts'
 import { cn } from '@/lib/utils'
-import { useUsername, walletAtom } from '@/store'
+import { useUsername, walletAtom, useToken } from '@/store'
 import { useToast } from '@/components/ui/use-toast'
 import { useAtom } from 'jotai'
 import { User } from '@/openapi/client'
 import { sdk, ZERO_ADDRESS } from '@/constants/data'
-import { userApi } from '@/service'
+import { userApi, scanProfile, getUserProfile } from '@/service'
 import { useAsyncEffect } from 'ahooks'
 import { LoadingCards } from '@/components/loading-cards'
 import GitHubCalendar from 'react-github-calendar'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { useMutation, useQuery } from '@tanstack/react-query'
 
 const programmingLanguagesData = [
   { skill: 'JavaScript', value: 95, fullMark: 100 },
@@ -90,8 +92,11 @@ const StarRating = ({
   )
 }
 
-const LockedOverlay = () => (
-  <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-lg bg-black/50 backdrop-blur-sm">
+const LockedOverlay = ({ onClick }: { onClick?: () => void }) => (
+  <div
+    className="absolute inset-0 z-10 flex cursor-pointer flex-col items-center justify-center rounded-lg bg-black/50 backdrop-blur-sm"
+    onClick={onClick}
+  >
     <Lock className="h-10 w-10 text-primary-foreground/80" />
     <p className="text-md mt-2 font-semibold text-primary-foreground/90">Locked</p>
   </div>
@@ -106,10 +111,39 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<User>()
   const [claiming, setClaiming] = useState(false)
   const { toast } = useToast()
+  const [showUnlockDialog, setShowUnlockDialog] = useState(false)
 
   const [walletState] = useAtom(walletAtom)
   const linkedAddress = walletState.linkedAddress
   const isFeatureLocked = true
+
+  const [token] = useToken()
+  console.log('token', token)
+
+  const scanMutation = useMutation({
+    mutationFn: async () => {
+      if (!token) throw new Error('No token')
+      return scanProfile(token, false)
+    },
+    onSuccess: () => {
+      toast({ title: 'Scan started', description: 'Your GitHub repo is being scanned.' })
+      setShowUnlockDialog(false)
+    },
+    onError: (err: unknown) => {
+      let msg = 'Scan failed'
+      if (err instanceof Error) msg = err.message
+      toast({ title: 'Error', description: msg, variant: 'destructive' })
+    },
+  })
+
+  const userProfileQuery = useQuery({
+    queryKey: ['userProfile', token],
+    queryFn: () => {
+      if (!token) throw new Error('No token')
+      return getUserProfile(token)
+    },
+    enabled: !!token,
+  })
 
   useAsyncEffect(async () => {
     if (!username) return
@@ -192,7 +226,7 @@ export default function ProfilePage() {
 
           {/* 右侧卡片：开发者评分 */}
           <Card className="relative flex flex-1 flex-col justify-center rounded-lg border border-primary/10 bg-card/30 p-6">
-            {isFeatureLocked && <LockedOverlay />}
+            {isFeatureLocked && <LockedOverlay onClick={() => setShowUnlockDialog(true)} />}
             <div
               className={cn(
                 'flex flex-1 flex-col items-center justify-center text-center',
@@ -254,7 +288,7 @@ export default function ProfilePage() {
 
           {/* Detailed Skills Card */}
           <Card className="relative border-primary/20 bg-card/50 backdrop-blur-sm md:col-span-1">
-            {isFeatureLocked && <LockedOverlay />}
+            {isFeatureLocked && <LockedOverlay onClick={() => setShowUnlockDialog(true)} />}
             <div className={cn(isFeatureLocked && 'blur-sm')}>
               <CardHeader className="px-5 py-4">
                 <CardTitle>Detailed Skill Ratings</CardTitle>
@@ -303,6 +337,23 @@ export default function ProfilePage() {
           </Card>
         </div>
       </div>
+      {/* 解锁提示弹窗 */}
+      <Dialog open={showUnlockDialog} onOpenChange={setShowUnlockDialog}>
+        <DialogContent>
+          <div className="p-6 text-center">
+            <h2 className="mb-2 text-xl font-bold">Unlock Feature</h2>
+            <p className="mb-4">Please scan your GitHub repo to unlock this feature.</p>
+            <div className="mt-6 flex justify-between gap-4">
+              <Button variant="outline" onClick={() => setShowUnlockDialog(false)}>
+                Close
+              </Button>
+              <Button variant="default" onClick={() => scanMutation.mutate()} disabled={scanMutation.isLoading}>
+                {scanMutation.isLoading ? 'Scanning...' : 'Scan'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
