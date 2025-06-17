@@ -16,6 +16,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { Checkbox } from '@/components/ui/checkbox'
 import { RewardStatus } from './RewardStatus'
 import { usePendingClaimTasks } from '@/store/admin'
+import { STALETIME } from '@/constants/contracts/request'
 import { ReceiptDto } from '@/openapi/client'
 
 // 添加领取处理函数
@@ -86,6 +87,7 @@ function RewardsTable({
     queryFn: () => {
       return receiptApi.receiptControllerMyReceipts(type, (page - 1) * pageSize, pageSize).then((res) => res.data)
     },
+    staleTime: STALETIME,
   })
 
   const totalPages = Math.ceil((periods?.pagination?.totalCount || 0) / pageSize)
