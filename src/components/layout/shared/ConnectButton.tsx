@@ -2,7 +2,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useUsername, walletAtom } from '@/store'
 import { useAccount, useSwitchChain } from 'wagmi'
 import { useEffect, useState } from 'react'
-import { linkWallet } from '@/service'
+import { youbetApi } from '@/service'
 import { currentChain, paymentChain, ZERO_ADDRESS } from '@/constants/data'
 import { useAtom } from 'jotai'
 import { useAsyncEffect } from 'ahooks'
@@ -34,10 +34,7 @@ export const CustomConnectButton = () => {
     if (!github || isAdmin || linkedAddress === '') return
     if (linkedAddress == ZERO_ADDRESS) {
       if (!address) return
-      await linkWallet({
-        github,
-        address,
-      })
+      await youbetApi.youbetControllerLinkWallet({ address })
     }
   }, [address, github, walletState.linkedAddress])
 
