@@ -177,11 +177,11 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-background p-4 text-foreground md:p-6">
       <div className="mx-auto max-w-7xl space-y-6">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-stretch">
+        <div className="flex flex-col gap-10 lg:flex-row lg:items-stretch">
           {/* 左侧卡片：个人信息 */}
-          <Card className="flex flex-1 flex-col justify-center overflow-hidden border-primary/20 bg-card/50 backdrop-blur-sm">
-            <div className="flex flex-1 flex-row items-center justify-center gap-4 p-4">
-              <div className="relative mr-4">
+          <Card className="w-full max-w-xs border-primary/20 bg-card/50 backdrop-blur-sm lg:w-[340px]">
+            <div className="flex flex-row items-center gap-4 px-4 py-2">
+              <div className="relative ml-4 mr-4">
                 <Avatar className="h-20 w-20 border-4 border-primary shadow-lg md:h-24 md:w-24">
                   <AvatarImage src={profile?.avatarUrl} alt="Avatar" />
                   <AvatarFallback>{profile?.displayName?.charAt(0)}</AvatarFallback>
@@ -193,16 +193,14 @@ export default function ProfilePage() {
                   {profile?.displayName || profile?.username}
                 </h1>
                 <p className="mt-1 max-w-md text-sm text-muted-foreground">{profile?.bio || 'No bio...'}</p>
-                <div className="mt-2 flex flex-wrap justify-start gap-2">
+                <div className="mt-2 flex flex-row justify-start gap-2">
                   <a href={`https://github.com/${profile?.username}`} target="_blank" rel="noopener noreferrer">
                     <Button variant="outline" size="sm">
                       <Github className="mr-2 h-4 w-4" /> GitHub
                     </Button>
                   </a>
                   <a
-                    href={`$ {
-                      'https://opencampus-codex.blockscout.com'
-                    }/address/${linkedAddress}`}
+                    href={`https://opencampus-codex.blockscout.com/address/${linkedAddress}`}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -225,6 +223,20 @@ export default function ProfilePage() {
             </div>
           </Card>
 
+          <Card className="relative min-w-0 rounded-lg border border-primary/10 bg-card/30 px-6 py-2">
+            <CardHeader className="px-5 py-2">
+              <CardTitle>Contribution Heatmap</CardTitle>
+              <CardDescription>An overview of activity in the past year</CardDescription>
+            </CardHeader>
+            <CardContent className="px-5 pb-1 pt-0">
+              <div className="flex flex-wrap justify-center gap-0.5">
+                <GitHubCalendar username={profile?.username || ''} />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {/* 右侧卡片：开发者评分 */}
           <Card className="relative flex flex-1 flex-col justify-center rounded-lg border border-primary/10 bg-card/30 p-6">
             {isFeatureLocked && <LockedOverlay onClick={() => setShowUnlockDialog(true)} />}
@@ -243,20 +255,6 @@ export default function ProfilePage() {
                 Outperformed 92% of developers
               </div>
             </div>
-          </Card>
-        </div>
-
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <Card className="w-full border-primary/20 bg-card/50 backdrop-blur-sm">
-            <CardHeader className="px-5 py-4">
-              <CardTitle>Contribution Heatmap</CardTitle>
-              <CardDescription>An overview of activity in the past year</CardDescription>
-            </CardHeader>
-            <CardContent className="px-5 pb-1 pt-0">
-              <div className="flex flex-wrap justify-center gap-0.5">
-                <GitHubCalendar username={profile?.username || ''} />
-              </div>
-            </CardContent>
           </Card>
 
           <Card className="border-primary/20 bg-card/50 backdrop-blur-sm md:col-span-1">
