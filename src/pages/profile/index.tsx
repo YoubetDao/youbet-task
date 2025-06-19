@@ -12,7 +12,7 @@ import { userApi } from '@/service'
 import { currentChain, sdk, ZERO_ADDRESS } from '@/constants/data'
 import { useAtom } from 'jotai'
 import { useAsyncEffect } from 'ahooks'
-import { User } from '@/openapi/client'
+import { UserProfileDto } from '@/openapi/client'
 
 export default function ProfilePage() {
   const [userPoints, setUserPoints] = useState('')
@@ -20,7 +20,7 @@ export default function ProfilePage() {
   const [claimedRewards, setClaimedRewards] = useState(0)
   const [loading, setLoading] = useState(true)
   const [username] = useUsername()
-  const [profile, setProfile] = useState<User>()
+  const [profile, setProfile] = useState<UserProfileDto>()
   const [claiming, setClaiming] = useState(false)
   const { toast } = useToast()
 
