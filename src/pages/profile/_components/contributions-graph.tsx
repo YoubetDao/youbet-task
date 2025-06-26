@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import GitHubCalendar, { type ThemeInput } from 'react-github-calendar'
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import type { ContributedRepoDto } from '@/openapi/client/models/contributed-repo-dto'
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 
 const explicitTheme: ThemeInput = {
   light: ['#EBEDF0', '#E9D7FE', '#C767C6', '#A632A5', '#401340'],
@@ -19,7 +20,7 @@ export default function ContributionsGraph({
   contributedRepos?: ContributedRepoDto[]
 }) {
   return (
-    <Card className="border-gray-700 bg-card">
+    <Card className="mb-4 border-gray-700 bg-card">
       <CardHeader>
         <CardTitle className="text-white">Contributions</CardTitle>
       </CardHeader>
@@ -29,7 +30,14 @@ export default function ContributionsGraph({
           <div className="flex items-center gap-2 text-white">
             <List className="h-5 w-5" />
             <h3 className="font-semibold">Contributions List</h3>
-            <Info className="h-4 w-4 text-muted-foreground" />
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info className="h-4 w-4" />
+              </TooltipTrigger>
+              <TooltipContent className="max-w-xs text-sm">
+                Contribution list according to, currently show top2 contribution information, read details to see all.
+              </TooltipContent>
+            </Tooltip>
           </div>
           <Dialog>
             <DialogTrigger asChild>
