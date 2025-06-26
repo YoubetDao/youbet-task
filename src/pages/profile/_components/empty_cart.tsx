@@ -1,18 +1,21 @@
 import empty_cart from '@/assets/images/empty_cart.png'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card'
 
-export default function EmptyCart() {
+type EmptyCartProps = {
+  title: string
+  description?: string
+}
+
+export default function EmptyCart({ title, description }: EmptyCartProps) {
   return (
     <Card className="border-gray-700 bg-card">
       <CardHeader className="pb-4">
-        <CardTitle>Language</CardTitle>
-        <CardDescription>Null technical languages</CardDescription>
+        <CardTitle>{title}</CardTitle>
+        {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
       <CardContent className="flex min-h-[190px] w-full flex-1 flex-col items-center justify-center px-8  pb-8 ">
         <div className="relative mt-4 flex h-full w-full flex-col items-center justify-center">
-          {/* 大圆背景 */}
           <div className="absolute left-1/2 top-1/2 h-[178px] w-[178px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/5" />
-          {/* 箱子图片 */}
           <img
             src={empty_cart}
             alt="empty box"
