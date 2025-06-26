@@ -1,27 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { Trophy, type LucideIcon } from 'lucide-react'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { Trophy } from 'lucide-react'
+import type { AchievementDto } from '@/openapi/client/models/achievement-dto'
 
-interface Achievement {
-  id: number
-  name: string
-  icon: LucideIcon
-}
-
-const achievementsData: Achievement[] = [
-  { id: 1, name: 'Code Master', icon: Trophy },
-  { id: 2, name: 'Git Guru', icon: Trophy },
-  { id: 3, name: 'React Rockstar', icon: Trophy },
-  { id: 4, name: 'TypeScript Titan', icon: Trophy },
-  { id: 5, name: 'Top Contributor', icon: Trophy },
-  { id: 6, name: 'Community Champion', icon: Trophy },
-  { id: 7, name: 'Bug Hunter', icon: Trophy },
-  { id: 8, name: 'Perfect Pull Request', icon: Trophy },
-]
-
-export default function Badges() {
-  const totalAchievements = 12
+export default function Badges({ achievements = [] }: { achievements?: AchievementDto[] }) {
+  const totalAchievements = achievements.length
 
   return (
     <Card className="border-gray-700 bg-card">
@@ -36,22 +20,23 @@ export default function Badges() {
         </Button>
       </CardHeader>
       <CardContent className="pt-2">
-        <TooltipProvider delayDuration={100}>
-          <div className="mb-6 grid grid-cols-4 gap-4">
-            {achievementsData.map((achievement) => (
-              <Tooltip key={achievement.id}>
-                <TooltipTrigger asChild>
-                  <div className="bg-purple-medium flex aspect-square cursor-pointer items-center justify-center rounded-full transition-transform hover:scale-105">
-                    <achievement.icon className="h-8 w-8 text-white" />
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent className="bg-white text-black">
-                  <p>{achievement.name}</p>
-                </TooltipContent>
-              </Tooltip>
-            ))}
-          </div>
-        </TooltipProvider>
+        <div className="mb-6 grid grid-cols-4 gap-4">
+          {achievements.map((achievement) => (
+            <Tooltip key={achievement.id}>
+              <TooltipTrigger asChild>
+                <div className="bg-purple-medium flex aspect-square cursor-pointer items-center justify-center rounded-full transition-transform hover:scale-105">
+                  <Trophy className="h-8 w-8 text-white" />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className="bg-white text-black">
+                <div className="font-bold">{achievement.name}</div>
+                {/* <div className="text-xs">{achievement.description}</div>
+                <div className="text-xs text-gray-500">{achievement.stats}</div>
+                <div className="text-xs text-gray-500">{achievement.rarity}</div> */}
+              </TooltipContent>
+            </Tooltip>
+          ))}
+        </div>
         <p className="text-center text-sm text-muted-foreground">
           {totalAchievements} Recognitions and Milestones Achieved
         </p>
