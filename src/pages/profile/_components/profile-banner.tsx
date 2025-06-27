@@ -16,7 +16,6 @@ type Profile = {
 }
 
 export default function ProfileBanner({ profile }: { profile: Profile }) {
-  console.log(profile)
   return (
     <div className="relative mb-4 border-b">
       <div

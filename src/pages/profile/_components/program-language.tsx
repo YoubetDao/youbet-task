@@ -13,7 +13,7 @@ export interface Languages {
   [key: string]: number
 }
 
-export default function ProgramLanguage({ languages = {} }: { languages?: Languages }) {
+export default function ProgramLanguage({ languages = {} as Languages }: { languages?: Languages }) {
   const chartData = Object.entries(languages || {})
     .map(([name, value]) => ({ name, value }))
     .filter((item) => item.value >= 1)
