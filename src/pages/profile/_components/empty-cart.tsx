@@ -1,4 +1,4 @@
-import empty_cart from '@/assets/images/empty_cart.png'
+import empty_cart from '@/assets/images/empty-cart.png'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card'
 
 type EmptyCartProps = {
