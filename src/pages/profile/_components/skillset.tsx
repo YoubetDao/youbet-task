@@ -47,20 +47,21 @@ export default function Skillset({ skillset = [] }: { skillset?: SkillsetDto[] }
           {},
           {
             r0: '33%',
-            r: '65%',
+            r: '60%',
             label: {
               rotate: 0,
               color: bgColor,
             },
           },
           {
-            r0: '65%',
-            r: '67%',
+            r0: '60%',
+            r: '75%',
             itemStyle: {
               borderWidth: 3,
             },
             label: {
               position: 'outside',
+              rotate: 0,
               padding: 3,
               silent: false,
               color: '#FFFFFF',
