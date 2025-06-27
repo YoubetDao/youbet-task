@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Github, Mail, Edit, Share2 } from 'lucide-react'
+import banner from '@/assets/images/banner.png'
 
 type Profile = {
   avatarUrl?: string
@@ -18,7 +19,10 @@ export default function ProfileBanner({ profile }: { profile: Profile }) {
   console.log(profile)
   return (
     <div className="relative mb-4 border-b">
-      <div className="bg-profile-banner h-[138px] rounded-t-lg bg-[#C767C6]" />
+      <div
+        className="bg-profile-banner h-[138px] rounded-t-lg bg-cover bg-center"
+        style={{ backgroundImage: `url(${banner})` }}
+      />
       <div className="absolute left-10 top-24 flex h-[146px] items-end gap-6">
         <Avatar className="h-[187px] w-[187px] border-4 border-background">
           <AvatarImage src={profile?.avatarUrl} alt="Avatar" />
