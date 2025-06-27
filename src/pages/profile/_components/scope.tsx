@@ -1,13 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Trophy } from 'lucide-react'
 
-const scopeItems = [
-  { id: 1, label: 'Points', value: '160' },
-  { id: 2, label: 'Rewards', value: '0.00000' },
-  { id: 3, label: 'To Claim', value: '0.00000' },
-]
+export interface ScopeItem {
+  id: number | string
+  label: string
+  value: string | number
+}
 
-export default function Scope() {
+export default function Scope({ scopeItems = [] }: { scopeItems: ScopeItem[] }) {
   return (
     <Card className="border-gray-700 bg-card">
       <CardHeader>
