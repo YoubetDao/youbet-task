@@ -5,6 +5,7 @@ import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '
 import * as React from 'react'
 import { Bar, BarChart, LabelList, XAxis, YAxis, Cell } from 'recharts'
 
+// const colors = ['#B744B8', '#A379C9', '#ADB9E3', '#ACDDE7', '#9AD5CA']
 const colors = ['#C71FF7', '#881EF8', '#1374FC', '#1AC0FF']
 
 const chartConfig = {} satisfies ChartConfig

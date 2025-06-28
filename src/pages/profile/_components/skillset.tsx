@@ -5,7 +5,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import ReactECharts from 'echarts-for-react'
 import type { SkillsetDto } from '@/openapi/client/models/skillset-dto'
 
-const colors = ['#C71FF7', '#881EF8', '#1374FC', '#1AC0FF', '#72F067']
+// const colors = ['#B744B8', '#A379C9', '#ADB9E3', '#ACDDE7', '#9AD5CA']
+const colors = ['#C71FF7', '#881EF8', '#1374FC', '#1AC0FF']
 const bgColor = '#2E2733'
 
 export default function Skillset({ skillset = [] }: { skillset?: SkillsetDto[] }) {
