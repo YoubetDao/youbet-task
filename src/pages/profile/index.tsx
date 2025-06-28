@@ -21,6 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CalendarDays, Scan } from 'lucide-react'
 import ProgramLanguage, { Languages } from './_components/program-language'
 import SkillSet from './_components/skillset'
+import EvaluateRadar from './_components/evaluate-radar'
 
 export default function ProfilePage() {
   const [userPoints, setUserPoints] = useState('')
@@ -179,22 +180,25 @@ export default function ProfilePage() {
                 {profile?.languages ? (
                   <ProgramLanguage languages={profile.languages as Languages} />
                 ) : (
-                  <EmptyCart title="Language" description="Null technical languages " />
+                  <EmptyCart title="Language" description="Null technical languages" />
                 )}
 
-                <EmptyCart title="Evaluate" description="You will get a radar graph" />
+                <EvaluateRadar isScanning={isScanning} />
               </div>
             </CardContent>
           </Card>
 
-          <SkillSet skillset={profile?.skillset} isScanning={isScanning} />
+          {profile?.skillset ? (
+            <SkillSet skillset={profile?.skillset} isScanning={isScanning} />
+          ) : (
+            <EmptyCart title="Skills" description="Null technical skills" />
+          )}
         </div>
 
-        {/* 右侧区域 */}
         <div className="col-span-1 flex flex-col gap-4">
           <EmptyCart title="Achievement" />
           <Scope scopeItems={scopeData} />
-          <Badges achievements={profile?.achievements ?? []} />
+          <Badges achievements={profile?.achievements} />
         </div>
       </div>
     </TooltipProvider>
