@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import ReactECharts from 'echarts-for-react'
 import type { SkillsetDto } from '@/openapi/client/models/skillset-dto'
 
-const colors = ['#FFAE57', '#FF7853', '#EA5151', '#CC3F57', '#9A2555']
+const colors = ['#C71FF7', '#881EF8', '#1374FC', '#1AC0FF', '#72F067']
 const bgColor = '#2E2733'
 
 export default function Skillset({ skillset = [] }: { skillset?: SkillsetDto[] }) {
@@ -16,10 +16,10 @@ export default function Skillset({ skillset = [] }: { skillset?: SkillsetDto[] }
     children: (item.children || [])
       .slice()
       .sort((a, b) => b.percentage - a.percentage)
-      .map((child, cidx) => ({
+      .map((child) => ({
         name: child.name,
         value: child.percentage,
-        itemStyle: { color: colors[(idx + cidx + 1) % colors.length] },
+        itemStyle: { color: colors[idx % colors.length] },
       })),
   }))
 
