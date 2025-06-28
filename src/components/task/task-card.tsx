@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { MarkdownProcessor } from '@/lib/md-processor'
 import { Card, CardDescription, CardFooter, CardTitle } from '../ui/card'
 import { Task } from '@/openapi/client/models/task'
+import { Icons } from '../icons'
 
 interface ITaskItemProps {
   item: Task
@@ -47,14 +48,17 @@ export const TaskCard = ({ item }: ITaskItemProps) => {
     <Link to={`/task/${item.githubId}`}>
       <Card className="flex h-full w-full flex-col gap-2 rounded-2xl border p-4 transition-all duration-200 ease-in hover:scale-[0.998] hover:border hover:border-opacity-80 hover:bg-white/10">
         <CardTitle
-          className="truncate px-0 text-left text-xl font-bold underline-offset-4 hover:underline"
+          className="flex px-0 text-left text-xl font-bold underline-offset-4 hover:underline"
           title={item.title}
-          onClick={(event) => {
-            event.preventDefault()
-            window.open(item.htmlUrl, '_blank', 'noopener, noreferrer')
-          }}
         >
-          {item.title}
+          <span className="pr-4 lg:w-[200px] lg:truncate ">{item.title}</span>
+          <Icons.github
+            className="h-6 w-6"
+            onClick={(event) => {
+              event.preventDefault()
+              window.open(item.htmlUrl, '_blank', 'noopener, noreferrer')
+            }}
+          />
         </CardTitle>
         <CardDescription className="line-clamp-2 h-10 break-words text-sm text-muted-foreground">
           {MarkdownProcessor.getPlainText(item.body) || 'No description...'}
