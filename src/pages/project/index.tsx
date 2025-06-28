@@ -107,8 +107,8 @@ function ProjectList({ loading, loadingMore, data, appearances }: ProjectListPro
   if (!data) return null
 
   return (
-    <div className="flex w-full flex-col gap-4 overflow-hidden pt-4 lg:pl-4">
-      <div className="flex items-center justify-between">
+    <div className="flex w-full flex-col gap-4 pt-4 lg:pl-4">
+      <div className="flex items-center justify-between lg:sticky lg:top-0 lg:z-20 lg:bg-background/75">
         {appearances.showImportProject && <ImportProjectDialog />}
         <div className="text-sm text-muted-foreground">{data.pagination?.totalCount} Projects</div>
       </div>
