@@ -32,6 +32,7 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfileDto>()
   const [claiming, setClaiming] = useState(false)
   const { toast } = useToast()
+  const [isScanning, setIsScanning] = useState(false)
 
   const [walletState] = useAtom(walletAtom)
   const linkedAddress = walletState.linkedAddress
@@ -96,14 +97,17 @@ export default function ProfilePage() {
     try {
       const scanData = await userApi.userControllerScanProfile().then((res) => res.data)
       console.log('Scan result:', scanData)
+      if ((scanData as any)?.jobId) {
+        setIsScanning(true)
+      }
 
-      //TODO 开始轮询直到 scanStatus === 'Completed'
       const intervalId = setInterval(async () => {
         try {
           const updatedProfile = await userApi.userControllerMyInfo().then((res) => res.data)
           if (updatedProfile.scanStatus === 'Completed') {
             // console.log('Polling profile:', updatedProfile)
             setProfile(updatedProfile)
+            setIsScanning(false)
             clearInterval(intervalId)
           }
         } catch (pollError) {
@@ -152,6 +156,7 @@ export default function ProfilePage() {
                 variant="outline"
                 className="bg-purple-medium border-purple-medium hover:bg-purple-medium/90 flex items-center px-6 py-2 text-base font-semibold text-white"
                 onClick={handleScan}
+                disabled={isScanning}
               >
                 <Scan className="mr-2 h-4 w-4" />
                 Scan Now
@@ -182,7 +187,7 @@ export default function ProfilePage() {
             </CardContent>
           </Card>
 
-          <SkillSet skillset={profile?.skillset} />
+          <SkillSet skillset={profile?.skillset} isScanning={isScanning} />
         </div>
 
         {/* 右侧区域 */}
