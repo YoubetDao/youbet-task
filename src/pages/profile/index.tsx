@@ -96,6 +96,20 @@ export default function ProfilePage() {
     try {
       const scanData = await userApi.userControllerScanProfile().then((res) => res.data)
       console.log('Scan result:', scanData)
+
+      //TODO 开始轮询直到 scanStatus === 'Completed'
+      const intervalId = setInterval(async () => {
+        try {
+          const updatedProfile = await userApi.userControllerMyInfo().then((res) => res.data)
+          if (updatedProfile.scanStatus === 'Completed') {
+            // console.log('Polling profile:', updatedProfile)
+            setProfile(updatedProfile)
+            clearInterval(intervalId)
+          }
+        } catch (pollError) {
+          console.error('Error polling profile:', pollError)
+        }
+      }, 10000)
     } catch (error) {
       console.error('Error scanning profile:', error)
     }
@@ -121,7 +135,14 @@ export default function ProfilePage() {
                 {profile?.scanUpdatedAt ? (
                   <>
                     <CalendarDays className="h-4 w-4" />
-                    <span>{`Update Date: ${profile.scanUpdatedAt}`}</span>
+                    <span>
+                      {`Update Date: ${new Date(profile.scanUpdatedAt).toLocaleDateString('zh-CN', {
+                        timeZone: 'Asia/Shanghai',
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                      })}`}
+                    </span>
                   </>
                 ) : (
                   <span>Please scan your Github repo by clicking the right button</span>
