@@ -6,6 +6,9 @@ import ReactECharts from 'echarts-for-react'
 const colors = ['#C71FF7', '#881EF8', '#1374FC', '#1AC0FF']
 export default function AchievementGauge({ score = 66, percent = 76.54 }: { score: number; percent: number }) {
   const option = {
+    // tooltip: {
+    //   formatter: '{a} <br/>{b} : {c}%',
+    // },
     series: [
       {
         type: 'gauge',
@@ -16,17 +19,25 @@ export default function AchievementGauge({ score = 66, percent = 76.54 }: { scor
         min: 0,
         max: 1,
         splitNumber: 4,
-        axisLine: {
-          lineStyle: {
-            width: 16,
-            color: [
-              [0.25, colors[3]],
-              [0.5, colors[2]],
-              [0.75, colors[1]],
-              [1, colors[0]],
-            ],
-          },
+        progress: {
+          show: true,
+          width: 10,
         },
+        detail: {
+          valueAnimation: true,
+          formatter: '{value}',
+        },
+        // axisLine: {
+        //   lineStyle: {
+        //     width: 16,
+        //     color: [
+        //       [0.25, colors[3]],
+        //       [0.5, colors[2]],
+        //       [0.75, colors[1]],
+        //       [1, colors[0]],
+        //     ],
+        //   },
+        // },
         pointer: {
           icon: 'rect',
           length: '0%',
@@ -81,19 +92,28 @@ export default function AchievementGauge({ score = 66, percent = 76.54 }: { scor
         },
         data: [
           {
-            value: score / 100,
             name: `Above ${percent}% developers`,
+            value: score / 100,
           },
         ],
         itemStyle: {
           shadowColor: 'rgba(0,0,0,0.2)',
           shadowBlur: 8,
+          color: colors[0],
         },
         backgroundColor: 'transparent',
       },
     ],
     backgroundColor: 'transparent',
     grid: { left: 0, right: 0, top: 0, bottom: 0 },
+    // title: {
+    //   text: `Above ${percent}% developers`,
+    //   left: 'center',
+    //   top: '90%',
+    //   textStyle: {
+    //     color: '#fff',
+    //   },
+    // },
   }
 
   return (

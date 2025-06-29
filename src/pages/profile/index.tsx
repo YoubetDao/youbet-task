@@ -22,6 +22,7 @@ import { CalendarDays, Scan } from 'lucide-react'
 import ProgramLanguage, { Languages } from './_components/program-language'
 import SkillSet from './_components/skillset'
 import EvaluateRadar from './_components/evaluate-radar'
+import AchievementGauge from './_components/achievement-gauge'
 
 export default function ProfilePage() {
   const [userPoints, setUserPoints] = useState('')
@@ -196,7 +197,8 @@ export default function ProfilePage() {
         </div>
 
         <div className="col-span-1 flex flex-col gap-4">
-          <EmptyCart title="Achievement" />
+          {/* <EmptyCart title="Achievement" /> */}
+          <AchievementGauge score={88} percent={92.73} />
           <Scope scopeItems={scopeData} />
           <Badges achievements={profile?.achievements} />
         </div>
