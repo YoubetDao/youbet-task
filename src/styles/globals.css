@@ -125,3 +125,37 @@
     @apply bg-background text-foreground;
   }
 }
+
+.darkTweetWrapper {
+  --tweet-body-background: #000;
+  --tweet-body-font-color: #ffffff;
+  --tweet-body-border-color: #3d403c;
+  --tweet-body-hover-background: #2a2b2a;
+  --tweet-body-hover-border-color: #3d403c;
+  --tweet-link-color: #fff;
+  --tweet-link-hover-color: #fff;
+  --tweet-stats-color: #a3a69f;
+}
+
+.darkTweetWrapper .react-tweet-theme {
+  background-color: #000 !important;
+  color: #ffffff !important;
+  border-color: #3d403c !important;
+  --tweet-body-font-size: 14px !important;
+}
+
+.darkTweetWrapper .react-tweet-theme a {
+  color: #fff !important;
+}
+
+.darkTweetWrapper .react-tweet-theme a:hover {
+  color: #fff !important;
+}
+
+.darkTweetWrapper .react-tweet-theme img {
+  border-color: #3d403c !important;
+}
+
+.darkTweetWrapper .react-tweet-theme article > div:nth-last-of-type(-n + 2) {
+  display: none !important;
+}
