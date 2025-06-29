@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { getRepos, getUserOrgs, importProjectForUser, userApi } from '@/service'
+import { orgApi, projectApi, userApi } from '@/service'
 import {
   Dialog,
   DialogClose,
@@ -41,7 +41,11 @@ export default function ImportProject() {
   })
 
   const { mutateAsync: importProject, isLoading: isImportProjectLoading } = useMutation({
-    mutationFn: importProjectForUser,
+    mutationFn: (values: z.infer<typeof formSchema>) =>
+      projectApi.projectControllerImportProjectForUser({
+        org: values.org,
+        project: values.project,
+      }),
   })
 
   const { data: profile } = useQuery({
@@ -53,7 +57,7 @@ export default function ImportProject() {
   const { data: userOrOrgOptions, isLoading: isUserOrOrgOptionsLoading } = useQuery({
     queryKey: ['userOrOrgOptions'],
     queryFn: async () => {
-      const data = await getUserOrgs()
+      const data = await orgApi.orgControllerGetUserOrgs().then((res) => res.data)
       return [{ login: profile?.username, avatar_url: profile?.avatarUrl, id: 'current_user' }, ...data]
     },
     enabled: !!open && !!profile,
@@ -61,7 +65,7 @@ export default function ImportProject() {
 
   const { data: repos = [], isLoading: isReposLoading } = useQuery({
     queryKey: ['repos'],
-    queryFn: () => getRepos(form.watch('org')),
+    queryFn: () => orgApi.orgControllerGetOrgRepos(form.watch('org')).then((res) => res.data),
     enabled: !!open && !!form.watch('org'),
   })
 

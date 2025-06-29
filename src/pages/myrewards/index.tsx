@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { fetchReceipts, getRewardSignature } from '@/service'
-import { IResultPaginationData, Receipt, ReceiptStatus } from '@/types'
+import { receiptApi, rewardApi } from '@/service'
+import { ReceiptStatus } from '@/types'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount } from 'wagmi'
 import PaginationFast from '@/components/pagination-fast'
@@ -16,6 +16,8 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { Checkbox } from '@/components/ui/checkbox'
 import { RewardStatus } from './RewardStatus'
 import { usePendingClaimTasks } from '@/store/admin'
+import { STALETIME } from '@/constants/contracts/request'
+import { ReceiptDto } from '@/openapi/client'
 
 // 添加领取处理函数
 const useClaimReward = (github: string | null, queryClient: any) => {
@@ -23,15 +25,15 @@ const useClaimReward = (github: string | null, queryClient: any) => {
   const [pendingClaimTasks, setPendingClaimTasks] = usePendingClaimTasks()
 
   const handleClaim = useCallback(
-    async (receipt: Receipt) => {
+    async (receipt: ReceiptDto) => {
       if ((!receipt.source.period && !receipt.source.task) || !github) return
       const sourceId = receipt.source.period?._id || receipt.source.task?._id
       if (!sourceId) return
 
       setClaimingId(receipt._id)
       try {
-        const signature = await getRewardSignature(sourceId)
-        await distributor.claimRedPacket(sourceId, github, signature.signature)
+        const signature = await rewardApi.rewardControllerGetRewardSignature(sourceId)
+        await distributor.claimRedPacket(sourceId, github, signature.data.signature)
         await queryClient.invalidateQueries({ queryKey: ['receipts'] })
 
         //update pendingReceipts
@@ -65,11 +67,13 @@ function RewardsTable({
   isLogin,
   selectedRewards,
   handleSelectReward,
+  handleAllSelectTask,
 }: {
   type: 'period' | 'task'
   selectedRewards: string[]
   isLogin: boolean
   handleSelectReward: (resourceId: string) => void
+  handleAllSelectTask: (periods: ReceiptDto[], checked: boolean) => void
 }): React.ReactElement {
   const [page, setPage] = useState(1)
   const [github] = useUsername()
@@ -78,23 +82,20 @@ function RewardsTable({
   const { handleClaim, isClaiming } = useClaimReward(github, queryClient)
   const [pendingClaimTasks, setPendingClaimTasks] = usePendingClaimTasks()
 
-  const { data: periods, isLoading: isPullRequestsLoading } = useQuery<IResultPaginationData<Receipt> | undefined>({
+  const { data: periods, isLoading: isPullRequestsLoading } = useQuery({
     queryKey: ['receipts', type, page],
     queryFn: () => {
-      return fetchReceipts({
-        offset: (page - 1) * pageSize,
-        limit: pageSize,
-        type,
-      })
+      return receiptApi.receiptControllerMyReceipts(type, (page - 1) * pageSize, pageSize).then((res) => res.data)
     },
+    staleTime: STALETIME,
   })
 
-  const totalPages = Math.ceil((periods?.pagination.totalCount || 0) / pageSize)
+  const totalPages = Math.ceil((periods?.pagination?.totalCount || 0) / pageSize)
 
   useEffect(() => {
     //update pendingReceipts
     const newList = pendingClaimTasks.filter((pendingId: string) => {
-      const receipt = periods?.data.find(
+      const receipt = periods?.data?.find(
         (receipt) => receipt.source.period?._id === pendingId || receipt.source.task?._id === pendingId,
       )
       return receipt?.status !== ReceiptStatus.CLAIMED
@@ -108,7 +109,9 @@ function RewardsTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-gray-400"></TableHead>
+              <TableHead className="text-gray-400">
+                <Checkbox onCheckedChange={(checked: boolean) => handleAllSelectTask(periods.data || [], checked)} />
+              </TableHead>
               {type === 'period' ? (
                 <TableHead className="text-gray-400">Period</TableHead>
               ) : (
@@ -119,7 +122,7 @@ function RewardsTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {periods.data.map((receipts) => {
+            {periods?.data?.map((receipts) => {
               return (
                 <TableRow key={receipts._id}>
                   <TableCell>
@@ -218,11 +221,11 @@ export default function MyRewards() {
       const batch = await Promise.all(
         selectedRewards.map(async (receiptId) => {
           // Get signature for each reward
-          const signature = await getRewardSignature(receiptId)
+          const signature = await rewardApi.rewardControllerGetRewardSignature(receiptId)
           return {
             uuid: receiptId,
             githubId: github,
-            signature: signature.signature,
+            signature: signature.data.signature,
           }
         }),
       )
@@ -277,6 +280,18 @@ export default function MyRewards() {
       return [...prev, resourceId]
     })
   }
+  const handleAllSelectTask = (periods: ReceiptDto[], checked: boolean) => {
+    if (checked) {
+      const taskUngrantedOrUnclaimed = (periods || [])
+        .filter((receipts) => receipts.status === ReceiptStatus.GRANTED)
+        .map((receipts) => {
+          return receipts.source.period?._id ?? receipts.source.task?._id ?? ''
+        })
+      setSelectedRewards(taskUngrantedOrUnclaimed)
+    } else {
+      setSelectedRewards([])
+    }
+  }
 
   return (
     <div className="space-y-4">
@@ -305,6 +320,7 @@ export default function MyRewards() {
         isLogin={isLogin}
         selectedRewards={selectedRewards}
         handleSelectReward={handleSelectReward}
+        handleAllSelectTask={handleAllSelectTask}
       />
     </div>
   )
