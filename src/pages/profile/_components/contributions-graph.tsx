@@ -1,7 +1,7 @@
 import { Info, List, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import GitHubCalendar, { type ThemeInput } from 'react-github-calendar'
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import type { ContributedRepoDto } from '@/openapi/client/models/contributed-repo-dto'
@@ -54,6 +54,7 @@ export default function ContributionsGraph({
                   <div key={item.fullName} className="flex items-center justify-between rounded-md bg-gray-700/50 p-3">
                     <div className="flex items-center gap-3">
                       <Avatar className="h-8 w-8">
+                        <AvatarImage src={`https://github.com/${item.fullName.split('/')[0]}.png`} />
                         <AvatarFallback>{item.fullName.substring(0, 1).toUpperCase()}</AvatarFallback>
                       </Avatar>
                       <div>
@@ -94,6 +95,7 @@ export default function ContributionsGraph({
             <div key={item.fullName} className="flex items-center justify-between rounded-md bg-gray-700/50 p-3">
               <div className="flex items-center gap-3">
                 <Avatar className="h-8 w-8">
+                  <AvatarImage src={`https://github.com/${item.fullName.split('/')[0]}.png`} />
                   <AvatarFallback>{item.fullName.substring(0, 1).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <div>
