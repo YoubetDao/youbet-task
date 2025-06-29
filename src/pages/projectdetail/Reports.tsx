@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import ReactMarkdown from 'react-markdown'
 import { PeriodReport } from '@/types'
-import { fetchProjectReports, reportApi } from '@/service'
+import { reportApi } from '@/service'
 import { useSearchParams } from 'react-router-dom'
 import { ShareButton } from '@/components/share-button'
 import { Textarea } from '@/components/ui/textarea'
@@ -27,7 +27,7 @@ export default function Reports({ project }: ReportsProps) {
 
   const { data: reports = [], isLoading } = useQuery({
     queryKey: ['project-reports', project],
-    queryFn: () => fetchProjectReports(project),
+    queryFn: () => reportApi.reportControllerListReports(project).then((res) => res.data),
   })
 
   useEffect(() => {

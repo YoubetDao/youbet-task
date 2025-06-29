@@ -8,6 +8,7 @@ import { TaskCard } from '@/components/task/task-card'
 import { LoadingCards } from '@/components/loading-cards'
 import { TaskControllerGetTasksRewardClaimedEnum, TaskControllerGetTasksRewardGrantedEnum } from '@/openapi/client'
 import { SearchInput } from '@/components/search'
+import { STALETIME } from '@/constants/contracts/request'
 
 export default function Tasks() {
   const [page, setPage] = useState(1)
@@ -39,6 +40,8 @@ export default function Tasks() {
   const { data, isLoading: loading } = useQuery({
     queryKey: queryKey,
     queryFn: queryFn,
+    staleTime: STALETIME,
+    refetchOnWindowFocus: false,
   })
 
   const tasks = data?.data || []

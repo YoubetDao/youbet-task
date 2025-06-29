@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { fetchReceiptsByPeriod, periodApi, projectApi } from '@/service'
-import { IResultPaginationData, PeriodReceipt, ReceiptStatus } from '@/types'
+import { periodApi, projectApi, receiptApi } from '@/service'
+import { ReceiptStatus } from '@/types'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount, useSwitchChain } from 'wagmi'
 import { paymentChain } from '@/constants/data'
@@ -44,7 +44,7 @@ function PeriodTable(): React.ReactElement {
   const { address, chain } = useAccount()
   const pageSize = 10
   const [isDetailOpen, setIsDetailOpen] = useState(false)
-  const [selectedPeriodId, setSelectedPeriodId] = useState<string | null>(null)
+  const [selectedPeriodId, setSelectedPeriodId] = useState<string>('')
   const [rewardState, setRewardState] = useState<string>(PeriodControllerGetPeriodsRewardGrantedEnum.All)
   const [batchGrantPeriods, setBatchGrantPeriods] = useState<Array<RewardTask>>([])
   const [userName] = useUsername()
@@ -81,12 +81,10 @@ function PeriodTable(): React.ReactElement {
 
   const [receiptPage, setReceiptPage] = useState(1)
   const receiptPageSize = 10
-  const { data: periodReceipts, isLoading: isDetailLoading } = useQuery<
-    IResultPaginationData<PeriodReceipt> | undefined
-  >({
+  const { data: periodReceipts, isLoading: isDetailLoading } = useQuery({
     queryKey: ['periodReceipts', selectedPeriodId],
     queryFn: () => {
-      return fetchReceiptsByPeriod(selectedPeriodId ?? '')
+      return receiptApi.receiptControllerGetReceiptsByPeriodId(selectedPeriodId, 0, 10).then((res) => res.data)
     },
     enabled: !!selectedPeriodId,
     onError: (error) => {
@@ -94,7 +92,7 @@ function PeriodTable(): React.ReactElement {
     },
   })
 
-  const totalReceiptsPage = Math.ceil((periodReceipts?.pagination.totalCount || 0) / receiptPageSize)
+  const totalReceiptsPage = Math.ceil((periodReceipts?.pagination?.totalCount || 0) / receiptPageSize)
 
   useEffect(() => {
     switchChain({ chainId: paymentChain.id })
@@ -312,7 +310,7 @@ function PeriodTable(): React.ReactElement {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {periodReceipts.data.map((periodReceipt) => {
+                    {periodReceipts.data?.map((periodReceipt) => {
                       return (
                         <TableRow key={periodReceipt._id}>
                           <TableCell className="font-medium">{periodReceipt.user}</TableCell>

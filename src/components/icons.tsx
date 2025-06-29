@@ -14,6 +14,8 @@ import {
   GitPullRequest,
   ClipboardList,
   CalendarRange,
+  LayoutListIcon,
+  CircleDollarSignIcon,
 } from 'lucide-react'
 
 export const Icons = {
@@ -31,6 +33,8 @@ export const Icons = {
   period: CalendarRange,
   clipboardList: ClipboardList,
   gitPullRequest: GitPullRequest,
+  layoutListIcon: LayoutListIcon,
+  circleDollarSignIcon: CircleDollarSignIcon,
   github: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"
