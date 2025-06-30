@@ -28,9 +28,11 @@ const Hero = () => {
           <h1 className="text-4xl font-bold text-transparent text-white md:text-6xl">
             Where solo developers build together
           </h1>
-          <p className="mx-auto mb-6 mt-8 max-w-[550px] text-xl text-white ">
-            A trustless coordination layer for developers — turning code into contributions, and contributions into
-            rewards.
+          <p className="mx-auto  mt-8 max-w-[550px] text-xl text-white ">
+            A trustless coordination layer for developers
+          </p>
+          <p className="mx-auto mb-6 max-w-[600px] text-xl text-white ">
+            turning code into contributions, and contributions into rewards
           </p>
           <div className="flex justify-center space-x-4">
             <a
