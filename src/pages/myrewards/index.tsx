@@ -122,54 +122,62 @@ function RewardsTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {periods?.data?.map((receipts) => {
-              return (
-                <TableRow key={receipts._id}>
-                  <TableCell>
-                    <Checkbox
-                      disabled={receipts.status !== ReceiptStatus.GRANTED}
-                      checked={selectedRewards.includes(receipts.source.period?._id ?? receipts.source.task?._id ?? '')}
-                      onCheckedChange={() => {
-                        handleSelectReward(receipts.source.period?._id ?? receipts.source.task?._id ?? '')
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    {type === 'period' ? (
-                      <>
-                        {formatDate(receipts.source.period?.from)} - {formatDate(receipts.source.period?.to)}
-                      </>
-                    ) : (
-                      <div className="space-y-1">
-                        <div>{receipts.source.task?.title}</div>
-                        <a
-                          href={receipts.source.task?.htmlUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-gray-500 hover:text-blue-500"
-                        >
-                          {receipts.source.task?._id}
-                        </a>
-                      </div>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {receipts.status == ReceiptStatus.CLAIMED || type !== 'period'
-                      ? `${receipts.detail.amount} ${receipts.detail.symbol}`
-                      : '***'}
-                  </TableCell>
-                  <TableCell>
-                    <RewardStatus
-                      status={receipts.status}
-                      isLogin={isLogin}
-                      onClaim={() => handleClaim(receipts)}
-                      isLoading={isClaiming(receipts._id)}
-                      receipt={receipts}
-                    />
-                  </TableCell>
-                </TableRow>
-              )
-            })}
+            {(periods?.data || []).length ? (
+              periods?.data?.map((receipts) => {
+                return (
+                  <TableRow key={receipts._id}>
+                    <TableCell>
+                      <Checkbox
+                        disabled={receipts.status !== ReceiptStatus.GRANTED}
+                        checked={selectedRewards.includes(
+                          receipts.source.period?._id ?? receipts.source.task?._id ?? '',
+                        )}
+                        onCheckedChange={() => {
+                          handleSelectReward(receipts.source.period?._id ?? receipts.source.task?._id ?? '')
+                        }}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      {type === 'period' ? (
+                        <>
+                          {formatDate(receipts.source.period?.from)} - {formatDate(receipts.source.period?.to)}
+                        </>
+                      ) : (
+                        <div className="space-y-1">
+                          <div>{receipts.source.task?.title}</div>
+                          <a
+                            href={receipts.source.task?.htmlUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-gray-500 hover:text-blue-500"
+                          >
+                            {receipts.source.task?._id}
+                          </a>
+                        </div>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {receipts.status == ReceiptStatus.CLAIMED || type !== 'period'
+                        ? `${receipts.detail.amount} ${receipts.detail.symbol}`
+                        : '***'}
+                    </TableCell>
+                    <TableCell>
+                      <RewardStatus
+                        status={receipts.status}
+                        isLogin={isLogin}
+                        onClaim={() => handleClaim(receipts)}
+                        isLoading={isClaiming(receipts._id)}
+                        receipt={receipts}
+                      />
+                    </TableCell>
+                  </TableRow>
+                )
+              })
+            ) : (
+              <TableRow key="NO_DATA">
+                <TableCell colSpan={4}>No Data.</TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       ) : (
