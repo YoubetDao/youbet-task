@@ -50,7 +50,7 @@ instance.interceptors.response.use(
         const pathname = window.location.pathname
         window.location.href = `${getSafeHrefByTitle('Login')}?redirect_uri=${encodeURIComponent(pathname)}`
       } else if (status === 403) {
-        window.location.href = getSafeHrefByTitle('Dashboard')
+        // window.location.href = getSafeHrefByTitle('Dashboard')
 
         toast({
           title: 'Forbidden',
