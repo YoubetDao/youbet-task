@@ -57,7 +57,7 @@ function ProjectItem({ item }: { item: Project }) {
               <div className="flex flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-2xl font-bold">
                 <span className="pr-4">{item.name}</span>
                 <Icons.github
-                  className="relative top-1 h-6 w-6"
+                  className="relative top-2 h-4 w-4"
                   onClick={(e) => {
                     e.preventDefault()
                     e.stopPropagation()

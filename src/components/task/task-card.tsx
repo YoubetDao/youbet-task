@@ -51,9 +51,9 @@ export const TaskCard = ({ item }: ITaskItemProps) => {
           className="flex px-0 text-left text-xl font-bold underline-offset-4 hover:underline"
           title={item.title}
         >
-          <span className="pr-4 lg:w-[200px] lg:truncate ">{item.title}</span>
+          <span className="pr-4 lg:max-w-[260px] lg:truncate">{item.title}</span>
           <Icons.github
-            className="h-6 w-6"
+            className="relative top-1 h-4 w-4"
             onClick={(event) => {
               event.preventDefault()
               window.open(item.htmlUrl, '_blank', 'noopener, noreferrer')
