@@ -222,6 +222,7 @@ function QuestLog({ createUser }: { createUser: string }) {
           </Button>
         )}
         <ShareButton
+          onClick={handleShare}
           iconSize={14}
           variant="default"
           className="flex gap-1 border border-muted text-white hover:border-opacity-80 hover:bg-white/10"
