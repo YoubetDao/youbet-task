@@ -4,10 +4,13 @@ import { userApi, taskApi, projectApi } from '@/service'
 import { TaskCompletionLeaderboard } from '@/components/task-completion-leaderboard'
 import { LucideUsers, LucidePackage, LucideListChecks, LucideCircleCheck, LucideStar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { BRAND_NAME } from '@/lib/config'
 import { useUsername } from '@/store'
 import { Project, UserTaskCompletionDto } from '@/openapi/client'
+import BindModal from './BindModal'
+import { useAccount } from 'wagmi'
+import { useMount } from 'ahooks'
 
 function StatsCard({ title, value, icon }: { title: string; value: number; icon: React.ReactNode }) {
   return (
@@ -71,6 +74,10 @@ export default function Dashboard() {
   const [projects, setProjects] = useState<Project[]>([])
   const [userCount, setUserCount] = useState<number>(0)
   const [username] = useUsername()
+  const { isConnected } = useAccount()
+  const [showModal, setShowModal] = useState<boolean>(false)
+
+  const [searchParams, setSearchParams] = useSearchParams()
 
   useEffect(() => {
     userApi
@@ -92,6 +99,29 @@ export default function Dashboard() {
       setProjects(res.data.data || [])
     })
   }, [])
+
+  useEffect(() => {
+    const isSuperfluid = sessionStorage.getItem('IS_SUPERFLUID')
+
+    console.log('isSuperfluid', isSuperfluid)
+
+    if (isSuperfluid && (!isConnected || !username)) {
+      setShowModal(true)
+    }
+  }, [isConnected, searchParams, username])
+
+  useMount(() => {
+    const isSuperfluid = searchParams.get('superfluid')
+
+    if (isSuperfluid) {
+      sessionStorage.setItem('IS_SUPERFLUID', 'true')
+
+      // 删除URL中的superfluid参数
+      const newSearchParams = new URLSearchParams(searchParams)
+      newSearchParams.delete('superfluid')
+      setSearchParams(newSearchParams, { replace: true })
+    }
+  })
 
   return (
     <div className="flex w-full flex-col gap-4 overflow-hidden">
@@ -115,6 +145,8 @@ export default function Dashboard() {
           <ProjectRecommendations projects={projects.slice(0, 5)} />
         </div>
       </div>
+
+      <BindModal open={showModal} onClose={() => setShowModal(false)} />
     </div>
   )
 }

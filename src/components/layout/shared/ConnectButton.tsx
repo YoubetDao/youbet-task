@@ -7,7 +7,11 @@ import { currentChain, paymentChain, ZERO_ADDRESS } from '@/constants/data'
 import { useAtom } from 'jotai'
 import { useAsyncEffect } from 'ahooks'
 
-export const CustomConnectButton = () => {
+interface Props {
+  className?: string
+}
+
+export const CustomConnectButton = ({ className }: Props) => {
   const [github] = useUsername()
   const { address } = useAccount()
   const { switchChain } = useSwitchChain()
@@ -57,6 +61,7 @@ export const CustomConnectButton = () => {
                 userSelect: 'none',
               },
             })}
+            // className={className}
           >
             {(() => {
               if (!connected) {
