@@ -14,7 +14,9 @@ const Callback = () => {
 
   useEffect(() => {
     const code = searchParams.get('code')
-    const redirectUri = searchParams.get('redirect_uri')
+    let redirectUri = searchParams.get('redirect_uri')
+
+    redirectUri = redirectUri !== '/' && redirectUri !== null ? redirectUri : '/dashboard'
 
     const handleFetchUserInfo = async (code: string) => {
       const userInfo = await authApi.authControllerGithubAuthRedirect(code).then((res) => res.data)
@@ -33,7 +35,7 @@ const Callback = () => {
 
       setUserPermission(getPermission())
 
-      navigate(redirectUri || '/')
+      navigate(redirectUri || '/dashboard')
     }
 
     if (code) handleFetchUserInfo(code)

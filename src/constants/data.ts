@@ -219,6 +219,15 @@ export const baseSepoliaOptions: SdkCtorOptions = {
   chainName: 'Base Sepolia',
 }
 
+export const baseMainnetOptions: SdkCtorOptions = {
+  networkOptions: {
+    rpcUrl: 'https://mainnet.base.org',
+    chainId: 8453,
+    contractAddress: '0x009B2B2509d08f4Ed860b2f528ef2166bBE33D00',
+  },
+  chainName: 'Base',
+}
+
 export const juChainTestnetOptions: SdkCtorOptions = {
   networkOptions: {
     rpcUrl: 'https://testnet-rpc.juchain.org',
@@ -322,6 +331,23 @@ const SUPPORTED_CHAINS: Record<string, Chain> = {
   neoTest: neoTest,
   monadDevnet: monadDevnet,
   baseSepolia: baseSepolia,
+  baseMainnet: {
+    id: 8453,
+    name: 'Base',
+    nativeCurrency: {
+      name: 'Ether',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://mainnet.base.org'],
+      },
+    },
+    blockExplorers: {
+      default: { name: 'BaseScan', url: 'https://basescan.org' },
+    },
+  },
   juChainTestnet: juChainTestnet,
 }
 
@@ -336,6 +362,7 @@ const CHAIN_OPTIONS: Record<string, SdkCtorOptions> = {
   monadDevnet: monadDevOptions,
   opSepolia: opSepoliaOptions,
   baseSepolia: baseSepoliaOptions,
+  baseMainnet: baseMainnetOptions,
   juChainTestnet: juChainTestnetOptions,
 }
 
