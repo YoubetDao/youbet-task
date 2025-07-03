@@ -29,7 +29,8 @@ enum BindStep {
 export default function BindModal({
   open,
   onClose,
-  poolAddress = import.meta.env.VITE_SUPERFLUID_POOL_ADDRESS,
+  // TODO: default pool address is just for this superfluid season, should be removed later
+  poolAddress = import.meta.env.VITE_SUPERFLUID_POOL_ADDRESS || '0x68555cc55061f43eD34e3614984cfCFEAc76DE3D',
 }: BindModalProps) {
   const [currentStep, setCurrentStep] = useState<BindStep>(BindStep.GITHUB)
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false)
