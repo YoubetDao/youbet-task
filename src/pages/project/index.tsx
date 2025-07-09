@@ -55,7 +55,7 @@ function ProjectItem({ item }: { item: Project }) {
           <div className="overflow-hidden pr-4 pt-4">
             <div className="flex w-full items-center gap-2">
               <div className="flex flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-2xl font-bold">
-                <span className="pr-4">{item.name}</span>
+                <span className="pr-1">{item.name}</span>
                 <Icons.github
                   className="relative top-2 h-4 w-4"
                   onClick={(e) => {
