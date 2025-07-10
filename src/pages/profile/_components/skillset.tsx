@@ -17,11 +17,11 @@ export default function Skillset({
   isScanning?: boolean
 }) {
   const chartRef = useRef<any>(null)
-  const data = (skillset || []).map((item, idx) => ({
+  const data = skillset.map((item, idx) => ({
     name: item.name,
     value: item.percentage,
     itemStyle: { color: colors[idx % colors.length] },
-    children: (item.children || [])
+    children: item.children
       .slice()
       .sort((a, b) => b.percentage - a.percentage)
       .map((child) => ({
