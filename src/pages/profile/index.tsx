@@ -158,7 +158,7 @@ export default function ProfilePage() {
               </div>
               <Button
                 variant="outline"
-                className="bg-purple-medium border-purple-medium hover:bg-purple-medium/90 flex items-center px-6 py-2 text-base font-semibold text-white"
+                className="flex items-center bg-primary px-6 py-2 text-base font-semibold text-white hover:bg-purple-600"
                 onClick={handleScan}
                 disabled={isScanning}
               >

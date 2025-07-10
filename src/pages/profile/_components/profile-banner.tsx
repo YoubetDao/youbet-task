@@ -59,11 +59,11 @@ export default function ProfileBanner({ profile }: { profile: Profile }) {
         </div>
       </div>
       <div className="absolute right-6 top-6 flex gap-2">
-        <Button variant="outline" size="sm" className="border-gray-600 bg-gray-700 text-white hover:bg-gray-600">
+        <Button variant="outline" size="sm" className="bg-primary text-white hover:bg-purple-600">
           <Edit className="mr-2 h-4 w-4" />
           Edit
         </Button>
-        <Button variant="outline" size="sm" className="border-gray-600 bg-gray-700 text-white hover:bg-gray-600">
+        <Button variant="outline" size="sm" className="bg-primary text-white hover:bg-purple-600">
           <Share2 className="mr-2 h-4 w-4" />
           Share
         </Button>
