@@ -16,8 +16,10 @@ export interface Languages {
 
 export default function ProgramLanguage({ languages = {} as Languages }: { languages?: Languages }) {
   const chartData = Object.entries(languages || {})
-    .map(([name, value]) => ({ name, value }))
-    .filter((item) => item.value >= 1)
+    .reduce((acc, [name, value]) => {
+      if (value >= 1) acc.push({ name, value })
+      return acc
+    }, [] as { name: string; value: number }[])
     .sort((a, b) => b.value - a.value)
 
   return (

@@ -23,10 +23,6 @@ export default function AchievementGauge({ score = 66, percent = 76.54 }: { scor
           show: true,
           width: 10,
         },
-        detail: {
-          valueAnimation: true,
-          formatter: '{value}',
-        },
         // axisLine: {
         //   lineStyle: {
         //     width: 16,

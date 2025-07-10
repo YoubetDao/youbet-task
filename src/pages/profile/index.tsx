@@ -96,6 +96,7 @@ export default function ProfilePage() {
     }
   }
 
+  // TODO: 当前轮询，需要后端优化为通知
   const handleScan = async () => {
     try {
       const scanData = await userApi.userControllerScanProfile().then((res) => res.data)
