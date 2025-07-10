@@ -13,8 +13,8 @@ export default function ComingSoon({
   title = 'Language',
   description = 'Null technical languages',
   imageSrc = coming_soon,
-  mainText = 'Content will be available soon',
-  subText = 'This session is under construction.',
+  mainText = 'Coming soon',
+  subText = 'Is under construction',
 }: ComingSoonProps) {
   return (
     <Card className="border-gray-700 bg-card">
