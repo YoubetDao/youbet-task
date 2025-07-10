@@ -38,17 +38,15 @@ export default function Badges({ achievements = [] }: { achievements?: Achieveme
                     <div className="text-xs text-muted-foreground">{achievement.description}</div>
                     <div className="mt-1 text-xs text-gray-400">
                       <span>Stats: {achievement.stats}</span>
-                      {achievement.rarity && <span className="ml-4">Rarity: {achievement.rarity}</span>}
-                      {achievement.date && (
-                        <span className="ml-4">
-                          {new Date(achievement.date).toLocaleDateString('zh-CN', {
-                            timeZone: 'Asia/Shanghai',
-                            year: 'numeric',
-                            month: '2-digit',
-                            day: '2-digit',
-                          })}
-                        </span>
-                      )}
+                      <span className="ml-4">Rarity: {achievement.rarity}</span>
+                      <span className="ml-4">
+                        {new Date(achievement.date).toLocaleDateString('zh-CN', {
+                          timeZone: 'Asia/Shanghai',
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                        })}
+                      </span>
                     </div>
                   </div>
                 </div>
