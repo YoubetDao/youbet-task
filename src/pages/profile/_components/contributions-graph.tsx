@@ -7,6 +7,13 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from 
 import type { ContributedRepoDto } from '@/openapi/client/models/contributed-repo-dto'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 
+const URLS = {
+  GITHUB_AVATAR: (username: string) => `https://github.com/${username}.png`,
+  GITHUB_REPO: (fullName: string) => `https://github.com/${fullName}`,
+  GITHUB_CONTRIBUTIONS: (fullName: string, username: string) =>
+    `https://github.com/${fullName}/pulls?q=is%3Apr+is%3Amerged+author%3A${username}`,
+} as const
+
 const explicitTheme: ThemeInput = {
   light: ['#EBEDF0', '#E9D7FE', '#C767C6', '#A632A5', '#401340'],
   dark: ['#EBEDF0', '#E9D7FE', '#C767C6', '#A632A5', '#401340'],
@@ -54,13 +61,13 @@ export default function ContributionsGraph({
                   <div key={item.fullName} className="flex items-center justify-between rounded-md bg-gray-700/50 p-3">
                     <div className="flex items-center gap-3">
                       <Avatar className="h-8 w-8">
-                        <AvatarImage src={`https://github.com/${item.fullName.split('/')[0]}.png`} />
+                        <AvatarImage src={URLS.GITHUB_AVATAR(item.fullName.split('/')[0])} />
                         <AvatarFallback>{item.fullName.substring(0, 1).toUpperCase()}</AvatarFallback>
                       </Avatar>
                       <div>
                         <div>
                           <a
-                            href={`https://github.com/${item.fullName}`}
+                            href={URLS.GITHUB_REPO(item.fullName)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-sm font-medium text-white hover:underline"
@@ -70,7 +77,7 @@ export default function ContributionsGraph({
                         </div>
                         <div>
                           <a
-                            href={`https://github.com/${item.fullName}/pulls?q=is%3Apr+is%3Amerged+author%3A${username}`}
+                            href={URLS.GITHUB_CONTRIBUTIONS(item.fullName, username)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-xs text-muted-foreground hover:underline"
@@ -95,13 +102,13 @@ export default function ContributionsGraph({
             <div key={item.fullName} className="flex items-center justify-between rounded-md bg-gray-700/50 p-3">
               <div className="flex items-center gap-3">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={`https://github.com/${item.fullName.split('/')[0]}.png`} />
+                  <AvatarImage src={URLS.GITHUB_AVATAR(item.fullName.split('/')[0])} />
                   <AvatarFallback>{item.fullName.substring(0, 1).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <div>
                   <div>
                     <a
-                      href={`https://github.com/${item.fullName}`}
+                      href={URLS.GITHUB_REPO(item.fullName)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm font-medium text-white hover:underline"
@@ -111,7 +118,7 @@ export default function ContributionsGraph({
                   </div>
                   <div>
                     <a
-                      href={`https://github.com/${item.fullName}/pulls?q=is%3Apr+is%3Amerged+author%3A${username}`}
+                      href={URLS.GITHUB_CONTRIBUTIONS(item.fullName, username)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-xs text-muted-foreground hover:underline"
