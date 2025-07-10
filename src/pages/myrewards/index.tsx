@@ -18,6 +18,7 @@ import { RewardStatus } from './RewardStatus'
 import { usePendingClaimTasks } from '@/store/admin'
 import { STALETIME } from '@/constants/contracts/request'
 import { ReceiptDto } from '@/openapi/client'
+import empty_cart from '@/assets/images/empty-cart.png'
 
 // 添加领取处理函数
 const useClaimReward = (github: string | null, queryClient: any) => {
@@ -175,7 +176,14 @@ function RewardsTable({
               })
             ) : (
               <TableRow key="NO_DATA">
-                <TableCell colSpan={4}>No Data.</TableCell>
+                <TableCell colSpan={4}>
+                  <img
+                    src={empty_cart}
+                    alt="No Data."
+                    className="relative z-10 m-auto h-[95px] w-[100px] object-contain opacity-60"
+                    style={{ filter: 'grayscale(1) brightness(0.8) drop-shadow(0 2px 8px rgba(0,0,0,0.10))' }}
+                  />
+                </TableCell>
               </TableRow>
             )}
           </TableBody>
