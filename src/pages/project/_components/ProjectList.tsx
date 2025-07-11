@@ -1,12 +1,12 @@
 import { LoadingCards } from '@/components/loading-cards'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
 import { Project } from '@/openapi/client'
 import { LucideUser } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import ImportProjectDialog from '@/components/import-project'
 import { IResultPagination } from '@/types'
 import { getAppearances } from '@/lib/appearances'
+import { Icons } from '@/components/icons'
 import RenderTags from './RenderTags'
 
 interface ProjectListProps {
@@ -28,23 +28,16 @@ function ProjectItem({ item }: { item: Project }) {
           </div>
           <div className="overflow-hidden pr-4 pt-4">
             <div className="flex w-full items-center gap-2">
-              <div className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-2xl font-bold">
-                <Button
-                  asChild
-                  variant="link"
-                  className="overflow-hidden text-ellipsis whitespace-nowrap !p-0 text-2xl font-bold text-gray-50"
-                >
-                  <span
-                    className="z-10"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      window.open(item.htmlUrl, '_blank')
-                    }}
-                  >
-                    {item.name}
-                  </span>
-                </Button>
+              <div className="flex flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-2xl font-bold">
+                <span className="pr-1">{item.name}</span>
+                <Icons.github
+                  className="relative top-2 h-4 w-4"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    window.open(item.htmlUrl, '_blank')
+                  }}
+                />
               </div>
               <div className="hidden gap-2 md:flex">
                 <RenderTags tags={item.youbetExtra?.tags || []} />
