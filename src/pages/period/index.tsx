@@ -1,41 +1,29 @@
 import React, { useEffect, useState } from 'react'
-import { periodApi, projectApi, receiptApi } from '@/service'
-import { ReceiptStatus } from '@/types'
-import { LoadingCards } from '@/components/loading-cards'
+import { projectApi } from '@/service'
 import { useAccount, useSwitchChain } from 'wagmi'
 import { paymentChain } from '@/constants/data'
-import PaginationFast from '@/components/pagination-fast'
 import { useQuery } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
-import { capitalizeFirstLetter, RewardButton } from '@/components/reward-button'
-import { Period, PeriodControllerGetPeriodsRewardGrantedEnum } from '@/openapi/client'
+import { RewardButton } from '@/components/reward-button'
+import { PeriodControllerGetPeriodsRewardGrantedEnum } from '@/openapi/client'
 import { Combobox } from '@/components/combo-box'
-import { Checkbox } from '@/components/ui/checkbox'
 import { BatchGrantDialog, RewardTask } from '../admin/BatchGrantDialog'
-import { useUsername } from '@/store'
 import { useAllowanceCheck } from '@/hooks/useAllowanceCheck'
-import { TaskRewardCell } from '@/components/task-reward-cell'
-import { usePendingGrantList } from '@/store/admin'
-import { statuses, valueToLabel } from './_constants/statuses'
+import { statuses, valueToLabel } from './_constants'
+import PeriodTable from './_components/PeriodTable'
+import DrawerDetail from './_components/DrawerDetail'
 
 function PeriodAdmin(): React.ReactElement {
-  const [page, setPage] = useState(1)
   const { switchChain } = useSwitchChain()
   const [urlParam] = useSearchParams('')
   const [projectId, setProjectId] = useState<string | undefined>('')
   const [filterTags] = useState<string[]>([])
   const { address, chain } = useAccount()
-  const pageSize = 10
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   const [selectedPeriodId, setSelectedPeriodId] = useState<string>('')
   const [rewardState, setRewardState] = useState<string>(PeriodControllerGetPeriodsRewardGrantedEnum.All)
   const [batchGrantPeriods, setBatchGrantPeriods] = useState<Array<RewardTask>>([])
-  const [userName] = useUsername()
-  const [pendingGrantPeriods, setPendingGrantPeriods] = usePendingGrantList()
 
   const { data: projects, isLoading: projectLoading } = useQuery(['projects', filterTags, urlParam], async () => {
     return projectApi
@@ -51,41 +39,9 @@ function PeriodAdmin(): React.ReactElement {
       .then((res) => res.data)
   })
 
-  const key = capitalizeFirstLetter(rewardState)
-  const { data: periods, isLoading: isPullRequestsLoading } = useQuery(
-    ['periods', page, pageSize, projectId ?? '', rewardState],
-    () =>
-      periodApi
-        .periodControllerGetPeriods(
-          projectId ?? '',
-          'desc',
-          PeriodControllerGetPeriodsRewardGrantedEnum[key as keyof typeof PeriodControllerGetPeriodsRewardGrantedEnum],
-          (page - 1) * pageSize,
-          pageSize,
-        )
-        .then((res) => res.data),
-  )
-
-  const [receiptPage, setReceiptPage] = useState(1)
-  const receiptPageSize = 10
-  const { data: periodReceipts, isLoading: isDetailLoading } = useQuery({
-    queryKey: ['periodReceipts', selectedPeriodId],
-    queryFn: () => {
-      return receiptApi.receiptControllerGetReceiptsByPeriodId(selectedPeriodId, 0, 10).then((res) => res.data)
-    },
-    enabled: !!selectedPeriodId,
-    onError: (error) => {
-      console.error('Error fetching period details:', error)
-    },
-  })
-
-  const totalReceiptsPage = Math.ceil((periodReceipts?.pagination?.totalCount || 0) / receiptPageSize)
-
   useEffect(() => {
     switchChain({ chainId: paymentChain.id })
   }, [switchChain])
-
-  const totalPages = Math.ceil((periods?.pagination?.totalCount || 0) / pageSize)
 
   const { hasAllowance, approveAllowance, tokenError, tokenLoading } = useAllowanceCheck()
 
@@ -99,51 +55,6 @@ function PeriodAdmin(): React.ReactElement {
       value: project._id.toString(),
       label: project.name,
     })) ?? []
-
-  const handleSelectTask = (period: Period) => {
-    if (batchGrantPeriods.some((t) => t.id === period._id)) {
-      setBatchGrantPeriods((prev) => prev.filter((t) => t.id !== period._id))
-    } else {
-      setBatchGrantPeriods((prev) => [
-        ...prev,
-        {
-          id: period._id,
-          taskTitle: 'period reward',
-          users: period.contributors[0],
-          amount: 0,
-          decimals: 18,
-          creator: userName!,
-        },
-      ])
-    }
-  }
-  useEffect(() => {
-    const newList = pendingGrantPeriods.filter((periodId) => {
-      const period = periods?.data?.find((period) => period._id === periodId)
-      return !period?.rewardGranted
-    })
-    setPendingGrantPeriods(newList)
-  }, [periods])
-
-  const handleAllSelectTask = (checked: boolean) => {
-    if (checked) {
-      const periodUngranted = (periods?.data || [])
-        .filter((x) => !x.rewardGranted)
-        .map((x) => {
-          return {
-            id: x._id,
-            taskTitle: 'period reward',
-            users: x.contributors[0],
-            amount: 0,
-            decimals: 18,
-            creator: userName!,
-          }
-        })
-      setBatchGrantPeriods(periodUngranted)
-    } else {
-      setBatchGrantPeriods([])
-    }
-  }
 
   return (
     <div className="space-y-4">
@@ -180,151 +91,18 @@ function PeriodAdmin(): React.ReactElement {
         />
       </div>
 
-      {!isPullRequestsLoading && periods ? (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="text-gray-400">
-                <Checkbox onCheckedChange={handleAllSelectTask} />
-              </TableHead>
-              <TableHead className="text-gray-400">From</TableHead>
-              <TableHead className="text-gray-400">To</TableHead>
-              <TableHead className="text-gray-400">Users</TableHead>
-              <TableHead className="text-gray-400">Pr count</TableHead>
-              <TableHead className="text-gray-400">Reward</TableHead>
-              <TableHead className="text-gray-400">Detail</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {(periods?.data || [])?.map((period, index) => {
-              return (
-                <TableRow key={period._id}>
-                  <TableCell>
-                    <Checkbox
-                      disabled={period.rewardGranted}
-                      checked={batchGrantPeriods.some((t) => t.id === period._id)}
-                      onCheckedChange={() => handleSelectTask(period)}
-                    />
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    {new Date(period.from).toLocaleDateString('en-US', {
-                      month: 'long',
-                      day: 'numeric',
-                      year: 'numeric',
-                      hour: 'numeric',
-                      minute: 'numeric',
-                    })}
-                  </TableCell>
-                  <TableCell>
-                    {new Date(period.to).toLocaleDateString('en-US', {
-                      month: 'long',
-                      day: 'numeric',
-                      year: 'numeric',
-                      hour: 'numeric',
-                      minute: 'numeric',
-                    })}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex -space-x-3">
-                      {period.contributors.map((user, index) => {
-                        return (
-                          <img
-                            key={index}
-                            className="h-6 w-6 rounded-full border-2 border-white"
-                            src={user.avatarUrl}
-                            alt={user.login}
-                          />
-                        )
-                      })}
-                    </div>
-                  </TableCell>
-                  <TableCell>{period.pullRequests.length}</TableCell>
-                  <TableCell>
-                    <TaskRewardCell
-                      id={period._id}
-                      isGranted={period.rewardGranted}
-                      users={period.contributors}
-                      userName={userName || undefined}
-                      tokenError={tokenError}
-                      tokenLoading={tokenLoading}
-                      address={address}
-                      chain={chain}
-                      hasAllowance={hasAllowance}
-                      pendingGrantTasks={pendingGrantPeriods}
-                      switchChain={switchChain}
-                      approveAllowance={approveAllowance}
-                      sourceType="period"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="link"
-                      className="gap-2 p-0 text-blue-500"
-                      onClick={() => handleDetailClick(period._id)}
-                    >
-                      <Info size={15} />
-                      Detail
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              )
-            })}
-          </TableBody>
-        </Table>
-      ) : (
-        <LoadingCards />
-      )}
+      <PeriodTable
+        handleDetailClick={handleDetailClick}
+        switchChain={switchChain}
+        projectId={projectId}
+        rewardState={rewardState}
+        hasAllowance={hasAllowance}
+        approveAllowance={approveAllowance}
+        tokenError={tokenError}
+        tokenLoading={tokenLoading}
+      />
 
-      <PaginationFast page={page} totalPages={totalPages} onPageChange={setPage} />
-      <Drawer open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-        <DrawerContent>
-          <DrawerHeader>
-            <DrawerTitle>Period Details</DrawerTitle>
-          </DrawerHeader>
-          <div className="p-4">
-            {isDetailLoading ? (
-              <div className="flex h-32 items-center justify-center">
-                <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"></div>
-              </div>
-            ) : periodReceipts ? (
-              <div className="space-y-4">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>User</TableHead>
-                      <TableHead>Amount</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {periodReceipts.data?.map((periodReceipt) => {
-                      return (
-                        <TableRow key={periodReceipt._id}>
-                          <TableCell className="font-medium">{periodReceipt.user}</TableCell>
-                          <TableCell>
-                            {periodReceipt.status == ReceiptStatus.CLAIMED
-                              ? `${periodReceipt.detail.amount} ${periodReceipt.detail.symbol}`
-                              : '***'}
-                          </TableCell>
-                          <TableCell>{periodReceipt.status}</TableCell>
-                        </TableRow>
-                      )
-                    })}
-                  </TableBody>
-                </Table>
-              </div>
-            ) : (
-              <p className="text-center text-gray-500">No details available</p>
-            )}
-            <PaginationFast page={receiptPage} totalPages={totalReceiptsPage} onPageChange={setReceiptPage} />
-          </div>
-          <DrawerFooter>
-            <DrawerClose asChild>
-              <Button variant="outline">Close</Button>
-            </DrawerClose>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
+      <DrawerDetail selectedPeriodId={selectedPeriodId} isDetailOpen={isDetailOpen} setIsDetailOpen={setIsDetailOpen} />
     </div>
   )
 }

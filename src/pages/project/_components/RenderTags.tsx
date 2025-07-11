@@ -1,4 +1,4 @@
-import getIconFromKey from '../_common/getIconFromKey'
+import getIconFromKey from '../_constants/getIconFromKey'
 interface RenderTagsProps {
   tags: string[]
 }

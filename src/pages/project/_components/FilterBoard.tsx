@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import getIconFromKey from '../_common/getIconFromKey'
+import getIconFromKey from '../_constants/getIconFromKey'
 import { Button } from '@/components/ui/button'
 import { LucideRefreshCcw } from 'lucide-react'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'

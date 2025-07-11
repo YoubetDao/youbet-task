@@ -14,4 +14,13 @@ const valueToLabel = Object.entries(PeriodControllerGetPeriodsRewardGrantedEnum)
   return acc
 }, {} as Record<string, string>)
 
-export { statuses, valueToLabel }
+const formatDate = (date: string) => {
+  return new Date(date).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  })
+}
+export { statuses, valueToLabel, formatDate }
