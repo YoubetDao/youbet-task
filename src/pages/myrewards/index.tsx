@@ -1,185 +1,18 @@
-import React, { useEffect, useState, useCallback } from 'react'
-import { receiptApi, rewardApi } from '@/service'
+import { useEffect, useState } from 'react'
+import { rewardApi } from '@/service'
 import { ReceiptStatus } from '@/types'
-import { LoadingCards } from '@/components/loading-cards'
 import { useAccount } from 'wagmi'
-import PaginationFast from '@/components/pagination-fast'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { useQueryClient } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
 import { distributor } from '@/constants/distributor'
-import { toast, useToast } from '@/components/ui/use-toast'
+import { useToast } from '@/components/ui/use-toast'
 import { useUsername } from '@/store'
-import { formatDate } from '@/lib/utils'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Checkbox } from '@/components/ui/checkbox'
-import { RewardStatus } from './RewardStatus'
-import { usePendingClaimTasks } from '@/store/admin'
-import { STALETIME } from '@/constants/contracts/request'
+
 import { ReceiptDto } from '@/openapi/client'
-
-// 添加领取处理函数
-const useClaimReward = (github: string | null, queryClient: any) => {
-  const [claimingId, setClaimingId] = useState<string | null>(null)
-  const [pendingClaimTasks, setPendingClaimTasks] = usePendingClaimTasks()
-
-  const handleClaim = useCallback(
-    async (receipt: ReceiptDto) => {
-      if ((!receipt.source.period && !receipt.source.task) || !github) return
-      const sourceId = receipt.source.period?._id || receipt.source.task?._id
-      if (!sourceId) return
-
-      setClaimingId(receipt._id)
-      try {
-        const signature = await rewardApi.rewardControllerGetRewardSignature(sourceId)
-        await distributor.claimRedPacket(sourceId, github, signature.data.signature)
-        await queryClient.invalidateQueries({ queryKey: ['receipts'] })
-
-        //update pendingReceipts
-        setPendingClaimTasks([...pendingClaimTasks, sourceId])
-
-        toast({
-          title: 'Claimed',
-          description: 'Reward claimed successfully',
-        })
-      } catch (error) {
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: error instanceof Error ? error.message : 'Failed to claim reward',
-        })
-      } finally {
-        setClaimingId(null)
-      }
-    },
-    [github, queryClient],
-  )
-
-  return {
-    handleClaim,
-    isClaiming: (id: string) => claimingId === id,
-  }
-}
-
-function RewardsTable({
-  type,
-  isLogin,
-  selectedRewards,
-  handleSelectReward,
-  handleAllSelectTask,
-}: {
-  type: 'period' | 'task'
-  selectedRewards: string[]
-  isLogin: boolean
-  handleSelectReward: (resourceId: string) => void
-  handleAllSelectTask: (periods: ReceiptDto[], checked: boolean) => void
-}): React.ReactElement {
-  const [page, setPage] = useState(1)
-  const [github] = useUsername()
-  const pageSize = 10
-  const queryClient = useQueryClient()
-  const { handleClaim, isClaiming } = useClaimReward(github, queryClient)
-  const [pendingClaimTasks, setPendingClaimTasks] = usePendingClaimTasks()
-
-  const { data: periods, isLoading: isPullRequestsLoading } = useQuery({
-    queryKey: ['receipts', type, page],
-    queryFn: () => {
-      return receiptApi.receiptControllerMyReceipts(type, (page - 1) * pageSize, pageSize).then((res) => res.data)
-    },
-    staleTime: STALETIME,
-  })
-
-  const totalPages = Math.ceil((periods?.pagination?.totalCount || 0) / pageSize)
-
-  useEffect(() => {
-    //update pendingReceipts
-    const newList = pendingClaimTasks.filter((pendingId: string) => {
-      const receipt = periods?.data?.find(
-        (receipt) => receipt.source.period?._id === pendingId || receipt.source.task?._id === pendingId,
-      )
-      return receipt?.status !== ReceiptStatus.CLAIMED
-    })
-    setPendingClaimTasks(newList)
-  }, [periods])
-
-  return (
-    <div className="space-y-4">
-      {!isPullRequestsLoading && periods ? (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="text-gray-400">
-                <Checkbox onCheckedChange={(checked: boolean) => handleAllSelectTask(periods.data || [], checked)} />
-              </TableHead>
-              {type === 'period' ? (
-                <TableHead className="text-gray-400">Period</TableHead>
-              ) : (
-                <TableHead className="text-gray-400">Task</TableHead>
-              )}
-              <TableHead className="text-gray-400">Amount</TableHead>
-              <TableHead className="text-gray-400">Reward</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {periods?.data?.map((receipts) => {
-              return (
-                <TableRow key={receipts._id}>
-                  <TableCell>
-                    <Checkbox
-                      disabled={receipts.status !== ReceiptStatus.GRANTED}
-                      checked={selectedRewards.includes(receipts.source.period?._id ?? receipts.source.task?._id ?? '')}
-                      onCheckedChange={() => {
-                        handleSelectReward(receipts.source.period?._id ?? receipts.source.task?._id ?? '')
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    {type === 'period' ? (
-                      <>
-                        {formatDate(receipts.source.period?.from)} - {formatDate(receipts.source.period?.to)}
-                      </>
-                    ) : (
-                      <div className="space-y-1">
-                        <div>{receipts.source.task?.title}</div>
-                        <a
-                          href={receipts.source.task?.htmlUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-gray-500 hover:text-blue-500"
-                        >
-                          {receipts.source.task?._id}
-                        </a>
-                      </div>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {receipts.status == ReceiptStatus.CLAIMED || type !== 'period'
-                      ? `${receipts.detail.amount} ${receipts.detail.symbol}`
-                      : '***'}
-                  </TableCell>
-                  <TableCell>
-                    <RewardStatus
-                      status={receipts.status}
-                      isLogin={isLogin}
-                      onClaim={() => handleClaim(receipts)}
-                      isLoading={isClaiming(receipts._id)}
-                      receipt={receipts}
-                    />
-                  </TableCell>
-                </TableRow>
-              )
-            })}
-          </TableBody>
-        </Table>
-      ) : (
-        <LoadingCards />
-      )}
-
-      <PaginationFast page={page} totalPages={totalPages} onPageChange={setPage} />
-    </div>
-  )
-}
+import { usePendingClaimTasks } from '@/store/admin'
+import RewardsTable from './_components/RewardsTable'
 
 export default function MyRewards() {
   const [type, setType] = useState<'period' | 'task'>('period')
@@ -194,8 +27,6 @@ export default function MyRewards() {
   const location = useLocation()
   const [pendingClaimTasks, setPendingClaimTasks] = usePendingClaimTasks()
 
-  const currentTab = new URLSearchParams(location.search).get('type') || type
-
   const isLogin = !!address && !!github && !!chain
 
   useEffect(() => {
@@ -204,7 +35,7 @@ export default function MyRewards() {
       params.set('type', type)
       navigate(`?${params.toString()}`, { replace: true })
     }
-  }, [location.search, navigate])
+  }, [location.search, navigate, type])
 
   const handleTabChange = (tab: string) => {
     const params = new URLSearchParams(location.search)

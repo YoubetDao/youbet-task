@@ -20,22 +20,9 @@ import { useUsername } from '@/store'
 import { useAllowanceCheck } from '@/hooks/useAllowanceCheck'
 import { TaskRewardCell } from '@/components/task-reward-cell'
 import { usePendingGrantList } from '@/store/admin'
+import { statuses, valueToLabel } from './_constants/statuses'
 
-const statuses = (
-  Object.keys(PeriodControllerGetPeriodsRewardGrantedEnum) as Array<
-    keyof typeof PeriodControllerGetPeriodsRewardGrantedEnum
-  >
-).map((key) => ({
-  label: key,
-  value: PeriodControllerGetPeriodsRewardGrantedEnum[key],
-}))
-
-const valueToLabel = Object.entries(PeriodControllerGetPeriodsRewardGrantedEnum).reduce((acc, [key, value]) => {
-  acc[value] = key
-  return acc
-}, {} as Record<string, string>)
-
-function PeriodTable(): React.ReactElement {
+function PeriodAdmin(): React.ReactElement {
   const [page, setPage] = useState(1)
   const { switchChain } = useSwitchChain()
   const [urlParam] = useSearchParams('')
@@ -342,6 +329,4 @@ function PeriodTable(): React.ReactElement {
   )
 }
 
-export default function PeriodAdmin() {
-  return <PeriodTable />
-}
+export default PeriodAdmin
