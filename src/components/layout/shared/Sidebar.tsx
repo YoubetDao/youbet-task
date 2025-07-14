@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { getNavItems } from '@/constants/data'
+import { getNavItems } from '@/constants/navigation'
 import { Icons } from '@/components/icons'
 import { cn } from '@/lib/utils'
 import { ChevronDown, ChevronRight, Menu } from 'lucide-react'

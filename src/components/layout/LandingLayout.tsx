@@ -4,7 +4,6 @@ import { Github, Heart, Twitter } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { InteractiveHoverButton } from '../ui/interactive-hover-button'
-import { getNavItems } from '@/constants/data'
 
 const socialLinks = [
   {
@@ -88,7 +87,7 @@ const LandingLayout = ({ children }: PropsWithChildren) => {
           ))}
         </nav>
 
-        <Link className="flex items-center" to={getNavItems().find((item) => item.title === 'Login')!.href}>
+        <Link className="flex items-center" to="/login">
           <InteractiveHoverButton>Go to app</InteractiveHoverButton>
         </Link>
       </header>
