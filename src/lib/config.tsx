@@ -68,18 +68,4 @@ export const SOCIAL_LINKS = [
       </svg>
     ),
   },
-  {
-    name: 'gohacker.ai',
-    href: 'https://www.gohacker.ai/',
-    icon: (props: React.SVGProps<SVGSVGElement>) => (
-      <svg viewBox="0 0 169 165" fill="none" {...props}>
-        <path
-          d="M134.717 43.2002H105.017L113.717 30H61.2169L38.339 64.8936C29.2968 78.6846 36.9747 97.2523 53.1163 100.629L78.3165 105.9L57.0167 136.8L41.9738 133.076C4.63475 123.833 -12.0391 80.1896 9.62513 48.4043L42.6173 0H163.517L134.717 43.2002Z"
-          fill="currentColor"
-        />
-        <path d="M150 129.3H126L168.6 66.6V101.4L150 129.3Z" fill="currentColor" />
-        <path d="M83.1008 52.2L65.1008 79.5H106.801L49.8008 164.7H87.3008L162.601 52.2H83.1008Z" fill="currentColor" />
-      </svg>
-    ),
-  },
 ]
