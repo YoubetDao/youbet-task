@@ -36,12 +36,15 @@ export function RewardButton(props: IRewardButtonProps) {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="w-max-[300px] justify-start space-x-4 ">
+        <Button variant="outline" className="w-max-[300px] group justify-start space-x-4">
           <CirclePlus className="h-[12px]" /> {title}
           {rewardState.length > 0 ? (
             <>
               <Separator orientation="vertical" />
-              <div key={rewardState} className="w-[100px] rounded-lg border-2 border-solid border-muted bg-muted px-2">
+              <div
+                key={rewardState}
+                className="w-[100px] rounded-lg border-2 border-solid border-muted bg-muted px-2 group-hover:bg-muted-foreground/10"
+              >
                 {valueToLabel[rewardState]}
               </div>
             </>
