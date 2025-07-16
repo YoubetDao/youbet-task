@@ -84,7 +84,9 @@ const PeriodTable: React.FC<PeriodTableProps> = ({
       const period = periods?.data?.find((period) => period._id === periodId)
       return !period?.rewardGranted
     })
-    setPendingGrantPeriods(newList)
+    if (newList.length) {
+      setPendingGrantPeriods(newList)
+    }
   }, [pendingGrantPeriods, periods, setPendingGrantPeriods])
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

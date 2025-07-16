@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
 import { receiptApi } from '@/service'
 import { useQuery } from '@tanstack/react-query'
+import { PAGESIZE } from '@/constants/contracts/request'
 
 interface DrawerDetailProps {
   selectedPeriodId: string
@@ -15,7 +16,7 @@ interface DrawerDetailProps {
 
 const DrawerDetail: React.FC<DrawerDetailProps> = ({ selectedPeriodId, isDetailOpen, setIsDetailOpen }) => {
   const [receiptPage, setReceiptPage] = useState(1)
-  const receiptPageSize = 10
+  const receiptPageSize = PAGESIZE
   const { data: periodReceipts, isLoading: isDetailLoading } = useQuery({
     queryKey: ['periodReceipts', selectedPeriodId],
     queryFn: () => {
