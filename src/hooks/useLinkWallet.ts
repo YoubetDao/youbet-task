@@ -1,4 +1,4 @@
-import { useAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
 import { useAsyncEffect } from 'ahooks'
 import { useAccount } from 'wagmi'
 import { useState } from 'react'
@@ -17,7 +17,7 @@ export const useLinkWallet = (options: UseLinkWalletOptions = {}) => {
   const { enabled = true, additionalConditions = true } = options
 
   const [walletState] = useAtom(walletAtom)
-  const [, setWalletAddress] = useAtom(walletAction.changeLinkedAddress)
+  const setWalletAddress = useSetAtom(walletAction.changeLinkedAddress)
   const [username] = useUsername()
   const { address } = useAccount()
 
