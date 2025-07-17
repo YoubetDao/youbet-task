@@ -1,71 +1,206 @@
-import React from 'react'
-import { createBrowserRouter, RouteObject } from 'react-router-dom'
+import { createBrowserRouter } from 'react-router-dom'
 
-import { getNavItems } from '@/constants/data'
-import { Pages } from '@/router/pages'
-import { Layouts } from '@/router/layouts'
-import { Helmet } from 'react-helmet'
-import { usePageTracking } from '@/hooks/use-page-tracking'
-import { useTimeTracking } from '@/hooks/use-time-tracking'
-import { NavItem } from '@/types'
-import { BRAND_NAME } from '@/lib/config'
+// Wrappers
+import RootWrapper from '@/wrappers/RootWrapper'
+import AuthWrapper from '@/wrappers/AuthWrapper'
+import ErrorBoundary from '@/wrappers/ErrorBoundary'
 
-function PageTracker() {
-  usePageTracking()
-  useTimeTracking()
-  return null
-}
+// Pages
+import LandingPage from '@/pages/landing'
+import Dashboard from '@/pages/dashboard'
+import Project from '@/pages/project'
+import ProjectDetailPage from '@/pages/projectdetail'
+import MyTask from '@/pages/mytask'
+import Tasks from '@/pages/tasks'
+import TaskDetailPage from '@/pages/task-detail'
+import MyRewards from '@/pages/myrewards'
+import Login from '@/pages/login'
+import Callback from '@/pages/callback'
+import ProfilePage from '@/pages/profile'
+import TaskApplyAdmin from '@/pages/task-apply'
+import PeriodAdmin from '@/pages/period'
+import CompletedTaskAdmin from '@/pages/admin/completedTask'
+import ErrorPage from '@/pages/error'
 
-const getDefaultLayout = ({ children }: { children: React.ReactNode }) => children
+import BaseLayout from '@/components/layout/shared/BaseLayout'
 
-const createRouterObjects = (items: NavItem[]): RouteObject[] => {
-  const flattenRoutes: RouteObject[] = []
+export const router: ReturnType<typeof createBrowserRouter> = createBrowserRouter([
+  {
+    path: '/',
+    Component: RootWrapper,
+    ErrorBoundary: ErrorBoundary,
+    children: [
+      {
+        index: true,
+        Component: LandingPage,
+        loader: () => ({
+          title: 'Landing',
+          description: 'YouBet Task Platform',
+        }),
+      },
 
-  items.forEach((item) => {
-    const Page = Pages[item.component]
-    const Layout = item.layout ? Layouts[item.layout] : getDefaultLayout
+      {
+        path: 'login',
+        Component: Login,
+        loader: () => ({
+          title: 'Login',
+          description: 'Authentication forms built using the components.',
+        }),
+      },
+      {
+        path: 'auth/github/callback',
+        Component: Callback,
+        loader: () => ({
+          title: 'Callback',
+          description: 'Redirect route.',
+        }),
+      },
+      {
+        path: 'dashboard',
+        element: (
+          <BaseLayout>
+            <Dashboard />
+          </BaseLayout>
+        ),
+        loader: () => ({
+          title: 'Dashboard',
+        }),
+      },
 
-    const Component = () => (
-      <>
-        <Helmet>
-          <title>
-            {item.title} - {BRAND_NAME}
-          </title>
-          {item.description && <meta name="description" content={item.description} />}
-        </Helmet>
-        <Layout>
-          <Page />
-        </Layout>
-      </>
-    )
+      {
+        path: 'projects',
+        element: (
+          <BaseLayout>
+            <Project />
+          </BaseLayout>
+        ),
+        loader: () => ({
+          title: 'Projects',
+        }),
+      },
+      {
+        path: 'projects/:project',
+        element: (
+          <BaseLayout>
+            <ProjectDetailPage />
+          </BaseLayout>
+        ),
+        loader: () => ({
+          title: 'Project Detail',
+        }),
+      },
+      {
+        path: 'tasks',
+        element: (
+          <BaseLayout>
+            <Tasks />
+          </BaseLayout>
+        ),
+        loader: () => ({
+          title: 'Tasks',
+        }),
+      },
+      {
+        path: 'task/:githubId',
+        element: (
+          <BaseLayout>
+            <TaskDetailPage />
+          </BaseLayout>
+        ),
+        loader: () => ({
+          title: 'TaskDetail',
+          description: 'task detail.',
+        }),
+      },
+      {
+        path: 'mytasks',
+        element: (
+          <AuthWrapper requireAuth>
+            <BaseLayout>
+              <MyTask />
+            </BaseLayout>
+          </AuthWrapper>
+        ),
+        loader: () => ({
+          title: 'MyTasks',
+        }),
+      },
+      {
+        path: 'myrewards',
+        element: (
+          <AuthWrapper requireAuth>
+            <BaseLayout>
+              <MyRewards />
+            </BaseLayout>
+          </AuthWrapper>
+        ),
+        loader: () => ({
+          title: 'MyRewards',
+        }),
+      },
 
-    flattenRoutes.push({
-      path: item.href,
-      element: <Component />,
-    })
+      {
+        path: 'profile',
+        element: (
+          <AuthWrapper requireAuth>
+            <BaseLayout>
+              <ProfilePage />
+            </BaseLayout>
+          </AuthWrapper>
+        ),
+        loader: () => ({
+          title: 'Profile',
+        }),
+      },
+      {
+        path: 'admin/period',
+        element: (
+          <AuthWrapper requireAuth>
+            <BaseLayout>
+              <PeriodAdmin />
+            </BaseLayout>
+          </AuthWrapper>
+        ),
+        loader: () => ({
+          title: 'Period',
+        }),
+      },
 
-    if (item.children) {
-      flattenRoutes.push(...createRouterObjects(item.children))
-    }
-  })
+      {
+        path: 'admin/task-apply',
+        element: (
+          <AuthWrapper requireAuth>
+            <BaseLayout>
+              <TaskApplyAdmin />
+            </BaseLayout>
+          </AuthWrapper>
+        ),
+        loader: () => ({
+          title: 'Task Apply',
+        }),
+      },
+      {
+        path: 'admin/completed-task',
+        element: (
+          <AuthWrapper requireAuth>
+            <BaseLayout>
+              <CompletedTaskAdmin />
+            </BaseLayout>
+          </AuthWrapper>
+        ),
+        loader: () => ({
+          title: 'Completed Task',
+        }),
+      },
 
-  return flattenRoutes
-}
-
-export function createRouter(): ReturnType<typeof createBrowserRouter> {
-  const navItems = getNavItems()
-  const routeObjects = createRouterObjects(navItems)
-
-  const routeWrappers = routeObjects.map((router) => ({
-    ...router,
-    element: router.element ? (
-      <>
-        <PageTracker />
-        {router.element}
-      </>
-    ) : null,
-    ErrorBoundary: Pages.error,
-  }))
-
-  return createBrowserRouter(routeWrappers)
-}
+      // 404
+      {
+        path: '*',
+        element: <ErrorPage />,
+        loader: () => ({
+          title: 'Page Not Found',
+        }),
+      },
+    ],
+  },
+])

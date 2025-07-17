@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { RouterProvider } from 'react-router-dom'
-import { createRouter } from './router'
+import { router } from './router'
 import { RainbowKitProvider, getDefaultConfig } from '@rainbow-me/rainbowkit'
 import { WagmiProvider } from 'wagmi'
 import '@rainbow-me/rainbowkit/styles.css'
@@ -30,7 +30,7 @@ export default function App() {
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
           <RainbowKitProvider>
-            <RouterProvider router={createRouter()} />
+            <RouterProvider router={router} />
             <ReactQueryDevtools />
           </RainbowKitProvider>
         </QueryClientProvider>

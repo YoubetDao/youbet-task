@@ -4,7 +4,7 @@ import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useEffect } from 'react'
 import { BRAND_LOGO, BRAND_NAME } from '@/lib/config'
-import { getSafeHrefByTitle } from '@/constants/data'
+import { getSafeHrefByTitle } from '@/constants/navigation'
 import { useToken } from '@/store'
 
 export default function Login() {
