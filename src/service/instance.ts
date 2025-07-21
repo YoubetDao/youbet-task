@@ -2,7 +2,7 @@ import axios from 'axios'
 import qs from 'qs'
 import { getToken, updateToken, updateUsername } from '@/store'
 import { toast } from '@/components/ui/use-toast'
-import { getSafeHrefByTitle } from '@/constants/data'
+import { getSafeHrefByTitle } from '@/constants/navigation'
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
