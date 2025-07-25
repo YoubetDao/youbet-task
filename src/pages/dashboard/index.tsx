@@ -1,68 +1,16 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useEffect, useState } from 'react'
 import { userApi, taskApi, projectApi } from '@/service'
 import { TaskCompletionLeaderboard } from '@/components/task-completion-leaderboard'
-import { LucideUsers, LucidePackage, LucideListChecks, LucideCircleCheck, LucideStar } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Link } from 'react-router-dom'
+import { LucideUsers, LucidePackage, LucideListChecks, LucideCircleCheck } from 'lucide-react'
+import { useSearchParams } from 'react-router-dom'
 import { BRAND_NAME } from '@/lib/config'
 import { useUsername } from '@/store'
 import { Project, UserTaskCompletionDto } from '@/openapi/client'
-
-function StatsCard({ title, value, icon }: { title: string; value: number; icon: React.ReactNode }) {
-  return (
-    <Card className="relative bg-transparent">
-      <div className="absolute inset-0 bg-white/10 opacity-70" />
-      <div className="relative">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-sm font-medium">
-            {icon}
-            {title}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{value}</div>
-        </CardContent>
-      </div>
-    </Card>
-  )
-}
-
-function ProjectRecommendations({ projects }: { projects: Project[] }) {
-  return (
-    <Card className="w-full bg-transparent bg-gradient-to-r from-white/10 to-transparent">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <LucideStar className="h-6 w-6" />
-          <span className="font-american-captain translate-y-[3px]">Recommended Projects</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {projects.map((project, index) => (
-            <Link key={index} to={project.htmlUrl}>
-              <div className="mb-4 border-b pb-4">
-                <Button
-                  asChild
-                  variant="link"
-                  className="z-10 px-0 !text-lg font-semibold"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    window.open(project.htmlUrl, '_blank', 'noopener,noreferrer')
-                  }}
-                >
-                  <p>{project.name}</p>
-                </Button>
-                <p className="text-sm text-gray-400">{project.description}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  )
-}
+import BindModal from './_components/BindModal'
+import { useAccount } from 'wagmi'
+import { useMount } from 'ahooks'
+import StatsCard from './_components/StatsCard'
+import ProjectRecommendations from './_components/ProjectRecommendations'
 
 export default function Dashboard() {
   const [leaderboard, setLeaderboard] = useState<UserTaskCompletionDto[]>([])
@@ -71,6 +19,10 @@ export default function Dashboard() {
   const [projects, setProjects] = useState<Project[]>([])
   const [userCount, setUserCount] = useState<number>(0)
   const [username] = useUsername()
+  const { isConnected } = useAccount()
+  const [showModal, setShowModal] = useState<boolean>(false)
+
+  const [searchParams, setSearchParams] = useSearchParams()
 
   useEffect(() => {
     userApi
@@ -92,6 +44,29 @@ export default function Dashboard() {
       setProjects(res.data.data || [])
     })
   }, [])
+
+  useEffect(() => {
+    const isSuperfluid = sessionStorage.getItem('IS_SUPERFLUID')
+
+    console.log('isSuperfluid', isSuperfluid)
+
+    if (isSuperfluid && (!isConnected || !username)) {
+      setShowModal(true)
+    }
+  }, [isConnected, searchParams, username])
+
+  useMount(() => {
+    const isSuperfluid = searchParams.get('superfluid')
+
+    if (isSuperfluid) {
+      sessionStorage.setItem('IS_SUPERFLUID', 'true')
+
+      // 删除URL中的superfluid参数
+      const newSearchParams = new URLSearchParams(searchParams)
+      newSearchParams.delete('superfluid')
+      setSearchParams(newSearchParams, { replace: true })
+    }
+  })
 
   return (
     <div className="flex w-full flex-col gap-4 overflow-hidden">
@@ -115,6 +90,8 @@ export default function Dashboard() {
           <ProjectRecommendations projects={projects.slice(0, 5)} />
         </div>
       </div>
+
+      <BindModal open={showModal} onClose={() => setShowModal(false)} />
     </div>
   )
 }

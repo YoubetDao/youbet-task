@@ -1,4 +1,5 @@
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, useState, useEffect } from 'react'
+import { clsx } from 'clsx'
 import { Github, Heart, Twitter } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
@@ -39,12 +40,33 @@ const scrollToAnchor = (href: string) => {
 }
 
 const LandingLayout = ({ children }: PropsWithChildren) => {
+  const [showNavbar, setShowNavbar] = useState(true)
+  const [lastScrollY, setLastScrollY] = useState(0)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+
+      if (currentScrollY > lastScrollY && currentScrollY > 60) {
+        setShowNavbar(false)
+      } else {
+        setShowNavbar(true)
+      }
+
+      setLastScrollY(currentScrollY)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [lastScrollY])
+
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden">
       <header
-        className="max-w-lg:mr-auto fixed top-4 z-20 flex h-[60px] w-full max-w-[100vw] justify-between rounded-md bg-white px-[3%] 
-                    text-gray-700 shadow-md dark:bg-[#17181b] dark:text-gray-200 dark:shadow-gray-700 max-lg:top-0 lg:left-1/2 lg:max-w-5xl lg:-translate-x-1/2
-                    lg:px-4 lg:opacity-[0.99] lg:!backdrop-blur-lg"
+        className={clsx(
+          'fixed top-0 z-20 flex h-[60px] w-full justify-between bg-white px-[3%] text-gray-700 shadow-md transition-transform duration-300 dark:bg-[#17181b] dark:text-gray-200 dark:shadow-gray-700 lg:px-4 lg:opacity-[0.99] lg:!backdrop-blur-lg',
+          showNavbar ? 'translate-y-0' : '-translate-y-full',
+        )}
       >
         <div className="flex items-center space-x-6">
           <Link to="/" className="group flex items-center gap-2">

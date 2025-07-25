@@ -55,8 +55,8 @@ export const SOCIAL_LINKS = [
     ),
   },
   {
-    name: 'Website',
-    href: 'https://according.work/',
+    name: 'YoubetDao',
+    href: 'https://www.youbetdao.com/',
     icon: (props: React.SVGProps<SVGSVGElement>) => (
       <svg width="66" height="68" viewBox="0 0 66 68" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
         <path

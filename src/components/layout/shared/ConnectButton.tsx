@@ -1,21 +1,34 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { useUsername, walletAtom } from '@/store'
-import { useAccount, useSwitchChain } from 'wagmi'
+import { useSwitchChain } from 'wagmi'
 import { useEffect, useState } from 'react'
-import { youbetApi } from '@/service'
-import { currentChain, paymentChain, ZERO_ADDRESS } from '@/constants/data'
-import { useAtom } from 'jotai'
-import { useAsyncEffect } from 'ahooks'
+import { useSearchParams, useLocation } from 'react-router-dom'
+import { currentChain, paymentChain } from '@/constants/data'
+import { useLinkWallet } from '@/hooks/useLinkWallet'
 
-export const CustomConnectButton = () => {
-  const [github] = useUsername()
-  const { address } = useAccount()
+interface Props {
+  className?: string
+}
+
+export const CustomConnectButton = ({ className }: Props) => {
   const { switchChain } = useSwitchChain()
   const [isAdmin, setIsAdmin] = useState(false)
-  const [walletState] = useAtom(walletAtom)
+  const [searchParams] = useSearchParams()
+  const location = useLocation()
+
+  const isSuperfluidContext = () => {
+    // 检查URL参数或sessionStorage中的superfluid标记
+    const hasUrlParam = location.pathname.includes('/dashboard') && searchParams.get('superfluid') === 'true'
+    const hasSessionStorage = !!sessionStorage.getItem('IS_SUPERFLUID')
+    return hasUrlParam || (location.pathname.includes('/dashboard') && hasSessionStorage)
+  }
+
+  useLinkWallet({
+    enabled: !isAdmin && !isSuperfluidContext(),
+    additionalConditions: true,
+  })
 
   useEffect(() => {
-    const currentPath = window.location.pathname
+    const currentPath = location.pathname
 
     if (currentPath.includes('admin')) {
       setIsAdmin(true)
@@ -27,16 +40,9 @@ export const CustomConnectButton = () => {
       switchChain({ chainId: currentChain.id })
       setIsAdmin(false)
     }
-  }, [switchChain])
+  }, [switchChain, location.pathname])
 
-  useAsyncEffect(async () => {
-    const linkedAddress = walletState.linkedAddress
-    if (!github || isAdmin || linkedAddress === '') return
-    if (linkedAddress == ZERO_ADDRESS) {
-      if (!address) return
-      await youbetApi.youbetControllerLinkWallet({ address })
-    }
-  }, [address, github, walletState.linkedAddress])
+  // linkWallet 逻辑已由 useLinkWallet hook 处理
 
   return (
     <ConnectButton.Custom>
@@ -57,6 +63,7 @@ export const CustomConnectButton = () => {
                 userSelect: 'none',
               },
             })}
+            // className={className}
           >
             {(() => {
               if (!connected) {

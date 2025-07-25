@@ -1,1 +1,4 @@
 src/openapi/**
+dist/
+.claude/settings.local.json
+pnpm-lock.yaml
