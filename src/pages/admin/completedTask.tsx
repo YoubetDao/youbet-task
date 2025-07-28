@@ -169,6 +169,7 @@ function CompletedTaskTable(): React.ReactElement {
       </div>
       <div className="flex justify-end">
         <BatchGrantDialog
+          cleanPendingGrantTasks={() => setPendingGrantTasks([])}
           defaultRewardTasks={batchGrantTasks}
           rewardType="task"
           trigger={
