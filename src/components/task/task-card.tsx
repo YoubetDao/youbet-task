@@ -5,11 +5,11 @@ import { Link } from 'react-router-dom'
 import { Badge } from '@/components/ui/badge'
 import { MarkdownProcessor } from '@/lib/md-processor'
 import { Card, CardDescription, CardFooter, CardTitle } from '../ui/card'
-import { Task } from '@/openapi/client/models/task'
 import { Icons } from '../icons'
+import { TaskDto } from '@/openapi/client'
 
 interface ITaskItemProps {
-  item: Task
+  item: TaskDto
 }
 
 type TaskState = 'open' | 'closed' | 'assigned'

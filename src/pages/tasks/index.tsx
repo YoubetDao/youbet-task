@@ -1,12 +1,15 @@
 import { useState, useMemo } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Task } from '@/openapi/client/models/task'
 import { taskApi } from '@/service'
 import { useQuery } from '@tanstack/react-query'
 import PaginationFast from '@/components/pagination-fast'
 import { TaskCard } from '@/components/task/task-card'
 import { LoadingCards } from '@/components/loading-cards'
-import { TaskControllerGetTasksRewardClaimedEnum, TaskControllerGetTasksRewardGrantedEnum } from '@/openapi/client'
+import {
+  TaskControllerGetTasksRewardClaimedEnum,
+  TaskControllerGetTasksRewardGrantedEnum,
+  TaskDto,
+} from '@/openapi/client'
 import { SearchInput } from '@/components/search'
 import { STALETIME } from '@/constants/contracts/request'
 
@@ -86,7 +89,7 @@ export default function Tasks() {
   )
 }
 
-const renderTasks = (tasks: Task[]) => {
+const renderTasks = (tasks: TaskDto[]) => {
   return (
     <section className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3" aria-labelledby="tasks-heading">
       {tasks.map((item) => (
