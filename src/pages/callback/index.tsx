@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { authApi } from '@/service'
 import Loading from '@/components/loading'
-import { useToken, useUsername, useUserPermission } from '@/store'
+import { useAdminNamespace, useAdminProjects, useToken, useUsername, useUserPermission } from '@/store'
 import { UserPermission } from '@/types'
 
 const Callback = () => {
@@ -11,6 +11,8 @@ const Callback = () => {
   const [, setToken] = useToken()
   const [, setUsername] = useUsername()
   const [, setUserPermission] = useUserPermission()
+  const [, setAdminProjects] = useAdminProjects()
+  const [, setAdminNamespace] = useAdminNamespace()
 
   useEffect(() => {
     const code = searchParams.get('code')
@@ -22,6 +24,8 @@ const Callback = () => {
       const userInfo = await authApi.authControllerGithubAuthRedirect(code).then((res) => res.data)
       setToken(userInfo.jwt)
       setUsername(userInfo.username)
+      setAdminProjects(userInfo.adminProjects || [])
+      setAdminNamespace(userInfo.adminNamespaces || [])
 
       const getPermission = () => {
         const hasNamespaces = userInfo.adminNamespaces.length > 0
