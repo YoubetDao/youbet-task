@@ -11,6 +11,7 @@ import TaskApplyAdmin from '@/pages/task-apply'
 import PeriodAdmin from '@/pages/period'
 import MyRewards from '@/pages/myrewards'
 import CompletedTaskAdmin from '@/pages/admin/completedTask'
+import ExpenseAdmin from '@/pages/admin/expense'
 import LandingPage from '@/pages/landing'
 import ProjectDetailPage from '@/pages/projectdetail'
 
@@ -28,6 +29,7 @@ export const Pages = {
   error: ErrorPage,
   taskApplyAdmin: TaskApplyAdmin,
   completedTaskAdmin: CompletedTaskAdmin,
+  expenseAdmin: ExpenseAdmin,
   periodAdmin: PeriodAdmin,
   projectDetail: ProjectDetailPage,
 }

@@ -130,6 +130,14 @@ export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
           layout: 'dashboard',
           hideInMenu: userPermission !== UserPermission.TaskApplies && userPermission !== UserPermission.All,
         },
+        {
+          title: 'Expense Management',
+          href: '/admin/expense',
+          icon: 'circleDollarSignIcon',
+          component: 'expenseAdmin',
+          layout: 'dashboard',
+          hideInMenu: userPermission !== UserPermission.All,
+        },
       ],
     },
   ]
