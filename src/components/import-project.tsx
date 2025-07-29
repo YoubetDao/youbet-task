@@ -40,7 +40,7 @@ export default function ImportProject() {
     },
   })
 
-  const { mutateAsync: importProject, isLoading: isImportProjectLoading } = useMutation({
+  const { mutateAsync: importProject, isPending: isImportProjectLoading } = useMutation({
     mutationFn: (values: z.infer<typeof formSchema>) =>
       projectApi.projectControllerImportProjectForUser({
         org: values.org,

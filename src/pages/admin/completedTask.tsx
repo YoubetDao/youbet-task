@@ -51,24 +51,27 @@ function CompletedTaskTable(): React.ReactElement {
   const [userName] = useUsername()
   const [pendingGrantTasks, setPendingGrantTasks] = usePendingGrantList()
 
-  const { data: projects, isLoading: projectLoading } = useQuery(['projects', filterTags, urlParam], async () => {
-    return projectApi
-      .projectControllerGetProjects(
-        filterTags.join(','),
-        '',
-        'false',
-        urlParam.get('search') || '',
-        urlParam.get('sort') || '',
-        0,
-        1000,
-      )
-      .then((res) => res.data)
+  const { data: projects, isLoading: projectLoading } = useQuery({
+    queryKey: ['projects', filterTags, urlParam.toString()],
+    queryFn: async () => {
+      return projectApi
+        .projectControllerGetProjects(
+          filterTags.join(','),
+          '',
+          'false',
+          urlParam.get('search') || '',
+          urlParam.get('sort') || '',
+          0,
+          1000,
+        )
+        .then((res) => res.data)
+    },
   })
 
   const key = capitalizeFirstLetter(rewardState)
-  const { data: tasks, isLoading: isTasksLoading } = useQuery(
-    ['tasks', page, pageSize, projectId || '', rewardState],
-    () =>
+  const { data: tasks, isLoading: isTasksLoading } = useQuery({
+    queryKey: ['tasks', page, pageSize, projectId || '', rewardState],
+    queryFn: () =>
       taskApi
         .taskControllerGetTasks(
           projectId ?? '',
@@ -81,7 +84,7 @@ function CompletedTaskTable(): React.ReactElement {
           pageSize,
         )
         .then((res) => res.data),
-  )
+  })
 
   const handleSelectTask = (task: TaskDto) => {
     if (batchGrantTasks.some((t) => t.id === task._id)) {

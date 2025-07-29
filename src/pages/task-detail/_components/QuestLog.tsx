@@ -39,7 +39,7 @@ export default function QuestLog({ createUser }: { createUser: string }) {
     getTokenInfo()
   }, [])
 
-  const { mutateAsync: updateReward, isLoading } = useMutation({
+  const { mutateAsync: updateReward, isPending: isLoading } = useMutation({
     mutationFn: (displayAmount: number) =>
       taskApi.taskControllerUpdateTask(Number(githubId), {
         reward: {
