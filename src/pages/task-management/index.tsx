@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { PAGESIZE, STALETIME } from '@/constants/contracts/request'
 import { useQuery } from '@tanstack/react-query'
 import TaskMgtTable from './_components/TaskMgtTable'
+import TableFilter from './_components/TableFilter'
 
 export default function TaskManagement() {
   const [page, setPage] = useState(1)
@@ -35,6 +36,7 @@ export default function TaskManagement() {
 
   return (
     <div className="space-y-4">
+      <TableFilter />
       <TaskMgtTable tasks={tasks} page={page} totalPages={totalPages} setPage={setPage} />
     </div>
   )
