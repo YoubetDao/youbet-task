@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { projectApi, taskApi } from '@/service'
 import {
-  Task,
   PeriodControllerGetPeriodsRewardGrantedEnum,
   TaskControllerGetCompletedTasksRewardClaimedEnum,
+  TaskDto,
 } from '@/openapi/client'
 import { LoadingCards } from '@/components/loading-cards'
 import { useAccount, useSwitchChain } from 'wagmi'
@@ -83,7 +83,7 @@ function CompletedTaskTable(): React.ReactElement {
         .then((res) => res.data),
   )
 
-  const handleSelectTask = (task: Task) => {
+  const handleSelectTask = (task: TaskDto) => {
     if (batchGrantTasks.some((t) => t.id === task._id)) {
       setBatchGrantTasks((prev) => prev.filter((t) => t.id !== task._id))
     } else {

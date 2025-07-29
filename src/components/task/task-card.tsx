@@ -7,6 +7,7 @@ import { MarkdownProcessor } from '@/lib/md-processor'
 import { Card, CardDescription, CardFooter, CardTitle } from '../ui/card'
 import { Task } from '@/openapi/client/models/task'
 import { Icons } from '../icons'
+import { TaskDto } from '@/openapi/client'
 
 interface ITaskItemProps {
   item: Task
@@ -35,7 +36,7 @@ const TaskStateBadge = ({ state }: { state: 'assigned' | 'open' | 'closed' }) =>
   }
 }
 
-export const TaskCard = ({ item }: ITaskItemProps) => {
+export const TaskCard = ({ item }: { item: TaskDto }) => {
   let state: TaskState
 
   if (item.state === 'open') {
