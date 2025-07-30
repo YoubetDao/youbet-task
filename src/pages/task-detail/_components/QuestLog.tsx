@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
-import { CircleDollarSign, PencilLine } from 'lucide-react'
+import { CircleDollarSign } from 'lucide-react'
 import { useParams } from 'react-router-dom'
 import { taskApi } from '@/service'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -131,7 +131,8 @@ export default function QuestLog({ createUser }: { createUser: string }) {
                     <CircleDollarSign />
                     {formatAmount(task.reward?.amount, task.reward?.decimals || USDT_DECIMAL)}
                   </span>
-                  <Button
+                  {/* TODO */}
+                  {/* <Button
                     variant="ghost"
                     size="icon"
                     className="h-6 w-6"
@@ -142,7 +143,7 @@ export default function QuestLog({ createUser }: { createUser: string }) {
                     }}
                   >
                     <PencilLine className="h-4 w-4" />
-                  </Button>
+                  </Button> */}
                 </>
               )}
             </div>
