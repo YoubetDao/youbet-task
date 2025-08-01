@@ -3,19 +3,23 @@ import { TaskPriorityEnum } from '@/openapi/client'
 import { projectApi } from '@/service'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
 export default function TableFilter() {
   const [selectProjects, setSelectProjects] = useState<IData[]>([])
   const [selectAssignees, setSelectAssignees] = useState<IData[]>([])
   const [selectPriority, setSelectPriority] = useState<IData[]>([])
+  const [searchParams] = useSearchParams()
+  const projectsSearch = searchParams.get('ProjectsSearch') || ''
 
-  // paging request project list
-  const { data: projects, isLoading: projectLoading } = useQuery({
-    queryKey: ['projects'],
+  const { data: projects } = useQuery({
+    queryKey: ['projects', projectsSearch],
     queryFn: async () => {
-      return projectApi.projectControllerGetProjects('', '', 'false', '', '', 0, 1000).then((res) => res.data)
+      const res = await projectApi.projectControllerGetProjects('', '', 'false', projectsSearch, '', 0, 20)
+      return res.data
     },
   })
+
   const configs = [
     {
       title: 'Projects',
@@ -23,6 +27,7 @@ export default function TableFilter() {
       type: 'multi',
       get: selectProjects,
       set: setSelectProjects,
+      search: projectsSearch,
     },
     {
       title: 'Priority',
@@ -43,6 +48,7 @@ export default function TableFilter() {
       type: 'multi',
       get: selectPriority,
       set: setSelectPriority,
+      search: '',
     },
     {
       title: 'Assignees',
@@ -50,6 +56,7 @@ export default function TableFilter() {
       type: 'multi',
       get: selectAssignees,
       set: setSelectAssignees,
+      search: '',
     },
   ]
 

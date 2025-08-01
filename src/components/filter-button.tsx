@@ -13,7 +13,10 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Separator } from '@/components/ui/separator'
 import { Project } from '@/openapi/client'
+import { debounce } from 'lodash'
 import { CircleX, ListFilter } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 export interface IData {
   name: string
@@ -26,12 +29,33 @@ interface IConfigs {
   data: OptionList
   get: IData[]
   set: React.Dispatch<React.SetStateAction<IData[]>>
+  search: string | null
 }
 
-const CommandListComponent = ({ title, data, get, set }: IConfigs) => {
+const CommandListComponent = ({ title, data, get, set, search }: IConfigs) => {
+  const [inputValue, setInputValue] = useState<string>(search || '')
+  const navigate = useNavigate()
+  const debouncedNavigate = useMemo(
+    () =>
+      debounce((value: string) => {
+        const searchParams = new URLSearchParams(location.search)
+        searchParams.set(`${title}Search`, value)
+        navigate(`${location.pathname}?${searchParams.toString()}`)
+      }, 500),
+    [title],
+  )
+
+  useEffect(() => {
+    if (inputValue) {
+      debouncedNavigate(inputValue)
+    }
+    // 清理防抖定时器，避免内存泄露
+    return () => debouncedNavigate.cancel()
+  }, [inputValue, debouncedNavigate])
+
   return (
     <Command className="max-h-48 overflow-y-auto">
-      {data.length > 5 ? <CommandInput placeholder={`Search ${title}...`} /> : null}
+      <CommandInput placeholder={`Search ${title}...`} value={inputValue} onValueChange={setInputValue} />
       <CommandList>
         {data.map((x) => (
           <CommandItem
@@ -70,20 +94,20 @@ const CommandListComponent = ({ title, data, get, set }: IConfigs) => {
     </Command>
   )
 }
-const MutiDropdownMenuSub = ({ title, data, get, set }: IConfigs) => {
+const MutiDropdownMenuSub = ({ title, data, get, set, search }: IConfigs) => {
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger>{title}</DropdownMenuSubTrigger>
       <DropdownMenuPortal>
         <DropdownMenuSubContent>
-          <CommandListComponent title={title} data={data} get={get} set={set} />
+          <CommandListComponent title={title} data={data} get={get} set={set} search={search} />
         </DropdownMenuSubContent>
       </DropdownMenuPortal>
     </DropdownMenuSub>
   )
 }
 
-const DisplayButton = ({ title, data, get, set }: IConfigs) => {
+const DisplayButton = ({ title, data, get, set, search }: IConfigs) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -95,7 +119,7 @@ const DisplayButton = ({ title, data, get, set }: IConfigs) => {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0" side="bottom" align="start">
-        <CommandListComponent title={title} data={data} get={get} set={set} />
+        <CommandListComponent title={title} data={data} get={get} set={set} search={search} />
       </PopoverContent>
     </Popover>
   )
@@ -116,6 +140,7 @@ export default function FilterButton({ configs }: { configs: IConfigs[] }) {
             data={config.data ?? []}
             get={config.get}
             set={config.set}
+            search={config.search}
           />
         ) : null
       })}
@@ -134,6 +159,7 @@ export default function FilterButton({ configs }: { configs: IConfigs[] }) {
               data={config.data ?? []}
               get={config.get}
               set={config.set}
+              search={config.search}
             />
           ))}
         </DropdownMenuContent>
