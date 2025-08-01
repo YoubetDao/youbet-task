@@ -26,7 +26,7 @@ export default function TaskMgtTable({
             <TableHead className="text-gray-400">Due</TableHead>
             <TableHead className="text-gray-400">Priority</TableHead>
             <TableHead className="text-gray-400">Story Points</TableHead>
-            <TableHead className="text-gray-400">Projects</TableHead>
+            <TableHead className="text-gray-400">Project</TableHead>
             <TableHead className="text-gray-400">Assignees</TableHead>
           </TableRow>
         </TableHeader>
