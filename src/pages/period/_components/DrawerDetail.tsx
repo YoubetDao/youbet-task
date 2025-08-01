@@ -23,9 +23,6 @@ const DrawerDetail: React.FC<DrawerDetailProps> = ({ selectedPeriodId, isDetailO
       return receiptApi.receiptControllerGetReceiptsByPeriodId(selectedPeriodId, 0, 10).then((res) => res.data)
     },
     enabled: !!selectedPeriodId,
-    onError: (error) => {
-      console.error('Error fetching period details:', error)
-    },
   })
   const totalReceiptsPage = Math.ceil((periodReceipts?.pagination?.totalCount || 0) / receiptPageSize)
   return (

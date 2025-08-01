@@ -25,18 +25,21 @@ function PeriodAdmin(): React.ReactElement {
   const [rewardState, setRewardState] = useState<string>(PeriodControllerGetPeriodsRewardGrantedEnum.All)
   const [batchGrantPeriods, setBatchGrantPeriods] = useState<Array<RewardTask>>([])
 
-  const { data: projects, isLoading: projectLoading } = useQuery(['projects', filterTags, urlParam], async () => {
-    return projectApi
-      .projectControllerGetProjects(
-        filterTags.join(','),
-        '',
-        'true',
-        urlParam.get('search') || '',
-        urlParam.get('sort') || '',
-        0,
-        1000,
-      )
-      .then((res) => res.data)
+  const { data: projects, isLoading: projectLoading } = useQuery({
+    queryKey: ['projects', filterTags, urlParam.toString()],
+    queryFn: async () => {
+      return projectApi
+        .projectControllerGetProjects(
+          filterTags.join(','),
+          '',
+          'true',
+          urlParam.get('search') || '',
+          urlParam.get('sort') || '',
+          0,
+          1000,
+        )
+        .then((res) => res.data)
+    },
   })
 
   useEffect(() => {

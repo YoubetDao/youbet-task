@@ -37,7 +37,7 @@ const TaskAppliesTable = () => {
     },
     onSettled: (_, __, applyId) => {
       setLoadingStates((prev) => ({ ...prev, [applyId]: false }))
-      queryClient.invalidateQueries(['taskApplies'])
+      queryClient.invalidateQueries({ queryKey: ['taskApplies'] })
     },
   })
 
@@ -48,7 +48,7 @@ const TaskAppliesTable = () => {
     },
     onSettled: (_, __, applyId) => {
       setLoadingStates((prev) => ({ ...prev, [applyId]: false }))
-      queryClient.invalidateQueries(['taskApplies'])
+      queryClient.invalidateQueries({ queryKey: ['taskApplies'] })
     },
   })
 

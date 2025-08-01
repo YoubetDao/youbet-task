@@ -35,7 +35,7 @@ const TaskStateBadge = ({ state }: { state: 'assigned' | 'open' | 'closed' }) =>
   }
 }
 
-export const TaskCard = ({ item }: ITaskItemProps) => {
+export const TaskCard = ({ item }: { item: TaskDto }) => {
   let state: TaskState
 
   if (item.state === 'open') {

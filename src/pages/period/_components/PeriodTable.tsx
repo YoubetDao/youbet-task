@@ -46,9 +46,9 @@ const PeriodTable: React.FC<PeriodTableProps> = ({
   const [pendingGrantPeriods, setPendingGrantPeriods] = usePendingGrantList()
 
   const key = capitalizeFirstLetter(rewardState)
-  const { data: periods, isLoading: isPullRequestsLoading } = useQuery(
-    ['periods', page, pageSize, projectId ?? '', rewardState],
-    () =>
+  const { data: periods, isLoading: isPullRequestsLoading } = useQuery({
+    queryKey: ['periods', page, pageSize, projectId ?? '', rewardState],
+    queryFn: () =>
       periodApi
         .periodControllerGetPeriods(
           projectId ?? '',
@@ -58,7 +58,7 @@ const PeriodTable: React.FC<PeriodTableProps> = ({
           pageSize,
         )
         .then((res) => res.data),
-  )
+  })
 
   const totalPages = Math.ceil((periods?.pagination?.totalCount || 0) / pageSize)
 
