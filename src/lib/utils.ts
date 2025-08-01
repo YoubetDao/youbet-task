@@ -36,3 +36,12 @@ export const formatDate = (date?: string) => {
     minute: 'numeric',
   })
 }
+
+export const formatDateToDay = (date?: string) => {
+  if (!date) return ''
+  return new Date(date).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  })
+}
