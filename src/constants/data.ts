@@ -131,6 +131,14 @@ export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
           hideInMenu: userPermission !== UserPermission.TaskApplies && userPermission !== UserPermission.All,
         },
         {
+          title: 'Task Management',
+          href: '/admin/task-management',
+          icon: 'chartNoAxesCombined',
+          component: 'taskManagement',
+          layout: 'dashboard',
+          hideInMenu: userPermission !== UserPermission.TaskApplies && userPermission !== UserPermission.All,
+        },
+        {
           title: 'Expense Management',
           href: '/admin/expense',
           icon: 'circleDollarSignIcon',

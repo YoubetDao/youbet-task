@@ -14,6 +14,7 @@ import CompletedTaskAdmin from '@/pages/admin/completedTask'
 import ExpenseAdmin from '@/pages/admin/expense'
 import LandingPage from '@/pages/landing'
 import ProjectDetailPage from '@/pages/projectdetail'
+import TaskManagement from '@/pages/task-management'
 
 export const Pages = {
   landing: LandingPage,
@@ -32,4 +33,5 @@ export const Pages = {
   expenseAdmin: ExpenseAdmin,
   periodAdmin: PeriodAdmin,
   projectDetail: ProjectDetailPage,
+  taskManagement: TaskManagement,
 }
