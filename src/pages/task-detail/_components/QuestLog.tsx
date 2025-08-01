@@ -13,6 +13,7 @@ import { USDT_DECIMAL, USDT_SYMBOL } from '@/constants/contracts/usdt'
 import { useTask } from '../_hooks'
 import { formatAmount, parseAmount, renderLevel, renderPriority } from '../_constants'
 import ButtonGroup from './ButtonGroup'
+import { useAdminProjects } from '@/store'
 export default function QuestLog({ createUser }: { createUser: string }) {
   const { githubId = '' } = useParams()
   const { data: task } = useTask(githubId)
@@ -24,6 +25,7 @@ export default function QuestLog({ createUser }: { createUser: string }) {
     decimals: number
     tokenAddress: string
   }>()
+  const [adminProject] = useAdminProjects()
 
   useEffect(() => {
     const getTokenInfo = async () => {
@@ -133,6 +135,7 @@ export default function QuestLog({ createUser }: { createUser: string }) {
                     variant="ghost"
                     size="icon"
                     className="h-6 w-6"
+                    disabled={!adminProject?.includes(task.project as any)}
                     onClick={() => {
                       setRewardAmount(formatAmount(task.reward?.amount, tokenInfo?.decimals || USDT_DECIMAL).toString())
                       setIsEditing(true)
