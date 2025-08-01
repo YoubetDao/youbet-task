@@ -9,8 +9,12 @@ export default function TableFilter() {
   const [selectAssignees, setSelectAssignees] = useState<IData[]>([])
   const [selectPriority, setSelectPriority] = useState<IData[]>([])
 
-  const { data: projects, isLoading: projectLoading } = useQuery(['projects'], async () => {
-    return projectApi.projectControllerGetProjects('', '', 'false', '', '', 0, 1000).then((res) => res.data)
+  // paging request project list
+  const { data: projects, isLoading: projectLoading } = useQuery({
+    queryKey: ['projects'],
+    queryFn: async () => {
+      return projectApi.projectControllerGetProjects('', '', 'false', '', '', 0, 1000).then((res) => res.data)
+    },
   })
   const configs = [
     {

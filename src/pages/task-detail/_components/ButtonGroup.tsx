@@ -11,12 +11,12 @@ export default function ButtonGroup({ createUser, rewardAmount }: { createUser: 
   const { data: task } = useTask(githubId)
   const { data: myApplies = [], isLoading: isMyAppliesLoading } = useMyApplies(Number(githubId))
   const queryClient = useQueryClient()
-  const { mutateAsync: applyTaskAsync, isLoading: _isClaiming } = useMutation({
+  const { mutateAsync: applyTaskAsync, isPending: _isClaiming } = useMutation({
     mutationFn: (id: number) =>
       taskApplyApi.taskApplyControllerApplyTask({ taskGithubId: id, comment: 'I would like to claim this issue.' }),
   })
   const isClaiming = _isClaiming || isMyAppliesLoading
-  const { mutateAsync: withdrawApplyAsync, isLoading: _isWithdrawing } = useMutation({
+  const { mutateAsync: withdrawApplyAsync, isPending: _isWithdrawing } = useMutation({
     mutationFn: (id: string) => taskApplyApi.taskApplyControllerWithdrawApply(id),
   })
   const isWithdrawing = _isWithdrawing || isMyAppliesLoading

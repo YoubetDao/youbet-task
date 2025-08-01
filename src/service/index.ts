@@ -13,6 +13,7 @@ import {
   GithubApi,
   OrgApi,
   YoubetApi,
+  ERC20TransfersApi,
 } from '@/openapi/client'
 
 function createApi<T>(ApiClass: new (...args: any[]) => T): T {
@@ -30,3 +31,4 @@ export const rewardApi = createApi(RewardApi)
 export const githubApi = createApi(GithubApi)
 export const orgApi = createApi(OrgApi)
 export const youbetApi = createApi(YoubetApi)
+export const erc20TransfersApi = createApi(ERC20TransfersApi)
