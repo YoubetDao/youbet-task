@@ -11203,7 +11203,7 @@ snapshots:
 
   '@types/conventional-commits-parser@5.0.1':
     dependencies:
-      '@types/node': 18.19.118
+      '@types/node': 18.19.120
 
   '@types/d3-array@3.2.1': {}
 

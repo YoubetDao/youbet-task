@@ -49,8 +49,8 @@ export default function Header() {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuItem>Support</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate('/profile')}>My Profile</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => window.open('https://t.me/youbetdao', '_blank')}>Support</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
           </DropdownMenuContent>
