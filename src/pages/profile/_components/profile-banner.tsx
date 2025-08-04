@@ -42,7 +42,7 @@ export default function ProfileBanner({ profile }: { profile: Profile }) {
           </div>
         </div>
       </div>
-      <div className="mt-12 flex items-center justify-end px-10 pb-4 pt-4">
+      <div className="mt-12 flex items-center justify-end px-10 pb-4 sm:pt-20 lg:pt-4">
         <div className="flex gap-8 text-center">
           <div>
             <p className="text-2xl font-bold text-white">{profile?.projects || 100}</p>
