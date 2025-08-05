@@ -22,7 +22,7 @@ import PeriodAdmin from '@/pages/period'
 import CompletedTaskAdmin from '@/pages/admin/completedTask'
 import ErrorPage from '@/pages/error'
 
-import BaseLayout from '@/components/layout/shared/BaseLayout'
+import LayoutWrapper from '@/wrappers/LayoutWrapper'
 
 export const router: ReturnType<typeof createBrowserRouter> = createBrowserRouter([
   {
@@ -56,141 +56,95 @@ export const router: ReturnType<typeof createBrowserRouter> = createBrowserRoute
         }),
       },
       {
-        path: 'dashboard',
-        element: (
-          <BaseLayout>
-            <Dashboard />
-          </BaseLayout>
-        ),
-        loader: () => ({
-          title: 'Dashboard',
-        }),
-      },
-
-      {
-        path: 'projects',
-        element: (
-          <BaseLayout>
-            <Project />
-          </BaseLayout>
-        ),
-        loader: () => ({
-          title: 'Projects',
-        }),
-      },
-      {
-        path: 'projects/:project',
-        element: (
-          <BaseLayout>
-            <ProjectDetailPage />
-          </BaseLayout>
-        ),
-        loader: () => ({
-          title: 'Project Detail',
-        }),
-      },
-      {
-        path: 'tasks',
-        element: (
-          <BaseLayout>
-            <Tasks />
-          </BaseLayout>
-        ),
-        loader: () => ({
-          title: 'Tasks',
-        }),
+        element: <LayoutWrapper />,
+        children: [
+          {
+            path: 'dashboard',
+            Component: Dashboard,
+            loader: () => ({
+              title: 'Dashboard',
+            }),
+          },
+          {
+            path: 'projects',
+            Component: Project,
+            loader: () => ({
+              title: 'Projects',
+            }),
+          },
+          {
+            path: 'projects/:project',
+            Component: ProjectDetailPage,
+            loader: () => ({
+              title: 'Project Detail',
+            }),
+          },
+          {
+            path: 'tasks',
+            Component: Tasks,
+            loader: () => ({
+              title: 'Tasks',
+            }),
+          },
+          {
+            path: 'task/:githubId',
+            Component: TaskDetailPage,
+            loader: () => ({
+              title: 'TaskDetail',
+            }),
+          },
+        ],
       },
       {
-        path: 'task/:githubId',
-        element: (
-          <BaseLayout>
-            <TaskDetailPage />
-          </BaseLayout>
-        ),
-        loader: () => ({
-          title: 'TaskDetail',
-          description: 'task detail.',
-        }),
-      },
-      {
-        path: 'mytasks',
         element: (
           <AuthWrapper requireAuth>
-            <BaseLayout>
-              <MyTask />
-            </BaseLayout>
+            <LayoutWrapper />
           </AuthWrapper>
         ),
-        loader: () => ({
-          title: 'MyTasks',
-        }),
-      },
-      {
-        path: 'myrewards',
-        element: (
-          <AuthWrapper requireAuth>
-            <BaseLayout>
-              <MyRewards />
-            </BaseLayout>
-          </AuthWrapper>
-        ),
-        loader: () => ({
-          title: 'MyRewards',
-        }),
-      },
-
-      {
-        path: 'profile',
-        element: (
-          <AuthWrapper requireAuth>
-            <BaseLayout>
-              <ProfilePage />
-            </BaseLayout>
-          </AuthWrapper>
-        ),
-        loader: () => ({
-          title: 'Profile',
-        }),
-      },
-      {
-        path: 'admin/period',
-        element: (
-          <AuthWrapper requireAuth>
-            <BaseLayout>
-              <PeriodAdmin />
-            </BaseLayout>
-          </AuthWrapper>
-        ),
-        loader: () => ({
-          title: 'Period',
-        }),
-      },
-
-      {
-        path: 'admin/task-apply',
-        element: (
-          <AuthWrapper requireAuth>
-            <BaseLayout>
-              <TaskApplyAdmin />
-            </BaseLayout>
-          </AuthWrapper>
-        ),
-        loader: () => ({
-          title: 'Task Apply',
-        }),
-      },
-      {
-        path: 'admin/completed-task',
-        element: (
-          <AuthWrapper requireAuth>
-            <BaseLayout>
-              <CompletedTaskAdmin />
-            </BaseLayout>
-          </AuthWrapper>
-        ),
-        loader: () => ({
-          title: 'Completed Task',
-        }),
+        children: [
+          {
+            path: 'mytasks',
+            element: <MyTask />,
+            loader: () => ({
+              title: 'MyTasks',
+            }),
+          },
+          {
+            path: 'myrewards',
+            element: <MyRewards />,
+            loader: () => ({
+              title: 'MyRewards',
+            }),
+          },
+          {
+            path: 'profile',
+            element: <ProfilePage />,
+            loader: () => ({
+              title: 'Profile',
+            }),
+          },
+          {
+            path: 'admin/period',
+            element: <PeriodAdmin />,
+            loader: () => ({
+              title: 'Period',
+            }),
+          },
+          {
+            path: 'admin/task-apply',
+            element: <TaskApplyAdmin />,
+            loader: () => ({
+              title: 'Task Apply',
+            }),
+          },
+          {
+            path: 'admin/completed-task',
+            element: <CompletedTaskAdmin />,
+            loader: () => ({
+              title: 'Completed Task',
+            }),
+          },
+        ],
       },
 
       // 404

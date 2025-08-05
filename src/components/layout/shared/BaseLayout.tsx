@@ -5,17 +5,17 @@ import Sidebar from './Sidebar'
 import Title from './Title'
 import { useInitState } from '../hooks/useInitState'
 import { Helmet } from 'react-helmet'
-import { useLoaderData } from 'react-router-dom'
 import { BRAND_NAME } from '@/lib/config'
 
 interface IBaseLayout {
   children: React.ReactNode
   mode?: 'default'
+  title?: string
+  description?: string
 }
 
-export default function BaseLayout({ children, mode = 'default' }: IBaseLayout) {
+export default function BaseLayout({ children, mode = 'default', title, description }: IBaseLayout) {
   useInitState()
-  const { title, description } = useLoaderData() as { title: string; description: string }
   return (
     <>
       <Helmet>
