@@ -6,6 +6,11 @@ import { store } from '..'
 const tokenAtom = atomWithStorage<string | null>('APP_TOKEN', null)
 const usernameAtom = atomWithStorage<string | null>('APP_USERNAME', null)
 const userPermissionAtom = atomWithStorage<UserPermission | null>('APP_IS_ADMIN', null)
+const adminProjects = atomWithStorage<string[] | null>('ADMIN_PROJECTS', null)
+const adminNamespace = atomWithStorage<string[] | null>('ADMIN_NAMESPACE', null)
+
+export const useAdminProjects = () => useAtom(adminProjects)
+export const useAdminNamespace = () => useAtom(adminNamespace)
 
 export const useToken = () => useAtom(tokenAtom)
 export const useUsername = () => useAtom(usernameAtom)
