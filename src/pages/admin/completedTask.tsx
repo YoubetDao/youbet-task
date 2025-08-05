@@ -3,6 +3,7 @@ import { projectApi, taskApi } from '@/service'
 import {
   PeriodControllerGetPeriodsRewardGrantedEnum,
   TaskControllerGetCompletedTasksRewardClaimedEnum,
+  TaskControllerGetTasksNoGrantNeededEnum,
   TaskDto,
 } from '@/openapi/client'
 import { LoadingCards } from '@/components/loading-cards'
@@ -76,10 +77,12 @@ function CompletedTaskTable(): React.ReactElement {
         .taskControllerGetTasks(
           projectId ?? '',
           '',
-          'closed',
           '',
+          'closed',
+          'all',
           PeriodControllerGetPeriodsRewardGrantedEnum[key as keyof typeof PeriodControllerGetPeriodsRewardGrantedEnum],
           TaskControllerGetCompletedTasksRewardClaimedEnum.All,
+          TaskControllerGetTasksNoGrantNeededEnum.GrantNeeded,
           (page - 1) * pageSize,
           pageSize,
         )
@@ -107,7 +110,7 @@ function CompletedTaskTable(): React.ReactElement {
   const handleAllSelectTask = (checked: boolean) => {
     if (checked) {
       const taskUngrantedOrUnclaimed = (tasks?.data || [])
-        .filter((x) => !x.rewardGranted || !x.rewardClaimed)
+        .filter((x) => !x.rewardGranted && !x.rewardClaimed && !x.noGrantNeeded)
         .map((x) => {
           return {
             taskTitle: x.title,
@@ -121,6 +124,18 @@ function CompletedTaskTable(): React.ReactElement {
       setBatchGrantTasks(taskUngrantedOrUnclaimed)
     } else {
       setBatchGrantTasks([])
+    }
+  }
+
+  const handleMarkAsNoGrantNeeded = async (githubId: number) => {
+    try {
+      console.log('Marking task as no grant needed:', githubId)
+      await taskApi.taskControllerMarkTaskAsNoGrantNeeded(githubId)
+      console.log('Successfully marked task as no grant needed')
+      // Refresh the tasks data after marking
+      window.location.reload()
+    } catch (error) {
+      console.error('Failed to mark task as no grant needed:', error)
     }
   }
 
@@ -196,6 +211,7 @@ function CompletedTaskTable(): React.ReactElement {
               <TableHead className="text-gray-400">Completed At</TableHead>
               <TableHead className="text-gray-400">Assignee</TableHead>
               <TableHead className="text-gray-400">Reward</TableHead>
+              <TableHead className="text-gray-400">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -203,7 +219,7 @@ function CompletedTaskTable(): React.ReactElement {
               <TableRow key={task._id}>
                 <TableCell>
                   <Checkbox
-                    disabled={task.rewardClaimed || task.rewardGranted}
+                    disabled={task.rewardClaimed || task.rewardGranted || task.noGrantNeeded}
                     checked={batchGrantTasks.some((t) => t.id === task._id)}
                     onCheckedChange={() => handleSelectTask(task)}
                   />
@@ -263,6 +279,21 @@ function CompletedTaskTable(): React.ReactElement {
                     approveAllowance={approveAllowance}
                     sourceType="task"
                   />
+                </TableCell>
+                <TableCell>
+                  {task.noGrantNeeded ? (
+                    <span className="text-xs text-gray-500">No Grant Needed</span>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-xs"
+                      onClick={() => handleMarkAsNoGrantNeeded(task.githubId)}
+                      disabled={task.rewardGranted || task.rewardClaimed || task.noGrantNeeded}
+                    >
+                      No Grant
+                    </Button>
+                  )}
                 </TableCell>
               </TableRow>
             ))}
