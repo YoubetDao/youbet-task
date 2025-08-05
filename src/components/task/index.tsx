@@ -8,7 +8,12 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { taskApi } from '@/service'
 import { TaskState } from '@/types'
-import { TaskControllerGetTasksRewardClaimedEnum, TaskControllerGetTasksRewardGrantedEnum } from '@/openapi/client/api'
+import {
+  TaskControllerGetTasksAssignmentStatusEnum,
+  TaskControllerGetTasksNoGrantNeededEnum,
+  TaskControllerGetTasksRewardClaimedEnum,
+  TaskControllerGetTasksRewardGrantedEnum,
+} from '@/openapi/client/api'
 import { STALETIME } from '@/constants/contracts/request'
 
 // TODO: should separate this in another way since project task and my task have different filter
@@ -44,10 +49,12 @@ export const TaskCatalog = ({ project }: ITaskCatalog) => {
         .taskControllerGetTasks(
           project || '',
           '',
+          '',
           selectedCategory !== 'all' ? [selectedCategory as TaskState].join(',') : [].join(','),
-          selectedAssignment !== 'all' ? selectedAssignment : '',
+          selectedAssignment !== 'all' ? (selectedAssignment as TaskControllerGetTasksAssignmentStatusEnum) : 'all',
           TaskControllerGetTasksRewardGrantedEnum.All,
           TaskControllerGetTasksRewardClaimedEnum.All,
+          TaskControllerGetTasksNoGrantNeededEnum.All,
           (page - 1) * pageSize,
           pageSize,
         )
