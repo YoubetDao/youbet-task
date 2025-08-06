@@ -16,7 +16,7 @@ import {
   CalendarRange,
   LayoutListIcon,
   CircleDollarSignIcon,
-  ChartNoAxesCombined,
+  TrendingUp,
 } from 'lucide-react'
 
 export const Icons = {
@@ -36,7 +36,7 @@ export const Icons = {
   gitPullRequest: GitPullRequest,
   layoutListIcon: LayoutListIcon,
   circleDollarSignIcon: CircleDollarSignIcon,
-  chartNoAxesCombined: ChartNoAxesCombined,
+  chartNoAxesCombined: TrendingUp,
   github: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"
