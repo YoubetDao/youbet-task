@@ -1,6 +1,7 @@
 import { ethers } from 'ethers'
 
 export class Distributor {
+  private static instance: Distributor | null = null
   private distributorAddress: string
 
   // Contract ABIs
@@ -21,8 +22,22 @@ export class Distributor {
     'function decimals() external view returns (uint8)',
   ]
 
-  constructor(distributorAddress: string) {
+  private constructor(distributorAddress: string) {
     this.distributorAddress = distributorAddress
+  }
+
+  static getInstance(address?: string): Distributor {
+    console.log('contractAddress', address)
+    if (!Distributor.instance || address !== Distributor.instance.distributorAddress) {
+      const contractAddress =
+        address || import.meta.env.VITE_DISTRIBUTOR_ADDRESS || '0xBE639b42A3818875D59992d80F18280387cFB412'
+      Distributor.instance = new Distributor(contractAddress)
+    }
+    return Distributor.instance
+  }
+
+  static resetInstance(): void {
+    Distributor.instance = null
   }
 
   async getDistributorContract() {
@@ -72,14 +87,21 @@ export class Distributor {
   }
 
   async createRedPacket(uuid: string, githubIds: string[], amounts: bigint[], creatorId: string, sourceType: string) {
-    const contract = await this.getDistributorContract()
-    const tx = await contract.createRedPacket(uuid, githubIds, amounts, creatorId, sourceType)
-    return await tx.wait()
+    try {
+      const contract = await this.getDistributorContract()
+      console.log('contract >>>>', contract)
+
+      const tx = await contract.createRedPacket(uuid, githubIds, amounts, creatorId, sourceType)
+      return await tx.wait()
+    } catch (error) {
+      console.log('createRedPacket', error)
+    }
   }
 
   async claimRedPacket(uuid: string, githubId: string, signature: string) {
     const contract = await this.getDistributorContract()
     const tx = await contract.claimRedPacket(uuid, githubId, signature)
+
     return await tx.wait()
   }
 
@@ -116,7 +138,14 @@ export class Distributor {
   }
 
   private async getReadOnlyProvider() {
-    return new ethers.JsonRpcProvider(import.meta.env.VITE_DISTRIBUTOR_RPC_URL || 'https://sepolia.optimism.io')
+    const provider = new ethers.BrowserProvider(window.ethereum)
+    const network = await provider.getNetwork()
+
+    const rpcUrl = network.name.includes('op') ? import.meta.env.VITE_OP_RPC_URL : import.meta.env.VITE_BSC_RPC_URL
+
+    console.log('rpcUrl >>>>', rpcUrl)
+
+    return new ethers.JsonRpcProvider(rpcUrl)
   }
 
   private async getReadOnlyDistributorContract() {
@@ -132,8 +161,13 @@ export class Distributor {
   }
 }
 
-const distributorAddress = import.meta.env.VITE_DISTRIBUTOR_ADDRESS || '0xBE639b42A3818875D59992d80F18280387cFB412'
+export const getDistributor = async () => {
+  const provider = new ethers.BrowserProvider(window.ethereum)
+  const network = await provider.getNetwork()
 
-const distributor = new Distributor(distributorAddress)
+  const contractAddress = network.name.includes('op')
+    ? import.meta.env.VITE_OP_CONTRACT_ADDRESS
+    : import.meta.env.VITE_BSC_CONTRACT_ADDRESS
 
-export { distributor }
+  return Distributor.getInstance(contractAddress)
+}

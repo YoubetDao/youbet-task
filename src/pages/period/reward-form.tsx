@@ -12,14 +12,14 @@ import { DialogContent, DialogFooter, DialogTitle, DialogTrigger } from '@/compo
 import { Dialog } from '@radix-ui/react-dialog'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
-import { paymentChain } from '@/constants/data'
-import { distributor } from '@/constants/distributor'
+import { getDistributor } from '@/constants/distributor'
 
 import _ from 'lodash'
 import { useDistributorToken } from '@/hooks/useDistributorToken'
 import { useQueryClient } from '@tanstack/react-query'
 import { GithubUser } from '@/openapi/client'
 import { usePendingGrantList } from '@/store/admin'
+import { DEFAULT_CHAIN, SUPPORTED_CHAINS } from '@/constants/chain'
 
 function randomDistribute(amount: number, people: number): number[] {
   const points = _.sortBy(_.times(people - 1, () => Math.random()))
@@ -76,7 +76,6 @@ export const RewardDialogForm = ({
   const [loading, setLoading] = useState(false)
   const [isOpen, setOpen] = useState(false)
   const { switchChain } = useSwitchChain()
-  const chains = [paymentChain]
   const [amounts, setAmounts] = useState<number[]>(Array(users.length).fill(0.0))
   const { symbol, decimals } = useDistributorToken()
   const queryClient = useQueryClient()
@@ -98,7 +97,7 @@ export const RewardDialogForm = ({
 
   const onOpenChange = async (isOpen: boolean) => {
     if (!isOpen) {
-      switchChain({ chainId: paymentChain.id })
+      switchChain({ chainId: DEFAULT_CHAIN.id })
     }
 
     setOpen(isOpen)
@@ -110,6 +109,8 @@ export const RewardDialogForm = ({
       // TODO: some github name is login, some is username in backend
       const githubIds = users.map((user) => user.login)
       const amountsInWei = amounts.map((amount) => BigInt(Math.floor(amount * 10 ** Number(decimals))))
+
+      const distributor = await getDistributor()
 
       const totalAmount = amountsInWei.reduce((a, b) => a + b, 0n)
       const currentAllowance = await distributor.getAllowance(addressFrom)
@@ -244,7 +245,7 @@ export const RewardDialogForm = ({
                         <SelectValue placeholder="Select a Chain used for transfer" />
                       </SelectTrigger>
                       <SelectContent>
-                        {chains.map((chain: Chain) => {
+                        {SUPPORTED_CHAINS.map((chain: Chain) => {
                           return (
                             <SelectItem key={chain.id} value={`${chain.id}`}>
                               {chain.name}

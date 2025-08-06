@@ -2,12 +2,15 @@ import { useCallback, useState } from 'react'
 import { ReceiptDto } from '@/openapi/client'
 import { usePendingClaimTasks } from '@/store/admin'
 import { rewardApi } from '@/service'
-import { distributor } from '@/constants/distributor'
 import { toast } from '@/components/ui/use-toast'
+import { getDistributor } from '@/constants/distributor'
+import { useAccount, useSwitchChain } from 'wagmi'
 
 const useClaimReward = (github: string | null, queryClient: any) => {
   const [claimingId, setClaimingId] = useState<string | null>(null)
   const [pendingClaimTasks, setPendingClaimTasks] = usePendingClaimTasks()
+  const { chain } = useAccount()
+  const { switchChain } = useSwitchChain()
 
   const handleClaim = useCallback(
     async (receipt: ReceiptDto) => {
@@ -15,8 +18,13 @@ const useClaimReward = (github: string | null, queryClient: any) => {
       const sourceId = receipt.source.period?._id || receipt.source.task?._id
       if (!sourceId) return
 
+      if (chain?.id !== receipt.detail?.chainId) {
+        switchChain({ chainId: receipt.detail?.chainId })
+      }
+
       setClaimingId(receipt._id)
       try {
+        const distributor = await getDistributor()
         const signature = await rewardApi.rewardControllerGetRewardSignature(sourceId)
         await distributor.claimRedPacket(sourceId, github, signature.data.signature)
         await queryClient.invalidateQueries({ queryKey: ['receipts'] })

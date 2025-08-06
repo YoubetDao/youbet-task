@@ -4,7 +4,6 @@ import { ReceiptStatus } from '@/types'
 import { useAccount } from 'wagmi'
 import { useQueryClient } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
-import { distributor } from '@/constants/distributor'
 import { useToast } from '@/components/ui/use-toast'
 import { useUsername } from '@/store'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -13,6 +12,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { ReceiptDto } from '@/openapi/client'
 import { usePendingClaimTasks } from '@/store/admin'
 import RewardsTable from './_components/RewardsTable'
+import { getDistributor } from '@/constants/distributor'
 
 export default function MyRewards() {
   const [type, setType] = useState<'period' | 'task'>('period')
@@ -60,7 +60,7 @@ export default function MyRewards() {
           }
         }),
       )
-
+      const distributor = await getDistributor()
       // Call batch claim contract
       await distributor.batchClaimRedPacket(batch)
 

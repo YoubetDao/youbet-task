@@ -7,6 +7,7 @@ import { usePendingClaimTasks } from '@/store/admin'
 import { STALETIME } from '@/constants/contracts/request'
 import { receiptApi } from '@/service'
 import { ReceiptStatus } from '@/types'
+import { getChainNameByChainId } from '@/constants/data'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Checkbox } from '@/components/ui/checkbox'
 import { formatDate } from '@/lib/utils'
@@ -71,6 +72,7 @@ function RewardsTable({
                 <TableHead className="text-gray-400">Task</TableHead>
               )}
               <TableHead className="text-gray-400">Amount</TableHead>
+              <TableHead className="text-gray-400">Chain</TableHead>
               <TableHead className="text-gray-400">Reward</TableHead>
             </TableRow>
           </TableHeader>
@@ -114,6 +116,7 @@ function RewardsTable({
                         ? `${receipts.detail.amount} ${receipts.detail.symbol}`
                         : '***'}
                     </TableCell>
+                    <TableCell>{getChainNameByChainId(receipts?.detail?.chainId)}</TableCell>
                     <TableCell>
                       <RewardStatus
                         status={receipts.status}

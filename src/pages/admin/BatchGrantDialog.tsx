@@ -2,16 +2,16 @@ import { Dialog, DialogContent, DialogFooter, DialogTitle, DialogTrigger } from 
 import { useEffect, useState } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useAccount, useSwitchChain } from 'wagmi'
-import { paymentChain } from '@/constants/data'
 import { Chain } from 'viem'
 import { useDistributorToken } from '@/hooks/useDistributorToken'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { GithubUser } from '@/openapi/client/models'
-import { distributor } from '@/constants/distributor'
+import { getDistributor } from '@/constants/distributor'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from '@/components/ui/use-toast'
 import { usePendingGrantList } from '@/store/admin'
+import { SUPPORTED_CHAINS } from '@/constants/chain'
 
 export interface RewardTask {
   users: GithubUser
@@ -38,19 +38,18 @@ export const BatchGrantDialog = ({ defaultRewardTasks, rewardType, trigger }: Pr
   const queryClient = useQueryClient()
   const [pendingGrantTasks, setPendingGrantTasks] = usePendingGrantList()
 
-  const chains = [paymentChain]
-
   //Submit batch grant
   const handleSubmit = async () => {
     if (loading) return
     try {
       setLoading(true)
-      switchChain({ chainId: paymentChain.id }) //TODO: switch chain
 
       const totalAmount = rewardTasks.reduce(
         (acc, task) => acc + BigInt(Math.floor(task.amount * 10 ** Number(decimals))),
         0n,
       )
+
+      const distributor = await getDistributor()
 
       const currentAllowance = await distributor.getAllowance(address!)
       const [, tokenDecimals] = await distributor.getTokenSymbolAndDecimals()
@@ -133,7 +132,7 @@ export const BatchGrantDialog = ({ defaultRewardTasks, rewardType, trigger }: Pr
                 <SelectValue placeholder="Select a Chain used for transfer" />
               </SelectTrigger>
               <SelectContent>
-                {chains.map((chain: Chain) => {
+                {SUPPORTED_CHAINS.map((chain: Chain) => {
                   return (
                     <SelectItem key={chain.id} value={`${chain.id}`}>
                       {chain.name}

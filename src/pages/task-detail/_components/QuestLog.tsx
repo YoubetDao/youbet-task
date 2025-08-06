@@ -8,11 +8,11 @@ import { taskApi } from '@/service'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Input } from '@/components/ui/input'
 import { useState, useEffect } from 'react'
-import { distributor } from '@/constants/distributor'
 import { USDT_DECIMAL, USDT_SYMBOL } from '@/constants/contracts/usdt'
 import { useTask } from '../_hooks'
 import { formatAmount, parseAmount, renderLevel, renderPriority } from '../_constants'
 import ButtonGroup from './ButtonGroup'
+import { getDistributor } from '@/constants/distributor'
 export default function QuestLog({ createUser }: { createUser: string }) {
   const { githubId = '' } = useParams()
   const { data: task } = useTask(githubId)
@@ -27,6 +27,7 @@ export default function QuestLog({ createUser }: { createUser: string }) {
 
   useEffect(() => {
     const getTokenInfo = async () => {
+      const distributor = await getDistributor()
       const [symbol, decimals] = await distributor.getTokenSymbolAndDecimals()
       const tokenAddress = await distributor.getTokenAddress()
       setTokenInfo({

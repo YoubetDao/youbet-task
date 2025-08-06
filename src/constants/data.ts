@@ -406,6 +406,26 @@ const getChainOptions = (): SdkCtorOptions => {
 
 // TODO: should support multiple chains and configured by the user
 export const currentChain = getCurrentChain()
+
+// get chain name by chainId
+export const getChainNameByChainId = (chainId: number): string => {
+  // First check in SUPPORTED_CHAINS
+  for (const [key, chain] of Object.entries(SUPPORTED_CHAINS)) {
+    if (chain.id === chainId) {
+      return chain.name
+    }
+  }
+
+  // Then check in CHAIN_OPTIONS for custom chain names
+  for (const [key, options] of Object.entries(CHAIN_OPTIONS)) {
+    if (options.networkOptions.chainId === chainId) {
+      return options.chainName || ''
+    }
+  }
+
+  // If not found, return the chainId as string
+  return `Chain ${chainId}`
+}
 // TODO: for openbuild payment - currently only polygon is supported
 export const paymentChain = getPaymentChain()
 export const currentChainOptions = getChainOptions()

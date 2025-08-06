@@ -1,7 +1,5 @@
-import { distributor } from '@/constants/distributor'
-
+import { getDistributor } from '@/constants/distributor'
 import { useEffect, useState } from 'react'
-
 interface TokenInfo {
   symbol: string
   decimals: number
@@ -19,8 +17,11 @@ export function useDistributorToken() {
 
   useEffect(() => {
     const getTokenInfo = async () => {
+      const distributor = await getDistributor()
+
       try {
         const [symbol, decimals] = await distributor.getTokenSymbolAndDecimals()
+        console.log('symbol', symbol)
         setTokenInfo({
           symbol,
           decimals,

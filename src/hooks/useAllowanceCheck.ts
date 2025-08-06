@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
-import { distributor } from '@/constants/distributor'
 import { useDistributorToken } from './useDistributorToken'
 import { useToast } from '@/components/ui/use-toast'
+import { getDistributor } from '@/constants/distributor'
 
 const APPROVE_MULTIPLIER = 10
 
@@ -23,6 +23,7 @@ export function useAllowanceCheck(options: UseAllowanceCheckOptions = {}) {
   const checkAllowance = useCallback(async () => {
     if (address && !tokenError && !tokenLoading) {
       try {
+        const distributor = await getDistributor()
         const allowance = await distributor.getAllowance(address)
         setHasAllowance(allowance >= MIN_ALLOWANCE)
       } catch (error) {
@@ -47,6 +48,7 @@ export function useAllowanceCheck(options: UseAllowanceCheckOptions = {}) {
 
   const approveAllowance = useCallback(async () => {
     try {
+      const distributor = await getDistributor()
       await distributor.approveAllowance(MIN_ALLOWANCE * BigInt(APPROVE_MULTIPLIER))
       await checkAllowance()
     } catch (error) {
