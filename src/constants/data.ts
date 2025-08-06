@@ -1,4 +1,3 @@
-import { getAppearances } from '@/lib/appearances'
 import { NavItem } from '@/types'
 import { SdkCtorOptions, SDK } from 'youbet-sdk'
 import {
@@ -10,11 +9,8 @@ import {
   mantleSepoliaTestnet,
   baseSepolia,
 } from 'viem/chains'
-import { UserPermission } from '@/store'
 
-export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
-  const appearances = getAppearances()
-
+export const getNavItems = (isAdminProjects?: boolean, isAdminNamespace?: boolean): NavItem[] => {
   const navItems: NavItem[] = [
     {
       title: 'Landing',
@@ -104,7 +100,7 @@ export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
       icon: 'settings',
       component: 'error',
       layout: 'dashboard',
-      hideInMenu: !userPermission,
+      hideInMenu: !isAdminProjects && !isAdminNamespace,
       children: [
         {
           title: 'Period',
@@ -112,7 +108,6 @@ export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
           icon: 'period',
           component: 'periodAdmin',
           layout: 'dashboard',
-          hideInMenu: userPermission !== UserPermission.PullRequest && userPermission !== UserPermission.All,
         },
         {
           title: 'Task Apply',
@@ -120,13 +115,20 @@ export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
           icon: 'clipboardList',
           component: 'taskApplyAdmin',
           layout: 'dashboard',
-          hideInMenu: userPermission !== UserPermission.TaskApplies && userPermission !== UserPermission.All,
+          hideInMenu: !isAdminProjects,
         },
         {
           title: 'Completed Task',
           href: '/admin/completed-task',
           icon: 'listChecks',
           component: 'completedTaskAdmin',
+          layout: 'dashboard',
+        },
+        {
+          title: 'Task Management',
+          href: '/admin/task-management',
+          icon: 'chartNoAxesCombined',
+          component: 'taskManagement',
           layout: 'dashboard',
           hideInMenu: userPermission !== UserPermission.TaskApplies && userPermission !== UserPermission.All,
         },
@@ -144,7 +146,6 @@ export const getNavItems = (userPermission?: UserPermission): NavItem[] => {
           icon: 'circleDollarSignIcon',
           component: 'expenseAdmin',
           layout: 'dashboard',
-          hideInMenu: userPermission !== UserPermission.All,
         },
       ],
     },

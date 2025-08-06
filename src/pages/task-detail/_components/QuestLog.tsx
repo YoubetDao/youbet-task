@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
-import { CircleDollarSign, PencilLine } from 'lucide-react'
+import { CircleDollarSign } from 'lucide-react'
 import { useParams } from 'react-router-dom'
 import { taskApi } from '@/service'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -13,6 +13,7 @@ import { USDT_DECIMAL, USDT_SYMBOL } from '@/constants/contracts/usdt'
 import { useTask } from '../_hooks'
 import { formatAmount, parseAmount, renderLevel, renderPriority } from '../_constants'
 import ButtonGroup from './ButtonGroup'
+import { useAdminProjects } from '@/store'
 export default function QuestLog({ createUser }: { createUser: string }) {
   const { githubId = '' } = useParams()
   const { data: task } = useTask(githubId)
@@ -24,6 +25,7 @@ export default function QuestLog({ createUser }: { createUser: string }) {
     decimals: number
     tokenAddress: string
   }>()
+  const [adminProject] = useAdminProjects()
 
   useEffect(() => {
     const getTokenInfo = async () => {
@@ -129,17 +131,19 @@ export default function QuestLog({ createUser }: { createUser: string }) {
                     <CircleDollarSign />
                     {formatAmount(task.reward?.amount, task.reward?.decimals || USDT_DECIMAL)}
                   </span>
-                  <Button
+                  {/* TODO */}
+                  {/* <Button
                     variant="ghost"
                     size="icon"
                     className="h-6 w-6"
+                    disabled={!adminProject?.includes(task.project as any)}
                     onClick={() => {
                       setRewardAmount(formatAmount(task.reward?.amount, tokenInfo?.decimals || USDT_DECIMAL).toString())
                       setIsEditing(true)
                     }}
                   >
                     <PencilLine className="h-4 w-4" />
-                  </Button>
+                  </Button> */}
                 </>
               )}
             </div>

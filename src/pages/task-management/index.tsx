@@ -1,5 +1,9 @@
 import { taskApi } from '@/service'
-import { TaskControllerGetTasksRewardClaimedEnum, TaskControllerGetTasksRewardGrantedEnum } from '@/openapi/client'
+import {
+  TaskControllerGetTasksNoGrantNeededEnum,
+  TaskControllerGetTasksRewardClaimedEnum,
+  TaskControllerGetTasksRewardGrantedEnum,
+} from '@/openapi/client'
 import { useState } from 'react'
 import { PAGESIZE, STALETIME } from '@/constants/contracts/request'
 import { useQuery } from '@tanstack/react-query'
@@ -15,10 +19,12 @@ export default function TaskManagement() {
       .taskControllerGetTasks(
         '',
         '',
+        '',
         'open',
         'all',
         TaskControllerGetTasksRewardGrantedEnum.All,
         TaskControllerGetTasksRewardClaimedEnum.All,
+        TaskControllerGetTasksNoGrantNeededEnum.All,
         (page - 1) * PAGESIZE,
         PAGESIZE,
       )

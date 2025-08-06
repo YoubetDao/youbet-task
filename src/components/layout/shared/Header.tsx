@@ -11,7 +11,7 @@ import {
 import { useNavigate } from 'react-router-dom'
 import { CustomConnectButton } from './ConnectButton'
 import { cn } from '@/lib/utils'
-import { useToken, useUsername, useUserPermission } from '@/store'
+import { useAdminNamespace, useAdminProjects, useToken, useUsername, useUserPermission } from '@/store'
 import Sidebar from './Sidebar'
 
 export default function Header() {
@@ -19,10 +19,14 @@ export default function Header() {
   const [token, setToken] = useToken()
   const [username, setUsername] = useUsername()
   const [, setUserPermission] = useUserPermission()
+  const [, setAdminProjects] = useAdminProjects()
+  const [, setAdminNamespace] = useAdminNamespace()
   const handleLogout = () => {
     setToken(null)
     setUsername(null)
     setUserPermission(null)
+    setAdminProjects(null)
+    setAdminNamespace(null)
     navigate('/login')
   }
 
@@ -49,8 +53,8 @@ export default function Header() {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuItem>Support</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate('/profile')}>My Profile</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => window.open('https://t.me/youbetdao', '_blank')}>Support</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
           </DropdownMenuContent>
