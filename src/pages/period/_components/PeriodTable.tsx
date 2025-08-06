@@ -11,7 +11,7 @@ import { Period, PeriodControllerGetPeriodsRewardGrantedEnum } from '@/openapi/c
 import { Checkbox } from '@/components/ui/checkbox'
 import { useUsername } from '@/store'
 import { TaskRewardCell } from '@/components/task-reward-cell'
-import { usePendingGrantList } from '@/store/admin'
+
 import { formatDate } from '../_constants'
 import PaginationFast from '@/components/pagination-fast'
 import { RewardTask } from '@/pages/admin/BatchGrantDialog'
@@ -26,6 +26,8 @@ interface PeriodTableProps {
   approveAllowance: () => Promise<void>
   tokenError: Error | null
   tokenLoading: boolean
+  pendingGrantPeriods: string[]
+  setPendingGrantPeriods: (val: string[] | ((prev: string[]) => string[])) => void
 }
 
 const PeriodTable: React.FC<PeriodTableProps> = ({
@@ -37,13 +39,14 @@ const PeriodTable: React.FC<PeriodTableProps> = ({
   approveAllowance,
   tokenError,
   tokenLoading,
+  pendingGrantPeriods,
+  setPendingGrantPeriods,
 }) => {
   const [page, setPage] = useState(1)
   const { address, chain } = useAccount()
   const pageSize = 10
   const [batchGrantPeriods, setBatchGrantPeriods] = useState<Array<RewardTask>>([])
   const [userName] = useUsername()
-  const [pendingGrantPeriods, setPendingGrantPeriods] = usePendingGrantList()
 
   const key = capitalizeFirstLetter(rewardState)
   const { data: periods, isLoading: isPullRequestsLoading } = useQuery({
