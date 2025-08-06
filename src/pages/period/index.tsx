@@ -81,7 +81,7 @@ function PeriodAdmin(): React.ReactElement {
       </div>
       <div className="flex justify-end">
         <BatchGrantDialog
-          cleanPendingGrantTasks={() => setPendingGrantPeriods([])}
+          cleanPendingGrantTasks={() => setBatchGrantPeriods([])}
           defaultRewardTasks={batchGrantPeriods}
           rewardType="period"
           trigger={

@@ -130,7 +130,6 @@ export const getNavItems = (isAdminProjects?: boolean, isAdminNamespace?: boolea
           icon: 'chartNoAxesCombined',
           component: 'taskManagement',
           layout: 'dashboard',
-          hideInMenu: userPermission !== UserPermission.TaskApplies && userPermission !== UserPermission.All,
         },
         {
           title: 'Expense Management',
