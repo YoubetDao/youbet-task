@@ -13,7 +13,6 @@ import { useAllowanceCheck } from '@/hooks/useAllowanceCheck'
 import { statuses, valueToLabel } from './_constants'
 import PeriodTable from './_components/PeriodTable'
 import DrawerDetail from './_components/DrawerDetail'
-import { usePendingGrantList } from '@/store/admin'
 
 function PeriodAdmin(): React.ReactElement {
   const { switchChain } = useSwitchChain()
@@ -25,7 +24,6 @@ function PeriodAdmin(): React.ReactElement {
   const [selectedPeriodId, setSelectedPeriodId] = useState<string>('')
   const [rewardState, setRewardState] = useState<string>(PeriodControllerGetPeriodsRewardGrantedEnum.All)
   const [batchGrantPeriods, setBatchGrantPeriods] = useState<Array<RewardTask>>([])
-  const [pendingGrantPeriods, setPendingGrantPeriods] = usePendingGrantList()
 
   const { data: projects, isLoading: projectLoading } = useQuery({
     queryKey: ['projects', filterTags, urlParam.toString()],
@@ -106,8 +104,6 @@ function PeriodAdmin(): React.ReactElement {
         approveAllowance={approveAllowance}
         tokenError={tokenError}
         tokenLoading={tokenLoading}
-        setPendingGrantPeriods={setPendingGrantPeriods}
-        pendingGrantPeriods={pendingGrantPeriods}
       />
 
       <DrawerDetail selectedPeriodId={selectedPeriodId} isDetailOpen={isDetailOpen} setIsDetailOpen={setIsDetailOpen} />

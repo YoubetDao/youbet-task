@@ -1,4 +1,4 @@
-import { taskApi } from '@/service'
+import { projectApi, taskApi } from '@/service'
 import {
   TaskControllerGetTasksNoGrantNeededEnum,
   TaskControllerGetTasksRewardClaimedEnum,
@@ -9,9 +9,24 @@ import { PAGESIZE, STALETIME } from '@/constants/contracts/request'
 import { useQuery } from '@tanstack/react-query'
 import TaskMgtTable from './_components/TaskMgtTable'
 import TableFilter from './_components/TableFilter'
+import { IData } from '@/components/filter-button'
+import { useSearchParams } from 'react-router-dom'
 
 export default function TaskManagement() {
   const [page, setPage] = useState(1)
+  const [selectProjects, setSelectProjects] = useState<IData[]>([])
+  const [selectAssignees, setSelectAssignees] = useState<IData[]>([])
+  const [selectPriority, setSelectPriority] = useState<IData[]>([])
+  const [searchParams] = useSearchParams()
+  const projectsSearch = searchParams.get('ProjectsSearch') || ''
+
+  const { data: projects } = useQuery({
+    queryKey: ['projects', projectsSearch],
+    queryFn: async () => {
+      const res = await projectApi.projectControllerGetProjects('', '', 'false', projectsSearch, '', 0, 20)
+      return res.data
+    },
+  })
 
   const queryKey = ['tasks', '', page]
   const queryFn = () =>
@@ -42,7 +57,16 @@ export default function TaskManagement() {
 
   return (
     <div className="space-y-4">
-      <TableFilter />
+      <TableFilter
+        projects={projects?.data || []}
+        selectProjects={selectProjects}
+        selectAssignees={selectAssignees}
+        selectPriority={selectPriority}
+        setSelectProjects={setSelectProjects}
+        setSelectAssignees={setSelectAssignees}
+        setSelectPriority={setSelectPriority}
+        projectsSearch={projectsSearch}
+      />
       <TaskMgtTable tasks={tasks} page={page} totalPages={totalPages} setPage={setPage} />
     </div>
   )

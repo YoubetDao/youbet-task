@@ -13,9 +13,8 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Separator } from '@/components/ui/separator'
 import { Project } from '@/openapi/client'
-import { debounce } from 'lodash'
 import { CircleX, ListFilter } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 export interface IData {
@@ -35,58 +34,60 @@ interface IConfigs {
 const CommandListComponent = ({ title, data, get, set, search }: IConfigs) => {
   const [inputValue, setInputValue] = useState<string>(search || '')
   const navigate = useNavigate()
-  const debouncedNavigate = useMemo(
-    () =>
-      debounce((value: string) => {
-        const searchParams = new URLSearchParams(location.search)
-        searchParams.set(`${title}Search`, value)
-        navigate(`${location.pathname}?${searchParams.toString()}`)
-      }, 500),
-    [title],
-  )
+  const debounceRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
-    if (inputValue) {
-      debouncedNavigate(inputValue)
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current)
     }
-    // 清理防抖定时器，避免内存泄露
-    return () => debouncedNavigate.cancel()
-  }, [inputValue, debouncedNavigate])
+
+    debounceRef.current = setTimeout(() => {
+      const searchParams = new URLSearchParams(location.search)
+      searchParams.set(`${title}Search`, inputValue)
+      navigate(`${location.pathname}?${searchParams.toString()}`)
+    }, 500)
+
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current)
+      }
+    }
+  }, [inputValue, title, navigate])
 
   return (
     <Command className="max-h-48 overflow-y-auto">
       <CommandInput placeholder={`Search ${title}...`} value={inputValue} onValueChange={setInputValue} />
       <CommandList>
-        {data.map((x) => (
+        {data.map((item) => (
           <CommandItem
-            key={x.name}
-            value={x.name}
-            onSelect={(value) => {
+            key={item.name}
+            value={item.name}
+            onSelect={() => {
               set((prev) =>
-                prev.map((p) => p.value).includes('_id' in x ? x._id : x.value)
-                  ? prev.filter((item) => item.value !== ('_id' in x ? x._id : x.value))
-                  : [...prev, { name: x.name, value: '_id' in x ? x._id : x.value }],
+                prev.map((p) => p.value).includes('_id' in item ? item._id : item.value)
+                  ? prev.filter((item) => item.value !== ('_id' in item ? item._id : item.value))
+                  : [...prev, { name: item.name, value: '_id' in item ? item._id : item.value }],
               )
             }}
           >
             <Checkbox
-              value={'_id' in x ? x._id : x.value}
-              checked={get.map((x) => x.value).includes('_id' in x ? x._id : x.value)}
-              id={'_id' in x ? x._id : x.value}
+              value={'_id' in item ? item._id : item.value}
+              checked={get.map((getItem) => getItem.value).includes('_id' in item ? item._id : item.value)}
+              id={'_id' in item ? item._id : item.value}
               onChange={(e: React.FormEvent<HTMLButtonElement>) => {
                 const value = (e.target as HTMLInputElement).value
                 set((prev) =>
                   prev.map((p) => p.value).includes(value)
                     ? prev.filter((item) => item.value !== value)
-                    : [...prev, { name: x.name, value: value }],
+                    : [...prev, { name: item.name, value: value }],
                 )
               }}
             />
             <label
-              htmlFor={x.name}
+              htmlFor={item.name}
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              {x.name}
+              {item.name}
             </label>
           </CommandItem>
         ))}

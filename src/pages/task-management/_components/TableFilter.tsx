@@ -1,29 +1,31 @@
 import FilterButton, { IData } from '@/components/filter-button'
-import { TaskPriorityEnum } from '@/openapi/client'
-import { projectApi } from '@/service'
-import { useQuery } from '@tanstack/react-query'
-import { useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Project, TaskPriorityEnum } from '@/openapi/client'
 
-export default function TableFilter() {
-  const [selectProjects, setSelectProjects] = useState<IData[]>([])
-  const [selectAssignees, setSelectAssignees] = useState<IData[]>([])
-  const [selectPriority, setSelectPriority] = useState<IData[]>([])
-  const [searchParams] = useSearchParams()
-  const projectsSearch = searchParams.get('ProjectsSearch') || ''
+interface ITableFilterProps {
+  projects: Project[]
+  selectProjects: IData[]
+  setSelectProjects: React.Dispatch<React.SetStateAction<IData[]>>
+  projectsSearch: string
+  selectPriority: IData[]
+  setSelectPriority: React.Dispatch<React.SetStateAction<IData[]>>
+  selectAssignees: IData[]
+  setSelectAssignees: React.Dispatch<React.SetStateAction<IData[]>>
+}
 
-  const { data: projects } = useQuery({
-    queryKey: ['projects', projectsSearch],
-    queryFn: async () => {
-      const res = await projectApi.projectControllerGetProjects('', '', 'false', projectsSearch, '', 0, 20)
-      return res.data
-    },
-  })
-
+export default function TableFilter({
+  projects,
+  selectProjects,
+  setSelectProjects,
+  projectsSearch,
+  selectPriority,
+  setSelectPriority,
+  selectAssignees,
+  setSelectAssignees,
+}: ITableFilterProps) {
   const configs = [
     {
       title: 'Projects',
-      data: projects?.data ?? [],
+      data: projects,
       type: 'multi',
       get: selectProjects,
       set: setSelectProjects,
