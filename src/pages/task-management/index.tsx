@@ -11,12 +11,14 @@ import TaskMgtTable from './_components/TaskMgtTable'
 import TableFilter from './_components/TableFilter'
 import { IData } from '@/components/filter-button'
 import { useSearchParams } from 'react-router-dom'
+import { ISort } from './_components/TableSortHeader'
 
 export default function TaskManagement() {
   const [page, setPage] = useState(1)
   const [selectProjects, setSelectProjects] = useState<IData[]>([])
   const [selectAssignees, setSelectAssignees] = useState<IData[]>([])
   const [selectPriority, setSelectPriority] = useState<IData[]>([])
+  const [sort, setSort] = useState<ISort[]>([])
   const [searchParams] = useSearchParams()
   const projectsSearch = searchParams.get('ProjectsSearch') || ''
 
@@ -37,8 +39,10 @@ export default function TaskManagement() {
     },
   })
 
+  const sortParams = sort.map((item) => `${item.field}:${item.value}`).join(',')
+
   const { data, isLoading: loading } = useQuery({
-    queryKey: ['tasks', '', page],
+    queryKey: ['tasks', '', page, sortParams],
     queryFn: () =>
       taskApi
         .taskControllerGetManagedTasks(
@@ -52,6 +56,7 @@ export default function TaskManagement() {
           TaskControllerGetTasksNoGrantNeededEnum.All,
           (page - 1) * PAGESIZE,
           PAGESIZE,
+          sortParams,
         )
         .then((res) => res.data),
     staleTime: STALETIME,
@@ -74,7 +79,7 @@ export default function TaskManagement() {
         projectsSearch={projectsSearch}
         assignees={Array.isArray(assignees) ? assignees : assignees?.data || []}
       />
-      <TaskMgtTable tasks={tasks} page={page} totalPages={totalPages} setPage={setPage} />
+      <TaskMgtTable tasks={tasks} page={page} totalPages={totalPages} setPage={setPage} sort={sort} setSort={setSort} />
     </div>
   )
 }
