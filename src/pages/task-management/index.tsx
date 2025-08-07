@@ -27,27 +27,33 @@ export default function TaskManagement() {
       return res.data
     },
   })
+  const searchAssigneesInProjects = selectProjects.map((item) => item.value).join(',')
 
-  const queryKey = ['tasks', '', page]
-  const queryFn = () =>
-    taskApi
-      .taskControllerGetTasks(
-        '',
-        '',
-        '',
-        'open',
-        'all',
-        TaskControllerGetTasksRewardGrantedEnum.All,
-        TaskControllerGetTasksRewardClaimedEnum.All,
-        TaskControllerGetTasksNoGrantNeededEnum.All,
-        (page - 1) * PAGESIZE,
-        PAGESIZE,
-      )
-      .then((res) => res.data)
+  const { data: assignees } = useQuery({
+    queryKey: ['assignees', searchAssigneesInProjects],
+    queryFn: async () => {
+      const res = await projectApi.projectControllerGetProjectInvolvedAssignees(searchAssigneesInProjects)
+      return res.data
+    },
+  })
 
   const { data, isLoading: loading } = useQuery({
-    queryKey: queryKey,
-    queryFn: queryFn,
+    queryKey: ['tasks', '', page],
+    queryFn: () =>
+      taskApi
+        .taskControllerGetTasks(
+          '',
+          '',
+          '',
+          'open',
+          'all',
+          TaskControllerGetTasksRewardGrantedEnum.All,
+          TaskControllerGetTasksRewardClaimedEnum.All,
+          TaskControllerGetTasksNoGrantNeededEnum.All,
+          (page - 1) * PAGESIZE,
+          PAGESIZE,
+        )
+        .then((res) => res.data),
     staleTime: STALETIME,
     refetchOnWindowFocus: false,
   })
@@ -66,6 +72,7 @@ export default function TaskManagement() {
         setSelectAssignees={setSelectAssignees}
         setSelectPriority={setSelectPriority}
         projectsSearch={projectsSearch}
+        assignees={assignees?.data || []}
       />
       <TaskMgtTable tasks={tasks} page={page} totalPages={totalPages} setPage={setPage} />
     </div>

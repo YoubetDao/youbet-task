@@ -1,5 +1,5 @@
 import FilterButton, { IData } from '@/components/filter-button'
-import { Project, TaskPriorityEnum } from '@/openapi/client'
+import { GithubUser, Project, TaskPriorityEnum } from '@/openapi/client'
 
 interface ITableFilterProps {
   projects: Project[]
@@ -10,6 +10,7 @@ interface ITableFilterProps {
   setSelectPriority: React.Dispatch<React.SetStateAction<IData[]>>
   selectAssignees: IData[]
   setSelectAssignees: React.Dispatch<React.SetStateAction<IData[]>>
+  assignees: GithubUser[]
 }
 
 export default function TableFilter({
@@ -21,6 +22,7 @@ export default function TableFilter({
   setSelectPriority,
   selectAssignees,
   setSelectAssignees,
+  assignees,
 }: ITableFilterProps) {
   const configs = [
     {
@@ -54,7 +56,7 @@ export default function TableFilter({
     },
     {
       title: 'Assignees',
-      data: [],
+      data: assignees,
       type: 'multi',
       get: selectAssignees,
       set: setSelectAssignees,

@@ -12,7 +12,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Separator } from '@/components/ui/separator'
-import { Project } from '@/openapi/client'
+import { cn } from '@/lib/utils'
+import { GithubUser, Project } from '@/openapi/client'
 import { CircleX, ListFilter } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -21,7 +22,7 @@ export interface IData {
   name: string
   value: string
 }
-type OptionList = IData[] | Project[]
+type OptionList = IData[] | Project[] | GithubUser[]
 
 interface IConfigs {
   title: string
@@ -29,6 +30,19 @@ interface IConfigs {
   get: IData[]
   set: React.Dispatch<React.SetStateAction<IData[]>>
   search: string | null
+}
+
+function isGithubUser(item: any): item is GithubUser {
+  return (
+    typeof item === 'object' &&
+    item !== null &&
+    typeof item.login === 'string' &&
+    typeof item.avatarUrl === 'string' &&
+    typeof item.htmlUrl === 'string'
+  )
+}
+function isIData(item: any): item is IData {
+  return typeof item === 'object' && item !== null && typeof item.name === 'string' && typeof item.value === 'string'
 }
 
 const CommandListComponent = ({ title, data, get, set, search }: IConfigs) => {
@@ -58,39 +72,60 @@ const CommandListComponent = ({ title, data, get, set, search }: IConfigs) => {
     <Command className="max-h-48 overflow-y-auto">
       <CommandInput placeholder={`Search ${title}...`} value={inputValue} onValueChange={setInputValue} />
       <CommandList>
-        {data.map((item) => (
-          <CommandItem
-            key={item.name}
-            value={item.name}
-            onSelect={() => {
-              set((prev) =>
-                prev.map((p) => p.value).includes('_id' in item ? item._id : item.value)
-                  ? prev.filter((item) => item.value !== ('_id' in item ? item._id : item.value))
-                  : [...prev, { name: item.name, value: '_id' in item ? item._id : item.value }],
-              )
-            }}
-          >
-            <Checkbox
-              value={'_id' in item ? item._id : item.value}
-              checked={get.map((getItem) => getItem.value).includes('_id' in item ? item._id : item.value)}
-              id={'_id' in item ? item._id : item.value}
-              onChange={(e: React.FormEvent<HTMLButtonElement>) => {
-                const value = (e.target as HTMLInputElement).value
+        {data.map((item) => {
+          const isAssignees = isGithubUser(item)
+          const isData = isIData(item)
+          const getKey = isAssignees ? item.login : item.name
+          const setKey = isAssignees ? item.login : isData ? item.value : item._id
+
+          return (
+            <CommandItem
+              key={getKey}
+              value={getKey}
+              onSelect={() => {
                 set((prev) =>
-                  prev.map((p) => p.value).includes(value)
-                    ? prev.filter((item) => item.value !== value)
-                    : [...prev, { name: item.name, value: value }],
+                  prev.map((p) => p.value).includes(setKey)
+                    ? prev.filter((item) => item.value !== setKey)
+                    : [...prev, { name: getKey, value: setKey }],
                 )
               }}
-            />
-            <label
-              htmlFor={item.name}
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              {item.name}
-            </label>
-          </CommandItem>
-        ))}
+              <Checkbox
+                value={setKey}
+                checked={get.map((getItem) => getItem.value).includes(setKey)}
+                id={setKey}
+                onChange={(e: React.FormEvent<HTMLButtonElement>) => {
+                  const value = (e.target as HTMLInputElement).value
+                  set((prev) =>
+                    prev.map((p) => p.value).includes(value)
+                      ? prev.filter((item) => item.value !== value)
+                      : [...prev, { name: getKey, value: value }],
+                  )
+                }}
+              />
+              <label
+                htmlFor={getKey}
+                className="flex text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                {isAssignees ? (
+                  <img
+                    key={item.login}
+                    className="mr-2 h-6 w-6 rounded-full border-2 border-white"
+                    src={item.avatarUrl}
+                    alt={item.login}
+                  />
+                ) : null}
+                <div
+                  className={cn({
+                    'pt-1': isAssignees,
+                  })}
+                >
+                  {getKey}
+                </div>
+              </label>
+            </CommandItem>
+          )
+        })}
       </CommandList>
     </Command>
   )
