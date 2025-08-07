@@ -15,7 +15,7 @@ export default function TaskManagement() {
   const queryKey = ['tasks', '', page]
   const queryFn = () =>
     taskApi
-      .taskControllerGetTasks(
+      .taskControllerGetManagedTasks(
         '',
         '',
         '',

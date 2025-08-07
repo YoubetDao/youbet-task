@@ -3,7 +3,7 @@ import { TaskDto, TaskPriorityEnum } from '@/openapi/client'
 import PaginationFast from '@/components/pagination-fast'
 import { Link } from 'react-router-dom'
 import { cn, formatDateToDay } from '@/lib/utils'
-import { compareAsc, format, formatDistance } from 'date-fns'
+import { compareAsc, formatDistance, formatISO } from 'date-fns'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent } from '@/components/ui/popover'
@@ -108,8 +108,7 @@ export default function TaskMgtTable({
                         captionLayout="dropdown"
                         data-id={x.githubId}
                         onSelect={(value) => {
-                          value &&
-                            updateTaskDetail({ githubId: x.githubId, value: format(new Date(value), 'yyyy-MM-dd') })
+                          value && updateTaskDetail({ githubId: x.githubId, value: formatISO(new Date(value)) })
                         }}
                       />
                     </PopoverContent>
