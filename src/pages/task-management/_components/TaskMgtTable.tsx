@@ -61,7 +61,6 @@ export default function TaskMgtTable({
     const value = e.currentTarget.value
     updateTaskDetail({ value })
   }
-  console.log('task:', tasks)
   return (
     <>
       <Table>
