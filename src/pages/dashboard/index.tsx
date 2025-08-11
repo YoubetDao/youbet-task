@@ -33,7 +33,7 @@ export default function Dashboard() {
         setUserCount(data.pagination?.totalCount || 0)
       })
     taskApi
-      .taskControllerGetTasks('', '', 'closed', 'all', undefined, undefined, 0, 1000)
+      .taskControllerGetTasks('', '', '', 'closed', 'all', undefined, undefined, undefined, 0, 1000)
       .then((res) => res.data)
       .then((tasks) => {
         const openedTasks = (tasks?.data || []).filter((task) => task.state === 'open')

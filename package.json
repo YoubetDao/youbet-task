@@ -58,7 +58,7 @@
     "jotai": "^2.9.1",
     "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
-    "lucide-react": "^0.400.0",
+    "lucide-react": "^0.525.0",
     "markdown-it": "^14.1.0",
     "markdown-it-anchor": "^9.0.1",
     "markdown-it-prism": "^2.3.0",

@@ -27,6 +27,7 @@ interface Props {
   trigger: React.ReactNode
   defaultRewardTasks: Array<RewardTask>
   rewardType: 'task' | 'period'
+  cleanPendingGrantTasks: () => void
 }
 
 function isValidDecimal(input: string, decimal: number) {
@@ -34,7 +35,7 @@ function isValidDecimal(input: string, decimal: number) {
   return regex.test(input)
 }
 
-export const BatchGrantDialog = ({ defaultRewardTasks, rewardType, trigger }: Props) => {
+export const BatchGrantDialog = ({ defaultRewardTasks, rewardType, trigger, cleanPendingGrantTasks }: Props) => {
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
   const { switchChain } = useSwitchChain()
@@ -81,6 +82,7 @@ export const BatchGrantDialog = ({ defaultRewardTasks, rewardType, trigger }: Pr
       setPendingGrantTasks([...pendingGrantTasks, ...rewardTasks.map((task) => task.id)])
 
       setOpen(false)
+      cleanPendingGrantTasks()
 
       queryClient.invalidateQueries({ queryKey: ['periods'] })
       queryClient.invalidateQueries({ queryKey: ['tasks'] })

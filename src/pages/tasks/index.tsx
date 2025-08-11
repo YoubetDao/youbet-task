@@ -6,6 +6,7 @@ import PaginationFast from '@/components/pagination-fast'
 import { TaskCard } from '@/components/task/task-card'
 import { LoadingCards } from '@/components/loading-cards'
 import {
+  TaskControllerGetTasksNoGrantNeededEnum,
   TaskControllerGetTasksRewardClaimedEnum,
   TaskControllerGetTasksRewardGrantedEnum,
   TaskDto,
@@ -31,10 +32,12 @@ export default function Tasks() {
       .taskControllerGetTasks(
         '',
         '',
+        '',
         'open',
         assignedType,
         TaskControllerGetTasksRewardGrantedEnum.All,
         TaskControllerGetTasksRewardClaimedEnum.All,
+        TaskControllerGetTasksNoGrantNeededEnum.All,
         (page - 1) * pageSize,
         pageSize,
       )
