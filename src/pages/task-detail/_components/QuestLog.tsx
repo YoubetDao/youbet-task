@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { CircleDollarSign } from 'lucide-react'
 import { useParams } from 'react-router-dom'
@@ -11,7 +11,7 @@ import { useState, useEffect } from 'react'
 import { distributor } from '@/constants/distributor'
 import { USDT_DECIMAL, USDT_SYMBOL } from '@/constants/contracts/usdt'
 import { useTask } from '../_hooks'
-import { formatAmount, parseAmount, renderLevel, renderPriority } from '../_constants'
+import { formatAmount, parseAmount, renderPriority } from '../_constants'
 import ButtonGroup from './ButtonGroup'
 import { useAdminProjects } from '@/store'
 export default function QuestLog({ createUser }: { createUser: string }) {
@@ -63,26 +63,12 @@ export default function QuestLog({ createUser }: { createUser: string }) {
     return null
   }
 
+  console.log('task:', task)
   return (
     <div className="flex flex-shrink-0 basis-96 flex-col">
       <ButtonGroup createUser={createUser} rewardAmount={rewardAmount} />
       <Card className="sticky left-0 top-0 mt-4 bg-transparent">
-        <CardHeader className="flex flex-row items-center justify-between border-b border-muted py-4">
-          <CardTitle className="relative justify-center text-2xl">Quest Log</CardTitle>
-        </CardHeader>
         <CardContent className="mt-2 flex flex-col gap-y-4 font-serif">
-          <div className="flex flex-row items-center justify-start pt-2">
-            <Label className="w-40">Assignee</Label>
-            {task.assignee && Object.keys(task.assignee).length > 0 && (
-              <div className="flex flex-row items-center justify-between gap-2">
-                <Avatar className="h-7 w-7">
-                  <AvatarImage src={task.assignee.avatarUrl} alt="Avatar" />
-                  <AvatarFallback>{task.assignee.login.charAt(0)}</AvatarFallback>
-                </Avatar>
-                {task.assignee.login}
-              </div>
-            )}
-          </div>
           <div className="flex flex-row items-center justify-start pt-2">
             <Label className="w-40">Rewards</Label>
             <div className="flex items-center gap-2">
@@ -153,8 +139,14 @@ export default function QuestLog({ createUser }: { createUser: string }) {
             <span className="flex flex-row items-center gap-1">{new Date(task.createdAt).toLocaleDateString()}</span>
           </div>
           <div className="flex flex-row items-center justify-start pt-2">
-            <Label className="w-40">Level</Label>
-            {renderLevel('Easy')}
+            <Label className="w-40">Due Date</Label>
+            <span className="flex flex-row items-center gap-1">
+              {task.due ? new Date(task.due).toLocaleDateString() : ''}
+            </span>
+          </div>
+          <div className="flex flex-row items-center justify-start pt-2">
+            <Label className="w-40">Story Points</Label>
+            <span className="flex flex-row items-center gap-1">{task.storyPoints}</span>
           </div>
           <div className="flex flex-row items-center justify-start pt-2">
             <Label className="w-40">Priority</Label>
@@ -162,7 +154,7 @@ export default function QuestLog({ createUser }: { createUser: string }) {
           </div>
 
           <div className="flex flex-row items-center justify-start pt-2">
-            <Label className="w-40">assignees</Label>
+            <Label className="w-40">Assignees</Label>
             <div className="flex flex-row items-center justify-between gap-2">
               {task.assignees.map((participant, index) => (
                 <Avatar key={index} className="h-7 w-7">
