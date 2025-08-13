@@ -22,6 +22,7 @@ import { CalendarDays, Scan } from 'lucide-react'
 import ProgramLanguage, { Languages } from './_components/program-language'
 import SkillSet from './_components/skillset'
 import ComingSoon from './_components/coming-soon'
+import Reputation from './_components/reputation'
 
 export default function ProfilePage() {
   const [userPoints, setUserPoints] = useState('')
@@ -199,7 +200,7 @@ export default function ProfilePage() {
 
         <div className="col-span-1 flex flex-col gap-4">
           {/* <EmptyCart title="Achievement" /> */}
-          <ComingSoon title="Points" description="Know your points" />
+          <Reputation />
           {/* <AchievementGauge score={88} percent={92.73} /> */}
           <Scope scopeItems={scopeData} />
           <Badges achievements={profile?.achievements} />
