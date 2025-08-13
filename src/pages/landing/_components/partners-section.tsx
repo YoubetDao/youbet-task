@@ -80,10 +80,9 @@ export const PartnersSection = () => {
   return (
     <section id="partners" className="py-24">
       <div className="container mx-auto px-4">
-        <div className="mb-16 text-center">
-          <h2 className="mb-8  text-2xl font-bold text-transparent text-white md:text-4xl">Our valued partners</h2>
-          <p className="mb-8 text-lg text-muted-foreground text-white">
-            We&apos;re proud to work with industry leaders to deliver the best experience.
+        <div className=" text-center">
+          <p className="mb-3 text-xs text-muted-foreground text-white sm:text-sm md:mb-6 md:text-base">
+            Trusted by Leading Crypto Partners
           </p>
         </div>
         <motion.div
@@ -96,24 +95,27 @@ export const PartnersSection = () => {
           <div className="overflow-hidden" ref={emblaRef}>
             <div className="flex">
               {partners.map((partner, index) => (
-                <div key={index} className="w-[150px] flex-shrink-0 pl-4 md:w-[200px] md:pl-6">
+                <div key={index} className="w-[120px] flex-shrink-0 pl-4 md:w-[150px] md:pl-6 lg:w-[200px]">
                   <div className="flex h-[80px] items-center justify-center p-4">
                     <img
                       src={partner.logo}
                       alt={`${partner.name} logo`}
-                      className="h-[30px] w-auto max-w-[100px] object-contain"
+                      className="h-[24px] w-auto max-w-[80px] object-contain md:h-[30px] md:max-w-[100px] lg:h-[40px]"
                     />
                   </div>
                 </div>
               ))}
               {/* 复制一遍内容以确保无缝循环 */}
               {partners.map((partner, index) => (
-                <div key={`duplicate-${index}`} className="w-[150px] flex-shrink-0 pl-4 md:w-[200px] md:pl-6">
+                <div
+                  key={`duplicate-${index}`}
+                  className="w-[120px] flex-shrink-0 pl-4 md:w-[150px] md:pl-6 lg:w-[200px]"
+                >
                   <div className="flex h-[80px] items-center justify-center p-4">
                     <img
                       src={partner.logo}
                       alt={`${partner.name} logo`}
-                      className="h-[30px] w-auto max-w-[100px] object-contain"
+                      className="h-[24px] w-auto max-w-[80px] object-contain md:h-[30px] md:max-w-[100px] lg:h-[40px]"
                     />
                   </div>
                 </div>
