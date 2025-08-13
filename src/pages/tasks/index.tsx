@@ -6,16 +6,19 @@ import PaginationFast from '@/components/pagination-fast'
 import { TaskCard } from '@/components/task/task-card'
 import { LoadingCards } from '@/components/loading-cards'
 import {
+  TaskControllerGetTasksNoGrantNeededEnum,
   TaskControllerGetTasksRewardClaimedEnum,
   TaskControllerGetTasksRewardGrantedEnum,
   TaskDto,
 } from '@/openapi/client'
 import { SearchInput } from '@/components/search'
 import { STALETIME } from '@/constants/contracts/request'
+import { useSearchParams } from 'react-router-dom'
 
 export default function Tasks() {
   const [page, setPage] = useState(1)
   const pageSize = 9
+  const [urlParam, setUrlParam] = useSearchParams('')
 
   const [currentTab, setCurrentTab] = useState('unassigned')
 
@@ -25,18 +28,22 @@ export default function Tasks() {
     return 'all'
   }, [currentTab])
 
-  const queryKey = ['tasks', '', page, pageSize, assignedType]
+  const queryKey = ['tasks', '', page, pageSize, assignedType, urlParam.get('search') || '', urlParam.get('sort') || '']
   const queryFn = () =>
     taskApi
       .taskControllerGetTasks(
+        '',
         '',
         '',
         'open',
         assignedType,
         TaskControllerGetTasksRewardGrantedEnum.All,
         TaskControllerGetTasksRewardClaimedEnum.All,
+        TaskControllerGetTasksNoGrantNeededEnum.All,
         (page - 1) * pageSize,
         pageSize,
+        urlParam.get('search') || '',
+        urlParam.get('sort') || '',
       )
       .then((res) => res.data)
 
@@ -57,11 +64,12 @@ export default function Tasks() {
       {/* Search */}
       <div className="relative mb-6">
         <SearchInput
-          searchInitialValue=""
-          sortInitialValue=""
+          searchInitialValue={urlParam.get('search') || ''}
+          sortInitialValue={urlParam.get('sort') || ''}
           placeholder="Search tasks..."
-          handleSubmit={() => {
-            /* TODO */
+          handleSubmit={(searchValue, sortValue) => {
+            setPage(1)
+            setUrlParam(`search=${searchValue}&sort=${sortValue}`)
           }}
         />
       </div>
