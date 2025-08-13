@@ -63,7 +63,6 @@ export default function QuestLog({ createUser }: { createUser: string }) {
     return null
   }
 
-  console.log('task:', task)
   return (
     <div className="flex flex-shrink-0 basis-96 flex-col">
       <ButtonGroup createUser={createUser} rewardAmount={rewardAmount} />
