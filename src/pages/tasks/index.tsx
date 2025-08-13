@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { taskApi } from '@/service'
 import { useQuery } from '@tanstack/react-query'
@@ -13,12 +13,17 @@ import {
 } from '@/openapi/client'
 import { SearchInput } from '@/components/search'
 import { STALETIME } from '@/constants/contracts/request'
+import { useSearchParams } from 'react-router-dom'
 
 export default function Tasks() {
-  const [page, setPage] = useState(1)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [currentTab, setCurrentTab] = useState('unassigned')
   const pageSize = 9
 
-  const [currentTab, setCurrentTab] = useState('unassigned')
+  // Get the current page number from the URL to ensure synchronization
+  const currentPage = useMemo(() => {
+    return Number(searchParams.get('page')) || 1
+  }, [searchParams])
 
   const assignedType = useMemo(() => {
     if (currentTab === 'assigned') return 'assigned'
@@ -26,7 +31,16 @@ export default function Tasks() {
     return 'all'
   }, [currentTab])
 
-  const queryKey = ['tasks', '', page, pageSize, assignedType]
+  const updateUrl = useCallback(
+    (newPage: number) => {
+      const params = new URLSearchParams(searchParams)
+      params.set('page', newPage.toString())
+      setSearchParams(params, { replace: true })
+    },
+    [searchParams, setSearchParams],
+  )
+
+  const queryKey = ['tasks', '', currentPage, pageSize, assignedType]
   const queryFn = () =>
     taskApi
       .taskControllerGetTasks(
@@ -38,12 +52,16 @@ export default function Tasks() {
         TaskControllerGetTasksRewardGrantedEnum.All,
         TaskControllerGetTasksRewardClaimedEnum.All,
         TaskControllerGetTasksNoGrantNeededEnum.All,
-        (page - 1) * pageSize,
+        (currentPage - 1) * pageSize,
         pageSize,
       )
       .then((res) => res.data)
 
-  const { data, isLoading: loading } = useQuery({
+  const {
+    data,
+    isLoading: loading,
+    isFetching,
+  } = useQuery({
     queryKey: queryKey,
     queryFn: queryFn,
     staleTime: STALETIME,
@@ -53,7 +71,20 @@ export default function Tasks() {
   const tasks = data?.data || []
   const totalPages = Math.ceil((data?.pagination?.totalCount || 0) / pageSize)
 
-  if (loading) return <LoadingCards count={3} />
+  const handleTabChange = (value: string) => {
+    setCurrentTab(value)
+    // When switching tabs, reset to the first page
+    updateUrl(1)
+  }
+
+  const handlePageChange = (newPage: number) => {
+    updateUrl(newPage)
+  }
+
+  // Show loading state: initial loading or data fetching
+  if (loading || (isFetching && !data)) {
+    return <LoadingCards count={3} />
+  }
 
   return (
     <main>
@@ -70,7 +101,7 @@ export default function Tasks() {
       </div>
 
       <div className="flex flex-col gap-5">
-        <Tabs value={currentTab} onValueChange={setCurrentTab}>
+        <Tabs value={currentTab} onValueChange={handleTabChange}>
           <div className="flex w-full items-center justify-between">
             <TabsList className="flex w-auto flex-nowrap">
               <TabsTrigger value="all">All</TabsTrigger>
@@ -79,13 +110,23 @@ export default function Tasks() {
             </TabsList>
           </div>
           <TabsContent value={currentTab} className="mt-6">
-            {renderTasks(tasks)}
+            {/* Display load indicator when data is loading */}
+            {isFetching && data ? (
+              <div className="relative">
+                <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50">
+                  <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900"></div>
+                </div>
+                {renderTasks(tasks)}
+              </div>
+            ) : (
+              renderTasks(tasks)
+            )}
           </TabsContent>
         </Tabs>
 
         {/* Pagination */}
         <nav aria-label="Pagination">
-          <PaginationFast page={page} totalPages={totalPages} onPageChange={setPage} />
+          <PaginationFast page={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
         </nav>
       </div>
     </main>
