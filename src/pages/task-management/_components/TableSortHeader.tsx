@@ -30,7 +30,6 @@ const TableSortHeader = ({ title, sort, onClick, field }: ITableSortHeaderProps)
     })
     onClick(filterSort)
   }
-  console.log('sort:', sort, sort.length)
 
   const fdSort = sort.find((item) => item.field === field)
 
