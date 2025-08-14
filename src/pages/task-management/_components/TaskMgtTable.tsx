@@ -33,7 +33,10 @@ export default function TaskMgtTable({
   const [isEdit, setIsEdit] = useState({
     field: '',
     value: false,
+    githubId: 0,
   })
+  const [title, setTitle] = useState({ githubId: 0, value: '' })
+  const [sp, setSp] = useState({ githubId: 0, value: 0 })
   const queryClient = useQueryClient()
   const mutation = useMutation({
     mutationFn: ({ githubId, field, value }: { githubId: number; field: string; value: number | string }) =>
@@ -42,27 +45,27 @@ export default function TaskMgtTable({
 
   const handleClicktoEditState = (e: { currentTarget: HTMLDivElement }) => {
     const field = (e.currentTarget as HTMLDivElement).dataset.field as string
+    const githubId = Number(e.currentTarget.dataset.githubid as string)
     setIsEdit({
       field,
       value: true,
+      githubId,
     })
   }
 
-  const updateTaskDetail = async ({ githubId, value }: { githubId: number; value: string | number }) => {
-    const { field } = isEdit
+  const updateTaskDetail = async ({ value }: { value: string | number }) => {
+    const { field, githubId } = isEdit
     if (value) {
       await mutation.mutateAsync({ githubId, value, field })
-      setIsEdit({ field, value: false })
+      setIsEdit({ field, value: false, githubId })
       queryClient.invalidateQueries({ queryKey: ['tasks', '', page] })
     }
   }
 
   const handleChangetoPatch = async (e: { currentTarget: HTMLInputElement }) => {
-    const githubId = Number(e.currentTarget.dataset.id as string)
-    const value = Number(e.currentTarget.value)
-    updateTaskDetail({ githubId, value })
+    const value = e.currentTarget.value
+    updateTaskDetail({ value })
   }
-
   return (
     <>
       <Table>
@@ -87,9 +90,19 @@ export default function TaskMgtTable({
             <TableRow key={x._id}>
               <TableCell>
                 <div className="space-y-1">
-                  <div data-field="title" onClick={handleClicktoEditState}>
-                    {isEdit.field === 'title' && isEdit.value ? (
-                      <Input value={x?.title} data-id={x.githubId} />
+                  <div data-field="title" data-githubId={x.githubId} onClick={handleClicktoEditState}>
+                    {isEdit.field === 'title' && isEdit.value && isEdit.githubId === x.githubId ? (
+                      <Input
+                        value={title && title.githubId === x.githubId ? title.value ?? '' : x?.title}
+                        onChange={(e) => setTitle({ githubId: x.githubId, value: e.currentTarget.value })}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            handleChangetoPatch(e)
+                          }
+                        }}
+                        onBlur={(e) => handleChangetoPatch(e)}
+                        autoFocus
+                      />
                     ) : (
                       <>{x?.title}</>
                     )}
@@ -105,7 +118,7 @@ export default function TaskMgtTable({
                 </div>
               </TableCell>
               <TableCell>
-                {isEdit.field === 'due' && isEdit.value ? (
+                {isEdit.field === 'due' && isEdit.value && isEdit.githubId === x.githubId ? (
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button variant="outline" id="date" className="w-48 justify-between font-normal">
@@ -117,9 +130,9 @@ export default function TaskMgtTable({
                         mode="single"
                         selected={new Date(x.due || '')}
                         captionLayout="dropdown"
-                        data-id={x.githubId}
+                        data-githubId={x.githubId}
                         onSelect={(value) => {
-                          value && updateTaskDetail({ githubId: x.githubId, value: formatISO(new Date(value)) })
+                          value && updateTaskDetail({ value: formatISO(new Date(value)) })
                         }}
                       />
                     </PopoverContent>
@@ -127,6 +140,7 @@ export default function TaskMgtTable({
                 ) : (
                   <div
                     data-field="due"
+                    data-githubId={x.githubId}
                     onClick={handleClicktoEditState}
                     className={cn(
                       'space-y-1',
@@ -148,11 +162,11 @@ export default function TaskMgtTable({
                 )}
               </TableCell>
               <TableCell>
-                {isEdit.field === 'priority' && isEdit.value ? (
+                {isEdit.field === 'priority' && isEdit.value && isEdit.githubId === x.githubId ? (
                   <Select
                     defaultValue={x.priority}
                     onValueChange={(value) => {
-                      updateTaskDetail({ githubId: x.githubId, value })
+                      updateTaskDetail({ value })
                     }}
                   >
                     <SelectTrigger>
@@ -170,6 +184,7 @@ export default function TaskMgtTable({
                   <div
                     data-field="priority"
                     onClick={handleClicktoEditState}
+                    data-githubId={x.githubId}
                     className={cn('w-20 rounded-sm py-1 text-center capitalize text-white', {
                       'bg-red-500': x.priority === TaskPriorityEnum.P0,
                       'bg-orange-500': x.priority === TaskPriorityEnum.P1,
@@ -181,9 +196,19 @@ export default function TaskMgtTable({
                 )}
               </TableCell>
               <TableCell>
-                <div data-field="storyPoints" onClick={handleClicktoEditState}>
-                  {isEdit.field === 'storyPoints' && isEdit.value ? (
-                    <Input className="w-12" value={x.storyPoints} onChange={handleChangetoPatch} data-id={x.githubId} />
+                <div data-field="storyPoints" data-githubId={x.githubId} onClick={handleClicktoEditState}>
+                  {isEdit.field === 'storyPoints' && isEdit.value && isEdit.githubId === x.githubId ? (
+                    <Input
+                      className="w-12"
+                      value={sp && sp.githubId === x.githubId ? sp.value ?? 0 : x?.storyPoints}
+                      onChange={(e) => setSp({ githubId: x.githubId, value: Number(e.currentTarget.value) })}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleChangetoPatch(e)
+                        }
+                      }}
+                      onBlur={(e) => handleChangetoPatch(e)}
+                    />
                   ) : (
                     <p
                       className={cn({
