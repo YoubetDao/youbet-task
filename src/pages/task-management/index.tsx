@@ -56,6 +56,7 @@ export default function TaskManagement() {
           TaskControllerGetTasksNoGrantNeededEnum.All,
           (page - 1) * PAGESIZE,
           PAGESIZE,
+          '',
           sortParams,
         )
         .then((res) => res.data),
