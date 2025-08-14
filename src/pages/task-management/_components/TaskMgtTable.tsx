@@ -13,17 +13,22 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { taskApi } from '@/service'
+import TableSortHeader, { ISort } from './TableSortHeader'
 
 export default function TaskMgtTable({
   tasks,
   page,
   totalPages,
   setPage,
+  sort,
+  setSort,
 }: {
   tasks: TaskDto[]
   page: number
   totalPages: number
   setPage: Dispatch<SetStateAction<number>>
+  sort: ISort[]
+  setSort: Dispatch<SetStateAction<ISort[]>>
 }) {
   const [isEdit, setIsEdit] = useState({
     field: '',
@@ -66,10 +71,16 @@ export default function TaskMgtTable({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="text-gray-400">Title</TableHead>
-            <TableHead className="text-gray-400">Due</TableHead>
-            <TableHead className="text-gray-400">Priority</TableHead>
-            <TableHead className="text-gray-400">Story Points</TableHead>
+            <TableHead className="w-20 text-gray-400">Title</TableHead>
+            <TableHead className="text-gray-400">
+              <TableSortHeader title="Due" sort={sort} onClick={setSort} field="due" />
+            </TableHead>
+            <TableHead className="text-gray-400">
+              <TableSortHeader title="Priority" sort={sort} onClick={setSort} field="priority" />
+            </TableHead>
+            <TableHead className="w-50 text-gray-400">
+              <TableSortHeader title="Story Points" sort={sort} onClick={setSort} field="storyPoints" />
+            </TableHead>
             <TableHead className="text-gray-400">Project</TableHead>
             <TableHead className="text-gray-400">Assignees</TableHead>
           </TableRow>
@@ -213,14 +224,16 @@ export default function TaskMgtTable({
                 <Link to={`/projects/${x.project._id}?projectName=${x.project.name}`}>{x.project.name}</Link>
               </TableCell>
               <TableCell>
-                {x.assignees.map((assign) => (
-                  <img
-                    key={assign.login}
-                    className="h-6 w-6 rounded-full border-2 border-white"
-                    src={assign.avatarUrl}
-                    alt={assign.login}
-                  />
-                ))}
+                <div className="flex -space-x-3">
+                  {x.assignees.map((assign) => (
+                    <img
+                      key={assign.login}
+                      className="h-6 w-6 rounded-full border-2 border-white"
+                      src={assign.avatarUrl}
+                      alt={assign.login}
+                    />
+                  ))}
+                </div>
               </TableCell>
             </TableRow>
           ))}
