@@ -6,50 +6,63 @@ import {
 } from '@/openapi/client'
 import { useState } from 'react'
 import { PAGESIZE, STALETIME } from '@/constants/contracts/request'
-import { useQuery } from '@tanstack/react-query'
+import { useQueries, useQuery } from '@tanstack/react-query'
 import TaskMgtTable from './_components/TaskMgtTable'
 import { ISort } from './_components/TableSortHeader'
 import TableFilter from './_components/TableFilter'
 import { IData } from '@/components/filter-button'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { priorities, selectedFn } from './_constants'
 
 export default function TaskManagement() {
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [page, setPage] = useState(1)
   const [sort, setSort] = useState<ISort[]>([])
+
+  const projectsFromUrl = searchParams.get('Projects')
+  const assigneesFromUrl = searchParams.get('Assignees')
+  const priorityFromUrl = searchParams.get('Priority')
+  const projectsSearch = searchParams.get('ProjectsSearch') || ''
 
   const [selectProjects, setSelectProjects] = useState<IData[]>([])
   const [selectAssignees, setSelectAssignees] = useState<IData[]>([])
   const [selectPriority, setSelectPriority] = useState<IData[]>([])
-  const [searchParams] = useSearchParams()
-  const projectsSearch = searchParams.get('ProjectsSearch') || ''
+  const searchAssigneesInProjects = selectedFn(selectProjects)
 
+  const [getProjects, getAssignees] = useQueries({
+    queries: [
+      {
+        queryKey: ['projects', projectsSearch],
+        queryFn: async () => {
+          const res = await projectApi.projectControllerGetProjects('', '', 'false', projectsSearch, '', 0, 20)
+          return res.data
+        },
+      },
+      {
+        queryKey: ['assignees', searchAssigneesInProjects],
+        queryFn: async () => {
+          const res = await projectApi.projectControllerGetProjectInvolvedAssignees(searchAssigneesInProjects)
+          return res.data
+        },
+      },
+    ],
+  })
+  const projects = getProjects.data
+  const assignees = getAssignees.data
+
+  const prioritySelected = selectedFn(selectPriority)
+  const assigneesSelected = selectedFn(selectAssignees)
   const sortParams = sort.map((item) => `${item.field}:${item.value}`).join(',')
 
-  const { data: projects } = useQuery({
-    queryKey: ['projects', projectsSearch],
-    queryFn: async () => {
-      const res = await projectApi.projectControllerGetProjects('', '', 'false', projectsSearch, '', 0, 20)
-      return res.data
-    },
-  })
-  const searchAssigneesInProjects = selectProjects.map((item) => item.value).join(',')
-
-  const { data: assignees } = useQuery({
-    queryKey: ['assignees', searchAssigneesInProjects],
-    queryFn: async () => {
-      const res = await projectApi.projectControllerGetProjectInvolvedAssignees(searchAssigneesInProjects)
-      return res.data
-    },
-  })
-
   const { data, isLoading: loading } = useQuery({
-    queryKey: ['tasks', '', page, sortParams],
+    queryKey: ['tasks', '', page, sortParams, searchAssigneesInProjects, prioritySelected, assigneesSelected],
     queryFn: () =>
       taskApi
         .taskControllerGetManagedTasks(
-          '',
-          '',
-          '',
+          searchAssigneesInProjects,
+          assigneesSelected,
+          prioritySelected,
           'open',
           'all',
           TaskControllerGetTasksRewardGrantedEnum.All,
@@ -68,6 +81,40 @@ export default function TaskManagement() {
   const tasks = data?.data || []
   const totalPages = Math.ceil((data?.pagination?.totalCount || 0) / PAGESIZE)
 
+  // useEffect(() => {
+  //   if (searchAssigneesInProjects) {
+  //     searchParams.set('Projects', searchAssigneesInProjects)
+  //   }
+  //   if (prioritySelected) {
+  //     searchParams.set('Priority', prioritySelected)
+  //   }
+  //   if (assigneesSelected) {
+  //     searchParams.set('Assignees', assigneesSelected)
+  //   }
+  //   navigate(`${location.pathname}?${searchParams.toString()}`)
+  // }, [searchAssigneesInProjects, prioritySelected, assigneesSelected])
+
+  // useEffect(() => {
+  //   if (!selectProjects.length) {
+  //     setSelectProjects(projectsFromUrl ? filterFromEntity(projectsFromUrl, projects?.data || []) : [])
+  //   }
+  //   if (!selectAssignees.length) {
+  //     setSelectAssignees(assigneesFromUrl ? filterFromEntity(assigneesFromUrl, assignees?.data || []) : [])
+  //   }
+  //   if (!selectPriority.length) {
+  //     setSelectPriority(priorityFromUrl ? filterFromEntity(priorityFromUrl, priorities) : [])
+  //   }
+  // }, [
+  //   projectsFromUrl,
+  //   assigneesFromUrl,
+  //   priorityFromUrl,
+  //   selectProjects.length,
+  //   selectAssignees.length,
+  //   selectPriority.length,
+  //   projects?.data,
+  //   assignees?.data,
+  // ])
+
   return (
     <div className="space-y-4">
       <TableFilter
@@ -80,6 +127,7 @@ export default function TaskManagement() {
         setSelectPriority={setSelectPriority}
         projectsSearch={projectsSearch}
         assignees={assignees?.data || []}
+        priorities={priorities}
       />
       <TaskMgtTable tasks={tasks} page={page} totalPages={totalPages} setPage={setPage} sort={sort} setSort={setSort} />
     </div>
