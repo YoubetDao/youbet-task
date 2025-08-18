@@ -4,7 +4,7 @@ import {
   TaskControllerGetTasksRewardClaimedEnum,
   TaskControllerGetTasksRewardGrantedEnum,
 } from '@/openapi/client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { PAGESIZE, STALETIME } from '@/constants/contracts/request'
 import { useQueries, useQuery } from '@tanstack/react-query'
 import TaskMgtTable from './_components/TaskMgtTable'
@@ -13,12 +13,16 @@ import TableFilter from './_components/TableFilter'
 import { IData } from '@/components/filter-button'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { priorities, selectedFn } from './_constants'
+import { Input } from '@/components/ui/input'
+import { Search } from 'lucide-react'
 
 export default function TaskManagement() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const [page, setPage] = useState(1)
   const [sort, setSort] = useState<ISort[]>([])
+  const [input, setInput] = useState('')
+  const [search, setSearch] = useState('')
 
   const projectsFromUrl = searchParams.get('Projects')
   const assigneesFromUrl = searchParams.get('Assignees')
@@ -56,7 +60,7 @@ export default function TaskManagement() {
   const sortParams = sort.map((item) => `${item.field}:${item.value}`).join(',')
 
   const { data, isLoading: loading } = useQuery({
-    queryKey: ['tasks', '', page, sortParams, searchAssigneesInProjects, prioritySelected, assigneesSelected],
+    queryKey: ['tasks', '', page, sortParams, searchAssigneesInProjects, prioritySelected, assigneesSelected, search],
     queryFn: () =>
       taskApi
         .taskControllerGetManagedTasks(
@@ -70,7 +74,7 @@ export default function TaskManagement() {
           TaskControllerGetTasksNoGrantNeededEnum.All,
           (page - 1) * PAGESIZE,
           PAGESIZE,
-          '',
+          search,
           sortParams,
         )
         .then((res) => res.data),
@@ -81,18 +85,21 @@ export default function TaskManagement() {
   const tasks = data?.data || []
   const totalPages = Math.ceil((data?.pagination?.totalCount || 0) / PAGESIZE)
 
-  // useEffect(() => {
-  //   if (searchAssigneesInProjects) {
-  //     searchParams.set('Projects', searchAssigneesInProjects)
-  //   }
-  //   if (prioritySelected) {
-  //     searchParams.set('Priority', prioritySelected)
-  //   }
-  //   if (assigneesSelected) {
-  //     searchParams.set('Assignees', assigneesSelected)
-  //   }
-  //   navigate(`${location.pathname}?${searchParams.toString()}`)
-  // }, [searchAssigneesInProjects, prioritySelected, assigneesSelected])
+  useEffect(() => {
+    //   if (searchAssigneesInProjects) {
+    //     searchParams.set('Projects', searchAssigneesInProjects)
+    //   }
+    //   if (prioritySelected) {
+    //     searchParams.set('Priority', prioritySelected)
+    //   }
+    //   if (assigneesSelected) {
+    //     searchParams.set('Assignees', assigneesSelected)
+    //   }
+    if (search) {
+      searchParams.set('search', search)
+    }
+    navigate(`${location.pathname}?${searchParams.toString()}`)
+  }, [searchAssigneesInProjects, prioritySelected, assigneesSelected, search])
 
   // useEffect(() => {
   //   if (!selectProjects.length) {
@@ -117,6 +124,24 @@ export default function TaskManagement() {
 
   return (
     <div className="space-y-4">
+      <div className="relative">
+        <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2" />
+        <Input
+          type="search"
+          placeholder="Search by describing your issue..."
+          className="pl-8"
+          value={input}
+          onChange={(e) => {
+            setInput(e.currentTarget.value)
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              setSearch(input)
+            }
+          }}
+        />
+      </div>
       <TableFilter
         projects={projects?.data || []}
         selectProjects={selectProjects}
