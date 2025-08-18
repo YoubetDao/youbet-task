@@ -125,11 +125,11 @@ export default function TaskManagement() {
   return (
     <div className="space-y-4">
       <div className="relative">
-        <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2" />
+        <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2" />
         <Input
           type="search"
           placeholder="Search by describing your issue..."
-          className="pl-8"
+          className="pl-10"
           value={input}
           onChange={(e) => {
             setInput(e.currentTarget.value)
