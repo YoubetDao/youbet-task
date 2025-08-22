@@ -8,17 +8,22 @@ import { useState } from 'react'
 import { PAGESIZE, STALETIME } from '@/constants/contracts/request'
 import { useQuery } from '@tanstack/react-query'
 import TaskMgtTable from './_components/TaskMgtTable'
+import { ISort } from './_components/TableSortHeader'
 import TableFilter from './_components/TableFilter'
 import { IData } from '@/components/filter-button'
 import { useSearchParams } from 'react-router-dom'
 
 export default function TaskManagement() {
   const [page, setPage] = useState(1)
+  const [sort, setSort] = useState<ISort[]>([])
+
   const [selectProjects, setSelectProjects] = useState<IData[]>([])
   const [selectAssignees, setSelectAssignees] = useState<IData[]>([])
   const [selectPriority, setSelectPriority] = useState<IData[]>([])
   const [searchParams] = useSearchParams()
   const projectsSearch = searchParams.get('ProjectsSearch') || ''
+
+  const sortParams = sort.map((item) => `${item.field}:${item.value}`).join(',')
 
   const { data: projects } = useQuery({
     queryKey: ['projects', projectsSearch],
@@ -38,7 +43,7 @@ export default function TaskManagement() {
   })
 
   const { data, isLoading: loading } = useQuery({
-    queryKey: ['tasks', '', page],
+    queryKey: ['tasks', '', page, sortParams],
     queryFn: () =>
       taskApi
         .taskControllerGetManagedTasks(
@@ -52,6 +57,8 @@ export default function TaskManagement() {
           TaskControllerGetTasksNoGrantNeededEnum.All,
           (page - 1) * PAGESIZE,
           PAGESIZE,
+          '',
+          sortParams,
         )
         .then((res) => res.data),
     staleTime: STALETIME,
@@ -74,7 +81,7 @@ export default function TaskManagement() {
         projectsSearch={projectsSearch}
         assignees={Array.isArray(assignees) ? assignees : assignees?.data || []}
       />
-      <TaskMgtTable tasks={tasks} page={page} totalPages={totalPages} setPage={setPage} />
+      <TaskMgtTable tasks={tasks} page={page} totalPages={totalPages} setPage={setPage} sort={sort} setSort={setSort} />
     </div>
   )
 }
