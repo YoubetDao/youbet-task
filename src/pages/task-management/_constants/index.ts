@@ -35,4 +35,5 @@ const priorities = [
     value: TaskPriorityEnum.P2,
   },
 ]
+
 export { selectedFn, filterFromEntity, priorities }

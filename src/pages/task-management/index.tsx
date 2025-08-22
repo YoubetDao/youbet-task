@@ -1,4 +1,4 @@
-import { projectApi, taskApi } from '@/service'
+import { taskApi } from '@/service'
 import {
   TaskControllerGetTasksNoGrantNeededEnum,
   TaskControllerGetTasksRewardClaimedEnum,
@@ -6,7 +6,7 @@ import {
 } from '@/openapi/client'
 import { useEffect, useState } from 'react'
 import { PAGESIZE, STALETIME } from '@/constants/contracts/request'
-import { useQueries, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import TaskMgtTable from './_components/TaskMgtTable'
 import { ISort } from './_components/TableSortHeader'
 import TableFilter from './_components/TableFilter'
@@ -15,6 +15,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { priorities, selectedFn } from './_constants'
 import { Input } from '@/components/ui/input'
 import { Search } from 'lucide-react'
+import TaskCreate from './_components/TaskCreate'
+import useQueryProjectsAndAssignees from './_hooks/useQueryProjectsAndAssignees'
 
 export default function TaskManagement() {
   const navigate = useNavigate()
@@ -34,26 +36,7 @@ export default function TaskManagement() {
   const [selectPriority, setSelectPriority] = useState<IData[]>([])
   const searchAssigneesInProjects = selectedFn(selectProjects)
 
-  const [getProjects, getAssignees] = useQueries({
-    queries: [
-      {
-        queryKey: ['projects', projectsSearch],
-        queryFn: async () => {
-          const res = await projectApi.projectControllerGetProjects('', '', 'false', projectsSearch, '', 0, 20)
-          return res.data
-        },
-      },
-      {
-        queryKey: ['assignees', searchAssigneesInProjects],
-        queryFn: async () => {
-          const res = await projectApi.projectControllerGetProjectInvolvedAssignees(searchAssigneesInProjects)
-          return res.data
-        },
-      },
-    ],
-  })
-  const projects = getProjects.data
-  const assignees = getAssignees.data
+  const { projects, assignees } = useQueryProjectsAndAssignees({ projectsSearch, searchAssigneesInProjects })
 
   const prioritySelected = selectedFn(selectPriority)
   const assigneesSelected = selectedFn(selectAssignees)
@@ -142,18 +125,21 @@ export default function TaskManagement() {
           }}
         />
       </div>
-      <TableFilter
-        projects={projects?.data || []}
-        selectProjects={selectProjects}
-        selectAssignees={selectAssignees}
-        selectPriority={selectPriority}
-        setSelectProjects={setSelectProjects}
-        setSelectAssignees={setSelectAssignees}
-        setSelectPriority={setSelectPriority}
-        projectsSearch={projectsSearch}
-        assignees={assignees?.data || []}
-        priorities={priorities}
-      />
+      <div className="flex gap-4">
+        <TableFilter
+          projects={projects?.data || []}
+          selectProjects={selectProjects}
+          selectAssignees={selectAssignees}
+          selectPriority={selectPriority}
+          setSelectProjects={setSelectProjects}
+          setSelectAssignees={setSelectAssignees}
+          setSelectPriority={setSelectPriority}
+          projectsSearch={projectsSearch}
+          assignees={assignees?.data || []}
+          priorities={priorities}
+        />
+        <TaskCreate />
+      </div>
       <TaskMgtTable tasks={tasks} page={page} totalPages={totalPages} setPage={setPage} sort={sort} setSort={setSort} />
     </div>
   )
