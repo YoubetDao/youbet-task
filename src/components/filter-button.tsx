@@ -48,7 +48,7 @@ export function isIData(item: any): item is IData {
 const changeURLParams = (navigate: NavigateFunction, key: string, value: string) => {
   const searchParams = new URLSearchParams(location.search)
   searchParams.set(key, value)
-  navigate(`${location.pathname}?${searchParams.toString()}`)
+  navigate(`${location.pathname}?${searchParams.toString()}`, { replace: true })
 }
 
 const CommandListComponent = ({ title, data, get, set, search }: IConfigs) => {

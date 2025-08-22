@@ -91,7 +91,7 @@ export default function TaskManagement() {
     if (assigneesSelected) {
       searchParams.set('Assignees', assigneesSelected)
     }
-    navigate(`${location.pathname}?${searchParams.toString()}`)
+    navigate(`${location.pathname}?${searchParams.toString()}`, { replace: true })
   }, [searchAssigneesInProjects, prioritySelected, assigneesSelected])
 
   useEffect(() => {
