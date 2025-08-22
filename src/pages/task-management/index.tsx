@@ -4,7 +4,7 @@ import {
   TaskControllerGetTasksRewardClaimedEnum,
   TaskControllerGetTasksRewardGrantedEnum,
 } from '@/openapi/client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { PAGESIZE, STALETIME } from '@/constants/contracts/request'
 import { useQueries, useQuery } from '@tanstack/react-query'
 import TaskMgtTable from './_components/TaskMgtTable'
@@ -12,7 +12,7 @@ import { ISort } from './_components/TableSortHeader'
 import TableFilter from './_components/TableFilter'
 import { IData } from '@/components/filter-button'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { priorities, selectedFn } from './_constants'
+import { filterFromEntity, priorities, selectedFn } from './_constants'
 
 export default function TaskManagement() {
   const navigate = useNavigate()
@@ -81,39 +81,39 @@ export default function TaskManagement() {
   const tasks = data?.data || []
   const totalPages = Math.ceil((data?.pagination?.totalCount || 0) / PAGESIZE)
 
-  // useEffect(() => {
-  //   if (searchAssigneesInProjects) {
-  //     searchParams.set('Projects', searchAssigneesInProjects)
-  //   }
-  //   if (prioritySelected) {
-  //     searchParams.set('Priority', prioritySelected)
-  //   }
-  //   if (assigneesSelected) {
-  //     searchParams.set('Assignees', assigneesSelected)
-  //   }
-  //   navigate(`${location.pathname}?${searchParams.toString()}`)
-  // }, [searchAssigneesInProjects, prioritySelected, assigneesSelected])
+  useEffect(() => {
+    if (searchAssigneesInProjects) {
+      searchParams.set('Projects', searchAssigneesInProjects)
+    }
+    if (prioritySelected) {
+      searchParams.set('Priority', prioritySelected)
+    }
+    if (assigneesSelected) {
+      searchParams.set('Assignees', assigneesSelected)
+    }
+    navigate(`${location.pathname}?${searchParams.toString()}`)
+  }, [searchAssigneesInProjects, prioritySelected, assigneesSelected])
 
-  // useEffect(() => {
-  //   if (!selectProjects.length) {
-  //     setSelectProjects(projectsFromUrl ? filterFromEntity(projectsFromUrl, projects?.data || []) : [])
-  //   }
-  //   if (!selectAssignees.length) {
-  //     setSelectAssignees(assigneesFromUrl ? filterFromEntity(assigneesFromUrl, assignees?.data || []) : [])
-  //   }
-  //   if (!selectPriority.length) {
-  //     setSelectPriority(priorityFromUrl ? filterFromEntity(priorityFromUrl, priorities) : [])
-  //   }
-  // }, [
-  //   projectsFromUrl,
-  //   assigneesFromUrl,
-  //   priorityFromUrl,
-  //   selectProjects.length,
-  //   selectAssignees.length,
-  //   selectPriority.length,
-  //   projects?.data,
-  //   assignees?.data,
-  // ])
+  useEffect(() => {
+    if (!selectProjects.length) {
+      setSelectProjects(projectsFromUrl ? filterFromEntity(projectsFromUrl, projects?.data || []) : [])
+    }
+    if (!selectAssignees.length) {
+      setSelectAssignees(assigneesFromUrl ? filterFromEntity(assigneesFromUrl, assignees?.data || []) : [])
+    }
+    if (!selectPriority.length) {
+      setSelectPriority(priorityFromUrl ? filterFromEntity(priorityFromUrl, priorities) : [])
+    }
+  }, [
+    projectsFromUrl,
+    assigneesFromUrl,
+    priorityFromUrl,
+    selectProjects.length,
+    selectAssignees.length,
+    selectPriority.length,
+    projects?.data,
+    assignees?.data,
+  ])
 
   return (
     <div className="space-y-4">

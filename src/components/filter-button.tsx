@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils'
 import { GithubUser, Project } from '@/openapi/client'
 import { CircleX, ListFilter } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { NavigateFunction, useNavigate } from 'react-router-dom'
 
 export interface IData {
   name: string
@@ -45,6 +45,12 @@ export function isIData(item: any): item is IData {
   return typeof item === 'object' && item !== null && typeof item.name === 'string' && typeof item.value === 'string'
 }
 
+const changeURLParams = (navigate: NavigateFunction, key: string, value: string) => {
+  const searchParams = new URLSearchParams(location.search)
+  searchParams.set(key, value)
+  navigate(`${location.pathname}?${searchParams.toString()}`)
+}
+
 const CommandListComponent = ({ title, data, get, set, search }: IConfigs) => {
   const [inputValue, setInputValue] = useState<string>(search || '')
   const navigate = useNavigate()
@@ -58,9 +64,7 @@ const CommandListComponent = ({ title, data, get, set, search }: IConfigs) => {
     debounceRef.current =
       search !== null
         ? setTimeout(() => {
-            const searchParams = new URLSearchParams(location.search)
-            searchParams.set(`${title}Search`, inputValue)
-            navigate(`${location.pathname}?${searchParams.toString()}`)
+            changeURLParams(navigate, `${title}Search`, inputValue)
           }, 500)
         : null
 
@@ -86,26 +90,15 @@ const CommandListComponent = ({ title, data, get, set, search }: IConfigs) => {
               key={getKey}
               value={getKey}
               onSelect={() => {
-                set((prev) =>
-                  prev.map((p) => p.value).includes(setKey)
-                    ? prev.filter((item) => item.value !== setKey)
-                    : [...prev, { name: getKey, value: setKey }],
-                )
+                const val = get.map((p) => p.value).includes(setKey)
+                  ? get.filter((item) => item.value !== setKey)
+                  : [...get, { name: getKey, value: setKey }]
+
+                changeURLParams(navigate, `${title}`, val.map((v) => v.value).join(','))
+                set(val)
               }}
             >
-              <Checkbox
-                value={setKey}
-                checked={get.map((getItem) => getItem.value).includes(setKey)}
-                id={setKey}
-                onChange={(e: React.FormEvent<HTMLButtonElement>) => {
-                  const value = (e.target as HTMLInputElement).value
-                  set((prev) =>
-                    prev.map((p) => p.value).includes(value)
-                      ? prev.filter((item) => item.value !== value)
-                      : [...prev, { name: getKey, value: value }],
-                  )
-                }}
-              />
+              <Checkbox value={setKey} checked={get.map((getItem) => getItem.value).includes(setKey)} id={setKey} />
               <label
                 htmlFor={getKey}
                 className="flex text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -147,14 +140,21 @@ const MutiDropdownMenuSub = ({ title, data, get, set, search }: IConfigs) => {
 }
 
 const DisplayButton = ({ title, data, get, set, search }: IConfigs) => {
+  const navigate = useNavigate()
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="group mr-4 max-w-[300px] justify-start space-x-2">
+        <Button variant="outline" className="group mr-4 max-w-[300px] justify-start space-x-2 truncate">
           {title}
           {get.length > 0 && <Separator orientation="vertical" className="mx-2" />}
           {get.length > 0 && `${get.length} ${title}`}
-          <CircleX className="h-3" onClick={() => set([])} />
+          <CircleX
+            className="h-3"
+            onClick={() => {
+              changeURLParams(navigate, title, '')
+              set([])
+            }}
+          />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0" side="bottom" align="start">
