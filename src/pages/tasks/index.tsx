@@ -19,7 +19,6 @@ export default function Tasks() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [currentTab, setCurrentTab] = useState('unassigned')
   const pageSize = 9
-  const [urlParam, setUrlParam] = useSearchParams('')
 
   // Get the current page number from the URL to ensure synchronization
   const currentPage = useMemo(() => {
@@ -47,8 +46,8 @@ export default function Tasks() {
     currentPage,
     pageSize,
     assignedType,
-    urlParam.get('search') || '',
-    urlParam.get('sort') || '',
+    searchParams.get('search') || '',
+    searchParams.get('sort') || '',
   ]
   const queryFn = () =>
     taskApi
@@ -63,8 +62,8 @@ export default function Tasks() {
         TaskControllerGetTasksNoGrantNeededEnum.All,
         (currentPage - 1) * pageSize,
         pageSize,
-        urlParam.get('search') || '',
-        urlParam.get('sort') || '',
+        searchParams.get('search') || '',
+        searchParams.get('sort') || '',
       )
       .then((res) => res.data)
 
@@ -102,12 +101,12 @@ export default function Tasks() {
       {/* Search */}
       <div className="relative mb-6">
         <SearchInput
-          searchInitialValue={urlParam.get('search') || ''}
-          sortInitialValue={urlParam.get('sort') || ''}
+          searchInitialValue={searchParams.get('search') || ''}
+          sortInitialValue={searchParams.get('sort') || ''}
           placeholder="Search tasks..."
           handleSubmit={(searchValue, sortValue) => {
-            setPage(1)
-            setUrlParam(`search=${searchValue}&sort=${sortValue}`)
+            updateUrl(1)
+            setSearchParams(`search=${searchValue}&sort=${sortValue}`)
           }}
         />
       </div>
