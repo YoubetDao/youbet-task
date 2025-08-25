@@ -4,7 +4,6 @@ import { ShineBorder } from '@/components/ui/shine-border'
 import { BackgroundCanvas } from '@/components/ui/background-canvas'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { PartnersSection } from './_components/partners-section'
 import { UserReviewsSection } from './_components/user-reviews-section'
 import Hero from './_components/hero'
 
@@ -204,7 +203,7 @@ const LandingPage = () => {
 
           <UserReviewsSection />
 
-          <PartnersSection />
+          {/* <PartnersSection /> */}
         </div>
       </main>
     </>

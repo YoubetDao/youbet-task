@@ -41,7 +41,7 @@ export default function TaskManagement() {
     queryKey: ['tasks', '', page],
     queryFn: () =>
       taskApi
-        .taskControllerGetTasks(
+        .taskControllerGetManagedTasks(
           '',
           '',
           '',

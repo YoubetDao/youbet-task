@@ -1,10 +1,8 @@
-import { PropsWithChildren, useState, useEffect } from 'react'
-import { clsx } from 'clsx'
+import { PropsWithChildren, useState } from 'react'
 import { Github, Heart, Twitter } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { InteractiveHoverButton } from '../ui/interactive-hover-button'
-import { getNavItems } from '@/constants/data'
 
 const socialLinks = [
   {
@@ -40,58 +38,96 @@ const scrollToAnchor = (href: string) => {
 }
 
 const LandingLayout = ({ children }: PropsWithChildren) => {
-  const [showNavbar, setShowNavbar] = useState(true)
-  const [lastScrollY, setLastScrollY] = useState(0)
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY
-
-      if (currentScrollY > lastScrollY && currentScrollY > 60) {
-        setShowNavbar(false)
-      } else {
-        setShowNavbar(true)
-      }
-
-      setLastScrollY(currentScrollY)
-    }
-
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [lastScrollY])
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const navigate = useNavigate()
 
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden">
-      <header
-        className={clsx(
-          'fixed top-0 z-20 flex h-[60px] w-full justify-between bg-white px-[3%] text-gray-700 shadow-md transition-transform duration-300 dark:bg-[#17181b] dark:text-gray-200 dark:shadow-gray-700 lg:px-4 lg:opacity-[0.99] lg:!backdrop-blur-lg',
-          showNavbar ? 'translate-y-0' : '-translate-y-full',
-        )}
-      >
-        <div className="flex items-center space-x-6">
-          <Link to="/" className="group flex items-center gap-2">
-            <img src="/logo.svg" alt="According.Work" className="h-8" />
-            <span className="font-outfit text-lg font-light tracking-wide">According.Work</span>
-          </Link>
+      <div className="fixed left-0 right-0 top-0 z-50 border-b border-[#222222] bg-black/80 px-4 py-2.5 backdrop-blur-sm md:px-10">
+        <div className="relative mx-auto flex h-10 max-w-[1200px] items-center justify-between text-white">
+          <div className="flex items-center gap-1 text-xl font-bold">
+            <img src="/logo.svg" alt="GoHacker" width={28} height={28} />
+            GoHacker
+          </div>
+
+          {/* 桌面端导航 */}
+          <div className="hidden items-center gap-8 md:flex">
+            <div className="flex items-center gap-8">
+              {navAnchorLinks.map((nav) => (
+                <div
+                  key={nav.name}
+                  onClick={() => {
+                    scrollToAnchor(nav.href)
+                  }}
+                  className="cursor-pointer text-base text-white hover:underline"
+                >
+                  {nav.name}
+                </div>
+              ))}
+            </div>
+            <InteractiveHoverButton
+              onClick={() => {
+                navigate('/dashboard')
+              }}
+            >
+              Go to app
+            </InteractiveHoverButton>
+          </div>
+
+          {/* 移动端汉堡菜单按钮 */}
+          <button
+            className="flex h-6 w-6 cursor-pointer flex-col items-center justify-center md:hidden"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            <span
+              className={`block h-0.5 w-6 rounded-sm bg-white transition-all duration-300 ease-out ${
+                isMenuOpen ? 'translate-y-1 rotate-45' : '-translate-y-0.5'
+              }`}
+            ></span>
+            <span
+              className={`my-0.5 block h-0.5 w-6 rounded-sm bg-white transition-all duration-300 ease-out ${
+                isMenuOpen ? 'opacity-0' : 'opacity-100'
+              }`}
+            ></span>
+            <span
+              className={`block h-0.5 w-6 rounded-sm bg-white transition-all duration-300 ease-out ${
+                isMenuOpen ? '-translate-y-1 -rotate-45' : 'translate-y-0.5'
+              }`}
+            ></span>
+          </button>
         </div>
 
-        {/* 导航菜单 */}
-        <nav className="hidden items-center space-x-6 md:flex">
-          {navAnchorLinks.map((link) => (
-            <button
-              key={link.name}
-              onClick={() => scrollToAnchor(link.href)}
-              className="text-sm font-medium transition-colors hover:text-primary"
-            >
-              {link.name}
-            </button>
-          ))}
-        </nav>
-
-        <Link className="flex items-center" to={getNavItems().find((item) => item.title === 'Login')!.href}>
-          <InteractiveHoverButton>Go to app</InteractiveHoverButton>
-        </Link>
-      </header>
+        {/* 移动端导航菜单 */}
+        <div
+          className={`absolute left-0 right-0 top-full border-b border-[#222222] bg-black/95 backdrop-blur-sm transition-all duration-300 ease-in-out md:hidden ${
+            isMenuOpen ? 'visible opacity-100' : 'invisible opacity-0'
+          }`}
+        >
+          <div className="mx-auto max-w-[1200px] space-y-4 p-2">
+            {navAnchorLinks.map((nav) => (
+              <div
+                key={nav.name}
+                onClick={() => {
+                  scrollToAnchor(nav.href)
+                  setIsMenuOpen(false)
+                }}
+                className="block cursor-pointer py-2 text-base font-medium text-white hover:text-gray-300"
+              >
+                {nav.name}
+              </div>
+            ))}
+            <div className="pt-2">
+              <InteractiveHoverButton
+                onClick={() => {
+                  navigate('/dashboard')
+                }}
+              >
+                Go to app
+              </InteractiveHoverButton>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Main Content */}
       <main className="flex-grow pt-16">{children}</main>
@@ -127,12 +163,12 @@ const LandingLayout = ({ children }: PropsWithChildren) => {
               <ul className="space-y-2">
                 {navAnchorLinks.map((link, index) => (
                   <li key={index}>
-                    <a
-                      href={link.href}
+                    <button
+                      onClick={() => scrollToAnchor(link.href)}
                       className="text-sm text-gray-400 transition-colors duration-200 hover:text-white"
                     >
                       {link.name}
-                    </a>
+                    </button>
                   </li>
                 ))}
               </ul>
