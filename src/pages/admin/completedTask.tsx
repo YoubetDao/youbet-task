@@ -11,7 +11,7 @@ import { useAccount, useSwitchChain } from 'wagmi'
 import { paymentChain } from '@/constants/data'
 import PaginationFast from '@/components/pagination-fast'
 import { useQuery } from '@tanstack/react-query'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { useAllowanceCheck } from '@/hooks/useAllowanceCheck'
@@ -40,10 +40,11 @@ const valueToLabel = Object.entries(PeriodControllerGetPeriodsRewardGrantedEnum)
 const DEFAULT_PAGE_SIZE = 10
 
 function CompletedTaskTable(): React.ReactElement {
+  const navigate = useNavigate()
   const [page, setPage] = useState(1)
   const { switchChain } = useSwitchChain()
   const [urlParam] = useSearchParams('')
-  const [projectId, setProjectId] = useState<string | undefined>('')
+  const [projectId, setProjectId] = useState<string | undefined>(urlParam.get('project') ?? '')
   const [filterTags] = useState<string[]>([])
   const { address, chain } = useAccount()
   const [rewardState, setRewardState] = useState<string>(PeriodControllerGetPeriodsRewardGrantedEnum.All)
@@ -164,6 +165,14 @@ function CompletedTaskTable(): React.ReactElement {
       value: project._id.toString(),
       label: project.name,
     })) ?? []
+
+  useEffect(() => {
+    if (projectId) {
+      const searchParams = new URLSearchParams(location.search)
+      searchParams.set('project', projectId)
+      navigate(`${location.pathname}?${searchParams.toString()}`)
+    }
+  }, [projectId])
 
   return (
     <div className="space-y-4">
