@@ -32,7 +32,7 @@ interface IConfigs {
   search: string | null
 }
 
-function isGithubUser(item: any): item is GithubUser {
+export function isGithubUser(item: any): item is GithubUser {
   return (
     typeof item === 'object' &&
     item !== null &&
@@ -41,7 +41,7 @@ function isGithubUser(item: any): item is GithubUser {
     typeof item.htmlUrl === 'string'
   )
 }
-function isIData(item: any): item is IData {
+export function isIData(item: any): item is IData {
   return typeof item === 'object' && item !== null && typeof item.name === 'string' && typeof item.value === 'string'
 }
 
@@ -55,18 +55,21 @@ const CommandListComponent = ({ title, data, get, set, search }: IConfigs) => {
       clearTimeout(debounceRef.current)
     }
 
-    debounceRef.current = setTimeout(() => {
-      const searchParams = new URLSearchParams(location.search)
-      searchParams.set(`${title}Search`, inputValue)
-      navigate(`${location.pathname}?${searchParams.toString()}`)
-    }, 500)
+    debounceRef.current =
+      search !== null
+        ? setTimeout(() => {
+            const searchParams = new URLSearchParams(location.search)
+            searchParams.set(`${title}Search`, inputValue)
+            navigate(`${location.pathname}?${searchParams.toString()}`)
+          }, 500)
+        : null
 
     return () => {
       if (debounceRef.current) {
         clearTimeout(debounceRef.current)
       }
     }
-  }, [inputValue, title, navigate])
+  }, [inputValue, title, navigate, search])
 
   return (
     <Command className="max-h-48 overflow-y-auto">
@@ -181,8 +184,8 @@ export default function FilterButton({ configs }: { configs: IConfigs[] }) {
         ) : null
       })}
       <DropdownMenu>
-        <DropdownMenuTrigger>
-          <Button variant="outline" className="group max-w-[300px] cursor-pointer justify-start space-x-2">
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" className="group flex max-w-[300px] items-center justify-start space-x-2">
             <ListFilter className="h-4 w-4 text-gray-500 group-hover:text-white group-focus:text-white" />
             <span>Filter</span>
           </Button>
