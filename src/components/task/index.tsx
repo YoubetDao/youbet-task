@@ -22,7 +22,7 @@ const ASSIGNMENT_STATUS = ['all', 'unassigned', 'assigned']
 
 interface ITaskCatalog {
   project?: string
-  search: string
+  search?: string
 }
 
 export const TaskCatalog = ({ project, search }: ITaskCatalog) => {
