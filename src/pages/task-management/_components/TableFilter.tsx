@@ -1,5 +1,5 @@
-import FilterButton, { IData } from '@/components/filter-button'
-import { GithubUser, Project, TaskPriorityEnum } from '@/openapi/client'
+import FilterButton, { IConfigs, IData } from '@/components/filter-button'
+import { GithubUser, Project } from '@/openapi/client'
 
 interface ITableFilterProps {
   projects: Project[]
@@ -11,6 +11,11 @@ interface ITableFilterProps {
   selectAssignees: IData[]
   setSelectAssignees: React.Dispatch<React.SetStateAction<IData[]>>
   assignees: GithubUser[]
+  priorities: IData[]
+  selectCreated: IData[]
+  setSelectCreated: React.Dispatch<React.SetStateAction<IData[]>>
+  selectDue: IData[]
+  setSelectDue: React.Dispatch<React.SetStateAction<IData[]>>
 }
 
 export default function TableFilter({
@@ -23,6 +28,11 @@ export default function TableFilter({
   selectAssignees,
   setSelectAssignees,
   assignees,
+  priorities,
+  selectCreated,
+  setSelectCreated,
+  selectDue,
+  setSelectDue,
 }: ITableFilterProps) {
   const configs = [
     {
@@ -35,20 +45,7 @@ export default function TableFilter({
     },
     {
       title: 'Priority',
-      data: [
-        {
-          name: 'P0',
-          value: TaskPriorityEnum.P0,
-        },
-        {
-          name: 'P1',
-          value: TaskPriorityEnum.P1,
-        },
-        {
-          name: 'P2',
-          value: TaskPriorityEnum.P2,
-        },
-      ],
+      data: priorities,
       type: 'multi',
       get: selectPriority,
       set: setSelectPriority,
@@ -62,7 +59,22 @@ export default function TableFilter({
       set: setSelectAssignees,
       search: '',
     },
-  ]
-
+    {
+      title: 'Created Between',
+      data: [],
+      type: 'date',
+      get: selectCreated,
+      set: setSelectCreated,
+      search: null,
+    },
+    {
+      title: 'Due Between',
+      data: [],
+      type: 'date',
+      get: selectDue,
+      set: setSelectDue,
+      search: null,
+    },
+  ] satisfies IConfigs[]
   return <FilterButton configs={configs} />
 }
