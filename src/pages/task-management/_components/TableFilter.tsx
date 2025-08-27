@@ -1,4 +1,4 @@
-import FilterButton, { IData } from '@/components/filter-button'
+import FilterButton, { IConfigs, IData } from '@/components/filter-button'
 import { GithubUser, Project } from '@/openapi/client'
 
 interface ITableFilterProps {
@@ -12,6 +12,10 @@ interface ITableFilterProps {
   setSelectAssignees: React.Dispatch<React.SetStateAction<IData[]>>
   assignees: GithubUser[]
   priorities: IData[]
+  selectCreated: IData[]
+  setSelectCreated: React.Dispatch<React.SetStateAction<IData[]>>
+  selectDue: IData[]
+  setSelectDue: React.Dispatch<React.SetStateAction<IData[]>>
 }
 
 export default function TableFilter({
@@ -25,6 +29,10 @@ export default function TableFilter({
   setSelectAssignees,
   assignees,
   priorities,
+  selectCreated,
+  setSelectCreated,
+  selectDue,
+  setSelectDue,
 }: ITableFilterProps) {
   const configs = [
     {
@@ -51,6 +59,22 @@ export default function TableFilter({
       set: setSelectAssignees,
       search: null,
     },
-  ]
+    {
+      title: 'Created Between',
+      data: [],
+      type: 'date',
+      get: selectCreated,
+      set: setSelectCreated,
+      search: null,
+    },
+    {
+      title: 'Due Between',
+      data: [],
+      type: 'date',
+      get: selectDue,
+      set: setSelectDue,
+      search: null,
+    },
+  ] satisfies IConfigs[]
   return <FilterButton configs={configs} />
 }

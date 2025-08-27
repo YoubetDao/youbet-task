@@ -12,19 +12,29 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Separator } from '@/components/ui/separator'
-import { cn } from '@/lib/utils'
+import { cn, formatDateToDay } from '@/lib/utils'
 import { GithubUser, Project } from '@/openapi/client'
+import { subDays, subMonths, subYears } from 'date-fns'
 import { CircleX, ListFilter } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { NavigateFunction, useNavigate } from 'react-router-dom'
+import { Calendar } from './ui/calendar'
 
 export interface IData {
   name: string
   value: string
 }
+
 type OptionList = IData[] | Project[] | GithubUser[]
 
-interface IConfigs {
+const options = {
+  multi: MultiCommandListComponent,
+  date: DateRangeDropdownMenuSub,
+}
+type OptionType = 'multi' | 'date'
+
+export interface IConfigs {
+  type: OptionType
   title: string
   data: OptionList
   get: IData[]
@@ -51,7 +61,7 @@ const changeURLParams = (navigate: NavigateFunction, key: string, value: string)
   navigate(`${location.pathname}?${searchParams.toString()}`, { replace: true })
 }
 
-const CommandListComponent = ({ title, data, get, set, search }: IConfigs) => {
+function MultiCommandListComponent({ title, data, get, set, search }: IConfigs) {
   const [inputValue, setInputValue] = useState<string>(search || '')
   const navigate = useNavigate()
   const debounceRef = useRef<NodeJS.Timeout | null>(null)
@@ -126,30 +136,167 @@ const CommandListComponent = ({ title, data, get, set, search }: IConfigs) => {
     </Command>
   )
 }
-const MutiDropdownMenuSub = ({ title, data, get, set, search }: IConfigs) => {
+const DropdownMenuSubComponent = ({ type, title, data, get, set, search }: IConfigs) => {
+  const Component = options[type]
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger>{title}</DropdownMenuSubTrigger>
       <DropdownMenuPortal>
         <DropdownMenuSubContent>
-          <CommandListComponent title={title} data={data} get={get} set={set} search={search} />
+          <Component title={title} data={data} get={get} set={set} search={search} type={type} />
         </DropdownMenuSubContent>
       </DropdownMenuPortal>
     </DropdownMenuSub>
   )
 }
 
-const DisplayButton = ({ title, data, get, set, search }: IConfigs) => {
+export const dateOptions = [
+  { name: '1 day ago', value: [subDays(new Date(), 1), new Date()] },
+  {
+    name: '3 days ago',
+    value: [subDays(new Date(), 3), new Date()],
+  },
+  {
+    name: '1 week ago',
+    value: [subDays(new Date(), 7), new Date()],
+  },
+  {
+    name: '1 month ago',
+    value: [subMonths(new Date(), 1), new Date()],
+  },
+  {
+    name: '3 months ago',
+    value: [subMonths(new Date(), 3), new Date()],
+  },
+  {
+    name: '6 months ago',
+    value: [subMonths(new Date(), 6), new Date()],
+  },
+  {
+    name: '1 year ago',
+    value: [subYears(new Date(), 1), new Date()],
+  },
+  {
+    name: 'custom date',
+    value: [],
+  },
+]
+
+function DateRangeDropdownMenuSub({ title, data, get, set, search }: IConfigs) {
   const navigate = useNavigate()
+  return (
+    <Command className="max-h-48 overflow-y-auto">
+      <CommandInput placeholder={`Search ${title}...`} />
+      <CommandList>
+        {dateOptions.map((x, index) => (
+          <CommandItem
+            key={x.name}
+            data-name={x.name}
+            value={x.name}
+            onSelect={(v) => {
+              if (x.name !== 'custom date') {
+                if (get.length && get[0].value === v) {
+                  changeURLParams(navigate, title, '')
+                  set([])
+                } else {
+                  changeURLParams(navigate, title, x.name)
+                  set([
+                    {
+                      name: x.name,
+                      value: x.value.join(','),
+                    },
+                  ])
+                }
+              }
+            }}
+          >
+            <Checkbox
+              value={x.value.join(',')}
+              checked={(get as IData[]).length ? (get as IData[])[0].name === x.name : false}
+              id={x.name}
+            />
+            {x.name !== 'custom date' ? (
+              <label>{x.name}</label>
+            ) : (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <label>custom date</label>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+                  <Calendar
+                    mode="range"
+                    selected={{
+                      from: get.length ? new Date(get[0].value.split(',')[0]) : new Date(),
+                      to: get.length ? new Date(get[0].value.split(',')[1]) : new Date(),
+                    }}
+                    onSelect={(v) => {
+                      changeURLParams(navigate, title, v?.from + ',' + v?.to)
+                      set([
+                        {
+                          name: 'custom date',
+                          value: v?.from + ',' + v?.to,
+                        },
+                      ])
+                    }}
+                    numberOfMonths={2}
+                    className="rounded-lg border shadow-sm"
+                  />
+                </PopoverContent>
+              </Popover>
+            )}
+          </CommandItem>
+        ))}
+        {/* <CommandItem key="custom">
+                <Checkbox checked={(get as IData[]).length ? (get as IData[])[0].name === 'custom date' : false} />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <label>custom date</label>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+                    <Calendar
+                      mode="range"
+                      selected={{
+                        from: get.length ? new Date(get[0].value.split(',')[0]) : new Date(),
+                        to: get.length ? new Date(get[0].value.split(',')[1]) : new Date(),
+                      }}
+                      onSelect={(v) => {
+                        set([
+                          {
+                            name: 'custom date',
+                            value: v?.from + ',' + v?.to,
+                          },
+                        ])
+                      }}
+                      numberOfMonths={2}
+                      className="rounded-lg border shadow-sm"
+                    />
+                  </PopoverContent>
+                </Popover>
+              </CommandItem> */}
+      </CommandList>
+    </Command>
+  )
+}
+
+const DisplayButton = ({ type, title, data, get, set, search }: IConfigs) => {
+  const navigate = useNavigate()
+  const Component = options[type]
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="group mr-4 max-w-[300px] justify-start space-x-2 truncate">
+        <Button variant="outline" className="group max-w-[400px] justify-start space-x-2 truncate">
           {title}
           {get.length > 0 && <Separator orientation="vertical" className="mx-2" />}
-          {get.length > 0 && `${get.length} ${title}`}
+          {get.length > 0 &&
+            (type === 'multi'
+              ? `${get.length} ${title}`
+              : `${
+                  get[0].name === 'custom date'
+                    ? formatDateToDay(get[0].value.split(',')[0]) + ' - ' + formatDateToDay(get[0].value.split(',')[1])
+                    : get[0].name
+                }`)}
           <CircleX
-            className="h-3"
+            className="h-3 flex-shrink-0"
             onClick={() => {
               changeURLParams(navigate, title, '')
               set([])
@@ -158,19 +305,15 @@ const DisplayButton = ({ title, data, get, set, search }: IConfigs) => {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0" side="bottom" align="start">
-        <CommandListComponent title={title} data={data} get={get} set={set} search={search} />
+        <Component title={title} data={data} get={get} set={set} search={search} type={type} />
       </PopoverContent>
     </Popover>
   )
 }
 
-const options = {
-  multi: MutiDropdownMenuSub,
-}
-
 export default function FilterButton({ configs }: { configs: IConfigs[] }) {
   return (
-    <div className="flex">
+    <div className="flex flex-wrap gap-4">
       {configs.map((config, index) => {
         return config.get.length ? (
           <DisplayButton
@@ -180,27 +323,31 @@ export default function FilterButton({ configs }: { configs: IConfigs[] }) {
             get={config.get}
             set={config.set}
             search={config.search}
+            type={config.type}
           />
         ) : null
       })}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="group flex max-w-[300px] items-center justify-start space-x-2">
+          <Button variant="outline" className="group mt-0 flex max-w-[300px] items-center justify-start space-x-2">
             <ListFilter className="h-4 w-4 text-gray-500 group-hover:text-white group-focus:text-white" />
             <span>Filter</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent side="bottom" align="start" sideOffset={4}>
-          {configs.map((config, index) => (
-            <options.multi
-              key={config.title}
-              title={config.title}
-              data={config.data ?? []}
-              get={config.get}
-              set={config.set}
-              search={config.search}
-            />
-          ))}
+          {configs.map((config, index) => {
+            return (
+              <DropdownMenuSubComponent
+                key={config.title}
+                title={config.title}
+                data={config.data ?? []}
+                get={config.get}
+                set={config.set}
+                search={config.search}
+                type={config.type}
+              />
+            )
+          })}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

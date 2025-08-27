@@ -12,7 +12,7 @@ import { ISort } from './_components/TableSortHeader'
 import TableFilter from './_components/TableFilter'
 import { IData } from '@/components/filter-button'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { filterFromEntity, priorities, selectedFn } from './_constants'
+import { filterFromDate, filterFromEntity, priorities, selectedFn } from './_constants'
 
 export default function TaskManagement() {
   const navigate = useNavigate()
@@ -24,11 +24,16 @@ export default function TaskManagement() {
   const assigneesFromUrl = searchParams.get('Assignees')
   const priorityFromUrl = searchParams.get('Priority')
   const projectsSearch = searchParams.get('ProjectsSearch') || ''
+  const createdFromUrl = searchParams.get('Created Between')
+  const dueFromUrl = searchParams.get('Due Between')
 
   const [selectProjects, setSelectProjects] = useState<IData[]>([])
   const [selectAssignees, setSelectAssignees] = useState<IData[]>([])
   const [selectPriority, setSelectPriority] = useState<IData[]>([])
   const searchAssigneesInProjects = selectedFn(selectProjects)
+
+  const [selectCreated, setSelectCreated] = useState<IData[]>([])
+  const [selectDue, setSelectDue] = useState<IData[]>([])
 
   const [getProjects, getAssignees] = useQueries({
     queries: [
@@ -82,19 +87,6 @@ export default function TaskManagement() {
   const totalPages = Math.ceil((data?.pagination?.totalCount || 0) / PAGESIZE)
 
   useEffect(() => {
-    if (searchAssigneesInProjects) {
-      searchParams.set('Projects', searchAssigneesInProjects)
-    }
-    if (prioritySelected) {
-      searchParams.set('Priority', prioritySelected)
-    }
-    if (assigneesSelected) {
-      searchParams.set('Assignees', assigneesSelected)
-    }
-    navigate(`${location.pathname}?${searchParams.toString()}`, { replace: true })
-  }, [searchAssigneesInProjects, prioritySelected, assigneesSelected])
-
-  useEffect(() => {
     if (!selectProjects.length) {
       setSelectProjects(projectsFromUrl ? filterFromEntity(projectsFromUrl, projects?.data || []) : [])
     }
@@ -103,6 +95,12 @@ export default function TaskManagement() {
     }
     if (!selectPriority.length) {
       setSelectPriority(priorityFromUrl ? filterFromEntity(priorityFromUrl, priorities) : [])
+    }
+    if (createdFromUrl) {
+      setSelectCreated(filterFromDate(createdFromUrl))
+    }
+    if (dueFromUrl) {
+      setSelectDue(filterFromDate(dueFromUrl))
     }
   }, [
     projectsFromUrl,
@@ -113,6 +111,8 @@ export default function TaskManagement() {
     selectPriority.length,
     projects?.data,
     assignees?.data,
+    createdFromUrl,
+    dueFromUrl,
   ])
 
   return (
@@ -128,6 +128,10 @@ export default function TaskManagement() {
         projectsSearch={projectsSearch}
         assignees={assignees?.data || []}
         priorities={priorities}
+        selectCreated={selectCreated}
+        setSelectCreated={setSelectCreated}
+        selectDue={selectDue}
+        setSelectDue={setSelectDue}
       />
       <TaskMgtTable tasks={tasks} page={page} totalPages={totalPages} setPage={setPage} sort={sort} setSort={setSort} />
     </div>
