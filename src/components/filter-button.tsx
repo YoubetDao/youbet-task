@@ -73,7 +73,7 @@ const CommandListComponent = ({ title, data, get, set, search }: IConfigs) => {
         clearTimeout(debounceRef.current)
       }
     }
-  }, [inputValue, title, navigate, search])
+  }, [inputValue, title, navigate])
 
   return (
     <Command className="max-h-48 overflow-y-auto">
@@ -184,8 +184,8 @@ export default function FilterButton({ configs }: { configs: IConfigs[] }) {
         ) : null
       })}
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="group flex max-w-[300px] items-center justify-start space-x-2">
+        <DropdownMenuTrigger>
+          <Button variant="outline" className="group max-w-[300px] cursor-pointer justify-start space-x-2">
             <ListFilter className="h-4 w-4 text-gray-500 group-hover:text-white group-focus:text-white" />
             <span>Filter</span>
           </Button>
