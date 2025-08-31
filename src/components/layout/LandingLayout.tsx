@@ -46,8 +46,8 @@ const LandingLayout = ({ children }: PropsWithChildren) => {
       <div className="fixed left-0 right-0 top-0 z-50 border-b border-[#222222] bg-black/80 px-4 py-2.5 backdrop-blur-sm md:px-10">
         <div className="relative mx-auto flex h-10 max-w-[1200px] items-center justify-between text-white">
           <div className="flex items-center gap-1 text-xl font-bold">
-            <img src="/logo.svg" alt="GoHacker" width={28} height={28} />
-            GoHacker
+            <img src="/logo.svg" alt="According.Work" width={28} height={28} />
+            According.Work
           </div>
 
           {/* 桌面端导航 */}
