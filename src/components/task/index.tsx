@@ -22,10 +22,9 @@ const ASSIGNMENT_STATUS = ['all', 'unassigned', 'assigned']
 
 interface ITaskCatalog {
   project?: string
-  search?: string
 }
 
-export const TaskCatalog = ({ project, search }: ITaskCatalog) => {
+export const TaskCatalog = ({ project }: ITaskCatalog) => {
   const [page, setPage] = useState(1)
   const [selectedCategory, setSelectedCategory] = useState<string>('open')
   const [selectedAssignment, setSelectedAssignment] = useState<string>('unassigned')
@@ -44,7 +43,7 @@ export const TaskCatalog = ({ project, search }: ITaskCatalog) => {
         )
         .then((res) => res.data)
   } else {
-    queryKey = ['tasks', project, page, pageSize, selectedCategory, selectedAssignment, search]
+    queryKey = ['tasks', project, page, pageSize, selectedCategory, selectedAssignment]
     queryFn = () =>
       taskApi
         .taskControllerGetTasks(
@@ -58,7 +57,6 @@ export const TaskCatalog = ({ project, search }: ITaskCatalog) => {
           TaskControllerGetTasksNoGrantNeededEnum.All,
           (page - 1) * pageSize,
           pageSize,
-          search,
         )
         .then((res) => res.data)
   }
