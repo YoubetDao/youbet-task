@@ -90,7 +90,7 @@ export default function TaskMgtTable({
             <TableRow key={x._id}>
               <TableCell>
                 <div className="space-y-1">
-                  <div data-field="title" data-githubId={x.githubId} onClick={handleClicktoEditState}>
+                  <div data-field="title" data-githubid={x.githubId} onClick={handleClicktoEditState}>
                     {isEdit.field === 'title' && isEdit.value && isEdit.githubId === x.githubId ? (
                       <Input
                         value={title && title.githubId === x.githubId ? title.value ?? '' : x?.title}
@@ -130,7 +130,7 @@ export default function TaskMgtTable({
                         mode="single"
                         selected={new Date(x.due || '')}
                         captionLayout="dropdown"
-                        data-githubId={x.githubId}
+                        data-githubid={x.githubId}
                         onSelect={(value) => {
                           value && updateTaskDetail({ value: formatISO(new Date(value)) })
                         }}
@@ -140,7 +140,7 @@ export default function TaskMgtTable({
                 ) : (
                   <div
                     data-field="due"
-                    data-githubId={x.githubId}
+                    data-githubid={x.githubId}
                     onClick={handleClicktoEditState}
                     className={cn(
                       'space-y-1',
@@ -184,7 +184,7 @@ export default function TaskMgtTable({
                   <div
                     data-field="priority"
                     onClick={handleClicktoEditState}
-                    data-githubId={x.githubId}
+                    data-githubid={x.githubId}
                     className={cn('w-20 rounded-sm py-1 text-center capitalize text-white', {
                       'bg-red-500': x.priority === TaskPriorityEnum.P0,
                       'bg-orange-500': x.priority === TaskPriorityEnum.P1,
@@ -196,7 +196,7 @@ export default function TaskMgtTable({
                 )}
               </TableCell>
               <TableCell>
-                <div data-field="storyPoints" data-githubId={x.githubId} onClick={handleClicktoEditState}>
+                <div data-field="storyPoints" data-githubid={x.githubId} onClick={handleClicktoEditState}>
                   {isEdit.field === 'storyPoints' && isEdit.value && isEdit.githubId === x.githubId ? (
                     <Input
                       className="w-12"

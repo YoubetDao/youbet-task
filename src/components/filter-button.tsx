@@ -32,7 +32,7 @@ interface IConfigs {
   search: string | null
 }
 
-function isGithubUser(item: any): item is GithubUser {
+export function isGithubUser(item: any): item is GithubUser {
   return (
     typeof item === 'object' &&
     item !== null &&
@@ -41,7 +41,7 @@ function isGithubUser(item: any): item is GithubUser {
     typeof item.htmlUrl === 'string'
   )
 }
-function isIData(item: any): item is IData {
+export function isIData(item: any): item is IData {
   return typeof item === 'object' && item !== null && typeof item.name === 'string' && typeof item.value === 'string'
 }
 
@@ -55,11 +55,14 @@ const CommandListComponent = ({ title, data, get, set, search }: IConfigs) => {
       clearTimeout(debounceRef.current)
     }
 
-    debounceRef.current = setTimeout(() => {
-      const searchParams = new URLSearchParams(location.search)
-      searchParams.set(`${title}Search`, inputValue)
-      navigate(`${location.pathname}?${searchParams.toString()}`)
-    }, 500)
+    debounceRef.current =
+      search !== null
+        ? setTimeout(() => {
+            const searchParams = new URLSearchParams(location.search)
+            searchParams.set(`${title}Search`, inputValue)
+            navigate(`${location.pathname}?${searchParams.toString()}`)
+          }, 500)
+        : null
 
     return () => {
       if (debounceRef.current) {
