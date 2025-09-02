@@ -43,8 +43,8 @@ function CompletedTaskTable(): React.ReactElement {
   const navigate = useNavigate()
   const [page, setPage] = useState(1)
   const { switchChain } = useSwitchChain()
-  const [urlParam, setUrlParams] = useSearchParams('')
-  const [projectId, setProjectId] = useState<string | undefined>(urlParam.get('project') ?? '')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [projectId, setProjectId] = useState<string | undefined>(searchParams.get('project') ?? '')
   const [filterTags] = useState<string[]>([])
   const { address, chain } = useAccount()
   const [rewardState, setRewardState] = useState<string>(PeriodControllerGetPeriodsRewardGrantedEnum.All)
@@ -54,15 +54,15 @@ function CompletedTaskTable(): React.ReactElement {
   const [pendingGrantTasks, setPendingGrantTasks] = usePendingGrantList()
 
   const { data: projects, isLoading: projectLoading } = useQuery({
-    queryKey: ['projects', filterTags, urlParam.toString()],
+    queryKey: ['projects', filterTags, searchParams.toString()],
     queryFn: async () => {
       return projectApi
         .projectControllerGetProjects(
           filterTags.join(','),
           '',
           'false',
-          urlParam.get('search') || '',
-          urlParam.get('sort') || '',
+          searchParams.get('search') || '',
+          searchParams.get('sort') || '',
           0,
           1000,
         )
@@ -170,12 +170,12 @@ function CompletedTaskTable(): React.ReactElement {
 
   useEffect(() => {
     if (projectId) {
-      setUrlParams((prev) => {
-        prev.set('project', projectId)
-        return prev
-      })
+      const newParams = new URLSearchParams(searchParams)
+      newParams.set('project', projectId)
+
+      setSearchParams(newParams, { replace: true })
     }
-  }, [projectId, setUrlParams])
+  }, [projectId])
 
   return (
     <div className="space-y-4">
