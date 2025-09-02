@@ -63,6 +63,5 @@ export default function TableFilter({
       search: '',
     },
   ]
-
   return <FilterButton configs={configs} />
 }

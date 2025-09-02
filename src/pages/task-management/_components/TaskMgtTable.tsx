@@ -45,7 +45,7 @@ export default function TaskMgtTable({
 
   const handleClicktoEditState = (e: { currentTarget: HTMLDivElement }) => {
     const field = (e.currentTarget as HTMLDivElement).dataset.field as string
-    const githubId = Number(e.currentTarget.dataset.githubid as string)
+    const githubId = Number(e.currentTarget.dataset.githubId as string)
     setIsEdit({
       field,
       value: true,

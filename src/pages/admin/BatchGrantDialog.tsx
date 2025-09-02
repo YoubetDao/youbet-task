@@ -34,7 +34,6 @@ function isValidDecimal(input: string, decimal: number) {
   const regex = new RegExp(`^\\d*(\\.\\d{0,${decimal}})?$`)
   return regex.test(input)
 }
-
 export const BatchGrantDialog = ({ defaultRewardTasks, rewardType, trigger, cleanPendingGrantTasks }: Props) => {
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
