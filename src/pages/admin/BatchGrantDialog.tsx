@@ -17,7 +17,6 @@ export interface RewardTask {
   users: GithubUser
   id: string
   amount: number
-  amountInput?: string
   decimals: number
   taskTitle: string
   creator: string
@@ -28,11 +27,6 @@ interface Props {
   defaultRewardTasks: Array<RewardTask>
   rewardType: 'task' | 'period'
   cleanPendingGrantTasks: () => void
-}
-
-function isValidDecimal(input: string, decimal: number) {
-  const regex = new RegExp(`^\\d*(\\.\\d{0,${decimal}})?$`)
-  return regex.test(input)
 }
 
 export const BatchGrantDialog = ({ defaultRewardTasks, rewardType, trigger, cleanPendingGrantTasks }: Props) => {
@@ -193,18 +187,11 @@ export const BatchGrantDialog = ({ defaultRewardTasks, rewardType, trigger, clea
                       className="flex-1"
                       onChange={(e) => {
                         const newValue = e.target.value
-                        // const newValue = parseAmount(e.target.value, Number(decimals))
-                        if (isValidDecimal(newValue + '', decimals)) {
-                          setRewardTasks(
-                            rewardTasks.map((t) =>
-                              t.id === task.id
-                                ? { ...t, amountInput: newValue, amount: newValue === '' ? 0 : Number(newValue) }
-                                : t,
-                            ),
-                          )
-                        }
+                        setRewardTasks(
+                          rewardTasks.map((t) => (t.id === task.id ? { ...t, amount: Number(newValue) } : t)),
+                        )
                       }}
-                      value={task.amountInput}
+                      value={task.amount}
                     />
                   </div>
                 </div>

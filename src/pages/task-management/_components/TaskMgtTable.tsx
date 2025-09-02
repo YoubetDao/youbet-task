@@ -13,22 +13,17 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { taskApi } from '@/service'
-import TableSortHeader, { ISort } from './TableSortHeader'
 
 export default function TaskMgtTable({
   tasks,
   page,
   totalPages,
   setPage,
-  sort,
-  setSort,
 }: {
   tasks: TaskDto[]
   page: number
   totalPages: number
   setPage: Dispatch<SetStateAction<number>>
-  sort: ISort[]
-  setSort: Dispatch<SetStateAction<ISort[]>>
 }) {
   const [isEdit, setIsEdit] = useState({
     field: '',
@@ -71,16 +66,10 @@ export default function TaskMgtTable({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-20 text-gray-400">Title</TableHead>
-            <TableHead className="text-gray-400">
-              <TableSortHeader title="Due" sort={sort} onClick={setSort} field="due" />
-            </TableHead>
-            <TableHead className="text-gray-400">
-              <TableSortHeader title="Priority" sort={sort} onClick={setSort} field="priority" />
-            </TableHead>
-            <TableHead className="w-50 text-gray-400">
-              <TableSortHeader title="Story Points" sort={sort} onClick={setSort} field="storyPoints" />
-            </TableHead>
+            <TableHead className="text-gray-400">Title</TableHead>
+            <TableHead className="text-gray-400">Due</TableHead>
+            <TableHead className="text-gray-400">Priority</TableHead>
+            <TableHead className="text-gray-400">Story Points</TableHead>
             <TableHead className="text-gray-400">Project</TableHead>
             <TableHead className="text-gray-400">Assignees</TableHead>
           </TableRow>
@@ -90,7 +79,7 @@ export default function TaskMgtTable({
             <TableRow key={x._id}>
               <TableCell>
                 <div className="space-y-1">
-                  <div data-field="title" data-githubid={x.githubId} onClick={handleClicktoEditState}>
+                  <div data-field="title" data-githubId={x.githubId} onClick={handleClicktoEditState}>
                     {isEdit.field === 'title' && isEdit.value && isEdit.githubId === x.githubId ? (
                       <Input
                         value={title && title.githubId === x.githubId ? title.value ?? '' : x?.title}
@@ -130,7 +119,7 @@ export default function TaskMgtTable({
                         mode="single"
                         selected={new Date(x.due || '')}
                         captionLayout="dropdown"
-                        data-githubid={x.githubId}
+                        data-githubId={x.githubId}
                         onSelect={(value) => {
                           value && updateTaskDetail({ value: formatISO(new Date(value)) })
                         }}
@@ -140,7 +129,7 @@ export default function TaskMgtTable({
                 ) : (
                   <div
                     data-field="due"
-                    data-githubid={x.githubId}
+                    data-githubId={x.githubId}
                     onClick={handleClicktoEditState}
                     className={cn(
                       'space-y-1',
@@ -184,7 +173,7 @@ export default function TaskMgtTable({
                   <div
                     data-field="priority"
                     onClick={handleClicktoEditState}
-                    data-githubid={x.githubId}
+                    data-githubId={x.githubId}
                     className={cn('w-20 rounded-sm py-1 text-center capitalize text-white', {
                       'bg-red-500': x.priority === TaskPriorityEnum.P0,
                       'bg-orange-500': x.priority === TaskPriorityEnum.P1,
@@ -196,7 +185,7 @@ export default function TaskMgtTable({
                 )}
               </TableCell>
               <TableCell>
-                <div data-field="storyPoints" data-githubid={x.githubId} onClick={handleClicktoEditState}>
+                <div data-field="storyPoints" data-githubId={x.githubId} onClick={handleClicktoEditState}>
                   {isEdit.field === 'storyPoints' && isEdit.value && isEdit.githubId === x.githubId ? (
                     <Input
                       className="w-12"
@@ -224,16 +213,14 @@ export default function TaskMgtTable({
                 <Link to={`/projects/${x.project._id}?projectName=${x.project.name}`}>{x.project.name}</Link>
               </TableCell>
               <TableCell>
-                <div className="flex -space-x-3">
-                  {x.assignees.map((assign) => (
-                    <img
-                      key={assign.login}
-                      className="h-6 w-6 rounded-full border-2 border-white"
-                      src={assign.avatarUrl}
-                      alt={assign.login}
-                    />
-                  ))}
-                </div>
+                {x.assignees.map((assign) => (
+                  <img
+                    key={assign.login}
+                    className="h-6 w-6 rounded-full border-2 border-white"
+                    src={assign.avatarUrl}
+                    alt={assign.login}
+                  />
+                ))}
               </TableCell>
             </TableRow>
           ))}
