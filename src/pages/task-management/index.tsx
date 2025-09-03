@@ -55,6 +55,8 @@ export default function TaskManagement() {
           TaskControllerGetTasksRewardGrantedEnum.All,
           TaskControllerGetTasksRewardClaimedEnum.All,
           TaskControllerGetTasksNoGrantNeededEnum.All,
+          '',
+          '',
           (page - 1) * PAGESIZE,
           PAGESIZE,
           '',
