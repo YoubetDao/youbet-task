@@ -19,7 +19,6 @@ export default function Tasks() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [currentTab, setCurrentTab] = useState('unassigned')
   const pageSize = 9
-  const [urlParam, setUrlParam] = useSearchParams('')
 
   // Get the current page number from the URL to ensure synchronization
   const currentPage = useMemo(() => {

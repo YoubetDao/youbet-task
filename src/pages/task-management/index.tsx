@@ -81,7 +81,7 @@ export default function TaskManagement() {
         setSelectAssignees={setSelectAssignees}
         setSelectPriority={setSelectPriority}
         projectsSearch={projectsSearch}
-        assignees={assignees?.data || []}
+        assignees={Array.isArray(assignees) ? assignees : assignees?.data || []}
       />
       <TaskMgtTable tasks={tasks} page={page} totalPages={totalPages} setPage={setPage} sort={sort} setSort={setSort} />
     </div>
