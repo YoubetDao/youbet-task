@@ -59,6 +59,8 @@ export default function TaskManagement() {
   const projects = getProjects.data
   const assignees = getAssignees.data
 
+  const sortParams = sort.map((item) => `${item.field}:${item.value}`).join(',')
+
   const { data, isLoading: loading } = useQuery({
     queryKey: ['tasks', '', page, sort, searchAssigneesInProjects, prioritySelected, assigneesSelected],
     queryFn: () =>
@@ -74,6 +76,8 @@ export default function TaskManagement() {
           TaskControllerGetTasksNoGrantNeededEnum.All,
           (page - 1) * PAGESIZE,
           PAGESIZE,
+          '', // search parameter
+          sortParams, // sort parameter
         )
         .then((res) => res.data),
     staleTime: STALETIME,
@@ -130,7 +134,7 @@ export default function TaskManagement() {
         selectDue={selectDue}
         setSelectDue={setSelectDue}
       />
-      <TaskMgtTable tasks={tasks} page={page} totalPages={totalPages} setPage={setPage} />
+      <TaskMgtTable tasks={tasks} page={page} totalPages={totalPages} setPage={setPage} sort={sort} setSort={setSort} />
     </div>
   )
 }
