@@ -55,6 +55,8 @@ export const TaskCatalog = ({ project }: ITaskCatalog) => {
           TaskControllerGetTasksRewardGrantedEnum.All,
           TaskControllerGetTasksRewardClaimedEnum.All,
           TaskControllerGetTasksNoGrantNeededEnum.All,
+          '',
+          '',
           (page - 1) * pageSize,
           pageSize,
         )

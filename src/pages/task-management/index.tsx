@@ -78,6 +78,8 @@ export default function TaskManagement() {
           TaskControllerGetTasksRewardGrantedEnum.All,
           TaskControllerGetTasksRewardClaimedEnum.All,
           TaskControllerGetTasksNoGrantNeededEnum.All,
+          '',
+          '',
           (page - 1) * PAGESIZE,
           PAGESIZE,
           search,
@@ -120,15 +122,15 @@ export default function TaskManagement() {
     dueFromUrl,
   ])
 
-  useEffect(() => {
-    const newSearchParams = new URLSearchParams(searchParams)
-    if (search) {
-      newSearchParams.set('search', search)
-    } else {
-      newSearchParams.delete('search')
-    }
-    navigate(`${location.pathname}?${newSearchParams.toString()}`, { replace: true })
-  }, [search, navigate])
+  // useEffect(() => {
+  //   const newSearchParams = new URLSearchParams(searchParams)
+  //   if (search) {
+  //     newSearchParams.set('search', search)
+  //   } else {
+  //     newSearchParams.delete('search')
+  //   }
+  //   navigate(`${location.pathname}?${newSearchParams.toString()}`, { replace: true })
+  // }, [search, navigate])
 
   return (
     <div className="space-y-4">

@@ -60,6 +60,8 @@ export default function Tasks() {
         TaskControllerGetTasksRewardGrantedEnum.All,
         TaskControllerGetTasksRewardClaimedEnum.All,
         TaskControllerGetTasksNoGrantNeededEnum.All,
+        '',
+        '',
         (currentPage - 1) * pageSize,
         pageSize,
         searchParams.get('search') || '',

@@ -71,11 +71,12 @@ function MultiCommandListComponent({ title, data, get, set, search }: IConfigs) 
       clearTimeout(debounceRef.current)
     }
 
-    debounceRef.current = setTimeout(() => {
-      const searchParams = new URLSearchParams(location.search)
-      searchParams.set(`${title}Search`, inputValue)
-      navigate(`${location.pathname}?${searchParams.toString()}`)
-    }, 500)
+    debounceRef.current =
+      search !== null
+        ? setTimeout(() => {
+            changeURLParams(navigate, `${title}Search`, inputValue)
+          }, 500)
+        : null
 
     return () => {
       if (debounceRef.current) {
@@ -99,26 +100,15 @@ function MultiCommandListComponent({ title, data, get, set, search }: IConfigs) 
               key={getKey}
               value={getKey}
               onSelect={() => {
-                set((prev) =>
-                  prev.map((p) => p.value).includes(setKey)
-                    ? prev.filter((item) => item.value !== setKey)
-                    : [...prev, { name: getKey, value: setKey }],
-                )
+                const val = get.map((p) => p.value).includes(setKey)
+                  ? get.filter((item) => item.value !== setKey)
+                  : [...get, { name: getKey, value: setKey }]
+
+                changeURLParams(navigate, `${title}`, val.map((v) => v.value).join(','))
+                set(val)
               }}
             >
-              <Checkbox
-                value={setKey}
-                checked={get.map((getItem) => getItem.value).includes(setKey)}
-                id={setKey}
-                onChange={(e: React.FormEvent<HTMLButtonElement>) => {
-                  const value = (e.target as HTMLInputElement).value
-                  set((prev) =>
-                    prev.map((p) => p.value).includes(value)
-                      ? prev.filter((item) => item.value !== value)
-                      : [...prev, { name: getKey, value: value }],
-                  )
-                }}
-              />
+              <Checkbox value={setKey} checked={get.map((getItem) => getItem.value).includes(setKey)} id={setKey} />
               <label
                 htmlFor={getKey}
                 className="flex text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
