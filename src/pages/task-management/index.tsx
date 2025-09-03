@@ -13,12 +13,16 @@ import { IData } from '@/components/filter-button'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { filterFromDate, filterFromEntity, priorities, selectedFn } from './_constants'
 import { ISort } from './_components/TableSortHeader'
+import { Input } from '@/components/ui/input'
+import { Search } from 'lucide-react'
 
 export default function TaskManagement() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const [page, setPage] = useState(1)
   const [sort, setSort] = useState<ISort[]>([])
+  const [input, setInput] = useState('')
+  const [search, setSearch] = useState('')
 
   const projectsFromUrl = searchParams.get('Projects')
   const assigneesFromUrl = searchParams.get('Assignees')
@@ -62,7 +66,7 @@ export default function TaskManagement() {
   const sortParams = sort.map((item) => `${item.field}:${item.value}`).join(',')
 
   const { data, isLoading: loading } = useQuery({
-    queryKey: ['tasks', '', page, sort, searchAssigneesInProjects, prioritySelected, assigneesSelected],
+    queryKey: ['tasks', '', page, sortParams, searchAssigneesInProjects, prioritySelected, assigneesSelected, search],
     queryFn: () =>
       taskApi
         .taskControllerGetManagedTasks(
@@ -76,8 +80,8 @@ export default function TaskManagement() {
           TaskControllerGetTasksNoGrantNeededEnum.All,
           (page - 1) * PAGESIZE,
           PAGESIZE,
-          '', // search parameter
-          sortParams, // sort parameter
+          search,
+          sortParams,
         )
         .then((res) => res.data),
     staleTime: STALETIME,
@@ -116,8 +120,36 @@ export default function TaskManagement() {
     dueFromUrl,
   ])
 
+  useEffect(() => {
+    const newSearchParams = new URLSearchParams(searchParams)
+    if (search) {
+      newSearchParams.set('search', search)
+    } else {
+      newSearchParams.delete('search')
+    }
+    navigate(`${location.pathname}?${newSearchParams.toString()}`, { replace: true })
+  }, [search, navigate])
+
   return (
     <div className="space-y-4">
+      <div className="relative">
+        <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2" />
+        <Input
+          type="search"
+          placeholder="Search by describing your issue..."
+          className="pl-10"
+          value={input}
+          onChange={(e) => {
+            setInput(e.currentTarget.value)
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              setSearch(input)
+            }
+          }}
+        />
+      </div>
       <TableFilter
         projects={projects?.data || []}
         selectProjects={selectProjects}
