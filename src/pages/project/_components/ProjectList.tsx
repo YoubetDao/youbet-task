@@ -15,6 +15,7 @@ interface ProjectListProps {
   data: IResultPagination<Project> | undefined
   appearances: ReturnType<typeof getAppearances>
 }
+
 function ProjectItem({ item }: { item: Project }) {
   return (
     <Link key={item._id} to={`/projects/${item._id}?projectName=${item.name}`}>
@@ -50,13 +51,20 @@ function ProjectItem({ item }: { item: Project }) {
                   <AvatarImage src={item.owner.avatarUrl} />
                   <AvatarFallback>{item.owner.login}</AvatarFallback>
                 </Avatar>
-                <span>project owner</span>
+                <span>{item.owner.login}</span>
               </div>
               <div className="flex gap-1 md:items-center md:justify-center">
                 <LucideUser className="h-4 w-4" />
                 {item.contributorsCount} contributors
               </div>
-              <div>Languages</div>
+
+              {item.language && (
+                <div className="flex gap-1 md:items-center md:justify-center">
+                  <span className="inline-flex items-center rounded-full bg-white/10 px-2 py-1 text-xs font-medium text-white">
+                    {item.language}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </div>
