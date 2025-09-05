@@ -84,6 +84,8 @@ function CompletedTaskTable(): React.ReactElement {
           PeriodControllerGetPeriodsRewardGrantedEnum[key as keyof typeof PeriodControllerGetPeriodsRewardGrantedEnum],
           TaskControllerGetCompletedTasksRewardClaimedEnum.All,
           TaskControllerGetTasksNoGrantNeededEnum.GrantNeeded,
+          '',
+          '',
           (page - 1) * pageSize,
           pageSize,
         )
