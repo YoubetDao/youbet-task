@@ -157,7 +157,15 @@ export default function TaskManagement() {
         selectDue={selectDue}
         setSelectDue={setSelectDue}
       />
-      <TaskMgtTable tasks={tasks} page={page} totalPages={totalPages} setPage={setPage} sort={sort} setSort={setSort} />
+      <TaskMgtTable
+        tasks={tasks}
+        page={page}
+        totalPages={totalPages}
+        setPage={setPage}
+        sort={sort}
+        setSort={setSort}
+        allAssignees={assignees?.data || []}
+      />
     </div>
   )
 }
