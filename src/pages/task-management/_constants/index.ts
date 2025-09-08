@@ -1,4 +1,4 @@
-import { IData } from '@/components/filter-button'
+import { dateOptions, IData } from '@/components/filter-button'
 import { TaskPriorityEnum } from '@/openapi/client'
 
 const selectedFn = (list: IData[]) => {
@@ -21,6 +21,25 @@ function filterFromEntity<T extends { _id?: string; login?: string; value?: stri
     .filter((x): x is IData => x !== null)
 }
 
+function filterFromDate(value: string) {
+  const getDate = dateOptions.find((item) => item.name === value)
+  if (getDate) {
+    return [
+      {
+        name: value,
+        value: getDate.value.join(','),
+      },
+    ]
+  } else {
+    return [
+      {
+        name: 'custom date',
+        value,
+      },
+    ]
+  }
+}
+
 const priorities = [
   {
     name: 'P0',
@@ -35,5 +54,4 @@ const priorities = [
     value: TaskPriorityEnum.P2,
   },
 ]
-
-export { selectedFn, filterFromEntity, priorities }
+export { selectedFn, filterFromEntity, priorities, filterFromDate }

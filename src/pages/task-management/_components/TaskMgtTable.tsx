@@ -71,14 +71,14 @@ export default function TaskMgtTable({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-20 text-gray-400">Title</TableHead>
+            <TableHead className="text-gray-400">Title</TableHead>
             <TableHead className="text-gray-400">
               <TableSortHeader title="Due" sort={sort} onClick={setSort} field="due" />
             </TableHead>
             <TableHead className="text-gray-400">
               <TableSortHeader title="Priority" sort={sort} onClick={setSort} field="priority" />
             </TableHead>
-            <TableHead className="w-50 text-gray-400">
+            <TableHead className="text-gray-400">
               <TableSortHeader title="Story Points" sort={sort} onClick={setSort} field="storyPoints" />
             </TableHead>
             <TableHead className="text-gray-400">Project</TableHead>
