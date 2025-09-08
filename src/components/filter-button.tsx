@@ -296,7 +296,7 @@ const DisplayButton = ({ type, title, data, get, set, search }: IConfigs) => {
 
 export default function FilterButton({ configs }: { configs: IConfigs[] }) {
   return (
-    <div className="flex flex-wrap gap-4">
+    <>
       {configs.map((config, index) => {
         return config.get.length ? (
           <DisplayButton
@@ -333,6 +333,6 @@ export default function FilterButton({ configs }: { configs: IConfigs[] }) {
           })}
         </DropdownMenuContent>
       </DropdownMenu>
-    </div>
+    </>
   )
 }

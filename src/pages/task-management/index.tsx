@@ -124,23 +124,25 @@ export default function TaskManagement() {
           }}
         />
       </div>
-      <TableFilter
-        projects={projects?.data || []}
-        selectProjects={selectProjects}
-        selectAssignees={selectAssignees}
-        selectPriority={selectPriority}
-        setSelectProjects={setSelectProjects}
-        setSelectAssignees={setSelectAssignees}
-        setSelectPriority={setSelectPriority}
-        projectsSearch={projectsSearch}
-        assignees={assignees?.data || []}
-        priorities={priorities}
-        selectCreated={selectCreated}
-        setSelectCreated={setSelectCreated}
-        selectDue={selectDue}
-        setSelectDue={setSelectDue}
-      />
-      <TaskCreate />
+      <div className="flex flex-wrap gap-4">
+        <TableFilter
+          projects={projects?.data || []}
+          selectProjects={selectProjects}
+          selectAssignees={selectAssignees}
+          selectPriority={selectPriority}
+          setSelectProjects={setSelectProjects}
+          setSelectAssignees={setSelectAssignees}
+          setSelectPriority={setSelectPriority}
+          projectsSearch={projectsSearch}
+          assignees={assignees?.data || []}
+          priorities={priorities}
+          selectCreated={selectCreated}
+          setSelectCreated={setSelectCreated}
+          selectDue={selectDue}
+          setSelectDue={setSelectDue}
+        />
+        <TaskCreate />
+      </div>
       <TaskMgtTable tasks={tasks} page={page} totalPages={totalPages} setPage={setPage} sort={sort} setSort={setSort} />
     </div>
   )
