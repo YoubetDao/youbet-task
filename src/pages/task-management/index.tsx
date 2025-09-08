@@ -10,14 +10,13 @@ import { useQueries, useQuery } from '@tanstack/react-query'
 import TaskMgtTable from './_components/TaskMgtTable'
 import TableFilter from './_components/TableFilter'
 import { IData } from '@/components/filter-button'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import { filterFromDate, filterFromEntity, priorities, selectedFn } from './_constants'
 import { ISort } from './_components/TableSortHeader'
 import { Input } from '@/components/ui/input'
 import { Search } from 'lucide-react'
 
 export default function TaskManagement() {
-  const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const [page, setPage] = useState(1)
   const [sort, setSort] = useState<ISort[]>([])
@@ -78,6 +77,8 @@ export default function TaskManagement() {
           TaskControllerGetTasksRewardGrantedEnum.All,
           TaskControllerGetTasksRewardClaimedEnum.All,
           TaskControllerGetTasksNoGrantNeededEnum.All,
+          '',
+          '',
           (page - 1) * PAGESIZE,
           PAGESIZE,
           search,
@@ -119,16 +120,6 @@ export default function TaskManagement() {
     createdFromUrl,
     dueFromUrl,
   ])
-
-  useEffect(() => {
-    const newSearchParams = new URLSearchParams(searchParams)
-    if (search) {
-      newSearchParams.set('search', search)
-    } else {
-      newSearchParams.delete('search')
-    }
-    navigate(`${location.pathname}?${newSearchParams.toString()}`, { replace: true })
-  }, [search, navigate])
 
   return (
     <div className="space-y-4">

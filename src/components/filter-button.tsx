@@ -71,11 +71,12 @@ function MultiCommandListComponent({ title, data, get, set, search }: IConfigs) 
       clearTimeout(debounceRef.current)
     }
 
-    debounceRef.current = setTimeout(() => {
-      const searchParams = new URLSearchParams(location.search)
-      searchParams.set(`${title}Search`, inputValue)
-      navigate(`${location.pathname}?${searchParams.toString()}`)
-    }, 500)
+    debounceRef.current =
+      search !== null
+        ? setTimeout(() => {
+            changeURLParams(navigate, `${title}Search`, inputValue)
+          }, 500)
+        : null
 
     return () => {
       if (debounceRef.current) {
@@ -99,26 +100,15 @@ function MultiCommandListComponent({ title, data, get, set, search }: IConfigs) 
               key={getKey}
               value={getKey}
               onSelect={() => {
-                set((prev) =>
-                  prev.map((p) => p.value).includes(setKey)
-                    ? prev.filter((item) => item.value !== setKey)
-                    : [...prev, { name: getKey, value: setKey }],
-                )
+                const val = get.map((p) => p.value).includes(setKey)
+                  ? get.filter((item) => item.value !== setKey)
+                  : [...get, { name: getKey, value: setKey }]
+
+                changeURLParams(navigate, `${title}`, val.map((v) => v.value).join(','))
+                set(val)
               }}
             >
-              <Checkbox
-                value={setKey}
-                checked={get.map((getItem) => getItem.value).includes(setKey)}
-                id={setKey}
-                onChange={(e: React.FormEvent<HTMLButtonElement>) => {
-                  const value = (e.target as HTMLInputElement).value
-                  set((prev) =>
-                    prev.map((p) => p.value).includes(value)
-                      ? prev.filter((item) => item.value !== value)
-                      : [...prev, { name: getKey, value: value }],
-                  )
-                }}
-              />
+              <Checkbox value={setKey} checked={get.map((getItem) => getItem.value).includes(setKey)} id={setKey} />
               <label
                 htmlFor={getKey}
                 className="flex text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -244,7 +234,7 @@ function DateRangeDropdownMenuSub({ title, data, get, set, search }: IConfigs) {
                       set([
                         {
                           name: 'custom date',
-                          value: v?.from + ',' + v?.to,
+                          value: (v?.from || '') + ',' + (v?.to || ''),
                         },
                       ])
                     }}
@@ -256,33 +246,6 @@ function DateRangeDropdownMenuSub({ title, data, get, set, search }: IConfigs) {
             )}
           </CommandItem>
         ))}
-        {/* <CommandItem key="custom">
-                <Checkbox checked={(get as IData[]).length ? (get as IData[])[0].name === 'custom date' : false} />
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <label>custom date</label>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto overflow-hidden p-0" align="start">
-                    <Calendar
-                      mode="range"
-                      selected={{
-                        from: get.length ? new Date(get[0].value.split(',')[0]) : new Date(),
-                        to: get.length ? new Date(get[0].value.split(',')[1]) : new Date(),
-                      }}
-                      onSelect={(v) => {
-                        set([
-                          {
-                            name: 'custom date',
-                            value: v?.from + ',' + v?.to,
-                          },
-                        ])
-                      }}
-                      numberOfMonths={2}
-                      className="rounded-lg border shadow-sm"
-                    />
-                  </PopoverContent>
-                </Popover>
-              </CommandItem> */}
       </CommandList>
     </Command>
   )
@@ -291,10 +254,14 @@ function DateRangeDropdownMenuSub({ title, data, get, set, search }: IConfigs) {
 const DisplayButton = ({ type, title, data, get, set, search }: IConfigs) => {
   const navigate = useNavigate()
   const Component = options[type]
+
+  const isValidDate = (str: string) => {
+    return str && str !== 'undefined' && str !== 'Invalid Date'
+  }
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="group max-w-[400px] justify-start space-x-2 truncate">
+        <Button variant="outline" className="group max-w-[450px] justify-start space-x-2 truncate">
           {title}
           {get.length > 0 && <Separator orientation="vertical" className="mx-2" />}
           {get.length > 0 &&
@@ -302,7 +269,13 @@ const DisplayButton = ({ type, title, data, get, set, search }: IConfigs) => {
               ? `${get.length} ${title}`
               : `${
                   get[0].name === 'custom date'
-                    ? formatDateToDay(get[0].value.split(',')[0]) + ' - ' + formatDateToDay(get[0].value.split(',')[1])
+                    ? (isValidDate(get[0].value.split(',')[0])
+                        ? formatDateToDay(get[0].value.split(',')[0])
+                        : 'Please Select') +
+                      ' - ' +
+                      (isValidDate(get[0].value.split(',')[1])
+                        ? formatDateToDay(get[0].value.split(',')[1])
+                        : 'Please Select')
                     : get[0].name
                 }`)}
           <CircleX
