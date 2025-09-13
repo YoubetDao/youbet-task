@@ -2,7 +2,7 @@ import { LoadingCards } from '../loading-cards'
 import { TaskCard } from './task-card'
 import { EmptyTasks } from './empty-tasks'
 import PaginationFast from '@/components/pagination-fast'
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { capitalize } from 'lodash'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
@@ -92,37 +92,33 @@ export const TaskCatalog = ({ project }: ITaskCatalog) => {
   return (
     <main className="flex flex-col gap-5">
       <header className="flex flex-col space-y-2" aria-label="Filter Controls">
-        <div className="flex space-x-2">
-          <ToggleGroup
-            size="sm"
-            type="single"
-            value={selectedCategory}
-            onValueChange={handleCategoryChange}
-            aria-label="Select Category"
-          >
-            {DEFAULT_CATEGORIES.map((category) => (
-              <ToggleGroupItem key={category} value={category}>
-                {capitalize(category)}
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
-        </div>
+        <Tabs value={selectedCategory} onValueChange={handleCategoryChange} aria-label="Select Category">
+          <div className="flex w-full items-center justify-between">
+            <TabsList className="flex w-auto flex-nowrap">
+              {DEFAULT_CATEGORIES.map((category) => (
+                <TabsTrigger key={category} value={category}>
+                  {capitalize(category)}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
+        </Tabs>
+
         {project && (
-          <ToggleGroup
-            size="sm"
-            type="single"
-            value={selectedAssignment}
-            onValueChange={handleAssignmentChange}
-            aria-label="Select Assignment Status"
-          >
-            {ASSIGNMENT_STATUS.map((status) => (
-              <ToggleGroupItem key={status} value={status}>
-                {capitalize(status)}
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
+          <Tabs value={selectedAssignment} onValueChange={handleAssignmentChange} aria-label="Select Assignment Status">
+            <div className="flex w-full items-center justify-between">
+              <TabsList className="flex w-auto flex-nowrap">
+                {ASSIGNMENT_STATUS.map((status) => (
+                  <TabsTrigger key={status} value={status}>
+                    {capitalize(status)}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </div>
+          </Tabs>
         )}
       </header>
+
       <section className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3" aria-labelledby="tasks-heading">
         <h2 id="tasks-heading" className="sr-only">
           Tasks
