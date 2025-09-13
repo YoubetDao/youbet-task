@@ -49,7 +49,7 @@ export default function TableFilter({
       type: 'multi',
       get: selectPriority,
       set: setSelectPriority,
-      search: '',
+      search: null,
     },
     {
       title: 'Assignees',
@@ -57,7 +57,7 @@ export default function TableFilter({
       type: 'multi',
       get: selectAssignees,
       set: setSelectAssignees,
-      search: '',
+      search: null,
     },
     {
       title: 'Created Between',

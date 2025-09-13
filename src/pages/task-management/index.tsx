@@ -1,4 +1,4 @@
-import { projectApi, taskApi } from '@/service'
+import { taskApi } from '@/service'
 import {
   TaskControllerGetTasksNoGrantNeededEnum,
   TaskControllerGetTasksRewardClaimedEnum,
@@ -6,7 +6,7 @@ import {
 } from '@/openapi/client'
 import { useEffect, useState } from 'react'
 import { PAGESIZE, STALETIME } from '@/constants/contracts/request'
-import { useQueries, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import TaskMgtTable from './_components/TaskMgtTable'
 import TableFilter from './_components/TableFilter'
 import { IData } from '@/components/filter-button'
@@ -15,6 +15,8 @@ import { filterFromDate, filterFromEntity, priorities, selectedFn } from './_con
 import { ISort } from './_components/TableSortHeader'
 import { Input } from '@/components/ui/input'
 import { Search } from 'lucide-react'
+import TaskCreate from './_components/TaskCreate'
+import useQueryProjectsAndAssignees from './_hooks/useQueryProjectsAndAssignees'
 
 export default function TaskManagement() {
   const [searchParams] = useSearchParams()
@@ -41,26 +43,7 @@ export default function TaskManagement() {
   const prioritySelected = selectedFn(selectPriority)
   const assigneesSelected = selectedFn(selectAssignees)
 
-  const [getProjects, getAssignees] = useQueries({
-    queries: [
-      {
-        queryKey: ['projects', projectsSearch],
-        queryFn: async () => {
-          const res = await projectApi.projectControllerGetProjects('', '', 'false', projectsSearch, '', 0, 20)
-          return res.data
-        },
-      },
-      {
-        queryKey: ['assignees', searchAssigneesInProjects],
-        queryFn: async () => {
-          const res = await projectApi.projectControllerGetProjectInvolvedAssignees(searchAssigneesInProjects)
-          return res.data
-        },
-      },
-    ],
-  })
-  const projects = getProjects.data
-  const assignees = getAssignees.data
+  const { projects, assignees } = useQueryProjectsAndAssignees({ projectsSearch, searchAssigneesInProjects })
 
   const sortParams = sort.map((item) => `${item.field}:${item.value}`).join(',')
 
@@ -141,31 +124,26 @@ export default function TaskManagement() {
           }}
         />
       </div>
-      <TableFilter
-        projects={projects?.data || []}
-        selectProjects={selectProjects}
-        selectAssignees={selectAssignees}
-        selectPriority={selectPriority}
-        setSelectProjects={setSelectProjects}
-        setSelectAssignees={setSelectAssignees}
-        setSelectPriority={setSelectPriority}
-        projectsSearch={projectsSearch}
-        assignees={assignees?.data || []}
-        priorities={priorities}
-        selectCreated={selectCreated}
-        setSelectCreated={setSelectCreated}
-        selectDue={selectDue}
-        setSelectDue={setSelectDue}
-      />
-      <TaskMgtTable
-        tasks={tasks}
-        page={page}
-        totalPages={totalPages}
-        setPage={setPage}
-        sort={sort}
-        setSort={setSort}
-        allAssignees={assignees?.data || []}
-      />
+      <div className="flex flex-wrap gap-4">
+        <TableFilter
+          projects={projects?.data || []}
+          selectProjects={selectProjects}
+          selectAssignees={selectAssignees}
+          selectPriority={selectPriority}
+          setSelectProjects={setSelectProjects}
+          setSelectAssignees={setSelectAssignees}
+          setSelectPriority={setSelectPriority}
+          projectsSearch={projectsSearch}
+          assignees={assignees?.data || []}
+          priorities={priorities}
+          selectCreated={selectCreated}
+          setSelectCreated={setSelectCreated}
+          selectDue={selectDue}
+          setSelectDue={setSelectDue}
+        />
+        <TaskCreate />
+      </div>
+      <TaskMgtTable tasks={tasks} page={page} totalPages={totalPages} setPage={setPage} sort={sort} setSort={setSort} />
     </div>
   )
 }
