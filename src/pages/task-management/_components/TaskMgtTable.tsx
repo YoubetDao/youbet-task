@@ -14,6 +14,8 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { taskApi } from '@/service'
 import TableSortHeader, { ISort } from './TableSortHeader'
+import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
+import { Checkbox } from '@/components/ui/checkbox'
 
 export default function TaskMgtTable({
   tasks,
@@ -22,6 +24,7 @@ export default function TaskMgtTable({
   setPage,
   sort,
   setSort,
+  allAssignees,
 }: {
   tasks: TaskDto[]
   page: number
@@ -29,6 +32,7 @@ export default function TaskMgtTable({
   setPage: Dispatch<SetStateAction<number>>
   sort: ISort[]
   setSort: Dispatch<SetStateAction<ISort[]>>
+  allAssignees: { login: string; avatarUrl?: string }[]
 }) {
   const [isEdit, setIsEdit] = useState({
     field: '',
@@ -37,6 +41,7 @@ export default function TaskMgtTable({
   })
   const [title, setTitle] = useState({ githubId: 0, value: '' })
   const [sp, setSp] = useState({ githubId: 0, value: 0 })
+  const [assignees, setAssignees] = useState({ githubId: 0, value: [] as { login: string; avatarUrl?: string }[] })
   const queryClient = useQueryClient()
   const mutation = useMutation({
     mutationFn: ({ githubId, field, value }: { githubId: number; field: string; value: number | string }) =>
@@ -46,11 +51,15 @@ export default function TaskMgtTable({
   const handleClicktoEditState = (e: { currentTarget: HTMLDivElement }) => {
     const field = (e.currentTarget as HTMLDivElement).dataset.field as string
     const githubId = Number(e.currentTarget.dataset.githubid as string)
+    const value = (e.currentTarget.dataset.value as string) || ''
     setIsEdit({
       field,
       value: true,
       githubId,
     })
+    if (field === 'assignees' && value) {
+      setAssignees({ githubId, value: JSON.parse(value) })
+    }
   }
 
   const updateTaskDetail = async ({ value }: { value: string | number }) => {
@@ -199,7 +208,6 @@ export default function TaskMgtTable({
                 <div data-field="storyPoints" data-githubid={x.githubId} onClick={handleClicktoEditState}>
                   {isEdit.field === 'storyPoints' && isEdit.value && isEdit.githubId === x.githubId ? (
                     <Input
-                      className="w-12"
                       value={sp && sp.githubId === x.githubId ? sp.value ?? 0 : x?.storyPoints}
                       onChange={(e) => setSp({ githubId: x.githubId, value: Number(e.currentTarget.value) })}
                       onKeyDown={(e) => {
@@ -224,16 +232,81 @@ export default function TaskMgtTable({
                 <Link to={`/projects/${x.project._id}?projectName=${x.project.name}`}>{x.project.name}</Link>
               </TableCell>
               <TableCell>
-                <div className="flex -space-x-3">
-                  {x.assignees.map((assign) => (
-                    <img
-                      key={assign.login}
-                      className="h-6 w-6 rounded-full border-2 border-white"
-                      src={assign.avatarUrl}
-                      alt={assign.login}
-                    />
-                  ))}
-                </div>
+                {isEdit.field === 'assignees' && isEdit.value && isEdit.githubId === x.githubId ? (
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button id="assignees" variant="outline" role="combobox" className="justify-start px-3">
+                        {assignees.value.length ? (
+                          <div className="flex -space-x-3">
+                            {assignees.value.map((assign) => (
+                              <img
+                                key={assign.login}
+                                className="h-6 w-6 rounded-full border-2 border-white"
+                                src={assign.avatarUrl}
+                                alt={assign.login}
+                              />
+                            ))}
+                          </div>
+                        ) : (
+                          'Select Assignees'
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent align="start">
+                      <Command>
+                        <CommandInput placeholder="Search assignees..." className="h-9" />
+                        <CommandList>
+                          <CommandEmpty>No results found.</CommandEmpty>
+                          {allAssignees.map((item) => {
+                            return (
+                              <CommandItem
+                                key={item.login}
+                                value={item.login}
+                                onSelect={(select) => {
+                                  const value = assignees.value.filter((assign) => assign.login === select).length
+                                    ? assignees.value.filter((assign) => assign.login !== select)
+                                    : [...assignees.value, { login: select, avatarUrl: item.avatarUrl }]
+                                  // setAssignees({ githubId: x.githubId, value })
+                                }}
+                              >
+                                <Checkbox
+                                  value={item.login}
+                                  checked={assignees.value.some((x) => x.login === item.login)}
+                                />
+                                <label className="flex text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                  <img
+                                    key={item.login}
+                                    className="mr-2 h-6 w-6 rounded-full border-2 border-white"
+                                    src={item.avatarUrl}
+                                    alt={item.login}
+                                  />
+                                  <div className="pt-1">{item.login}</div>
+                                </label>
+                              </CommandItem>
+                            )
+                          })}
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                ) : (
+                  <div
+                    className={cn('flex -space-x-3', { 'h-8': !x.assignees.length })}
+                    data-field="assignees"
+                    data-githubid={x.githubId}
+                    onClick={handleClicktoEditState}
+                    data-value={JSON.stringify(x.assignees)}
+                  >
+                    {x.assignees.map((assign) => (
+                      <img
+                        key={assign.login}
+                        className="h-6 w-6 rounded-full border-2 border-white"
+                        src={assign.avatarUrl}
+                        alt={assign.login}
+                      />
+                    ))}
+                  </div>
+                )}
               </TableCell>
             </TableRow>
           ))}
