@@ -1,5 +1,5 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { TaskDto, TaskPriorityEnum } from '@/openapi/client'
+import { GithubUser, TaskDto, TaskPriorityEnum } from '@/openapi/client'
 import PaginationFast from '@/components/pagination-fast'
 import { Link } from 'react-router-dom'
 import { cn, formatDateToDay } from '@/lib/utils'
@@ -32,7 +32,7 @@ export default function TaskMgtTable({
   setPage: Dispatch<SetStateAction<number>>
   sort: ISort[]
   setSort: Dispatch<SetStateAction<ISort[]>>
-  allAssignees: { login: string; avatarUrl?: string }[]
+  allAssignees: GithubUser[]
 }) {
   const [isEdit, setIsEdit] = useState({
     field: '',
@@ -41,11 +41,21 @@ export default function TaskMgtTable({
   })
   const [title, setTitle] = useState({ githubId: 0, value: '' })
   const [sp, setSp] = useState({ githubId: 0, value: 0 })
-  const [assignees, setAssignees] = useState({ githubId: 0, value: [] as { login: string; avatarUrl?: string }[] })
+  const [assignees, setAssignees] = useState({
+    githubId: 0,
+    value: [] as GithubUser[],
+  })
   const queryClient = useQueryClient()
   const mutation = useMutation({
-    mutationFn: ({ githubId, field, value }: { githubId: number; field: string; value: number | string }) =>
-      taskApi.taskControllerUpdateTask(githubId, { [field]: value }),
+    mutationFn: ({
+      githubId,
+      field,
+      value,
+    }: {
+      githubId: number
+      field: string
+      value: number | string | GithubUser[]
+    }) => taskApi.taskControllerUpdateTask(githubId, { [field]: value }),
   })
 
   const handleClicktoEditState = (e: { currentTarget: HTMLDivElement }) => {
@@ -62,7 +72,7 @@ export default function TaskMgtTable({
     }
   }
 
-  const updateTaskDetail = async ({ value }: { value: string | number }) => {
+  const updateTaskDetail = async ({ value }: { value: string | number | GithubUser[] }) => {
     const { field, githubId } = isEdit
     if (value) {
       await mutation.mutateAsync({ githubId, value, field })
@@ -233,7 +243,13 @@ export default function TaskMgtTable({
               </TableCell>
               <TableCell>
                 {isEdit.field === 'assignees' && isEdit.value && isEdit.githubId === x.githubId ? (
-                  <Popover>
+                  <Popover
+                    onOpenChange={(open) => {
+                      if (!open) {
+                        updateTaskDetail({ value: assignees.value as GithubUser[] })
+                      }
+                    }}
+                  >
                     <PopoverTrigger asChild>
                       <Button id="assignees" variant="outline" role="combobox" className="justify-start px-3">
                         {assignees.value.length ? (
@@ -265,8 +281,15 @@ export default function TaskMgtTable({
                                 onSelect={(select) => {
                                   const value = assignees.value.filter((assign) => assign.login === select).length
                                     ? assignees.value.filter((assign) => assign.login !== select)
-                                    : [...assignees.value, { login: select, avatarUrl: item.avatarUrl }]
-                                  // setAssignees({ githubId: x.githubId, value })
+                                    : [
+                                        ...assignees.value,
+                                        {
+                                          login: select,
+                                          avatarUrl: item.avatarUrl,
+                                          htmlUrl: item.htmlUrl,
+                                        } as GithubUser,
+                                      ]
+                                  setAssignees({ githubId: x.githubId, value })
                                 }}
                               >
                                 <Checkbox
